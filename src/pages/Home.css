@@ -1,0 +1,102 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.greeting-card.card {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
+  color: var(--white);
+  padding: 20px;
+}
+
+.greeting-card h2 {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.greeting-date {
+  font-size: 13px;
+  opacity: 0.8;
+  text-transform: capitalize;
+}
+
+.tip-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-left: 3px solid var(--accent);
+}
+
+.tip-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tip-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.today-events {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.event-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.event-mini:active {
+  transform: scale(0.98);
+}
+
+.event-time {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 45px;
+}
+
+.event-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  border: none;
+  cursor: pointer;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.action-card:active {
+  transform: scale(0.96);
+}
+
+.action-card svg {
+  color: var(--accent);
+}

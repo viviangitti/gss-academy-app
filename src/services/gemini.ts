@@ -22,7 +22,7 @@ let chat: ReturnType<ReturnType<GoogleGenerativeAI['getGenerativeModel']>['start
 export async function sendMessage(message: string, apiKey: string): Promise<string> {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     if (!chat) {
       chat = model.startChat({

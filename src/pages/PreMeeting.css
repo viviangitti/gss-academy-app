@@ -23,7 +23,7 @@
 }
 
 .premeeting-hero p {
-  font-size: 13px;
+  font-size: 15px;
   opacity: 0.8;
 }
 
@@ -37,7 +37,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--text-light);
 }
@@ -101,7 +101,7 @@
 }
 
 .quick-check-item span {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
 }
 
@@ -139,7 +139,7 @@
 }
 
 .mini-obj-header strong {
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .mini-obj-responses {
@@ -152,7 +152,7 @@
 }
 
 .mini-obj-responses p {
-  font-size: 12px;
+  font-size: 16px;
   line-height: 1.5;
   color: var(--text);
 }
@@ -169,13 +169,13 @@
 }
 
 .mini-tech strong {
-  font-size: 13px;
+  font-size: 15px;
   display: block;
   margin-bottom: 2px;
 }
 
 .mini-tech p {
-  font-size: 12px;
+  font-size: 16px;
   color: var(--text-light);
   line-height: 1.4;
 }

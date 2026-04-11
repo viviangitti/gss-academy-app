@@ -28,7 +28,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   margin-bottom: 6px;
   color: var(--text-light);
@@ -64,13 +64,13 @@
 }
 
 .link-info h4 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 2px;
 }
 
 .link-info p {
-  font-size: 12px;
+  font-size: 16px;
   color: var(--text-light);
 }
 
@@ -79,7 +79,7 @@
 }
 
 .form-hint {
-  font-size: 11px;
+  font-size: 15px;
   color: var(--text-light);
   margin-top: 4px;
   display: block;
@@ -91,6 +91,6 @@
 }
 
 .app-info p {
-  font-size: 11px;
+  font-size: 15px;
   color: var(--text-light);
 }

@@ -3,7 +3,7 @@ import type { Segment, NewsItem } from '../types';
 const SEGMENT_KEYWORDS: Record<string, string> = {
   farmaceutico: 'indústria farmacêutica medicamentos',
   automotivo: 'indústria automotiva carros veículos',
-  tecnologia: 'tecnologia SaaS software startups',
+  tecnologia: 'tecnologia software inovação digital',
   varejo: 'varejo retail consumo lojas',
   imobiliario: 'mercado imobiliário imóveis construção',
   financeiro: 'mercado financeiro bancos seguros fintech',

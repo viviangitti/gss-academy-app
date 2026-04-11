@@ -8,7 +8,7 @@ const tabs = [
   { path: '/', icon: Home, label: 'Início' },
   { path: '/calendario', icon: CalendarDays, label: 'Agenda' },
   { path: '/conteudo', icon: BookOpen, label: 'Conteúdo' },
-  { path: '/ia-coach', icon: MessageCircle, label: 'IA Coach' },
+  { path: '/ia-coach', icon: MessageCircle, label: 'Consultor' },
   { path: '/perfil', icon: User, label: 'Perfil' },
 ];
 

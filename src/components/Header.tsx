@@ -6,13 +6,13 @@ const titles: Record<string, string> = {
   '/': 'GSS Academy',
   '/calendario': 'Calendário',
   '/conteudo': 'Conteúdo',
-  '/checklists': 'Checklists',
+  '/checklists': 'Listas',
   '/objecoes': 'Objeções',
-  '/scripts': 'Scripts',
+  '/scripts': 'Roteiros',
   '/tecnicas': 'Técnicas',
   '/noticias': 'Notícias',
   '/pre-reuniao': 'Pré-reunião',
-  '/ia-coach': 'IA Coach',
+  '/ia-coach': 'Consultor IA',
   '/perfil': 'Perfil',
 };
 

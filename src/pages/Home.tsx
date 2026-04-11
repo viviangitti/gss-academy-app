@@ -94,7 +94,7 @@ export default function Home() {
           </button>
           <button className="action-card card" onClick={() => navigate('/ia-coach')}>
             <MessageCircle size={24} />
-            <span>IA Coach</span>
+            <span>Consultor</span>
           </button>
           <button className="action-card card" onClick={() => navigate('/calendario')}>
             <CalendarDays size={24} />

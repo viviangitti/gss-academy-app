@@ -7,7 +7,7 @@ import './Calendar.css';
 const CATEGORIES = [
   { value: 'reuniao', label: 'Reunião', color: '#3b82f6' },
   { value: 'ritual', label: 'Ritual', color: '#f59e0b' },
-  { value: 'followup', label: 'Follow-up', color: '#22c55e' },
+  { value: 'followup', label: 'Acompanhamento', color: '#22c55e' },
   { value: 'treinamento', label: 'Treinamento', color: '#8b5cf6' },
 ] as const;
 

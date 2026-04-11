@@ -78,6 +78,13 @@
   color: var(--accent);
 }
 
+.form-hint {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 4px;
+  display: block;
+}
+
 .app-info {
   text-align: center;
   padding: 16px;

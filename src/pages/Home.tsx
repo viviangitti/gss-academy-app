@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CalendarDays, CheckSquare, MessageCircle, TrendingUp, Clock, Target } from 'lucide-react';
+import { CalendarDays, Shield, MessageCircle, Zap, Clock, Target, Newspaper, BookOpen, ExternalLink } from 'lucide-react';
 import { loadData, KEYS } from '../services/storage';
-import type { CalendarEvent } from '../types';
+import { fetchNews } from '../services/news';
+import { SEGMENTS } from '../types';
+import type { CalendarEvent, UserProfile, NewsItem } from '../types';
 import './Home.css';
 
 const TIPS = [
@@ -14,6 +16,8 @@ const TIPS = [
   'Pergunte "O que te impede de fechar hoje?" para acelerar decisões.',
   'Comemore cada pequena vitória com sua equipe.',
   'Revise seus números toda sexta-feira para ajustar a rota.',
+  'Antes de qualquer reunião, use o modo Pré-reunião do app.',
+  'Conheça as objeções do seu segmento como a palma da mão.',
 ];
 
 export default function Home() {
@@ -21,6 +25,8 @@ export default function Home() {
   const [todayEvents, setTodayEvents] = useState<CalendarEvent[]>([]);
   const [tip] = useState(() => TIPS[Math.floor(Math.random() * TIPS.length)]);
   const [greeting, setGreeting] = useState('');
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [segmentLabel, setSegmentLabel] = useState('');
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -31,9 +37,15 @@ export default function Home() {
     const events = loadData<CalendarEvent[]>(KEYS.EVENTS, []);
     const today = new Date().toISOString().split('T')[0];
     setTodayEvents(events.filter(e => e.date === today).sort((a, b) => a.time.localeCompare(b.time)));
+
+    const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '' });
+    if (profile.segment) {
+      setSegmentLabel(SEGMENTS.find(s => s.value === profile.segment)?.label || '');
+      fetchNews(profile.segment).then(items => setNews(items.slice(0, 3)));
+    }
   }, []);
 
-  const profile = loadData(KEYS.PROFILE, { name: '' });
+  const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '' });
   const name = profile.name ? `, ${profile.name.split(' ')[0]}` : '';
 
   return (
@@ -44,6 +56,12 @@ export default function Home() {
           {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
         </p>
       </div>
+
+      {/* Pre-meeting quick button */}
+      <button className="premeeting-btn" onClick={() => navigate('/pre-reuniao')}>
+        <Zap size={18} />
+        <span>Vou entrar numa reunião</span>
+      </button>
 
       <div className="tip-card card">
         <div className="tip-icon"><Target size={18} /></div>
@@ -66,24 +84,40 @@ export default function Home() {
       <div className="quick-actions">
         <h3 className="section-title">Acesso Rápido</h3>
         <div className="actions-grid">
-          <button className="action-card card" onClick={() => navigate('/calendario')}>
-            <CalendarDays size={24} />
-            <span>Agenda</span>
+          <button className="action-card card" onClick={() => navigate('/objecoes')}>
+            <Shield size={24} />
+            <span>Objeções</span>
           </button>
-          <button className="action-card card" onClick={() => navigate('/checklists')}>
-            <CheckSquare size={24} />
-            <span>Checklists</span>
+          <button className="action-card card" onClick={() => navigate('/conteudo')}>
+            <BookOpen size={24} />
+            <span>Conteúdo</span>
           </button>
           <button className="action-card card" onClick={() => navigate('/ia-coach')}>
             <MessageCircle size={24} />
             <span>IA Coach</span>
           </button>
-          <button className="action-card card" onClick={() => navigate('/ia-coach')}>
-            <TrendingUp size={24} />
-            <span>Objeções</span>
+          <button className="action-card card" onClick={() => navigate('/calendario')}>
+            <CalendarDays size={24} />
+            <span>Agenda</span>
           </button>
         </div>
       </div>
+
+      {/* News section */}
+      {news.length > 0 && (
+        <div className="home-news">
+          <div className="news-section-header">
+            <h3 className="section-title"><Newspaper size={16} /> {segmentLabel}</h3>
+            <button className="btn btn-outline btn-sm" onClick={() => navigate('/noticias')}>Ver mais</button>
+          </div>
+          {news.map((item, i) => (
+            <a key={i} href={item.link} target="_blank" rel="noopener noreferrer" className="home-news-item card">
+              <h4>{item.title}</h4>
+              <ExternalLink size={12} />
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

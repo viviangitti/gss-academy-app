@@ -12,7 +12,7 @@ const titles: Record<string, string> = {
   '/tecnicas': 'Técnicas',
   '/noticias': 'Notícias',
   '/pre-reuniao': 'Pré-reunião',
-  '/ia-coach': 'Pergunte',
+  '/ia-coach': 'Pergunte à IA',
   '/perfil': 'Perfil',
 };
 

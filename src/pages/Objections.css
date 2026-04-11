@@ -18,13 +18,13 @@
 }
 
 .objections-intro p {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-light);
   line-height: 1.4;
 }
 
 .objections-segment {
-  font-size: 12px;
+  font-size: 16px;
   color: var(--accent);
   font-weight: 600;
 }
@@ -47,7 +47,7 @@
 .search-bar input {
   border: none;
   padding: 10px 0;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .search-bar input:focus {
@@ -74,7 +74,7 @@
 }
 
 .objection-header h4 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   flex: 1;
 }
@@ -110,14 +110,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 700;
   flex-shrink: 0;
   margin-top: 2px;
 }
 
 .response-item p {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.5;
   color: var(--text);
 }

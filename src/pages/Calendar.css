@@ -44,7 +44,7 @@
 }
 
 .cal-weekdays span {
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-light);
   text-transform: uppercase;
@@ -63,7 +63,7 @@
   justify-content: center;
   border: none;
   background: none;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   border-radius: 50%;
@@ -133,7 +133,7 @@
 }
 
 .event-card .event-time {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--accent);
 }
@@ -159,12 +159,12 @@
 }
 
 .event-name {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
 }
 
 .event-notes {
-  font-size: 12px;
+  font-size: 16px;
   color: var(--text-light);
   margin-top: 4px;
 }
@@ -172,6 +172,6 @@
 .empty-state {
   text-align: center;
   color: var(--text-light);
-  font-size: 13px;
+  font-size: 15px;
   padding: 24px;
 }

@@ -11,7 +11,7 @@
 }
 
 .news-segment {
-  font-size: 12px;
+  font-size: 16px;
   color: var(--accent);
   font-weight: 600;
 }
@@ -43,14 +43,14 @@
 }
 
 .news-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1.4;
   margin-bottom: 6px;
 }
 
 .news-desc {
-  font-size: 12px;
+  font-size: 16px;
   color: var(--text-light);
   line-height: 1.4;
   margin-bottom: 8px;
@@ -63,7 +63,7 @@
 }
 
 .news-date {
-  font-size: 11px;
+  font-size: 15px;
   color: var(--text-light);
 }
 
@@ -105,6 +105,6 @@
 }
 
 .news-empty p {
-  font-size: 13px;
+  font-size: 15px;
   max-width: 260px;
 }

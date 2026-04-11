@@ -5,7 +5,7 @@
 }
 
 .content-segment {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-light);
   text-align: center;
   padding: 8px;
@@ -48,13 +48,13 @@
 }
 
 .content-item h4 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text);
 }
 
 .content-item p {
-  font-size: 11px;
+  font-size: 15px;
   color: var(--text-light);
   line-height: 1.3;
 }

@@ -38,7 +38,7 @@
 }
 
 .checklist-info h4 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -65,7 +65,7 @@
 }
 
 .progress-text {
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-light);
   min-width: 32px;
@@ -114,7 +114,7 @@
   flex: 1;
   border: none;
   padding: 4px 0;
-  font-size: 13px;
+  font-size: 15px;
   background: transparent;
 }
 

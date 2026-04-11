@@ -212,7 +212,7 @@ const GENERAL_SCRIPTS: Script[] = [
   },
 ];
 
-export function getScripts(segment: Segment): Script[] {
+export function getScripts(_segment: Segment): Script[] {
   return GENERAL_SCRIPTS;
 }
 

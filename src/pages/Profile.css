@@ -20,6 +20,71 @@
   color: var(--accent);
 }
 
+/* Level card */
+.level-card {
+  border-left: 3px solid var(--accent);
+}
+
+.level-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.level-header svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.level-title {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.level-points {
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.streak-badge {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.level-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.level-progress .progress-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.level-progress .progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.level-next {
+  font-size: 12px;
+  color: var(--text-light);
+  text-align: right;
+}
+
 .profile-form .form-group {
   margin-bottom: 14px;
 }

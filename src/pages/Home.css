@@ -21,6 +21,29 @@
   text-transform: capitalize;
 }
 
+.premeeting-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  color: var(--primary);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.2s;
+  box-shadow: var(--shadow);
+}
+
+.premeeting-btn:active {
+  transform: scale(0.98);
+}
+
 .tip-card {
   display: flex;
   align-items: flex-start;
@@ -99,4 +122,51 @@
 
 .action-card svg {
   color: var(--accent);
+}
+
+/* News section */
+.home-news {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.news-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.news-section-header .section-title {
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.home-news-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--text);
+  padding: 12px;
+}
+
+.home-news-item:active {
+  transform: scale(0.98);
+}
+
+.home-news-item h4 {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.home-news-item svg {
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 2px;
 }

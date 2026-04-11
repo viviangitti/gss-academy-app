@@ -1,18 +1,29 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import './Header.css';
 
 const titles: Record<string, string> = {
   '/': 'GSS Academy',
   '/calendario': 'Calendário',
+  '/conteudo': 'Conteúdo',
   '/checklists': 'Checklists',
+  '/objecoes': 'Objeções',
+  '/scripts': 'Scripts',
+  '/tecnicas': 'Técnicas',
+  '/noticias': 'Notícias',
+  '/pre-reuniao': 'Pré-reunião',
   '/ia-coach': 'IA Coach',
   '/perfil': 'Perfil',
 };
 
+const SUB_PAGES = ['/objecoes', '/scripts', '/tecnicas', '/checklists', '/noticias', '/pre-reuniao'];
+
 export default function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
   const title = titles[location.pathname] || 'GSS Academy';
   const isHome = location.pathname === '/';
+  const isSubPage = SUB_PAGES.includes(location.pathname);
 
   return (
     <header className="header">
@@ -23,7 +34,14 @@ export default function Header() {
             <span className="header-subtitle">Maestria em Vendas</span>
           </div>
         ) : (
-          <h1 className="header-title">{title}</h1>
+          <div className="header-nav">
+            {isSubPage && (
+              <button className="header-back" onClick={() => navigate('/conteudo')}>
+                <ArrowLeft size={20} />
+              </button>
+            )}
+            <h1 className="header-title">{title}</h1>
+          </div>
         )}
       </div>
     </header>

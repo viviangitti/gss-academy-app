@@ -1,0 +1,110 @@
+.news-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.news-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.news-segment {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.news-card {
+  text-decoration: none;
+  color: var(--text);
+  transition: transform 0.2s;
+  display: block;
+}
+
+.news-card:active {
+  transform: scale(0.98);
+}
+
+.news-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.news-desc {
+  font-size: 12px;
+  color: var(--text-light);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.news-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.news-date {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.news-footer svg {
+  color: var(--accent);
+}
+
+.news-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.news-skeleton {
+  height: 80px;
+  background: linear-gradient(90deg, var(--white) 25%, var(--bg) 50%, var(--white) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.news-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
+  gap: 12px;
+  color: var(--text-light);
+}
+
+.news-empty h3 {
+  color: var(--text);
+  font-size: 16px;
+}
+
+.news-empty p {
+  font-size: 13px;
+  max-width: 260px;
+}

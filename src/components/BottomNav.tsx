@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, CalendarDays, BookOpen, MessageCircle, User } from 'lucide-react';
 import './BottomNav.css';
 
-const CONTENT_PATHS = ['/conteudo', '/objecoes', '/scripts', '/tecnicas', '/checklists', '/noticias', '/pre-reuniao'];
+const CONTENT_PATHS = ['/conteudo', '/objecoes', '/scripts', '/tecnicas', '/checklists', '/noticias', '/gatilhos', '/pre-reuniao'];
 
 const tabs = [
   { path: '/', icon: Home, label: 'Início' },

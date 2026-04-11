@@ -7,11 +7,11 @@ import './AICoach.css';
 
 const QUICK_PROMPTS = [
   'Como rebater objeção de preço?',
-  'Script para cold call',
+  'Roteiro para ligação fria',
   'Técnicas de fechamento',
   'Como motivar minha equipe?',
   'Roteiro de reunião de vendas',
-  'Como qualificar um lead?',
+  'Como qualificar um cliente potencial?',
 ];
 
 const API_KEY = 'AIzaSyB2kyZkx-6yJ88YqsYNXcBMv67s1GjERLg';
@@ -81,7 +81,7 @@ export default function AICoach() {
           <div className="ai-welcome-icon">
             <Sparkles size={40} />
           </div>
-          <h3>Coach de Vendas IA</h3>
+          <h3>Consultor de Vendas</h3>
           <p>Seu assistente especialista em vendas, negociação e liderança comercial.</p>
 
           <div className="quick-prompts">

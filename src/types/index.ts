@@ -47,7 +47,7 @@ export const SEGMENTS: { value: Segment; label: string }[] = [
   { value: '', label: 'Selecione seu segmento' },
   { value: 'farmaceutico', label: 'Farmacêutico' },
   { value: 'automotivo', label: 'Automotivo' },
-  { value: 'tecnologia', label: 'Tecnologia / SaaS' },
+  { value: 'tecnologia', label: 'Tecnologia / Software' },
   { value: 'varejo', label: 'Varejo' },
   { value: 'imobiliario', label: 'Imobiliário' },
   { value: 'financeiro', label: 'Financeiro / Seguros' },

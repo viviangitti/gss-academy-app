@@ -7,9 +7,9 @@ import './Content.css';
 
 const MENU_ITEMS = [
   { path: '/objecoes', icon: Shield, label: 'Objeções', desc: 'Respostas prontas para cada objeção', color: '#ef4444' },
-  { path: '/scripts', icon: FileText, label: 'Scripts', desc: 'Templates de abordagem e follow-up', color: '#3b82f6' },
-  { path: '/tecnicas', icon: BookOpen, label: 'Técnicas', desc: 'SPIN, BANT, Challenger e mais', color: '#8b5cf6' },
-  { path: '/checklists', icon: CheckSquare, label: 'Checklists', desc: 'Rituais e preparação de reuniões', color: '#22c55e' },
+  { path: '/scripts', icon: FileText, label: 'Roteiros', desc: 'Modelos de abordagem e acompanhamento', color: '#3b82f6' },
+  { path: '/tecnicas', icon: BookOpen, label: 'Técnicas', desc: 'Perguntas estratégicas, qualificação e mais', color: '#8b5cf6' },
+  { path: '/checklists', icon: CheckSquare, label: 'Listas', desc: 'Rituais e preparação de reuniões', color: '#22c55e' },
   { path: '/noticias', icon: Newspaper, label: 'Notícias', desc: 'Novidades do seu mercado', color: '#f59e0b' },
   { path: '/pre-reuniao', icon: Zap, label: 'Pré-reunião', desc: 'Prepare-se em 2 minutos', color: '#c9a84c' },
 ];

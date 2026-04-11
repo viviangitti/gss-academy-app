@@ -30,7 +30,7 @@ export default function Scripts() {
     <div className="scripts-page">
       <div className="scripts-intro card">
         <FileText size={20} />
-        <p>Scripts prontos para copiar e adaptar. Personalize com o nome do cliente e dados específicos.</p>
+        <p>Roteiros prontos para copiar e adaptar. Personalize com o nome do cliente e dados específicos.</p>
       </div>
 
       <div className="scripts-list">

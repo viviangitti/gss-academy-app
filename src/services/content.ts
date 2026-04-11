@@ -31,7 +31,7 @@ const GENERAL_OBJECTIONS: Objection[] = [
     id: 'g1', objection: '"Está muito caro"', segment: 'geral',
     responses: [
       'Entendo sua preocupação com o investimento. Vamos olhar pelo lado do retorno: quanto você perde hoje sem essa solução? O custo de não agir geralmente é maior que o investimento.',
-      'Caro comparado a quê? Vamos comparar não o preço, mas o valor entregue. Nosso cliente X tinha a mesma percepção e hoje tem ROI de 3x.',
+      'Caro comparado a quê? Vamos comparar não o preço, mas o valor entregue. Nosso cliente X tinha a mesma percepção e hoje tem retorno de 3x o investimento.',
       'Posso ajustar as condições de pagamento para caber melhor no seu orçamento. O importante é não perder o timing da oportunidade.',
     ],
   },
@@ -62,8 +62,8 @@ const GENERAL_OBJECTIONS: Objection[] = [
   {
     id: 'g5', objection: '"Preciso falar com meu sócio/diretor"', segment: 'geral',
     responses: [
-      'Claro! Para facilitar a conversa dele, posso preparar um resumo executivo de 1 página com os pontos principais e o ROI esperado. O que acha?',
-      'Perfeito. Que tal agendarmos uma call de 15 minutos com ele? Assim tiro as dúvidas dele diretamente e agilizamos o processo.',
+      'Claro! Para facilitar a conversa dele, posso preparar um resumo executivo de 1 página com os pontos principais e o retorno esperado. O que acha?',
+      'Perfeito. Que tal agendarmos uma ligação de 15 minutos com ele? Assim tiro as dúvidas dele diretamente e agilizamos o processo.',
       'Entendo. Quais são os critérios que ele costuma avaliar? Assim posso preparar os argumentos certos para vocês dois.',
     ],
   },
@@ -100,7 +100,7 @@ const SEGMENT_OBJECTIONS: Record<string, Objection[]> = {
       'A aprovação regulatória é um passo necessário. Podemos começar o processo agora para que quando a janela de compras abrir, vocês já estejam prontos.',
     ]},
     { id: 'f2', objection: '"O médico já está acostumado a prescrever outra marca"', segment: 'farmaceutico', responses: [
-      'A familiaridade é importante, mas os estudos clínicos mostram [dados]. Podemos organizar um simpósio com KOLs para apresentar as evidências?',
+      'A familiaridade é importante, mas os estudos clínicos mostram [dados]. Podemos organizar um simpósio com líderes de opinião para apresentar as evidências?',
       'Entendo. Que tal um programa de amostras grátis para que o médico possa testar com alguns pacientes e comparar os resultados?',
     ]},
   ],
@@ -111,26 +111,26 @@ const SEGMENT_OBJECTIONS: Record<string, Objection[]> = {
     ]},
     { id: 'a2', objection: '"O seguro está muito caro"', segment: 'automotivo', responses: [
       'Temos parceria com corretoras que conseguem até 30% de desconto. Posso incluir isso na proposta e mostrar o custo total real mensal.',
-      'Vamos olhar o TCO (custo total de propriedade): consumo, manutenção, seguro. Comparando com o concorrente, nosso custo mensal é mais competitivo.',
+      'Vamos olhar o custo total de propriedade: consumo, manutenção, seguro. Comparando com o concorrente, nosso custo mensal é mais competitivo.',
     ]},
   ],
   tecnologia: [
     { id: 't1', objection: '"Já temos uma solução interna"', segment: 'tecnologia', responses: [
-      'Soluções internas têm custo oculto alto: manutenção, atualizações, equipe dedicada. Nosso SaaS elimina tudo isso e tem SLA garantido.',
-      'Quanto custa manter essa solução por ano? Geralmente o TCO interno é 3x maior que um SaaS especializado. Posso fazer essa análise com vocês.',
+      'Soluções internas têm custo oculto alto: manutenção, atualizações, equipe dedicada. Nossa plataforma elimina tudo isso e tem garantia de disponibilidade.',
+      'Quanto custa manter essa solução por ano? Geralmente o custo total interno é 3x maior que uma plataforma especializada. Posso fazer essa análise com vocês.',
     ]},
-    { id: 't2', objection: '"Preciso de integração com nosso stack"', segment: 'tecnologia', responses: [
-      'Temos API aberta e integrações nativas com [principais ferramentas]. Nosso time de implementação configura tudo em até X dias.',
-      'Entendo que integração é crítica. Que tal um POC de 2 semanas onde validamos todas as integrações antes de fechar?',
+    { id: 't2', objection: '"Preciso de integração com nossos sistemas"', segment: 'tecnologia', responses: [
+      'Temos integração aberta e conexões nativas com [principais ferramentas]. Nosso time de implementação configura tudo em até X dias.',
+      'Entendo que integração é crítica. Que tal um teste piloto de 2 semanas onde validamos todas as integrações antes de fechar?',
     ]},
   ],
   varejo: [
     { id: 'v1', objection: '"As vendas estão fracas, não posso investir agora"', segment: 'varejo', responses: [
-      'Exatamente por isso precisa agir. Quando as vendas estão fracas é hora de investir em [solução] para se diferenciar e capturar market share.',
+      'Exatamente por isso precisa agir. Quando as vendas estão fracas é hora de investir em [solução] para se diferenciar e conquistar participação de mercado.',
       'Entendo o momento. Que tal começarmos com uma loja piloto? Assim você valida o resultado com risco mínimo antes de escalar.',
     ]},
     { id: 'v2', objection: '"Meu público não vai aceitar/usar"', segment: 'varejo', responses: [
-      'Fizemos testes com perfil de público similar e a adesão foi de X%. Posso compartilhar o case? O público se adapta rápido quando percebe valor.',
+      'Fizemos testes com perfil de público similar e a adesão foi de X%. Posso compartilhar o caso de sucesso? O público se adapta rápido quando percebe valor.',
       'Podemos fazer um teste A/B em uma loja antes de implementar na rede toda. Dados reais são melhores que suposições.',
     ]},
   ],
@@ -159,25 +159,25 @@ const SEGMENT_OBJECTIONS: Record<string, Objection[]> = {
   educacao: [
     { id: 'e1', objection: '"O aluno pode aprender isso de graça online"', segment: 'educacao', responses: [
       'Conteúdo gratuito existe, mas sem metodologia, acompanhamento e certificação. Nossa taxa de conclusão é X% vs 3% dos cursos gratuitos. Resultado custa investimento.',
-      'Gratuito não tem suporte, networking nem empregabilidade. Nossos alunos têm X% de colocação no mercado em Y meses.',
+      'Gratuito não tem suporte, rede de contatos nem empregabilidade. Nossos alunos têm X% de colocação no mercado em Y meses.',
     ]},
   ],
   servicos: [
     { id: 'sv1', objection: '"Posso fazer internamente"', segment: 'servicos', responses: [
-      'Pode, mas quanto custa em tempo e oportunidade? Enquanto sua equipe faz isso, deixa de fazer o core business. Nosso time especializado entrega em metade do tempo.',
+      'Pode, mas quanto custa em tempo e oportunidade? Enquanto sua equipe faz isso, deixa de focar no negócio principal. Nosso time especializado entrega em metade do tempo.',
       'Internalizar parece econômico, mas some: contratação, treinamento, ferramentas, gestão. Terceirizar é custo variável sem dor de cabeça.',
     ]},
   ],
   agro: [
     { id: 'ag1', objection: '"Vou esperar a safra para decidir"', segment: 'agro', responses: [
       'Entendo o ciclo. Mas preparar agora garante as melhores condições e disponibilidade. Na safra, a demanda sobe e as condições pioram.',
-      'Os insumos têm lead time. Quem compra antecipado garante preço e entrega. Podemos travar o preço agora e ajustar o pagamento para pós-safra.',
+      'Os insumos têm prazo de entrega. Quem compra antecipado garante preço e disponibilidade. Podemos travar o preço agora e ajustar o pagamento para pós-safra.',
     ]},
   ],
   energia: [
-    { id: 'en1', objection: '"O payback é muito longo"', segment: 'energia', responses: [
-      'Com as novas tarifas e o aumento constante da energia, o payback real é menor que o projetado. Clientes que instalaram há 2 anos já recuperaram o investimento.',
-      'Além do payback financeiro, considere: valorização do imóvel, marketing verde e proteção contra aumentos futuros. O ROI total é muito maior.',
+    { id: 'en1', objection: '"O prazo de retorno é muito longo"', segment: 'energia', responses: [
+      'Com as novas tarifas e o aumento constante da energia, o prazo de retorno real é menor que o projetado. Clientes que instalaram há 2 anos já recuperaram o investimento.',
+      'Além do retorno financeiro, considere: valorização do imóvel, sustentabilidade como diferencial e proteção contra aumentos futuros. O retorno total é muito maior.',
     ]},
   ],
 };
@@ -191,11 +191,11 @@ export function getObjections(segment: Segment): Objection[] {
 
 const GENERAL_SCRIPTS: Script[] = [
   {
-    id: 'sc1', title: 'Cold Call - Primeira Abordagem', context: 'Ligação para prospect que nunca ouviu falar de você', segment: 'geral',
+    id: 'sc1', title: 'Ligação Fria - Primeira Abordagem', context: 'Ligação para cliente potencial que nunca ouviu falar de você', segment: 'geral',
     script: `"Olá [Nome], aqui é [Seu Nome] da [Empresa]. Eu sei que você está ocupado, então vou ser breve - 30 segundos.\n\nEstamos ajudando [perfil de empresa similar] a [resultado principal] e acredito que pode fazer sentido para vocês também.\n\nNão estou ligando para vender nada agora, mas gostaria de agendar 15 minutos para entender se podemos ajudar. Teria disponibilidade [dia] às [hora]?"`,
   },
   {
-    id: 'sc2', title: 'WhatsApp - Follow-up Pós-reunião', context: 'Mensagem após primeira reunião de apresentação', segment: 'geral',
+    id: 'sc2', title: 'WhatsApp - Acompanhamento Pós-reunião', context: 'Mensagem após primeira reunião de apresentação', segment: 'geral',
     script: `"Oi [Nome], tudo bem?\n\n[Seu Nome] da [Empresa] aqui. Foi um prazer conversar com você hoje!\n\nComo combinamos, segue o material que mencionei: [link]\n\nOs pontos principais que conversamos:\n✅ [Ponto 1]\n✅ [Ponto 2]\n✅ [Ponto 3]\n\nPróximo passo: [ação combinada] até [data].\n\nQualquer dúvida, estou à disposição! 🤝"`,
   },
   {
@@ -207,7 +207,7 @@ const GENERAL_SCRIPTS: Script[] = [
     script: `"Oi [Nome], tudo bem?\n\nFaz um tempo que conversamos e queria saber como estão as coisas por aí.\n\nDesde nossa última conversa, [novidade relevante: novo produto/resultado de outro cliente/condição especial].\n\nAchei que poderia fazer sentido para você. Vale uma conversa rápida de 10 minutos essa semana?\n\nAbraço!"`,
   },
   {
-    id: 'sc5', title: 'Abordagem - Indicação', context: 'Quando alguém indicou o prospect', segment: 'geral',
+    id: 'sc5', title: 'Abordagem - Indicação', context: 'Quando alguém indicou o cliente potencial', segment: 'geral',
     script: `"Olá [Nome], tudo bem?\n\nO [Nome de quem indicou] me falou muito bem de você e sugeriu que conversássemos.\n\nAjudamos a [empresa do indicador] com [resultado] e ele achou que poderia fazer sentido para vocês também.\n\nTem 15 minutos essa semana para uma conversa rápida?"`,
   },
 ];
@@ -220,39 +220,39 @@ export function getScripts(segment: Segment): Script[] {
 
 export const TECHNIQUES: Technique[] = [
   {
-    id: 'tec1', name: 'SPIN Selling', icon: '🔄',
-    summary: 'Método de perguntas que conduz o cliente a reconhecer sua própria necessidade.',
+    id: 'tec1', name: 'Perguntas Estratégicas', icon: '🔄',
+    summary: 'Método de perguntas que conduz o cliente a reconhecer sua própria necessidade. (Situação → Problema → Implicação → Necessidade)',
     steps: [
       'Situação: Perguntas sobre o contexto atual ("Como funciona hoje seu processo de X?")',
       'Problema: Identificar dores ("Quais dificuldades você enfrenta com isso?")',
       'Implicação: Aprofundar a dor ("O que acontece quando esse problema se repete?")',
       'Necessidade de Solução: Fazer o cliente verbalizar o valor ("Se resolvesse isso, qual seria o impacto?")',
     ],
-    whenToUse: 'Vendas consultivas complexas, tickets altos, múltiplos decisores.',
+    whenToUse: 'Vendas consultivas complexas, valores altos, múltiplos decisores.',
   },
   {
-    id: 'tec2', name: 'BANT', icon: '🎯',
-    summary: 'Framework para qualificar leads rapidamente em 4 critérios.',
+    id: 'tec2', name: 'Qualificação em 4 Passos', icon: '🎯',
+    summary: 'Método para qualificar clientes potenciais rapidamente em 4 critérios.',
     steps: [
-      'Budget (Orçamento): "Vocês já têm orçamento previsto para essa iniciativa?"',
-      'Authority (Autoridade): "Quem mais participa da decisão?"',
-      'Need (Necessidade): "Qual o principal problema que querem resolver?"',
-      'Timeline (Prazo): "Para quando vocês precisam disso implementado?"',
+      'Orçamento: "Vocês já têm orçamento previsto para essa iniciativa?"',
+      'Autoridade: "Quem mais participa da decisão?"',
+      'Necessidade: "Qual o principal problema que querem resolver?"',
+      'Prazo: "Para quando vocês precisam disso implementado?"',
     ],
-    whenToUse: 'Qualificação de leads, primeiras ligações, para decidir se vale investir tempo.',
+    whenToUse: 'Qualificação de clientes potenciais, primeiras ligações, para decidir se vale investir tempo.',
   },
   {
-    id: 'tec3', name: 'Challenger Sale', icon: '💡',
+    id: 'tec3', name: 'Venda Desafiadora', icon: '💡',
     summary: 'Ensine algo novo ao cliente, personalize a abordagem e assuma o controle.',
     steps: [
-      'Ensinar: Traga insights que o cliente não sabia ("Você sabia que 70% das empresas do seu setor estão...")',
+      'Ensinar: Traga informações que o cliente não sabia ("Você sabia que 70% das empresas do seu setor estão...")',
       'Personalizar: Conecte à realidade dele ("No seu caso específico, isso significa...")',
       'Controlar: Conduza a conversa com firmeza ("Com base nisso, o caminho mais inteligente seria...")',
     ],
-    whenToUse: 'Quando o cliente acha que já sabe tudo, vendas B2B, diferenciação competitiva.',
+    whenToUse: 'Quando o cliente acha que já sabe tudo, vendas entre empresas, diferenciação competitiva.',
   },
   {
-    id: 'tec4', name: 'Rapport', icon: '🤝',
+    id: 'tec4', name: 'Conexão e Confiança', icon: '🤝',
     summary: 'Técnica de conexão emocional para criar confiança rapidamente.',
     steps: [
       'Espelhamento: Adapte tom de voz, velocidade e linguagem corporal ao cliente',
@@ -274,7 +274,7 @@ export const TECHNIQUES: Technique[] = [
     whenToUse: 'Momento de fechamento, quando o cliente está indeciso mas interessado.',
   },
   {
-    id: 'tec6', name: 'Storytelling em Vendas', icon: '📖',
+    id: 'tec6', name: 'Histórias que Vendem', icon: '📖',
     summary: 'Use histórias de clientes reais para criar identificação e provar resultados.',
     steps: [
       'Situação: "O cliente X, do mesmo segmento que vocês, enfrentava [problema]"',
@@ -301,7 +301,7 @@ export const TECHNIQUES: Technique[] = [
     steps: [
       'Diagnóstico: Faça mais perguntas do que apresentações nos primeiros 70% da reunião',
       'Prescrição: Só apresente a solução depois de entender 100% a dor',
-      'Personalização: Adapte o pitch para o contexto específico do cliente',
+      'Personalização: Adapte a apresentação para o contexto específico do cliente',
       'Acompanhamento: Monitore resultados e sugira melhorias proativamente',
     ],
     whenToUse: 'Vendas complexas, serviços, quando o cliente precisa de solução sob medida.',

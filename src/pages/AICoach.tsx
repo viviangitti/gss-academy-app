@@ -81,8 +81,8 @@ export default function AICoach() {
           <div className="ai-welcome-icon">
             <Sparkles size={40} />
           </div>
-          <h3>Consultor de Vendas</h3>
-          <p>Seu assistente especialista em vendas, negociação e liderança comercial.</p>
+          <h3>Pergunte ao Especialista</h3>
+          <p>Tire dúvidas sobre vendas, negociação e liderança comercial.</p>
 
           <div className="quick-prompts">
             <p className="quick-label">Sugestões rápidas:</p>

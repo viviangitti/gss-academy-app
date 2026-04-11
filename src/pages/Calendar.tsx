@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Plus, ChevronLeft, ChevronRight, Trash2, Edit3 } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Trash2, Edit3, TrendingUp } from 'lucide-react';
 import { loadData, saveData, KEYS } from '../services/storage';
-import type { CalendarEvent } from '../types';
+import type { CalendarEvent, UserProfile } from '../types';
 import './Calendar.css';
 
 const CATEGORIES = [
@@ -17,16 +17,23 @@ function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
 
+function formatCurrency(value: number) {
+  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 });
+}
+
 export default function Calendar() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
-  const [form, setForm] = useState({ title: '', time: '09:00', category: 'reuniao' as CalendarEvent['category'], notes: '' });
+  const [form, setForm] = useState({ title: '', time: '09:00', category: 'reuniao' as CalendarEvent['category'], notes: '', value: '' });
+  const [monthlyGoal, setMonthlyGoal] = useState(0);
 
   useEffect(() => {
     setEvents(loadData(KEYS.EVENTS, []));
+    const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '', monthlyGoal: 0 });
+    setMonthlyGoal(profile.monthlyGoal || 0);
   }, []);
 
   const save = (updated: CalendarEvent[]) => {
@@ -48,27 +55,41 @@ export default function Calendar() {
   const hasEvents = (day: number) => events.some(e => e.date === getDateStr(day));
   const dayEvents = events.filter(e => e.date === selectedDate).sort((a, b) => a.time.localeCompare(b.time));
 
+  // Monthly totals
+  const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+  const monthEvents = events.filter(e => e.date.startsWith(monthPrefix));
+  const monthTotal = monthEvents.reduce((sum, e) => sum + (e.value || 0), 0);
+  const monthClosed = monthEvents.filter(e => e.outcome === 'fechou').reduce((sum, e) => sum + (e.value || 0), 0);
+  const goalProgress = monthlyGoal > 0 ? Math.min((monthClosed / monthlyGoal) * 100, 100) : 0;
+
+  // Today's pipeline
+  const dayTotal = dayEvents.reduce((sum, e) => sum + (e.value || 0), 0);
+
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
   const openNewEvent = () => {
     setEditingEvent(null);
-    setForm({ title: '', time: '09:00', category: 'reuniao', notes: '' });
+    setForm({ title: '', time: '09:00', category: 'reuniao', notes: '', value: '' });
     setShowModal(true);
   };
 
   const openEditEvent = (event: CalendarEvent) => {
     setEditingEvent(event);
-    setForm({ title: event.title, time: event.time, category: event.category, notes: event.notes || '' });
+    setForm({ title: event.title, time: event.time, category: event.category, notes: event.notes || '', value: event.value ? String(event.value) : '' });
     setShowModal(true);
   };
 
   const handleSave = () => {
     if (!form.title.trim()) return;
+    const eventData = {
+      ...form,
+      value: form.value ? Number(form.value) : undefined,
+    };
     if (editingEvent) {
-      save(events.map(e => e.id === editingEvent.id ? { ...e, ...form, date: selectedDate } : e));
+      save(events.map(e => e.id === editingEvent.id ? { ...e, ...eventData, date: selectedDate } : e));
     } else {
-      save([...events, { id: generateId(), date: selectedDate, ...form }]);
+      save([...events, { id: generateId(), date: selectedDate, ...eventData }]);
     }
     setShowModal(false);
   };
@@ -79,6 +100,22 @@ export default function Calendar() {
 
   return (
     <div className="calendar-page">
+      {/* Goal progress bar */}
+      {monthlyGoal > 0 && (
+        <div className="goal-bar card">
+          <div className="goal-info">
+            <TrendingUp size={16} />
+            <span>Meta: {formatCurrency(monthClosed)} / {formatCurrency(monthlyGoal)}</span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: `${goalProgress}%` }} />
+          </div>
+          {monthTotal > monthClosed && (
+            <span className="pipeline-text">Em negociação: {formatCurrency(monthTotal - monthClosed)}</span>
+          )}
+        </div>
+      )}
+
       <div className="cal-header card">
         <button className="cal-nav" onClick={prevMonth}><ChevronLeft size={20} /></button>
         <h3 className="cal-month">
@@ -108,9 +145,12 @@ export default function Calendar() {
 
       <div className="cal-events">
         <div className="cal-events-header">
-          <h3 className="section-title">
-            {new Date(selectedDate + 'T12:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' })}
-          </h3>
+          <div>
+            <h3 className="section-title">
+              {new Date(selectedDate + 'T12:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' })}
+            </h3>
+            {dayTotal > 0 && <span className="day-total">{formatCurrency(dayTotal)} em reuniões</span>}
+          </div>
           <button className="btn btn-primary btn-sm" onClick={openNewEvent}>
             <Plus size={14} /> Novo
           </button>
@@ -132,6 +172,7 @@ export default function Calendar() {
                 </div>
               </div>
               <h4 className="event-name">{event.title}</h4>
+              {event.value && <span className="event-value">{formatCurrency(event.value)}</span>}
               {event.notes && <p className="event-notes">{event.notes}</p>}
             </div>
           ))
@@ -155,6 +196,10 @@ export default function Calendar() {
               <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value as CalendarEvent['category'] })}>
                 {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
               </select>
+            </div>
+            <div className="form-group">
+              <label>Valor da oportunidade (R$)</label>
+              <input type="number" value={form.value} onChange={e => setForm({ ...form, value: e.target.value })} placeholder="Ex: 15000" />
             </div>
             <div className="form-group">
               <label>Observações</label>

@@ -3,8 +3,27 @@ export interface CalendarEvent {
   title: string;
   date: string; // YYYY-MM-DD
   time: string; // HH:mm
+  endTime?: string; // HH:mm
   category: 'reuniao' | 'ritual' | 'followup' | 'treinamento';
   notes?: string;
+  value?: number; // valor da oportunidade em R$
+  outcome?: 'fechou' | 'acompanhamento' | 'perdeu' | '';
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  dueDate: string; // YYYY-MM-DD
+  linkedEventId?: string;
+  status: 'pendente' | 'concluida';
+  createdAt: number;
+}
+
+export interface GamePoints {
+  total: number;
+  streak: number;
+  lastActiveDate: string;
+  history: { action: string; points: number; date: string }[];
 }
 
 export interface ChecklistItem {
@@ -64,6 +83,7 @@ export interface UserProfile {
   role: string;
   company: string;
   segment: Segment;
+  monthlyGoal?: number;
 }
 
 export interface NewsItem {

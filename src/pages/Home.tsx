@@ -58,7 +58,7 @@ export default function Home() {
       </div>
 
       {/* Pre-meeting quick button */}
-      <button className="premeeting-btn" onClick={() => navigate('/pre-reuniao')}>
+      <button className="premeeting-btn" onClick={() => navigate('/cronometro')}>
         <Zap size={18} />
         <span>Vou entrar numa reunião</span>
       </button>

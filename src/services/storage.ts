@@ -5,6 +5,8 @@ const KEYS = {
   CHECKLISTS: 'gss_checklists',
   CHAT_HISTORY: 'gss_chat',
   PROFILE: 'gss_profile',
+  TASKS: 'gss_tasks',
+  GAME_POINTS: 'gss_points',
 };
 
 export function loadData<T>(key: string, fallback: T): T {

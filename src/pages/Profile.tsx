@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Briefcase, Save, ExternalLink, Factory } from 'lucide-react';
+import { User, Building2, Briefcase, Save, ExternalLink, Factory, Target, Trophy } from 'lucide-react';
 import { loadData, saveData, KEYS } from '../services/storage';
+import { getPoints, getLevel, checkDailyLogin } from '../services/gamification';
 import { SEGMENTS } from '../types';
 import type { UserProfile } from '../types';
 import './Profile.css';
 
 export default function Profile() {
-  const [profile, setProfile] = useState<UserProfile>({ name: '', role: '', company: '', segment: '' });
+  const [profile, setProfile] = useState<UserProfile>({ name: '', role: '', company: '', segment: '', monthlyGoal: 0 });
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    setProfile(loadData(KEYS.PROFILE, { name: '', role: '', company: '', segment: '' }));
+    setProfile(loadData(KEYS.PROFILE, { name: '', role: '', company: '', segment: '', monthlyGoal: 0 }));
+    checkDailyLogin();
   }, []);
 
   const handleSave = () => {
@@ -19,11 +21,34 @@ export default function Profile() {
     setTimeout(() => setSaved(false), 2000);
   };
 
+  const points = getPoints();
+  const level = getLevel(points.total);
+
   return (
     <div className="profile-page">
       <div className="profile-avatar">
         <div className="avatar-circle">
           <User size={36} />
+        </div>
+      </div>
+
+      {/* Gamification card */}
+      <div className="level-card card">
+        <div className="level-header">
+          <Trophy size={20} />
+          <div>
+            <span className="level-title">Nível {level.level} — {level.title}</span>
+            <span className="level-points">{points.total} pontos</span>
+          </div>
+          {points.streak > 1 && (
+            <span className="streak-badge">{points.streak} dias seguidos</span>
+          )}
+        </div>
+        <div className="level-progress">
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: `${level.progress}%` }} />
+          </div>
+          <span className="level-next">Próximo nível: {level.nextLevel} pts</span>
         </div>
       </div>
 
@@ -62,7 +87,17 @@ export default function Profile() {
               <option key={s.value} value={s.value}>{s.label}</option>
             ))}
           </select>
-          <span className="form-hint">Personaliza objeções, scripts e notícias do seu mercado</span>
+          <span className="form-hint">Personaliza objeções, roteiros e notícias do seu mercado</span>
+        </div>
+        <div className="form-group">
+          <label><Target size={14} /> Meta mensal (R$)</label>
+          <input
+            type="number"
+            value={profile.monthlyGoal || ''}
+            onChange={e => setProfile({ ...profile, monthlyGoal: Number(e.target.value) || 0 })}
+            placeholder="Ex: 100000"
+          />
+          <span className="form-hint">Acompanhe o progresso na agenda</span>
         </div>
         <button className={`btn btn-primary save-btn ${saved ? 'saved' : ''}`} onClick={handleSave}>
           <Save size={16} /> {saved ? 'Salvo!' : 'Salvar'}
@@ -82,7 +117,7 @@ export default function Profile() {
 
       <div className="app-info">
         <p>GSS Academy - App do Líder</p>
-        <p>Versão 2.0.0</p>
+        <p>Versão 3.0.0</p>
       </div>
     </div>
   );

@@ -1,9 +1,23 @@
 import type { Segment } from '../types';
 
+export type Stage = 'prospeccao' | 'qualificacao' | 'apresentacao' | 'negociacao' | 'fechamento';
+
+export const STAGES: { value: Stage | ''; label: string }[] = [
+  { value: '', label: 'Todos' },
+  { value: 'prospeccao', label: 'Prospecção' },
+  { value: 'qualificacao', label: 'Qualificação' },
+  { value: 'apresentacao', label: 'Apresentação' },
+  { value: 'negociacao', label: 'Negociação' },
+  { value: 'fechamento', label: 'Fechamento' },
+];
+
 export interface Objection {
   id: string;
   objection: string;
   responses: string[];
+  quickResponses?: string[];
+  commonMistake?: string;
+  stage?: Stage;
   segment?: Segment | 'geral';
 }
 
@@ -24,11 +38,24 @@ export interface Technique {
   whenToUse: string;
 }
 
+export interface UrgencyTrigger {
+  id: string;
+  category: string;
+  icon: string;
+  phrases: string[];
+}
+
 // ==================== OBJEÇÕES ====================
 
 const GENERAL_OBJECTIONS: Objection[] = [
   {
     id: 'g1', objection: '"Está muito caro"', segment: 'geral',
+    quickResponses: [
+      'Caro é perder R$ X por mês sem essa solução.',
+      'Quanto te custa NÃO resolver esse problema?',
+      'Nosso cliente Y achava o mesmo. Hoje o retorno dele é 3x.',
+    ],
+    commonMistake: 'Dar desconto imediato sem explorar o valor. Isso desvaloriza seu produto e treina o cliente a sempre pedir desconto.',
     responses: [
       'Entendo sua preocupação com o investimento. Vamos olhar pelo lado do retorno: quanto você perde hoje sem essa solução? O custo de não agir geralmente é maior que o investimento.',
       'Caro comparado a quê? Vamos comparar não o preço, mas o valor entregue. Nosso cliente X tinha a mesma percepção e hoje tem retorno de 3x o investimento.',
@@ -36,7 +63,33 @@ const GENERAL_OBJECTIONS: Objection[] = [
     ],
   },
   {
+    id: 'g1-prosp', objection: '"Está muito caro"', segment: 'geral', stage: 'prospeccao',
+    quickResponses: [
+      'Ainda nem mostrei o valor. Me dá 5 minutos?',
+      'Você está comparando com o quê exatamente?',
+    ],
+    responses: [
+      'Entendo, mas você está avaliando o preço antes de ver o retorno. Me dá 5 minutos para mostrar o que nossos clientes estão conseguindo?',
+    ],
+  },
+  {
+    id: 'g1-neg', objection: '"Está muito caro"', segment: 'geral', stage: 'negociacao',
+    quickResponses: [
+      'O valor reflete o resultado. Posso ajustar as condições.',
+      'Qual valor faria sentido considerando o retorno?',
+    ],
+    responses: [
+      'Nessa fase você já viu o valor que entregamos. O preço reflete esse resultado. Posso ajustar condições de pagamento para viabilizar.',
+    ],
+  },
+  {
     id: 'g2', objection: '"Vou pensar"', segment: 'geral',
+    quickResponses: [
+      'Pensar sobre qual ponto especificamente?',
+      'O que falta para você decidir hoje?',
+      'Posso te ajudar a pensar — qual é a maior dúvida?',
+    ],
+    commonMistake: 'Aceitar passivamente e ir embora. "Vou pensar" geralmente significa que algum ponto não ficou claro ou existe uma objeção escondida.',
     responses: [
       'Perfeito, pensar é importante. Para eu te ajudar a pensar melhor: qual é o ponto principal que te gera dúvida? Assim posso enviar informações focadas.',
       'Entendo! Normalmente quando alguém diz "vou pensar" é porque algum ponto não ficou 100% claro. O que posso esclarecer agora?',
@@ -44,7 +97,23 @@ const GENERAL_OBJECTIONS: Objection[] = [
     ],
   },
   {
+    id: 'g2-prosp', objection: '"Vou pensar"', segment: 'geral', stage: 'prospeccao',
+    quickResponses: [
+      'Claro! O que te chamou mais atenção até aqui?',
+      'Posso enviar um material resumido para ajudar na reflexão?',
+    ],
+    responses: [
+      'Entendo, estamos no início. O que te chamou mais atenção até aqui? Posso enviar um material focado para te ajudar a decidir se vale uma conversa mais profunda.',
+    ],
+  },
+  {
     id: 'g3', objection: '"Já tenho fornecedor"', segment: 'geral',
+    quickResponses: [
+      'Ótimo! Está 100% satisfeito ou tem pontos a melhorar?',
+      'Não é trocar, é comparar. 15 minutos resolvem.',
+      'Ter referência é bom. Que tal uma segunda opinião?',
+    ],
+    commonMistake: 'Falar mal do concorrente. Isso gera desconfiança e faz o cliente defender o fornecedor atual.',
     responses: [
       'Ótimo, isso mostra que você valoriza esse tipo de solução. Muitos dos nossos melhores clientes já tinham fornecedor. A pergunta é: você está 100% satisfeito ou há pontos que gostaria de melhorar?',
       'Não estou pedindo para trocar, mas sim para comparar. Se em 15 minutos eu mostrar algo que complemente o que você já tem, valeu a pena. Se não, você confirma que fez a melhor escolha.',
@@ -53,6 +122,12 @@ const GENERAL_OBJECTIONS: Objection[] = [
   },
   {
     id: 'g4', objection: '"Não é o momento"', segment: 'geral',
+    quickResponses: [
+      'Quando seria? Seus concorrentes estão agindo agora.',
+      'O custo de esperar é maior que o de agir.',
+      'Que tal um piloto pequeno para não perder a janela?',
+    ],
+    commonMistake: 'Insistir agressivamente ou desistir rápido demais. O ideal é plantar uma semente e agendar retorno.',
     responses: [
       'Entendo que o timing é importante. Qual seria o momento ideal? Pergunto porque muitos clientes que esperaram acabaram perdendo [vantagem específica].',
       'Quando seria o melhor momento para você? Enquanto isso, posso te enviar um material que vai te ajudar a se preparar para quando chegar a hora.',
@@ -61,6 +136,12 @@ const GENERAL_OBJECTIONS: Objection[] = [
   },
   {
     id: 'g5', objection: '"Preciso falar com meu sócio/diretor"', segment: 'geral',
+    quickResponses: [
+      'Posso preparar um resumo de 1 página para ele.',
+      'Que tal uma ligação rápida com ele? 15 minutos.',
+      'Quais critérios ele avalia? Preparo os argumentos.',
+    ],
+    commonMistake: 'Não pedir para falar direto com o decisor. Você fica dependendo de alguém vender por você.',
     responses: [
       'Claro! Para facilitar a conversa dele, posso preparar um resumo executivo de 1 página com os pontos principais e o retorno esperado. O que acha?',
       'Perfeito. Que tal agendarmos uma ligação de 15 minutos com ele? Assim tiro as dúvidas dele diretamente e agilizamos o processo.',
@@ -69,6 +150,12 @@ const GENERAL_OBJECTIONS: Objection[] = [
   },
   {
     id: 'g6', objection: '"Me envia uma proposta por email"', segment: 'geral',
+    quickResponses: [
+      'Envio! Mas 10 min juntos valem mais que um email.',
+      '80% das propostas se perdem no email. Revisamos juntos?',
+      'Posso fazer 2 perguntas antes para personalizar?',
+    ],
+    commonMistake: 'Enviar a proposta e esperar o cliente responder. Proposta sem apresentação é documento perdido.',
     responses: [
       'Envio sim! Mas antes, quero garantir que a proposta esteja 100% personalizada. Posso fazer mais 2 perguntas rápidas sobre suas necessidades?',
       'Claro! Vou enviar hoje. Posso te ligar quinta às 10h para passar pelos pontos principais juntos? Email sozinho não transmite todo o valor.',
@@ -77,6 +164,12 @@ const GENERAL_OBJECTIONS: Objection[] = [
   },
   {
     id: 'g7', objection: '"O concorrente é mais barato"', segment: 'geral',
+    quickResponses: [
+      'Mais barato com as mesmas entregas? Vamos comparar.',
+      'O barato pode sair caro. Pergunte sobre o resultado.',
+      'Preço menor = escopo menor. Quer ver lado a lado?',
+    ],
+    commonMistake: 'Entrar em guerra de preço. Você nunca vai ganhar competindo só por preço — compete por valor.',
     responses: [
       'É uma comparação justa. Mas você está comparando exatamente as mesmas entregas? Geralmente o mais barato não inclui [diferencial]. No final, o barato pode sair caro.',
       'Preço menor muitas vezes significa escopo menor. Vamos colocar lado a lado o que cada um entrega? Tenho certeza que o custo-benefício vai te surpreender.',
@@ -85,6 +178,12 @@ const GENERAL_OBJECTIONS: Objection[] = [
   },
   {
     id: 'g8', objection: '"Não tenho orçamento"', segment: 'geral',
+    quickResponses: [
+      'Se pagasse em 3 meses, realocaria orçamento?',
+      'Quanto esse problema te custa hoje? Compare.',
+      'Comece pequeno. O resultado paga a expansão.',
+    ],
+    commonMistake: 'Aceitar que não tem orçamento e ir embora. Muitas vezes "não tenho orçamento" significa "não vi valor suficiente para priorizar".',
     responses: [
       'Entendo. Mas me diz: se o investimento se pagasse em 3 meses, faria sentido realocar orçamento? Vamos olhar o retorno antes de decidir.',
       'Orçamento é prioridade. A pergunta é: quanto esse problema te custa hoje? Muitas vezes o "não investir" sai mais caro que o investimento.',
@@ -95,90 +194,122 @@ const GENERAL_OBJECTIONS: Objection[] = [
 
 const SEGMENT_OBJECTIONS: Record<string, Objection[]> = {
   farmaceutico: [
-    { id: 'f1', objection: '"Não temos aprovação regulatória para trocar"', segment: 'farmaceutico', responses: [
-      'Entendo a questão regulatória. Nosso time de assuntos regulatórios pode acompanhar todo o processo de adequação. Já fizemos isso com [laboratório X] em tempo recorde.',
-      'A aprovação regulatória é um passo necessário. Podemos começar o processo agora para que quando a janela de compras abrir, vocês já estejam prontos.',
-    ]},
-    { id: 'f2', objection: '"O médico já está acostumado a prescrever outra marca"', segment: 'farmaceutico', responses: [
-      'A familiaridade é importante, mas os estudos clínicos mostram [dados]. Podemos organizar um simpósio com líderes de opinião para apresentar as evidências?',
-      'Entendo. Que tal um programa de amostras grátis para que o médico possa testar com alguns pacientes e comparar os resultados?',
-    ]},
+    { id: 'f1', objection: '"Não temos aprovação regulatória para trocar"', segment: 'farmaceutico',
+      quickResponses: ['Nosso time acompanha todo o processo regulatório.', 'Comece agora para estar pronto quando a janela abrir.'],
+      responses: [
+        'Entendo a questão regulatória. Nosso time de assuntos regulatórios pode acompanhar todo o processo de adequação. Já fizemos isso com [laboratório X] em tempo recorde.',
+        'A aprovação regulatória é um passo necessário. Podemos começar o processo agora para que quando a janela de compras abrir, vocês já estejam prontos.',
+      ]},
+    { id: 'f2', objection: '"O médico já está acostumado a prescrever outra marca"', segment: 'farmaceutico',
+      quickResponses: ['Os estudos clínicos mostram vantagens claras.', 'Que tal amostras grátis para o médico testar?'],
+      responses: [
+        'A familiaridade é importante, mas os estudos clínicos mostram [dados]. Podemos organizar um simpósio com líderes de opinião para apresentar as evidências?',
+        'Entendo. Que tal um programa de amostras grátis para que o médico possa testar com alguns pacientes e comparar os resultados?',
+      ]},
   ],
   automotivo: [
-    { id: 'a1', objection: '"Vou esperar o novo modelo"', segment: 'automotivo', responses: [
-      'O modelo atual tem condições que não se repetem: [bônus de fábrica/taxa zero/estoque limitado]. Quando o novo chegar, essas condições acabam e o preço sobe.',
-      'O novo modelo vai demorar X meses e o preço de entrada será Y% maior. Comprando agora, você aproveita as condições e ainda pega um bom valor de revenda.',
-    ]},
-    { id: 'a2', objection: '"O seguro está muito caro"', segment: 'automotivo', responses: [
-      'Temos parceria com corretoras que conseguem até 30% de desconto. Posso incluir isso na proposta e mostrar o custo total real mensal.',
-      'Vamos olhar o custo total de propriedade: consumo, manutenção, seguro. Comparando com o concorrente, nosso custo mensal é mais competitivo.',
-    ]},
+    { id: 'a1', objection: '"Vou esperar o novo modelo"', segment: 'automotivo',
+      quickResponses: ['Condições atuais não se repetem no modelo novo.', 'Preço de entrada sobe Y%. Compre agora.'],
+      responses: [
+        'O modelo atual tem condições que não se repetem: [bônus de fábrica/taxa zero/estoque limitado]. Quando o novo chegar, essas condições acabam e o preço sobe.',
+        'O novo modelo vai demorar X meses e o preço de entrada será Y% maior. Comprando agora, você aproveita as condições e ainda pega um bom valor de revenda.',
+      ]},
+    { id: 'a2', objection: '"O seguro está muito caro"', segment: 'automotivo',
+      quickResponses: ['Parceria com corretoras: até 30% de desconto.', 'Olhe o custo total mensal, não só o seguro.'],
+      responses: [
+        'Temos parceria com corretoras que conseguem até 30% de desconto. Posso incluir isso na proposta e mostrar o custo total real mensal.',
+        'Vamos olhar o custo total de propriedade: consumo, manutenção, seguro. Comparando com o concorrente, nosso custo mensal é mais competitivo.',
+      ]},
   ],
   tecnologia: [
-    { id: 't1', objection: '"Já temos uma solução interna"', segment: 'tecnologia', responses: [
-      'Soluções internas têm custo oculto alto: manutenção, atualizações, equipe dedicada. Nossa plataforma elimina tudo isso e tem garantia de disponibilidade.',
-      'Quanto custa manter essa solução por ano? Geralmente o custo total interno é 3x maior que uma plataforma especializada. Posso fazer essa análise com vocês.',
-    ]},
-    { id: 't2', objection: '"Preciso de integração com nossos sistemas"', segment: 'tecnologia', responses: [
-      'Temos integração aberta e conexões nativas com [principais ferramentas]. Nosso time de implementação configura tudo em até X dias.',
-      'Entendo que integração é crítica. Que tal um teste piloto de 2 semanas onde validamos todas as integrações antes de fechar?',
-    ]},
+    { id: 't1', objection: '"Já temos uma solução interna"', segment: 'tecnologia',
+      quickResponses: ['Custo oculto alto: manutenção, atualizações, equipe.', 'Custo total interno é 3x maior. Posso provar.'],
+      responses: [
+        'Soluções internas têm custo oculto alto: manutenção, atualizações, equipe dedicada. Nossa plataforma elimina tudo isso e tem garantia de disponibilidade.',
+        'Quanto custa manter essa solução por ano? Geralmente o custo total interno é 3x maior que uma plataforma especializada. Posso fazer essa análise com vocês.',
+      ]},
+    { id: 't2', objection: '"Preciso de integração com nossos sistemas"', segment: 'tecnologia',
+      quickResponses: ['Integrações nativas prontas. Configuração em X dias.', 'Teste piloto de 2 semanas para validar.'],
+      responses: [
+        'Temos integração aberta e conexões nativas com [principais ferramentas]. Nosso time de implementação configura tudo em até X dias.',
+        'Entendo que integração é crítica. Que tal um teste piloto de 2 semanas onde validamos todas as integrações antes de fechar?',
+      ]},
   ],
   varejo: [
-    { id: 'v1', objection: '"As vendas estão fracas, não posso investir agora"', segment: 'varejo', responses: [
-      'Exatamente por isso precisa agir. Quando as vendas estão fracas é hora de investir em [solução] para se diferenciar e conquistar participação de mercado.',
-      'Entendo o momento. Que tal começarmos com uma loja piloto? Assim você valida o resultado com risco mínimo antes de escalar.',
-    ]},
-    { id: 'v2', objection: '"Meu público não vai aceitar/usar"', segment: 'varejo', responses: [
-      'Fizemos testes com perfil de público similar e a adesão foi de X%. Posso compartilhar o caso de sucesso? O público se adapta rápido quando percebe valor.',
-      'Podemos fazer um teste A/B em uma loja antes de implementar na rede toda. Dados reais são melhores que suposições.',
-    ]},
+    { id: 'v1', objection: '"As vendas estão fracas, não posso investir agora"', segment: 'varejo',
+      quickResponses: ['Vendas fracas = hora de se diferenciar.', 'Comece com uma loja piloto, risco mínimo.'],
+      responses: [
+        'Exatamente por isso precisa agir. Quando as vendas estão fracas é hora de investir em [solução] para se diferenciar e conquistar participação de mercado.',
+        'Entendo o momento. Que tal começarmos com uma loja piloto? Assim você valida o resultado com risco mínimo antes de escalar.',
+      ]},
+    { id: 'v2', objection: '"Meu público não vai aceitar/usar"', segment: 'varejo',
+      quickResponses: ['Adesão de X% em público similar. Dados reais.', 'Teste em uma loja antes de escalar.'],
+      responses: [
+        'Fizemos testes com perfil de público similar e a adesão foi de X%. Posso compartilhar o caso de sucesso? O público se adapta rápido quando percebe valor.',
+        'Podemos fazer um teste A/B em uma loja antes de implementar na rede toda. Dados reais são melhores que suposições.',
+      ]},
   ],
   imobiliario: [
-    { id: 'i1', objection: '"O mercado está parado"', segment: 'imobiliario', responses: [
-      'Mercado parado é oportunidade de compra. Taxa de juros, FGTS, condições especiais - tudo favorece quem compra agora. Quando aquecer, o preço sobe.',
-      'Para quem está pronto, mercado parado = menos concorrência e mais poder de negociação. Você pode escolher as melhores unidades.',
-    ]},
-    { id: 'i2', objection: '"Preciso vender meu imóvel antes"', segment: 'imobiliario', responses: [
-      'Temos parceria com imobiliárias que podem ajudar na venda do seu atual. E podemos congelar as condições por X dias enquanto isso acontece.',
-      'Trabalhamos com permuta e entrada parcelada. Assim você pode garantir este imóvel sem precisar vender o atual primeiro.',
-    ]},
+    { id: 'i1', objection: '"O mercado está parado"', segment: 'imobiliario',
+      quickResponses: ['Mercado parado = oportunidade de compra.', 'Menos concorrência, mais poder de negociação.'],
+      responses: [
+        'Mercado parado é oportunidade de compra. Taxa de juros, FGTS, condições especiais - tudo favorece quem compra agora. Quando aquecer, o preço sobe.',
+        'Para quem está pronto, mercado parado = menos concorrência e mais poder de negociação. Você pode escolher as melhores unidades.',
+      ]},
+    { id: 'i2', objection: '"Preciso vender meu imóvel antes"', segment: 'imobiliario',
+      quickResponses: ['Congelamos condições enquanto você vende.', 'Trabalhamos com permuta e entrada parcelada.'],
+      responses: [
+        'Temos parceria com imobiliárias que podem ajudar na venda do seu atual. E podemos congelar as condições por X dias enquanto isso acontece.',
+        'Trabalhamos com permuta e entrada parcelada. Assim você pode garantir este imóvel sem precisar vender o atual primeiro.',
+      ]},
   ],
   financeiro: [
-    { id: 'fi1', objection: '"Já tenho meu banco/corretora"', segment: 'financeiro', responses: [
-      'Não precisa trocar, pode diversificar. Muitos clientes mantêm 2-3 instituições para comparar taxas e ter mais opções. Vamos fazer uma simulação sem compromisso?',
-      'Ótimo que você já investe. A pergunta é: você está no melhor produto para seu perfil? Uma análise gratuita da sua carteira pode revelar oportunidades.',
-    ]},
+    { id: 'fi1', objection: '"Já tenho meu banco/corretora"', segment: 'financeiro',
+      quickResponses: ['Não é trocar, é diversificar.', 'Análise gratuita pode revelar oportunidades.'],
+      responses: [
+        'Não precisa trocar, pode diversificar. Muitos clientes mantêm 2-3 instituições para comparar taxas e ter mais opções. Vamos fazer uma simulação sem compromisso?',
+        'Ótimo que você já investe. A pergunta é: você está no melhor produto para seu perfil? Uma análise gratuita da sua carteira pode revelar oportunidades.',
+      ]},
   ],
   saude: [
-    { id: 's1', objection: '"Meus pacientes não vão pagar isso"', segment: 'saude', responses: [
-      'Quando o paciente entende o valor do resultado, o preço deixa de ser barreira. Posso ajudar a criar uma comunicação de valor que mude essa percepção.',
-      'Temos planos de parcelamento que tornam o tratamento acessível. O valor por sessão fica menor que [comparação do dia a dia].',
-    ]},
+    { id: 's1', objection: '"Meus pacientes não vão pagar isso"', segment: 'saude',
+      quickResponses: ['Quando entendem o valor, preço vira investimento.', 'Parcelamento torna acessível.'],
+      responses: [
+        'Quando o paciente entende o valor do resultado, o preço deixa de ser barreira. Posso ajudar a criar uma comunicação de valor que mude essa percepção.',
+        'Temos planos de parcelamento que tornam o tratamento acessível. O valor por sessão fica menor que [comparação do dia a dia].',
+      ]},
   ],
   educacao: [
-    { id: 'e1', objection: '"O aluno pode aprender isso de graça online"', segment: 'educacao', responses: [
-      'Conteúdo gratuito existe, mas sem metodologia, acompanhamento e certificação. Nossa taxa de conclusão é X% vs 3% dos cursos gratuitos. Resultado custa investimento.',
-      'Gratuito não tem suporte, rede de contatos nem empregabilidade. Nossos alunos têm X% de colocação no mercado em Y meses.',
-    ]},
+    { id: 'e1', objection: '"O aluno pode aprender isso de graça online"', segment: 'educacao',
+      quickResponses: ['Gratuito tem 3% de conclusão. Nós temos X%.', 'Sem suporte, rede de contatos nem certificação.'],
+      responses: [
+        'Conteúdo gratuito existe, mas sem metodologia, acompanhamento e certificação. Nossa taxa de conclusão é X% vs 3% dos cursos gratuitos. Resultado custa investimento.',
+        'Gratuito não tem suporte, rede de contatos nem empregabilidade. Nossos alunos têm X% de colocação no mercado em Y meses.',
+      ]},
   ],
   servicos: [
-    { id: 'sv1', objection: '"Posso fazer internamente"', segment: 'servicos', responses: [
-      'Pode, mas quanto custa em tempo e oportunidade? Enquanto sua equipe faz isso, deixa de focar no negócio principal. Nosso time especializado entrega em metade do tempo.',
-      'Internalizar parece econômico, mas some: contratação, treinamento, ferramentas, gestão. Terceirizar é custo variável sem dor de cabeça.',
-    ]},
+    { id: 'sv1', objection: '"Posso fazer internamente"', segment: 'servicos',
+      quickResponses: ['Quanto custa em tempo e oportunidade?', 'Some tudo: contratação, treinamento, gestão.'],
+      responses: [
+        'Pode, mas quanto custa em tempo e oportunidade? Enquanto sua equipe faz isso, deixa de focar no negócio principal. Nosso time especializado entrega em metade do tempo.',
+        'Internalizar parece econômico, mas some: contratação, treinamento, ferramentas, gestão. Terceirizar é custo variável sem dor de cabeça.',
+      ]},
   ],
   agro: [
-    { id: 'ag1', objection: '"Vou esperar a safra para decidir"', segment: 'agro', responses: [
-      'Entendo o ciclo. Mas preparar agora garante as melhores condições e disponibilidade. Na safra, a demanda sobe e as condições pioram.',
-      'Os insumos têm prazo de entrega. Quem compra antecipado garante preço e disponibilidade. Podemos travar o preço agora e ajustar o pagamento para pós-safra.',
-    ]},
+    { id: 'ag1', objection: '"Vou esperar a safra para decidir"', segment: 'agro',
+      quickResponses: ['Na safra, demanda sobe e condições pioram.', 'Trave o preço agora, pague pós-safra.'],
+      responses: [
+        'Entendo o ciclo. Mas preparar agora garante as melhores condições e disponibilidade. Na safra, a demanda sobe e as condições pioram.',
+        'Os insumos têm prazo de entrega. Quem compra antecipado garante preço e disponibilidade. Podemos travar o preço agora e ajustar o pagamento para pós-safra.',
+      ]},
   ],
   energia: [
-    { id: 'en1', objection: '"O prazo de retorno é muito longo"', segment: 'energia', responses: [
-      'Com as novas tarifas e o aumento constante da energia, o prazo de retorno real é menor que o projetado. Clientes que instalaram há 2 anos já recuperaram o investimento.',
-      'Além do retorno financeiro, considere: valorização do imóvel, sustentabilidade como diferencial e proteção contra aumentos futuros. O retorno total é muito maior.',
-    ]},
+    { id: 'en1', objection: '"O prazo de retorno é muito longo"', segment: 'energia',
+      quickResponses: ['Prazo real é menor que o projetado.', 'Valorização do imóvel + proteção contra aumentos.'],
+      responses: [
+        'Com as novas tarifas e o aumento constante da energia, o prazo de retorno real é menor que o projetado. Clientes que instalaram há 2 anos já recuperaram o investimento.',
+        'Além do retorno financeiro, considere: valorização do imóvel, sustentabilidade como diferencial e proteção contra aumentos futuros. O retorno total é muito maior.',
+      ]},
   ],
 };
 
@@ -187,7 +318,7 @@ export function getObjections(segment: Segment): Objection[] {
   return [...segmentSpecific, ...GENERAL_OBJECTIONS];
 }
 
-// ==================== SCRIPTS ====================
+// ==================== ROTEIROS ====================
 
 const GENERAL_SCRIPTS: Script[] = [
   {
@@ -305,5 +436,55 @@ export const TECHNIQUES: Technique[] = [
       'Acompanhamento: Monitore resultados e sugira melhorias proativamente',
     ],
     whenToUse: 'Vendas complexas, serviços, quando o cliente precisa de solução sob medida.',
+  },
+];
+
+// ==================== GATILHOS DE URGÊNCIA ====================
+
+export const URGENCY_TRIGGERS: UrgencyTrigger[] = [
+  {
+    id: 'urg1', category: 'Prazo', icon: '⏰',
+    phrases: [
+      'Essa condição é válida até sexta-feira.',
+      'O preço atual muda no dia [data]. Depois disso, sobe X%.',
+      'A tabela de preços atualiza no próximo mês.',
+      'Essa promoção encerra quando bater [X unidades vendidas].',
+    ],
+  },
+  {
+    id: 'urg2', category: 'Exclusividade', icon: '👑',
+    phrases: [
+      'Só consigo essa condição para os 3 primeiros que fecharem.',
+      'Essa é uma condição que eu negociei especialmente para você.',
+      'Temos estoque limitado — só restam X unidades.',
+      'Essa condição é para clientes indicados como você.',
+    ],
+  },
+  {
+    id: 'urg3', category: 'Perda', icon: '📉',
+    phrases: [
+      'Sem isso, vocês continuam perdendo R$ X por mês.',
+      'Cada dia sem agir custa [valor] em oportunidade perdida.',
+      'Seu concorrente já está usando isso. O gap só aumenta.',
+      'O problema não vai se resolver sozinho — e vai custar mais depois.',
+    ],
+  },
+  {
+    id: 'urg4', category: 'Comparação temporal', icon: '📊',
+    phrases: [
+      'Daqui a 6 meses o preço será Y% maior.',
+      'Se tivesse começado 3 meses atrás, já teria recuperado o investimento.',
+      'Ano passado o valor era X. Hoje é Y. Ano que vem será Z.',
+      'Quem fechou há 1 ano já está no retorno positivo.',
+    ],
+  },
+  {
+    id: 'urg5', category: 'Prova social', icon: '👥',
+    phrases: [
+      '3 empresas do seu setor fecharam essa semana.',
+      'X% dos líderes do seu mercado já adotaram essa solução.',
+      'Nosso cliente [nome similar] hesitou igual e hoje agradece que fechou.',
+      'O mercado está migrando. Quem não se adaptar fica para trás.',
+    ],
   },
 ];

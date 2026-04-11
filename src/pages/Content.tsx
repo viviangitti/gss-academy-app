@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Shield, FileText, BookOpen, CheckSquare, Newspaper, Zap } from 'lucide-react';
+import { Shield, FileText, BookOpen, CheckSquare, Newspaper, Zap, Flame } from 'lucide-react';
 import { loadData, KEYS } from '../services/storage';
 import { SEGMENTS } from '../types';
 import type { UserProfile } from '../types';
@@ -11,6 +11,7 @@ const MENU_ITEMS = [
   { path: '/tecnicas', icon: BookOpen, label: 'Técnicas', desc: 'Perguntas estratégicas, qualificação e mais', color: '#8b5cf6' },
   { path: '/checklists', icon: CheckSquare, label: 'Listas', desc: 'Rituais e preparação de reuniões', color: '#22c55e' },
   { path: '/noticias', icon: Newspaper, label: 'Notícias', desc: 'Novidades do seu mercado', color: '#f59e0b' },
+  { path: '/gatilhos', icon: Flame, label: 'Gatilhos', desc: 'Frases de urgência para acelerar decisões', color: '#ef4444' },
   { path: '/pre-reuniao', icon: Zap, label: 'Pré-reunião', desc: 'Prepare-se em 2 minutos', color: '#c9a84c' },
 ];
 

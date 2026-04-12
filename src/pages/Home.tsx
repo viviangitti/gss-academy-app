@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CalendarDays, Shield, MessageCircle, Zap, Clock, Target, Newspaper, BookOpen, ExternalLink } from 'lucide-react';
+import { CalendarDays, Shield, MessageCircle, Zap, Clock, Target, Newspaper, BookOpen, ExternalLink, Users, BarChart3 } from 'lucide-react';
 import { loadData, KEYS } from '../services/storage';
 import { fetchNews } from '../services/news';
 import { SEGMENTS } from '../types';
@@ -99,6 +99,14 @@ export default function Home() {
           <button className="action-card card" onClick={() => navigate('/calendario')}>
             <CalendarDays size={24} />
             <span>Agenda</span>
+          </button>
+          <button className="action-card card" onClick={() => navigate('/clientes')}>
+            <Users size={24} />
+            <span>Clientes</span>
+          </button>
+          <button className="action-card card" onClick={() => navigate('/painel')}>
+            <BarChart3 size={24} />
+            <span>Meu Painel</span>
           </button>
         </div>
       </div>

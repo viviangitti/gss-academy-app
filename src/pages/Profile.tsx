@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { User, Building2, Briefcase, Save, ExternalLink, Factory, Target, Trophy } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { User, Building2, Briefcase, Save, ExternalLink, Factory, Target, Trophy, Download, Upload } from 'lucide-react';
 import { loadData, saveData, KEYS } from '../services/storage';
 import { getPoints, getLevel, checkDailyLogin } from '../services/gamification';
 import { SEGMENTS } from '../types';
@@ -9,6 +9,8 @@ import './Profile.css';
 export default function Profile() {
   const [profile, setProfile] = useState<UserProfile>({ name: '', role: '', company: '', segment: '', monthlyGoal: 0 });
   const [saved, setSaved] = useState(false);
+  const [importStatus, setImportStatus] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setProfile(loadData(KEYS.PROFILE, { name: '', role: '', company: '', segment: '', monthlyGoal: 0 }));
@@ -19,6 +21,48 @@ export default function Profile() {
     saveData(KEYS.PROFILE, profile);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleExport = () => {
+    const data: Record<string, unknown> = {};
+    Object.values(KEYS).forEach(key => {
+      const val = localStorage.getItem(key);
+      if (val) data[key] = JSON.parse(val);
+    });
+    data['gss_onboarding_done'] = localStorage.getItem('gss_onboarding_done');
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `gss-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string);
+        Object.entries(data).forEach(([key, value]) => {
+          if (key === 'gss_onboarding_done') {
+            localStorage.setItem(key, value as string);
+          } else {
+            localStorage.setItem(key, JSON.stringify(value));
+          }
+        });
+        setImportStatus('Dados restaurados! Recarregando...');
+        setTimeout(() => window.location.reload(), 1500);
+      } catch {
+        setImportStatus('Erro ao importar. Arquivo inválido.');
+        setTimeout(() => setImportStatus(''), 3000);
+      }
+    };
+    reader.readAsText(file);
   };
 
   const points = getPoints();
@@ -115,9 +159,30 @@ export default function Profile() {
         </a>
       </div>
 
+      <div className="backup-section">
+        <h3 className="section-title">Seus dados</h3>
+        <div className="backup-buttons">
+          <button className="btn btn-outline" onClick={handleExport}>
+            <Download size={16} /> Exportar dados
+          </button>
+          <button className="btn btn-outline" onClick={() => fileInputRef.current?.click()}>
+            <Upload size={16} /> Importar dados
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json"
+            style={{ display: 'none' }}
+            onChange={handleImport}
+          />
+        </div>
+        {importStatus && <p className="import-status">{importStatus}</p>}
+        <p className="backup-hint">Exporte seus dados como backup. Importe para restaurar em outro dispositivo.</p>
+      </div>
+
       <div className="app-info">
         <p>GSS Academy - App do Líder</p>
-        <p>Versão 3.0.0</p>
+        <p>Versão 3.1.0</p>
       </div>
     </div>
   );

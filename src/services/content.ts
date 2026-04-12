@@ -221,6 +221,32 @@ const SEGMENT_OBJECTIONS: Record<string, Objection[]> = {
         'Vamos olhar o custo total de propriedade: consumo, manutenção, seguro. Comparando com o concorrente, nosso custo mensal é mais competitivo.',
       ]},
   ],
+  automotivo_luxo: [
+    { id: 'al1', objection: '"Por esse preço compro um importado"', segment: 'automotivo_luxo',
+      quickResponses: ['Nosso pós-venda e exclusividade não se comparam.', 'Importado tem custo de manutenção até 3x maior.'],
+      responses: [
+        'Entendo a comparação. Mas considere: nosso pós-venda é premium, peças originais com entrega rápida e a exclusividade da marca no Brasil. Importado paralelo não tem nada disso.',
+        'O custo de manutenção de importado pode ser até 3x maior. Quando você soma seguro, peças e revenda, nosso custo total é mais competitivo — com experiência muito superior.',
+      ]},
+    { id: 'al2', objection: '"Vou comprar no exterior, sai mais barato"', segment: 'automotivo_luxo',
+      quickResponses: ['Garantia, emplacamento e impostos tornam equivalente.', 'A experiência de compra premium é só aqui.'],
+      responses: [
+        'Quando você soma frete, impostos de importação, emplacamento e perda de garantia de fábrica, o preço fica muito próximo. E sem a experiência de compra personalizada que oferecemos.',
+        'Nossos clientes valorizam a consultoria premium, test-drive exclusivo e acompanhamento pós-venda. Isso não existe comprando no exterior.',
+      ]},
+    { id: 'al3', objection: '"Preciso ver a cor/versão pessoalmente"', segment: 'automotivo_luxo',
+      quickResponses: ['Agendamos uma experiência exclusiva no showroom.', 'Podemos levar o carro até você para test-drive.'],
+      responses: [
+        'Com certeza! Posso agendar uma experiência exclusiva no nosso showroom, com champagne e atendimento personalizado. Qual o melhor horário para você?',
+        'Podemos ir até você. Nosso serviço de test-drive em domicílio permite que você veja o carro no seu ambiente. Quando seria ideal?',
+      ]},
+    { id: 'al4', objection: '"Minha esposa/marido precisa aprovar"', segment: 'automotivo_luxo',
+      quickResponses: ['Vamos fazer um test-drive em casal.', 'Posso preparar uma apresentação especial para os dois.'],
+      responses: [
+        'Perfeito! Nada melhor que os dois vivenciarem a experiência juntos. Posso agendar um test-drive especial para o casal, com nosso consultor dedicado.',
+        'Entendo. Posso preparar um material exclusivo com configurações e opcionais para vocês decidirem juntos. E se quiserem, fazemos uma visita ao showroom no horário mais conveniente.',
+      ]},
+  ],
   tecnologia: [
     { id: 't1', objection: '"Já temos uma solução interna"', segment: 'tecnologia',
       quickResponses: ['Custo oculto alto: manutenção, atualizações, equipe.', 'Custo total interno é 3x maior. Posso provar.'],

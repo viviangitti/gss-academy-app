@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, RotateCcw, Mic, MicOff, Swords } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { sendMessage, resetChat } from '../services/gemini';
 import { loadData, saveData, KEYS } from '../services/storage';
-import type { ChatMessage } from '../types';
+import type { ChatMessage, Client } from '../types';
 import SpeakButton from '../components/SpeakButton';
 import './AICoach.css';
 
@@ -32,18 +32,37 @@ function parseSuggestions(text: string): { clean: string; suggestions: string[] 
 
 export default function AICoach() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const clientName = searchParams.get('cliente');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [autoSpeak, setAutoSpeak] = useState(false);
+  const [clientContext, setClientContext] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
-    setMessages(loadData(KEYS.CHAT_HISTORY, []));
-  }, []);
+    if (!clientName) {
+      setMessages(loadData(KEYS.CHAT_HISTORY, []));
+    } else {
+      // Load client context for AI memory
+      const allClients = loadData<Client[]>(KEYS.CLIENTS, []);
+      const client = allClients.find(c => c.name === clientName);
+      if (client) {
+        const ctx = [
+          `Cliente: ${client.name} (${client.company})`,
+          client.objections.length > 0 ? `Objeções já citadas: ${client.objections.join(', ')}` : '',
+          client.meetings.length > 0 ? `Última reunião: ${client.meetings[0].date} — ${client.meetings[0].outcome || 'sem registro'}` : '',
+          client.notes ? `Notas: ${client.notes}` : '',
+        ].filter(Boolean).join('\n');
+        setClientContext(ctx);
+        resetChat();
+      }
+    }
+  }, [clientName]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -60,7 +79,8 @@ export default function AICoach() {
     setSuggestions([]);
     setLoading(true);
 
-    const promptWithSuggestions = msg + '\n\n(Ao final da resposta, inclua exatamente neste formato: [SUGESTÕES: pergunta 1 | pergunta 2 | pergunta 3] com 2-3 perguntas que o vendedor poderia fazer ao cliente em seguida)';
+    const contextPrefix = clientContext ? `[Contexto do cliente:\n${clientContext}]\n\n` : '';
+    const promptWithSuggestions = contextPrefix + msg + '\n\n(Ao final da resposta, inclua exatamente neste formato: [SUGESTÕES: pergunta 1 | pergunta 2 | pergunta 3] com 2-3 perguntas que o vendedor poderia fazer ao cliente em seguida)';
 
     try {
       const response = await sendMessage(promptWithSuggestions, API_KEY);
@@ -146,8 +166,8 @@ export default function AICoach() {
           <div className="ai-welcome-icon">
             <Sparkles size={40} />
           </div>
-          <h3>Pergunte ao Especialista</h3>
-          <p>Tire dúvidas sobre vendas, negociação e liderança comercial.</p>
+          <h3>{clientName ? `Sobre: ${clientName}` : 'Pergunte ao Especialista'}</h3>
+          <p>{clientName ? 'A IA já conhece o histórico deste cliente.' : 'Tire dúvidas sobre vendas, negociação e liderança comercial.'}</p>
 
           <button className="roleplay-cta" onClick={() => navigate('/treino')}>
             <Swords size={18} />

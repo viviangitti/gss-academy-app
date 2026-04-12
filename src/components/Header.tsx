@@ -14,6 +14,8 @@ const titles: Record<string, string> = {
   '/gatilhos': 'Gatilhos de Urgência',
   '/treino': 'Simulador de Treino',
   '/cronometro': 'Cronômetro',
+  '/clientes': 'Clientes',
+  '/painel': 'Meu Painel',
   '/pre-reuniao': 'Pré-reunião',
   '/ia-coach': 'Pergunte à IA',
   '/perfil': 'Perfil',

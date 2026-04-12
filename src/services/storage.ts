@@ -6,6 +6,7 @@ const KEYS = {
   CHAT_HISTORY: 'gss_chat',
   PROFILE: 'gss_profile',
   TASKS: 'gss_tasks',
+  CLIENTS: 'gss_clients',
   GAME_POINTS: 'gss_points',
 };
 

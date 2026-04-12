@@ -10,6 +10,25 @@ export interface CalendarEvent {
   outcome?: 'fechou' | 'acompanhamento' | 'perdeu' | '';
 }
 
+export interface Client {
+  id: string;
+  name: string;
+  company: string;
+  notes?: string;
+  objections: string[]; // objeções que já citou
+  meetings: ClientMeeting[];
+  createdAt: number;
+}
+
+export interface ClientMeeting {
+  date: string;
+  type: string;
+  outcome: 'fechou' | 'acompanhamento' | 'perdeu' | '';
+  objections: string[];
+  notes: string;
+  value?: number;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -50,6 +69,7 @@ export interface ChatMessage {
 export type Segment =
   | 'farmaceutico'
   | 'automotivo'
+  | 'automotivo_luxo'
   | 'tecnologia'
   | 'varejo'
   | 'imobiliario'
@@ -66,6 +86,7 @@ export const SEGMENTS: { value: Segment; label: string }[] = [
   { value: '', label: 'Selecione seu segmento' },
   { value: 'farmaceutico', label: 'Farmacêutico' },
   { value: 'automotivo', label: 'Automotivo' },
+  { value: 'automotivo_luxo', label: 'Automotivo de Luxo' },
   { value: 'tecnologia', label: 'Tecnologia / Software' },
   { value: 'varejo', label: 'Varejo' },
   { value: 'imobiliario', label: 'Imobiliário' },

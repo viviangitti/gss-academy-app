@@ -14,6 +14,8 @@ import News from './pages/News';
 import Urgency from './pages/Urgency';
 import RolePlay from './pages/RolePlay';
 import Timer from './pages/Timer';
+import Clients from './pages/Clients';
+import Dashboard from './pages/Dashboard';
 import PreMeeting from './pages/PreMeeting';
 import AICoach from './pages/AICoach';
 import Profile from './pages/Profile';
@@ -45,6 +47,8 @@ function App() {
             <Route path="/gatilhos" element={<Urgency />} />
             <Route path="/treino" element={<RolePlay />} />
             <Route path="/cronometro" element={<Timer />} />
+            <Route path="/clientes" element={<Clients />} />
+            <Route path="/painel" element={<Dashboard />} />
             <Route path="/pre-reuniao" element={<PreMeeting />} />
             <Route path="/ia-coach" element={<AICoach />} />
             <Route path="/perfil" element={<Profile />} />

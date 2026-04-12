@@ -179,3 +179,93 @@
   color: var(--text-light);
   line-height: 1.4;
 }
+
+/* Client picker */
+.client-picker {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.picker-item {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 0;
+  border: none;
+  background: none;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.picker-item:last-child {
+  border-bottom: none;
+}
+
+.picker-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.picker-company {
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+/* Briefing card */
+.briefing-card {
+  border-left: 3px solid var(--accent);
+}
+
+.briefing-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--primary);
+}
+
+.briefing-points {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.briefing-point {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.briefing-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.briefing-point > span:last-child {
+  font-size: 14px;
+}
+
+.briefing-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.briefing-tag {
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #fef2f2;
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.briefing-value {
+  font-weight: 700;
+  color: var(--success);
+}

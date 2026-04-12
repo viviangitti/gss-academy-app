@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, Pause, RotateCcw, Check, X, ArrowRight } from 'lucide-react';
+import { Play, Pause, RotateCcw, Check, X, ArrowRight, Sparkles } from 'lucide-react';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { loadData, saveData, KEYS } from '../services/storage';
 import { addPoints } from '../services/gamification';
 import type { Task } from '../types';
 import './Timer.css';
+
+const API_KEY = 'AIzaSyB2kyZkx-6yJ88YqsYNXcBMv67s1GjERLg';
 
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -18,6 +21,9 @@ export default function Timer() {
   const [hasStarted, setHasStarted] = useState(false);
   const [showOutcome, setShowOutcome] = useState(false);
   const [taskTitle, setTaskTitle] = useState('');
+  const [meetingNotes, setMeetingNotes] = useState('');
+  const [aiSummary, setAiSummary] = useState('');
+  const [loadingSummary, setLoadingSummary] = useState(false);
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -70,6 +76,22 @@ export default function Timer() {
   const endMeeting = () => {
     setIsRunning(false);
     setShowOutcome(true);
+  };
+
+  const generateSummary = async () => {
+    if (!meetingNotes.trim()) return;
+    setLoadingSummary(true);
+    try {
+      const genAI = new GoogleGenerativeAI(API_KEY);
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+      const result = await model.generateContent(
+        `Resuma esta anotação de reunião de vendas em EXATAMENTE 3 pontos curtos (1 frase cada). Formato:\n1. O que foi discutido\n2. Próximo passo\n3. Objeções ou pontos de atenção\n\nFale em português brasileiro. Sem introdução, só os 3 pontos.\n\nAnotação: "${meetingNotes}"`
+      );
+      setAiSummary(result.response.text());
+    } catch {
+      setAiSummary('Não foi possível gerar o resumo.');
+    }
+    setLoadingSummary(false);
   };
 
   const handleOutcome = (outcome: 'fechou' | 'acompanhamento' | 'perdeu') => {
@@ -137,6 +159,28 @@ export default function Timer() {
               onChange={e => setTaskTitle(e.target.value)}
               placeholder="Próximo passo: ex. Enviar proposta até terça"
             />
+          </div>
+
+          {/* Meeting notes + AI summary - F3.4 */}
+          <div className="outcome-notes">
+            <label>O que aconteceu? (opcional)</label>
+            <textarea
+              value={meetingNotes}
+              onChange={e => setMeetingNotes(e.target.value)}
+              rows={3}
+              placeholder="Anote os pontos principais da reunião..."
+            />
+            {meetingNotes.trim() && !aiSummary && (
+              <button className="btn btn-outline btn-sm summary-btn" onClick={generateSummary} disabled={loadingSummary}>
+                <Sparkles size={14} /> {loadingSummary ? 'Gerando...' : 'Gerar resumo com IA'}
+              </button>
+            )}
+            {aiSummary && (
+              <div className="ai-summary">
+                <strong><Sparkles size={12} /> Resumo da reunião:</strong>
+                <p>{aiSummary}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

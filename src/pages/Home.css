@@ -40,6 +40,40 @@
   box-shadow: var(--shadow);
 }
 
+/* Smart suggestions */
+.smart-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.smart-suggestions .section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.smart-suggestions .section-title svg {
+  color: var(--warning);
+}
+
+.suggestion-card {
+  padding: 12px;
+  border-left: 3px solid var(--warning);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.suggestion-card:active {
+  transform: scale(0.98);
+}
+
+.suggestion-card p {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
 .premeeting-btn:active {
   transform: scale(0.98);
 }

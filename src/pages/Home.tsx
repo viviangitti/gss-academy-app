@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CalendarDays, Shield, MessageCircle, Zap, Clock, Target, Newspaper, BookOpen, ExternalLink, Users, BarChart3 } from 'lucide-react';
+import { CalendarDays, Shield, MessageCircle, Zap, Clock, Target, Newspaper, BookOpen, ExternalLink, Users, BarChart3, Lightbulb } from 'lucide-react';
 import { loadData, KEYS } from '../services/storage';
 import { fetchNews } from '../services/news';
 import { SEGMENTS } from '../types';
-import type { CalendarEvent, UserProfile, NewsItem } from '../types';
+import type { CalendarEvent, UserProfile, NewsItem, Client, Task } from '../types';
 import './Home.css';
 
 const TIPS = [
@@ -27,6 +27,7 @@ export default function Home() {
   const [greeting, setGreeting] = useState('');
   const [news, setNews] = useState<NewsItem[]>([]);
   const [segmentLabel, setSegmentLabel] = useState('');
+  const [suggestions, setSuggestions] = useState<{ text: string; clientName: string }[]>([]);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -43,6 +44,30 @@ export default function Home() {
       setSegmentLabel(SEGMENTS.find(s => s.value === profile.segment)?.label || '');
       fetchNews(profile.segment).then(items => setNews(items.slice(0, 3)));
     }
+
+    // F2.8 - Smart suggestions
+    const clients = loadData<Client[]>(KEYS.CLIENTS, []);
+    const tasks = loadData<Task[]>(KEYS.TASKS, []);
+    const smartSuggestions: { text: string; clientName: string }[] = [];
+
+    clients.forEach(client => {
+      if (client.meetings.length === 0) return;
+      const lastMeeting = client.meetings[0];
+      const daysSince = Math.floor((Date.now() - new Date(lastMeeting.date).getTime()) / (1000 * 60 * 60 * 24));
+
+      if (lastMeeting.outcome === 'acompanhamento' && daysSince >= 3) {
+        smartSuggestions.push({ text: `${client.name} aguarda acompanhamento há ${daysSince} dias`, clientName: client.name });
+      } else if (daysSince >= 7 && lastMeeting.outcome !== 'fechou' && lastMeeting.outcome !== 'perdeu') {
+        smartSuggestions.push({ text: `Sem contato com ${client.name} há ${daysSince} dias`, clientName: client.name });
+      }
+    });
+
+    // Overdue tasks
+    tasks.filter(t => t.status === 'pendente' && t.dueDate < today).forEach(t => {
+      smartSuggestions.push({ text: `Tarefa atrasada: ${t.title}`, clientName: '' });
+    });
+
+    setSuggestions(smartSuggestions.slice(0, 3));
   }, []);
 
   const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '' });
@@ -62,6 +87,18 @@ export default function Home() {
         <Zap size={18} />
         <span>Vou entrar numa reunião</span>
       </button>
+
+      {/* Smart suggestions - F2.8 */}
+      {suggestions.length > 0 && (
+        <div className="smart-suggestions">
+          <h3 className="section-title"><Lightbulb size={16} /> Ações sugeridas</h3>
+          {suggestions.map((s, i) => (
+            <div key={i} className="suggestion-card card" onClick={() => s.clientName ? navigate(`/ia-coach?cliente=${encodeURIComponent(s.clientName)}`) : navigate('/clientes')}>
+              <p>{s.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="tip-card card">
         <div className="tip-icon"><Target size={18} /></div>

@@ -221,3 +221,50 @@
   text-align: center;
   font-size: 14px;
 }
+
+/* Notes + AI summary */
+.outcome-notes {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.outcome-notes label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.outcome-notes textarea {
+  text-align: left;
+  font-size: 14px;
+}
+
+.summary-btn {
+  align-self: flex-start;
+}
+
+.ai-summary {
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  border-left: 3px solid var(--accent);
+}
+
+.ai-summary strong {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.ai-summary p {
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-line;
+}

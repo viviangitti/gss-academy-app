@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Zap, Check, ChevronDown, ChevronUp, Shield, BookOpen } from 'lucide-react';
+import { Zap, Check, ChevronDown, ChevronUp, Shield, BookOpen, User, Search } from 'lucide-react';
 import { getObjections } from '../services/content';
 import { TECHNIQUES } from '../services/content';
 import { loadData, KEYS } from '../services/storage';
-import type { UserProfile } from '../types';
+import type { UserProfile, Client } from '../types';
 import type { Objection } from '../services/content';
 import './PreMeeting.css';
 
@@ -22,11 +22,16 @@ export default function PreMeeting() {
   const [showTechniques, setShowTechniques] = useState(false);
   const [topObjections, setTopObjections] = useState<Objection[]>([]);
   const [expandedObj, setExpandedObj] = useState<string | null>(null);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [clientSearch, setClientSearch] = useState('');
+  const [showClientPicker, setShowClientPicker] = useState(false);
 
   useEffect(() => {
     const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '' });
     const all = getObjections(profile.segment);
     setTopObjections(all.slice(0, 5));
+    setClients(loadData(KEYS.CLIENTS, []));
   }, []);
 
   const toggleCheck = (idx: number) => {
@@ -37,6 +42,17 @@ export default function PreMeeting() {
       return next;
     });
   };
+
+  const selectClient = (client: Client) => {
+    setSelectedClient(client);
+    setShowClientPicker(false);
+    setClientSearch('');
+  };
+
+  const filteredClients = clients.filter(c =>
+    c.name.toLowerCase().includes(clientSearch.toLowerCase()) ||
+    c.company.toLowerCase().includes(clientSearch.toLowerCase())
+  );
 
   const progress = Math.round((checkedItems.size / PRE_MEETING_CHECKLIST.length) * 100);
   const topTechniques = TECHNIQUES.slice(0, 3);
@@ -50,6 +66,69 @@ export default function PreMeeting() {
           <p>Prepare-se em 2 minutos</p>
         </div>
       </div>
+
+      {/* Client briefing - F2.5 */}
+      {clients.length > 0 && (
+        <div className="premeeting-section">
+          <div className="section-toggle" onClick={() => setShowClientPicker(!showClientPicker)}>
+            <h4 className="section-title"><User size={16} /> {selectedClient ? selectedClient.name : 'Selecionar cliente'}</h4>
+            {showClientPicker ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </div>
+
+          {showClientPicker && (
+            <div className="client-picker card">
+              <div className="search-bar" style={{ marginBottom: 8 }}>
+                <Search size={14} />
+                <input value={clientSearch} onChange={e => setClientSearch(e.target.value)} placeholder="Buscar..." />
+              </div>
+              {filteredClients.map(c => (
+                <button key={c.id} className="picker-item" onClick={() => selectClient(c)}>
+                  <span className="picker-name">{c.name}</span>
+                  {c.company && <span className="picker-company">{c.company}</span>}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {selectedClient && (
+            <div className="briefing-card card">
+              <h4 className="briefing-title">Resumo — {selectedClient.name}</h4>
+              <div className="briefing-points">
+                <div className="briefing-point">
+                  <span className="briefing-label">Empresa:</span>
+                  <span>{selectedClient.company || '—'}</span>
+                </div>
+                {selectedClient.meetings.length > 0 && (
+                  <div className="briefing-point">
+                    <span className="briefing-label">Última reunião:</span>
+                    <span>{selectedClient.meetings[0].date.split('-').reverse().join('/')} — {selectedClient.meetings[0].outcome === 'fechou' ? 'Fechou' : selectedClient.meetings[0].outcome === 'perdeu' ? 'Perdeu' : selectedClient.meetings[0].outcome === 'acompanhamento' ? 'Acompanhamento' : 'Sem registro'}</span>
+                  </div>
+                )}
+                {selectedClient.objections.length > 0 && (
+                  <div className="briefing-point">
+                    <span className="briefing-label">Objeções citadas:</span>
+                    <div className="briefing-tags">
+                      {selectedClient.objections.map(o => <span key={o} className="briefing-tag">{o}</span>)}
+                    </div>
+                  </div>
+                )}
+                {selectedClient.meetings.length > 0 && selectedClient.meetings[0].value && (
+                  <div className="briefing-point">
+                    <span className="briefing-label">Valor em jogo:</span>
+                    <span className="briefing-value">R$ {selectedClient.meetings[0].value.toLocaleString()}</span>
+                  </div>
+                )}
+                {selectedClient.notes && (
+                  <div className="briefing-point">
+                    <span className="briefing-label">Notas:</span>
+                    <span>{selectedClient.notes}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Quick Checklist */}
       <div className="premeeting-section">

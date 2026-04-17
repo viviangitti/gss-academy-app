@@ -8,7 +8,7 @@ import type { Objection } from '../services/content';
 import SpeakButton from '../components/SpeakButton';
 import './RolePlay.css';
 
-const API_KEY = 'AIzaSyB2kyZkx-6yJ88YqsYNXcBMv67s1GjERLg';
+const API_KEY = 'AIzaSyADE7zlJ0Edm3Q25t0FQ8-evnCUXuFn9e0';
 
 const ROLEPLAY_PROMPT = `Você é um cliente DIFÍCIL em uma simulação de vendas. Seu papel:
 

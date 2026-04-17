@@ -16,7 +16,7 @@ const QUICK_PROMPTS = [
   'Como qualificar um cliente potencial?',
 ];
 
-const API_KEY = 'AIzaSyB2kyZkx-6yJ88YqsYNXcBMv67s1GjERLg';
+const API_KEY = 'AIzaSyADE7zlJ0Edm3Q25t0FQ8-evnCUXuFn9e0';
 
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);

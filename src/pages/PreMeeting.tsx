@@ -101,7 +101,7 @@ export default function PreMeeting() {
                 {selectedClient.meetings.length > 0 && (
                   <div className="briefing-point">
                     <span className="briefing-label">Última reunião:</span>
-                    <span>{selectedClient.meetings[0].date.split('-').reverse().join('/')} — {selectedClient.meetings[0].outcome === 'fechou' ? 'Fechou' : selectedClient.meetings[0].outcome === 'perdeu' ? 'Perdeu' : selectedClient.meetings[0].outcome === 'acompanhamento' ? 'Acompanhamento' : 'Sem registro'}</span>
+                    <span>{selectedClient.meetings[0].date.split('-').reverse().join('/')} — {selectedClient.meetings[0].outcome === 'fechou' ? 'Fechou' : selectedClient.meetings[0].outcome === 'perdeu' ? 'Não avançou' : selectedClient.meetings[0].outcome === 'acompanhamento' ? 'Acompanhamento' : 'Sem registro'}</span>
                   </div>
                 )}
                 {selectedClient.objections.length > 0 && (

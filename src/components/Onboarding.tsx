@@ -30,13 +30,13 @@ export default function Onboarding({ onComplete }: Props) {
   const screens = [
     {
       icon: <Shield size={48} />,
-      title: 'Treine para rebater qualquer objeção',
-      description: 'Respostas prontas, treino com IA e técnicas comprovadas para você nunca mais travar numa negociação.',
+      title: 'Domine a resposta certa para cada objeção',
+      description: 'Respostas prontas, treino com IA e técnicas comprovadas para você brilhar em cada negociação.',
     },
     {
       icon: <CalendarCheck size={48} />,
-      title: 'Organize suas reuniões e nunca entre despreparado',
-      description: 'Checklists, agenda e modo pré-reunião para garantir que cada encontro com o cliente seja produtivo.',
+      title: 'Organize suas reuniões e entre sempre com confiança',
+      description: 'Checklists, agenda e modo pré-reunião para que cada encontro com o cliente seja produtivo.',
     },
   ];
 

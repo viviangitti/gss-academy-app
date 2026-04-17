@@ -27,7 +27,7 @@ export default function Clients() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showNewModal, setShowNewModal] = useState(false);
   const [showMeetingModal, setShowMeetingModal] = useState<string | null>(null);
-  const [newClient, setNewClient] = useState({ name: '', company: '', notes: '' });
+  const [newClient, setNewClient] = useState({ name: '', nomeFantasia: '', razaoSocial: '', cnpj: '', company: '', notes: '' });
   const [newMeeting, setNewMeeting] = useState<Partial<ClientMeeting>>({
     date: new Date().toISOString().split('T')[0],
     type: 'Reunião',
@@ -51,6 +51,9 @@ export default function Clients() {
     const client: Client = {
       id: generateId(),
       name: newClient.name,
+      nomeFantasia: newClient.nomeFantasia,
+      razaoSocial: newClient.razaoSocial,
+      cnpj: newClient.cnpj,
       company: newClient.company,
       notes: newClient.notes,
       objections: [],
@@ -58,7 +61,7 @@ export default function Clients() {
       createdAt: Date.now(),
     };
     save([client, ...clients]);
-    setNewClient({ name: '', company: '', notes: '' });
+    setNewClient({ name: '', nomeFantasia: '', razaoSocial: '', cnpj: '', company: '', notes: '' });
     setShowNewModal(false);
     setExpandedId(client.id);
   };
@@ -154,7 +157,7 @@ export default function Clients() {
                   <div className="client-avatar-sm">{client.name.charAt(0)}</div>
                   <div className="client-info">
                     <h4>{client.name}</h4>
-                    {client.company && <span className="client-company">{client.company}</span>}
+                    {(client.nomeFantasia || client.company) && <span className="client-company">{client.nomeFantasia || client.company}</span>}
                   </div>
                   {lastMeeting && <span className="client-last">{lastMeeting.date.split('-').reverse().join('/')}</span>}
                   {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -162,6 +165,15 @@ export default function Clients() {
 
                 {isExpanded && (
                   <div className="client-details">
+                    {/* Client details */}
+                    {(client.cnpj || client.razaoSocial || client.nomeFantasia) && (
+                      <div className="client-extra">
+                        {client.nomeFantasia && <span><strong>Fantasia:</strong> {client.nomeFantasia}</span>}
+                        {client.razaoSocial && <span><strong>Razão Social:</strong> {client.razaoSocial}</span>}
+                        {client.cnpj && <span><strong>CNPJ:</strong> {client.cnpj}</span>}
+                      </div>
+                    )}
+
                     {/* Objections this client cited */}
                     {client.objections.length > 0 && (
                       <div className="client-objections">
@@ -194,7 +206,7 @@ export default function Clients() {
                             <span className="meeting-date">{m.date.split('-').reverse().join('/')}</span>
                             <span className="meeting-type">{m.type}</span>
                             {m.outcome && <span className={`meeting-outcome ${m.outcome}`}>
-                              {m.outcome === 'fechou' ? 'Fechou' : m.outcome === 'perdeu' ? 'Perdeu' : 'Acompanhamento'}
+                              {m.outcome === 'fechou' ? 'Fechou' : m.outcome === 'perdeu' ? 'Não avançou' : 'Acompanhamento'}
                             </span>}
                             {m.value ? <span className="meeting-value">R$ {m.value.toLocaleString()}</span> : null}
                           </div>
@@ -217,12 +229,24 @@ export default function Clients() {
           <div className="modal" onClick={e => e.stopPropagation()}>
             <h3>Novo Cliente</h3>
             <div className="form-group">
-              <label>Nome</label>
-              <input value={newClient.name} onChange={e => setNewClient({ ...newClient, name: e.target.value })} placeholder="Nome do cliente" />
+              <label>Nome do contato</label>
+              <input value={newClient.name} onChange={e => setNewClient({ ...newClient, name: e.target.value })} placeholder="Nome da pessoa" />
+            </div>
+            <div className="form-group">
+              <label>Nome Fantasia</label>
+              <input value={newClient.nomeFantasia} onChange={e => setNewClient({ ...newClient, nomeFantasia: e.target.value })} placeholder="Nome fantasia da empresa" />
+            </div>
+            <div className="form-group">
+              <label>Razão Social</label>
+              <input value={newClient.razaoSocial} onChange={e => setNewClient({ ...newClient, razaoSocial: e.target.value })} placeholder="Razão social (opcional)" />
+            </div>
+            <div className="form-group">
+              <label>CNPJ</label>
+              <input value={newClient.cnpj} onChange={e => setNewClient({ ...newClient, cnpj: e.target.value })} placeholder="00.000.000/0000-00" />
             </div>
             <div className="form-group">
               <label>Empresa</label>
-              <input value={newClient.company} onChange={e => setNewClient({ ...newClient, company: e.target.value })} placeholder="Empresa" />
+              <input value={newClient.company} onChange={e => setNewClient({ ...newClient, company: e.target.value })} placeholder="Empresa (se diferente do nome fantasia)" />
             </div>
             <div className="form-group">
               <label>Observações</label>
@@ -251,7 +275,7 @@ export default function Clients() {
                 <option value="">Selecione</option>
                 <option value="fechou">Fechou</option>
                 <option value="acompanhamento">Precisa de acompanhamento</option>
-                <option value="perdeu">Perdeu</option>
+                <option value="perdeu">Não avançou</option>
               </select>
             </div>
             <div className="form-group">

@@ -13,9 +13,12 @@ export interface CalendarEvent {
 export interface Client {
   id: string;
   name: string;
+  nomeFantasia?: string;
+  razaoSocial?: string;
+  cnpj?: string;
   company: string;
   notes?: string;
-  objections: string[]; // objeções que já citou
+  objections: string[];
   meetings: ClientMeeting[];
   createdAt: number;
 }

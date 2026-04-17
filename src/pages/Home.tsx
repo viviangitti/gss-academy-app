@@ -58,13 +58,13 @@ export default function Home() {
       if (lastMeeting.outcome === 'acompanhamento' && daysSince >= 3) {
         smartSuggestions.push({ text: `${client.name} aguarda acompanhamento há ${daysSince} dias`, clientName: client.name });
       } else if (daysSince >= 7 && lastMeeting.outcome !== 'fechou' && lastMeeting.outcome !== 'perdeu') {
-        smartSuggestions.push({ text: `Sem contato com ${client.name} há ${daysSince} dias`, clientName: client.name });
+        smartSuggestions.push({ text: `Hora de reconectar com ${client.name} (${daysSince} dias)`, clientName: client.name });
       }
     });
 
     // Overdue tasks
     tasks.filter(t => t.status === 'pendente' && t.dueDate < today).forEach(t => {
-      smartSuggestions.push({ text: `Tarefa atrasada: ${t.title}`, clientName: '' });
+      smartSuggestions.push({ text: `Pendente para hoje: ${t.title}`, clientName: '' });
     });
 
     setSuggestions(smartSuggestions.slice(0, 3));

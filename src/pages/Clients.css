@@ -114,6 +114,19 @@
   gap: 12px;
 }
 
+.client-extra {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.client-extra strong {
+  color: var(--text-light);
+  font-size: 12px;
+  margin-right: 4px;
+}
+
 .detail-label {
   font-size: 12px;
   font-weight: 700;

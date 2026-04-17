@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const SYSTEM_PROMPT = `Você é o Consultor de Vendas da Maestr.IA em Vendas, um especialista em vendas consultivas, negociação e liderança comercial de alta performance.
+const SYSTEM_PROMPT = `Você é o Consultor de Vendas da MAESTR.IA em Vendas, um especialista em vendas consultivas, negociação e liderança comercial de alta performance.
 
 Seu papel é ajudar líderes comerciais a dominar vendas com base nos princípios abaixo:
 
@@ -72,7 +72,7 @@ export async function sendMessage(message: string, apiKey: string): Promise<stri
           },
           {
             role: 'model',
-            parts: [{ text: 'Entendido! Sou o Consultor de Vendas da Maestr.IA em Vendas. Domino técnicas de alta performance em vendas, negociação e liderança comercial. Estou pronto para ajudar com objeções, abordagens, rituais de equipe e estratégias de fechamento. Como posso ajudar?' }],
+            parts: [{ text: 'Entendido! Sou o Consultor de Vendas da MAESTR.IA em Vendas. Domino técnicas de alta performance em vendas, negociação e liderança comercial. Estou pronto para ajudar com objeções, abordagens, rituais de equipe e estratégias de fechamento. Como posso ajudar?' }],
           },
         ],
       });

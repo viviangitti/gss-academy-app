@@ -36,7 +36,7 @@ export default function Header() {
         {isHome ? (
           <div className="header-brand">
             <div className="header-logo">GSS</div>
-            <span className="header-subtitle">Maestr.IA em Vendas</span>
+            <span className="header-subtitle">MAESTR.IA em Vendas</span>
           </div>
         ) : (
           <div className="header-nav">

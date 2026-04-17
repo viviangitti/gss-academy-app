@@ -83,7 +83,7 @@ export default function Timer() {
     setLoadingSummary(true);
     try {
       const genAI = new GoogleGenerativeAI(API_KEY);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
       const result = await model.generateContent(
         `Resuma esta anotação de reunião de vendas em EXATAMENTE 3 pontos curtos (1 frase cada). Formato:\n1. O que foi discutido\n2. Próximo passo\n3. Objeções ou pontos de atenção\n\nFale em português brasileiro. Sem introdução, só os 3 pontos.\n\nAnotação: "${meetingNotes}"`
       );

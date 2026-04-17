@@ -43,35 +43,47 @@
 }
 
 .stage-chip {
-  padding: 6px 14px;
-  border-radius: 20px;
-  border: 1.5px solid var(--border);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-strong);
   background: var(--white);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-light);
   cursor: pointer;
   white-space: nowrap;
   font-family: inherit;
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease);
+}
+
+.stage-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .stage-chip.active {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
   color: var(--primary);
   border-color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.3);
 }
 
 /* Search bar */
 .search-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0 12px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 0 14px;
+  transition: all 0.2s var(--ease);
+}
+
+.search-bar:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12);
 }
 
 .search-bar svg {
@@ -81,12 +93,15 @@
 
 .search-bar input {
   border: none;
-  padding: 10px 0;
+  padding: 12px 0;
   font-size: 15px;
+  background: transparent;
+  box-shadow: none;
 }
 
 .search-bar input:focus {
   border: none;
+  box-shadow: none;
 }
 
 /* Objection cards */

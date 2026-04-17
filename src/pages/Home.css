@@ -1,168 +1,128 @@
 .home {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
+/* Greeting card - gradient moderno */
 .greeting-card.card {
-  background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
+  background: linear-gradient(135deg, var(--primary-deep) 0%, var(--primary) 50%, var(--primary-light) 100%) !important;
   color: var(--white);
-  padding: 20px;
+  padding: 22px 20px;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.greeting-card.card::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(201, 168, 76, 0.18) 0%, transparent 70%);
+  border-radius: 50%;
 }
 
 .greeting-card h2 {
-  font-size: 22px;
-  margin-bottom: 4px;
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  letter-spacing: -0.03em;
+  position: relative;
 }
 
 .greeting-date {
-  font-size: 15px;
-  opacity: 0.8;
+  font-size: 14px;
+  opacity: 0.75;
   text-transform: capitalize;
+  font-weight: 500;
+  position: relative;
 }
 
+/* CTA principal - botão com vida */
 .premeeting-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  padding: 18px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
   color: var(--primary);
   border: none;
   border-radius: var(--radius);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;
-  transition: transform 0.2s;
-  box-shadow: var(--shadow);
+  transition: all 0.25s var(--ease);
+  box-shadow: var(--shadow-accent);
+  letter-spacing: -0.01em;
+  position: relative;
+  overflow: hidden;
+  animation: pulse-glow 2.4s ease-in-out infinite;
 }
 
-/* Smart suggestions */
-.smart-suggestions {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.premeeting-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s;
 }
 
-.smart-suggestions .section-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.smart-suggestions .section-title svg {
-  color: var(--warning);
-}
-
-.suggestion-card {
-  padding: 12px;
-  border-left: 3px solid var(--warning);
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.suggestion-card:active {
-  transform: scale(0.98);
-}
-
-.suggestion-card p {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text);
+.premeeting-btn:hover::after {
+  left: 100%;
 }
 
 .premeeting-btn:active {
   transform: scale(0.98);
 }
 
-.tip-card {
+.premeeting-btn svg {
+  flex-shrink: 0;
+}
+
+/* Tip card - acento lateral */
+.tip-card.card {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  border-left: 3px solid var(--accent);
+  gap: 14px;
+  border-left: 4px solid var(--accent);
+  padding: 16px;
+  background: linear-gradient(90deg, rgba(201, 168, 76, 0.06) 0%, var(--white) 100%);
 }
 
 .tip-icon {
   color: var(--accent);
   flex-shrink: 0;
   margin-top: 2px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(201, 168, 76, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tip-text {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.5;
   color: var(--text);
-}
-
-.today-events {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.event-mini {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.event-mini:active {
-  transform: scale(0.98);
-}
-
-.event-time {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--accent);
-  min-width: 45px;
-}
-
-.event-title {
-  flex: 1;
-  font-size: 16px;
   font-weight: 500;
 }
 
-.actions-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.action-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 20px;
-  border: none;
-  cursor: pointer;
-  color: var(--primary);
-  font-size: 15px;
-  font-weight: 600;
-  transition: all 0.2s;
-  font-family: inherit;
-}
-
-.action-card:active {
-  transform: scale(0.96);
-}
-
-.action-card svg {
-  color: var(--accent);
-}
-
-/* News section */
+/* News section na home */
 .home-news {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .news-section-header {
@@ -178,14 +138,25 @@
   gap: 6px;
 }
 
+.news-section-header .section-title svg {
+  color: var(--accent);
+}
+
 .home-news-item {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 8px;
+  gap: 10px;
   text-decoration: none;
   color: var(--text);
-  padding: 12px;
+  padding: 14px 16px;
+  transition: all 0.2s var(--ease);
+  cursor: pointer;
+}
+
+.home-news-item:hover {
+  transform: translateX(2px);
+  box-shadow: var(--shadow);
 }
 
 .home-news-item:active {
@@ -193,7 +164,7 @@
 }
 
 .home-news-item h4 {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   line-height: 1.4;
   flex: 1;

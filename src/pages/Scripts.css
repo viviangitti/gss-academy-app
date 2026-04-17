@@ -4,6 +4,103 @@
   gap: 12px;
 }
 
+/* Tabs */
+.scripts-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  border: 1px solid var(--border);
+}
+
+.scripts-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.scripts-tab.active {
+  background: var(--accent);
+  color: var(--primary);
+}
+
+/* Urgency (gatilhos) dentro de Roteiros */
+.urgency-category {
+  padding: 14px;
+}
+
+.urgency-cat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.urgency-icon {
+  font-size: 22px;
+}
+
+.urgency-cat-header h4 {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.urgency-phrases {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.urgency-phrase {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.urgency-phrase:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.urgency-phrase p {
+  font-size: 14px;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.urgency-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.urgency-actions .copy-mini {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
 .scripts-intro {
   display: flex;
   align-items: flex-start;

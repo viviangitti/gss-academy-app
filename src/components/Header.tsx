@@ -1,34 +1,37 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, User } from 'lucide-react';
 import './Header.css';
 
 const titles: Record<string, string> = {
-  '/': 'GSS Academy',
-  '/calendario': 'Calendário',
-  '/conteudo': 'Conteúdo',
-  '/checklists': 'Listas',
+  '/': 'MAESTR.IA',
+  '/biblioteca': 'Biblioteca',
   '/objecoes': 'Objeções',
   '/scripts': 'Roteiros',
   '/tecnicas': 'Técnicas',
   '/noticias': 'Notícias',
-  '/gatilhos': 'Gatilhos de Urgência',
+  '/treino-hub': 'Treino',
   '/treino': 'Simulador de Treino',
-  '/cronometro': 'Cronômetro',
-  '/clientes': 'Clientes',
-  '/painel': 'Meu Painel',
   '/pre-reuniao': 'Pré-reunião',
   '/ia-coach': 'Pergunte à IA',
   '/perfil': 'Perfil',
 };
 
-const SUB_PAGES = ['/objecoes', '/scripts', '/tecnicas', '/checklists', '/noticias', '/gatilhos', '/treino', '/cronometro', '/pre-reuniao'];
+const LIBRARY_SUB_PAGES = ['/objecoes', '/scripts', '/tecnicas', '/noticias'];
+const TRAINING_SUB_PAGES = ['/treino', '/pre-reuniao'];
 
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const title = titles[location.pathname] || 'GSS Academy';
+  const title = titles[location.pathname] || 'MAESTR.IA';
   const isHome = location.pathname === '/';
-  const isSubPage = SUB_PAGES.includes(location.pathname);
+  const isLibrarySub = LIBRARY_SUB_PAGES.includes(location.pathname);
+  const isTrainingSub = TRAINING_SUB_PAGES.includes(location.pathname);
+
+  const handleBack = () => {
+    if (isLibrarySub) navigate('/biblioteca');
+    else if (isTrainingSub) navigate('/treino-hub');
+    else navigate(-1);
+  };
 
   return (
     <header className="header">
@@ -40,13 +43,18 @@ export default function Header() {
           </div>
         ) : (
           <div className="header-nav">
-            {isSubPage && (
-              <button className="header-back" onClick={() => navigate('/conteudo')}>
+            {(isLibrarySub || isTrainingSub) && (
+              <button className="header-back" onClick={handleBack}>
                 <ArrowLeft size={20} />
               </button>
             )}
             <h1 className="header-title">{title}</h1>
           </div>
+        )}
+        {location.pathname !== '/perfil' && (
+          <button className="header-profile" onClick={() => navigate('/perfil')}>
+            <User size={20} />
+          </button>
         )}
       </div>
     </header>

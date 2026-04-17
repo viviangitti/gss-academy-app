@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Zap, Check, ChevronDown, ChevronUp, Shield, BookOpen, User, Search } from 'lucide-react';
+import { Zap, Check, ChevronDown, ChevronUp, Shield, BookOpen, StickyNote } from 'lucide-react';
 import { getObjections } from '../services/content';
 import { TECHNIQUES } from '../services/content';
 import { loadData, KEYS } from '../services/storage';
-import type { UserProfile, Client } from '../types';
+import type { UserProfile } from '../types';
 import type { Objection } from '../services/content';
 import './PreMeeting.css';
 
@@ -22,16 +22,13 @@ export default function PreMeeting() {
   const [showTechniques, setShowTechniques] = useState(false);
   const [topObjections, setTopObjections] = useState<Objection[]>([]);
   const [expandedObj, setExpandedObj] = useState<string | null>(null);
-  const [clients, setClients] = useState<Client[]>([]);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [clientSearch, setClientSearch] = useState('');
-  const [showClientPicker, setShowClientPicker] = useState(false);
+  const [notes, setNotes] = useState('');
 
   useEffect(() => {
     const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '' });
     const all = getObjections(profile.segment);
     setTopObjections(all.slice(0, 5));
-    setClients(loadData(KEYS.CLIENTS, []));
+    setNotes(localStorage.getItem('gss_premeeting_notes') || '');
   }, []);
 
   const toggleCheck = (idx: number) => {
@@ -43,16 +40,10 @@ export default function PreMeeting() {
     });
   };
 
-  const selectClient = (client: Client) => {
-    setSelectedClient(client);
-    setShowClientPicker(false);
-    setClientSearch('');
+  const handleNotesChange = (value: string) => {
+    setNotes(value);
+    localStorage.setItem('gss_premeeting_notes', value);
   };
-
-  const filteredClients = clients.filter(c =>
-    c.name.toLowerCase().includes(clientSearch.toLowerCase()) ||
-    c.company.toLowerCase().includes(clientSearch.toLowerCase())
-  );
 
   const progress = Math.round((checkedItems.size / PRE_MEETING_CHECKLIST.length) * 100);
   const topTechniques = TECHNIQUES.slice(0, 3);
@@ -67,70 +58,7 @@ export default function PreMeeting() {
         </div>
       </div>
 
-      {/* Client briefing - F2.5 */}
-      {clients.length > 0 && (
-        <div className="premeeting-section">
-          <div className="section-toggle" onClick={() => setShowClientPicker(!showClientPicker)}>
-            <h4 className="section-title"><User size={16} /> {selectedClient ? selectedClient.name : 'Selecionar cliente'}</h4>
-            {showClientPicker ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </div>
-
-          {showClientPicker && (
-            <div className="client-picker card">
-              <div className="search-bar" style={{ marginBottom: 8 }}>
-                <Search size={14} />
-                <input value={clientSearch} onChange={e => setClientSearch(e.target.value)} placeholder="Buscar..." />
-              </div>
-              {filteredClients.map(c => (
-                <button key={c.id} className="picker-item" onClick={() => selectClient(c)}>
-                  <span className="picker-name">{c.name}</span>
-                  {c.company && <span className="picker-company">{c.company}</span>}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {selectedClient && (
-            <div className="briefing-card card">
-              <h4 className="briefing-title">Resumo — {selectedClient.name}</h4>
-              <div className="briefing-points">
-                <div className="briefing-point">
-                  <span className="briefing-label">Empresa:</span>
-                  <span>{selectedClient.company || '—'}</span>
-                </div>
-                {selectedClient.meetings.length > 0 && (
-                  <div className="briefing-point">
-                    <span className="briefing-label">Última reunião:</span>
-                    <span>{selectedClient.meetings[0].date.split('-').reverse().join('/')} — {selectedClient.meetings[0].outcome === 'fechou' ? 'Fechou' : selectedClient.meetings[0].outcome === 'perdeu' ? 'Não avançou' : selectedClient.meetings[0].outcome === 'acompanhamento' ? 'Acompanhamento' : 'Sem registro'}</span>
-                  </div>
-                )}
-                {selectedClient.objections.length > 0 && (
-                  <div className="briefing-point">
-                    <span className="briefing-label">Objeções citadas:</span>
-                    <div className="briefing-tags">
-                      {selectedClient.objections.map(o => <span key={o} className="briefing-tag">{o}</span>)}
-                    </div>
-                  </div>
-                )}
-                {selectedClient.meetings.length > 0 && selectedClient.meetings[0].value && (
-                  <div className="briefing-point">
-                    <span className="briefing-label">Valor em jogo:</span>
-                    <span className="briefing-value">R$ {selectedClient.meetings[0].value.toLocaleString()}</span>
-                  </div>
-                )}
-                {selectedClient.notes && (
-                  <div className="briefing-point">
-                    <span className="briefing-label">Notas:</span>
-                    <span>{selectedClient.notes}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Quick Checklist */}
+      {/* Checklist */}
       <div className="premeeting-section">
         <h4 className="section-title">Checklist Rápido</h4>
         <div className="premeeting-progress">
@@ -149,7 +77,19 @@ export default function PreMeeting() {
         </div>
       </div>
 
-      {/* Top Objections */}
+      {/* Notas rápidas */}
+      <div className="premeeting-section">
+        <h4 className="section-title"><StickyNote size={16} /> Anotações do cliente</h4>
+        <textarea
+          className="premeeting-notes"
+          value={notes}
+          onChange={e => handleNotesChange(e.target.value)}
+          rows={4}
+          placeholder="Nome do cliente, contexto, objetivo da reunião, pontos de atenção..."
+        />
+      </div>
+
+      {/* Objeções mais comuns */}
       <div className="premeeting-section">
         <div className="section-toggle" onClick={() => setShowObjections(!showObjections)}>
           <h4 className="section-title"><Shield size={16} /> Objeções Frequentes</h4>
@@ -165,9 +105,15 @@ export default function PreMeeting() {
                 </div>
                 {expandedObj === obj.id && (
                   <div className="mini-obj-responses">
-                    {obj.responses.map((r, i) => (
-                      <p key={i}><strong>{i + 1}.</strong> {r}</p>
-                    ))}
+                    {obj.quickResponses && obj.quickResponses.length > 0 ? (
+                      obj.quickResponses.map((r, i) => (
+                        <p key={i}><strong>{i + 1}.</strong> {r}</p>
+                      ))
+                    ) : (
+                      obj.responses.map((r, i) => (
+                        <p key={i}><strong>{i + 1}.</strong> {r}</p>
+                      ))
+                    )}
                   </div>
                 )}
               </div>
@@ -176,7 +122,7 @@ export default function PreMeeting() {
         )}
       </div>
 
-      {/* Quick Techniques */}
+      {/* Técnicas */}
       <div className="premeeting-section">
         <div className="section-toggle" onClick={() => setShowTechniques(!showTechniques)}>
           <h4 className="section-title"><BookOpen size={16} /> Técnicas Rápidas</h4>

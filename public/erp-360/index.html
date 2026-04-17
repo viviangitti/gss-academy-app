@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sistema de Gestão — GSS Academy | Protótipo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Inter', sans-serif; }
+  body { background: #0a0a0a; color: #e5e5e5; }
+  .glass {
+    background: rgba(20, 20, 20, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .gradient-gold {
+    background: linear-gradient(135deg, #D4AF37 0%, #F4E4A6 50%, #D4AF37 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, #D4AF37 0%, #B8941F 100%);
+  }
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-4px);
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 20px 40px rgba(212, 175, 55, 0.1);
+  }
+  .kanban-card {
+    cursor: grab;
+    transition: all 0.2s ease;
+  }
+  .kanban-card:hover {
+    transform: scale(1.02);
+  }
+  .nav-item.active {
+    background: linear-gradient(90deg, rgba(212,175,55,0.15) 0%, transparent 100%);
+    border-left: 3px solid #D4AF37;
+  }
+  .nav-item.active svg, .nav-item.active span {
+    color: #D4AF37;
+  }
+  .pulse-dot {
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hot-badge { background: linear-gradient(90deg, #ef4444, #f97316); }
+  .warm-badge { background: linear-gradient(90deg, #f59e0b, #eab308); }
+  .cold-badge { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0a0a; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+  /* ============ MOBILE ============ */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 40;
+  }
+  .sidebar-overlay.open { display: block; }
+
+  @media (max-width: 1023px) {
+    #sidebar {
+      position: fixed !important;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 280px !important;
+      z-index: 50;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+    }
+    #sidebar.open { transform: translateX(0); }
+    .mobile-only { display: flex !important; }
+    .desktop-only { display: none !important; }
+  }
+  @media (min-width: 1024px) {
+    .mobile-only { display: none !important; }
+  }
+
+  /* Kanban cards com largura mínima pra scroll horizontal */
+  @media (max-width: 767px) {
+    .kanban-col { min-width: 260px; }
+  }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ============ LOGIN SPLASH ============ -->
+<div id="splash" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
+  <div class="text-center">
+    <div class="mb-6">
+      <div class="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-gold mb-4">
+        <span class="text-4xl font-bold text-black">GSS</span>
+      </div>
+    </div>
+    <h1 class="text-4xl font-bold gradient-gold mb-2">Sistema de Gestão</h1>
+    <p class="text-neutral-500 tracking-[0.3em] text-xs uppercase">GSS Academy</p>
+    <div class="mt-8 flex justify-center gap-1">
+      <div class="w-2 h-2 rounded-full bg-yellow-600 pulse-dot"></div>
+      <div class="w-2 h-2 rounded-full bg-yellow-600 pulse-dot" style="animation-delay: 0.3s"></div>
+      <div class="w-2 h-2 rounded-full bg-yellow-600 pulse-dot" style="animation-delay: 0.6s"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP SHELL ============ -->
+<div class="flex h-screen overflow-hidden" id="app" style="display:none">
+
+  <!-- Mobile overlay -->
+  <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="w-64 glass flex-shrink-0 flex flex-col border-r border-neutral-800">
+    <div class="p-6 border-b border-neutral-800">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-gradient-gold flex items-center justify-center">
+          <span class="text-black font-bold text-sm">GSS</span>
+        </div>
+        <div class="min-w-0">
+          <div class="font-bold text-white text-sm leading-tight">Sistema de Gestão</div>
+          <div class="text-xs text-neutral-500">GSS Academy</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="flex-1 py-4">
+      <div class="px-4 mb-2 text-xs text-neutral-600 uppercase tracking-wider">Principal</div>
+      <button onclick="navigate('dashboard')" class="nav-item active w-full flex items-center gap-3 px-6 py-3 text-neutral-300 hover:bg-neutral-900">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <span>Dashboard</span>
+      </button>
+
+      <div class="px-4 mt-6 mb-2 text-xs text-neutral-600 uppercase tracking-wider">Módulos</div>
+      <button onclick="navigate('crm')" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-neutral-300 hover:bg-neutral-900">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <span>CRM & Vendas</span>
+        <span class="ml-auto text-xs bg-yellow-600/20 text-yellow-500 px-2 py-0.5 rounded">142</span>
+      </button>
+      <button onclick="navigate('educacional')" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-neutral-300 hover:bg-neutral-900">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+        <span>Educacional</span>
+      </button>
+      <button onclick="navigate('financeiro')" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-neutral-300 hover:bg-neutral-900">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Financeiro</span>
+      </button>
+      <button onclick="navigate('bi')" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-neutral-300 hover:bg-neutral-900">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span>BI & Analytics</span>
+      </button>
+      <button onclick="navigate('inteligencia')" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-neutral-300 hover:bg-neutral-900">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        <span>Inteligência IA</span>
+        <span class="ml-auto text-[9px] bg-gradient-gold text-black px-1.5 py-0.5 rounded font-bold">NEW</span>
+      </button>
+    </nav>
+
+    <div class="p-4 border-t border-neutral-800">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-gold flex items-center justify-center text-black font-bold">S</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium text-white truncate">Silene</div>
+          <div class="text-xs text-neutral-500">Diretoria</div>
+        </div>
+        <svg class="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto">
+
+    <!-- Topbar -->
+    <header class="glass sticky top-0 z-40 border-b border-neutral-800 px-4 md:px-8 py-3 md:py-4 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2 md:gap-4 min-w-0">
+        <!-- Hamburger (mobile only) -->
+        <button onclick="toggleSidebar(true)" class="lg:hidden p-2 -ml-2 hover:bg-neutral-900 rounded-lg flex-shrink-0">
+          <svg class="w-6 h-6 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <h1 id="pageTitle" class="text-base md:text-xl font-semibold text-white truncate">Dashboard Executivo</h1>
+        <span class="hidden sm:flex text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full items-center gap-1 flex-shrink-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot"></span>
+          Tempo real
+        </span>
+      </div>
+      <div class="flex items-center gap-2 md:gap-4 flex-shrink-0">
+        <div class="relative hidden md:block">
+          <input type="text" placeholder="Buscar leads, alunos, eventos..." class="bg-neutral-900 border border-neutral-800 rounded-lg pl-10 pr-4 py-2 text-sm w-64 lg:w-80 focus:outline-none focus:border-yellow-600"/>
+          <svg class="w-4 h-4 absolute left-3 top-3 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+        <button class="md:hidden p-2 hover:bg-neutral-900 rounded-lg">
+          <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </button>
+        <button class="relative p-2 hover:bg-neutral-900 rounded-lg">
+          <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ========== DASHBOARD ========== -->
+    <div id="page-dashboard" class="page active p-4 md:p-8">
+      <div class="mb-6">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-xs bg-gradient-gold text-black px-3 py-1 rounded-full font-semibold tracking-wider">CO-FUNDADORA · GSS ACADEMY</span>
+        </div>
+        <h2 class="text-2xl md:text-4xl font-bold text-white mb-3 leading-tight">
+          Bem-vinda de volta, <span class="gradient-gold">Silene</span> ✨
+        </h2>
+        <p class="text-neutral-400 text-sm md:text-lg max-w-3xl leading-relaxed">
+          Tudo isso aqui — cada aluno, cada venda, cada sonho transformado — nasceu da sua coragem de começar.
+          <br/>
+          <span class="text-neutral-500">Hoje a GSS Academy impacta <span class="text-yellow-500 font-semibold">3.892 vidas</span>, e esse é só o começo da história que <span class="text-yellow-500 font-semibold">você</span> está construindo. 💛</span>
+        </p>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
+        <div class="glass rounded-xl p-6 card-hover">
+          <div class="flex justify-between items-start mb-4">
+            <span class="text-xs text-neutral-500 uppercase tracking-wider">Receita do Mês</span>
+            <span class="text-xs text-green-400">↑ 23%</span>
+          </div>
+          <div class="text-xl md:text-3xl font-bold text-white">R$ 847K</div>
+          <div class="mt-2 text-xs text-neutral-500">vs. R$ 689K mês anterior</div>
+        </div>
+        <div class="glass rounded-xl p-6 card-hover">
+          <div class="flex justify-between items-start mb-4">
+            <span class="text-xs text-neutral-500 uppercase tracking-wider">Leads Ativos</span>
+            <span class="text-xs text-green-400">↑ 12%</span>
+          </div>
+          <div class="text-xl md:text-3xl font-bold text-white">1.248</div>
+          <div class="mt-2 text-xs text-neutral-500">142 hot · 486 warm · 620 cold</div>
+        </div>
+        <div class="glass rounded-xl p-6 card-hover">
+          <div class="flex justify-between items-start mb-4">
+            <span class="text-xs text-neutral-500 uppercase tracking-wider">Alunos Ativos</span>
+            <span class="text-xs text-green-400">↑ 8%</span>
+          </div>
+          <div class="text-xl md:text-3xl font-bold text-white">3.892</div>
+          <div class="mt-2 text-xs text-neutral-500">NPS 82 · Churn 2.1%</div>
+        </div>
+        <div class="glass rounded-xl p-6 card-hover">
+          <div class="flex justify-between items-start mb-4">
+            <span class="text-xs text-neutral-500 uppercase tracking-wider">Taxa Conversão</span>
+            <span class="text-xs text-green-400">↑ 4pp</span>
+          </div>
+          <div class="text-xl md:text-3xl font-bold text-white">28.4%</div>
+          <div class="mt-2 text-xs text-neutral-500">Meta: 25% · LTV R$ 4.2K</div>
+        </div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+        <div class="col-span-2 glass rounded-xl p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-semibold text-white">Receita dos Últimos 12 Meses</h3>
+            <select class="bg-neutral-900 border border-neutral-800 rounded px-3 py-1 text-xs">
+              <option>Últimos 12 meses</option>
+              <option>Últimos 6 meses</option>
+            </select>
+          </div>
+          <div style="position: relative; height: 260px;"><canvas id="revenueChart"></canvas></div>
+        </div>
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold text-white mb-4">Mix de Produtos</h3>
+          <div style="position: relative; height: 260px;"><canvas id="productChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Activity & Pipeline -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold text-white mb-4">Funil de Vendas</h3>
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">Leads Captados</span><span class="text-white font-medium">1.248</span></div>
+              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:100%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">Qualificados</span><span class="text-white font-medium">628</span></div>
+              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:50%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">Proposta Enviada</span><span class="text-white font-medium">412</span></div>
+              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:33%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">Negociação</span><span class="text-white font-medium">234</span></div>
+              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:18%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">Fechados</span><span class="text-green-400 font-medium">178</span></div>
+              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-green-500 rounded" style="width:14%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold text-white mb-4">Atividades Recentes</h3>
+          <div class="space-y-4 text-sm">
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">💰</div>
+              <div class="flex-1">
+                <div class="text-white">Rafael Souza fechou R$ 12.500</div>
+                <div class="text-xs text-neutral-500">Mentoria Premium · há 12 min</div>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">👤</div>
+              <div class="flex-1">
+                <div class="text-white">23 novos leads capturados (Meta Ads)</div>
+                <div class="text-xs text-neutral-500">Campanha Black Weekend · há 1h</div>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-yellow-500/20 flex items-center justify-center flex-shrink-0">🎓</div>
+              <div class="flex-1">
+                <div class="text-white">Evento "Vendas de Alta Performance"</div>
+                <div class="text-xs text-neutral-500">186 inscritos · há 3h</div>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">🧠</div>
+              <div class="flex-1">
+                <div class="text-white">IA identificou 47 leads com alta probabilidade</div>
+                <div class="text-xs text-neutral-500">Score &gt; 85 · há 5h</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== CRM ========== -->
+    <div id="page-crm" class="page p-4 md:p-8">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">Pipeline de Vendas</h2>
+          <p class="text-neutral-500">Arraste os cards entre colunas · 142 oportunidades · R$ 1.8M em pipe</p>
+        </div>
+        <button class="bg-gradient-gold text-black font-semibold px-4 py-2 rounded-lg text-sm">+ Novo Lead</button>
+      </div>
+
+      <div class="flex md:grid md:grid-cols-5 gap-3 md:gap-4 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+        <!-- Column: Novos Leads -->
+        <div class="kanban-col bg-neutral-900/50 rounded-lg p-3 flex-shrink-0">
+          <div class="flex justify-between items-center mb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-blue-400"></div>
+              <span class="font-semibold text-white text-sm">Novos Leads</span>
+            </div>
+            <span class="text-xs text-neutral-500">48</span>
+          </div>
+          <div class="text-xs text-neutral-500 mb-3">R$ 420K</div>
+          <div class="space-y-2">
+            <div class="kanban-card glass rounded-lg p-3">
+              <div class="flex justify-between items-start mb-2">
+                <span class="text-[10px] cold-badge px-2 py-0.5 rounded text-white">COLD</span>
+                <span class="text-xs text-neutral-500">há 2h</span>
+              </div>
+              <div class="font-medium text-white text-sm mb-1">Marina Costa</div>
+              <div class="text-xs text-neutral-500 mb-2">CEO · Tech Startup</div>
+              <div class="text-sm font-bold text-yellow-500">R$ 8.500</div>
+            </div>
+            <div class="kanban-card glass rounded-lg p-3">
+              <div class="flex justify-between items-start mb-2">
+                <span class="text-[10px] cold-badge px-2 py-0.5 rounded text-white">COLD</span>
+                <span class="text-xs text-neutral-500">há 4h</span>
+              </div>
+              <div class="font-medium text-white text-sm mb-1">Bruno Oliveira</div>
+              <div class="text-xs text-neutral-500 mb-2">Gerente Comercial</div>
+              <div class="text-sm font-bold text-yellow-500">R$ 4.200</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column: Qualificado -->
+        <div class="kanban-col bg-neutral-900/50 rounded-lg p-3 flex-shrink-0">
+          <div class="flex justify-between items-center mb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
+              <span class="font-semibold text-white text-sm">Qualificado</span>
+            </div>
+            <span class="text-xs text-neutral-500">36</span>
+          </div>
+          <div class="text-xs text-neutral-500 mb-3">R$ 380K</div>
+          <div class="space-y-2">
+            <div class="kanban-card glass rounded-lg p-3">
+              <div class="flex justify-between items-start mb-2">
+                <span class="text-[10px] warm-badge px-2 py-0.5 rounded text-white">WARM</span>
+                <span class="text-xs text-neutral-500">há 1d</span>
+              </div>
+              <div class="font-medium text-white text-sm mb-1">Ana Beatriz Lima</div>
+              <div class="text-xs text-neutral-500 mb-2">Diretora de Vendas</div>
+              <div class="text-sm font-bold text-yellow-500">R$ 15.000</div>
+            </div>
+            <div class="kanban-card glass rounded-lg p-3">
+              <div class="flex justify-between items-start mb-2">
+                <span class="text-[10px] warm-badge px-2 py-0.5 rounded text-white">WARM</span>
+                <span class="text-xs text-neutral-500">há 2d</span>
+              </div>
+              <div class="font-medium text-white text-sm mb-1">Pedro Almeida</div>
+              <div class="text-xs text-neutral-500 mb-2">Empresário</div>
+              <div class="text-sm font-bold text-yellow-500">R$ 9.800</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column: Proposta -->
+        <div class="kanban-col bg-neutral-900/50 rounded-lg p-3 flex-shrink-0">
+          <div class="flex justify-between items-center mb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
+              <span class="font-semibold text-white text-sm">Proposta Enviada</span>
+            </div>
+            <span class="text-xs text-neutral-500">28</span>
+          </div>
+          <div class="text-xs text-neutral-500 mb-3">R$ 512K</div>
+          <div class="space-y-2">
+            <div class="kanban-card glass rounded-lg p-3 border-yellow-600/30">
+              <div class="flex justify-between items-start mb-2">
+                <span class="text-[10px] hot-badge px-2 py-0.5 rounded text-white">🔥 HOT</span>
+                <span class="text-xs text-neutral-500">há 3h</span>
+              </div>
+              <div class="font-medium text-white text-sm mb-1">Carlos Mendes</div>
+              <div class="text-xs text-neutral-500 mb-2">CEO · Grupo Mendes</div>
+              <div class="text-sm font-bold text-yellow-500">R$ 28.000</div>
+              <div class="mt-2 flex gap-1">
+                <div class="text-[10px] bg-neutral-800 text-neutral-400 px-2 py-0.5 rounded">Mentoria</div>
+                <div class="text-[10px] bg-neutral-800 text-neutral-400 px-2 py-0.5 rounded">Premium</div>
+              </div>
+            </div>
+            <div class="kanban-card glass rounded-lg p-3">
+              <div class="flex justify-between items-start mb-2">
+                <span class="text-[10px] warm-badge px-2 py-0.5 rounded text-white">WARM</span>
+                <span class="text-xs text-neutral-500">há 1d</span>
+              </div>
+              <div class="font-medium text-white text-sm mb-1">Juliana Rocha</div>
+              <div class="text-xs text-neutral-500 mb-2">Coach Executiva</div>
+              <div class="text-sm font-bold text-yellow-500">R$ 12.500</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column: Negociação -->
+        <div class="kanban-col bg-neutral-900/50 rounded-lg p-3 flex-shrink-0">
+          <div class="flex justify-between items-center mb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-orange-400"></div>
+              <span class="font-semibold text-white text-sm">Negociação</span>
+            </div>
+            <span class="text-xs text-neutral-500">18</span>
+          </div>
+          <div class="text-xs text-neutral-500 mb-3">R$ 298K</div>
+          <div class="space-y-2">
+            <div class="kanban-card glass rounded-lg p-3 border-red-500/30">
+              <div class="flex justify-between items-start mb-2">
+                <span class="text-[10px] hot-badge px-2 py-0.5 rounded text-white">🔥 HOT</span>
+                <span class="text-xs text-neutral-500">há 2h</span>
+              </div>
+              <div class="font-medium text-white text-sm mb-1">Rafael Souza</div>
+              <div class="text-xs text-neutral-500 mb-2">Dir. Comercial</div>
+              <div class="text-sm font-bold text-yellow-500">R$ 22.000</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column: Fechado -->
+        <div class="kanban-col bg-neutral-900/50 rounded-lg p-3 flex-shrink-0">
+          <div class="flex justify-between items-center mb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-green-400"></div>
+              <span class="font-semibold text-white text-sm">Ganhos</span>
+            </div>
+            <span class="text-xs text-green-400">12</span>
+          </div>
+          <div class="text-xs text-green-400 mb-3">R$ 189K ✓</div>
+          <div class="space-y-2">
+            <div class="kanban-card glass rounded-lg p-3 border-green-500/30 bg-green-500/5">
+              <div class="flex justify-between items-start mb-2">
+                <span class="text-[10px] bg-green-500 px-2 py-0.5 rounded text-white">✓ GANHO</span>
+                <span class="text-xs text-neutral-500">hoje</span>
+              </div>
+              <div class="font-medium text-white text-sm mb-1">Fernanda Castro</div>
+              <div class="text-xs text-neutral-500 mb-2">Empreendedora</div>
+              <div class="text-sm font-bold text-green-400">R$ 18.500</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== EDUCACIONAL ========== -->
+    <div id="page-educacional" class="page p-4 md:p-8">
+      <div class="mb-6">
+        <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">Gestão Educacional</h2>
+        <p class="text-neutral-500">3.892 alunos ativos · 12 turmas em andamento · 8 eventos agendados</p>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+        <div class="glass rounded-xl p-5 card-hover">
+          <div class="text-xs text-neutral-500 uppercase mb-2">Alunos Ativos</div>
+          <div class="text-xl md:text-2xl font-bold text-white">3.892</div>
+          <div class="text-xs text-green-400 mt-1">+412 este mês</div>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover">
+          <div class="text-xs text-neutral-500 uppercase mb-2">Taxa Conclusão</div>
+          <div class="text-xl md:text-2xl font-bold text-white">87%</div>
+          <div class="text-xs text-green-400 mt-1">Acima do benchmark</div>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover">
+          <div class="text-xs text-neutral-500 uppercase mb-2">NPS</div>
+          <div class="text-xl md:text-2xl font-bold text-white">82</div>
+          <div class="text-xs text-green-400 mt-1">Excelência</div>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover">
+          <div class="text-xs text-neutral-500 uppercase mb-2">Churn</div>
+          <div class="text-xl md:text-2xl font-bold text-white">2.1%</div>
+          <div class="text-xs text-green-400 mt-1">-0.8pp vs mês anterior</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold text-white mb-4">Próximos Eventos</h3>
+          <div class="space-y-3">
+            <div class="flex gap-4 p-3 bg-neutral-900/50 rounded-lg">
+              <div class="w-14 h-14 rounded-lg bg-gradient-gold flex flex-col items-center justify-center text-black">
+                <div class="text-xs font-semibold">ABR</div>
+                <div class="text-lg font-bold leading-none">22</div>
+              </div>
+              <div class="flex-1">
+                <div class="font-medium text-white">Vendas de Alta Performance</div>
+                <div class="text-xs text-neutral-500 mt-1">Presencial · São Paulo · 19h</div>
+                <div class="text-xs text-yellow-500 mt-1">186 inscritos / 200 vagas</div>
+              </div>
+            </div>
+            <div class="flex gap-4 p-3 bg-neutral-900/50 rounded-lg">
+              <div class="w-14 h-14 rounded-lg bg-neutral-800 flex flex-col items-center justify-center text-neutral-400">
+                <div class="text-xs font-semibold">ABR</div>
+                <div class="text-lg font-bold leading-none">28</div>
+              </div>
+              <div class="flex-1">
+                <div class="font-medium text-white">Mentoria Premium Grupo B</div>
+                <div class="text-xs text-neutral-500 mt-1">Online · Zoom · 20h</div>
+                <div class="text-xs text-neutral-400 mt-1">24 participantes confirmados</div>
+              </div>
+            </div>
+            <div class="flex gap-4 p-3 bg-neutral-900/50 rounded-lg">
+              <div class="w-14 h-14 rounded-lg bg-neutral-800 flex flex-col items-center justify-center text-neutral-400">
+                <div class="text-xs font-semibold">MAI</div>
+                <div class="text-lg font-bold leading-none">05</div>
+              </div>
+              <div class="flex-1">
+                <div class="font-medium text-white">Imersão Liderança 360</div>
+                <div class="text-xs text-neutral-500 mt-1">Presencial · 3 dias</div>
+                <div class="text-xs text-red-400 mt-1">47 inscritos / 50 vagas</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold text-white mb-4">Engajamento por Turma</h3>
+          <div style="position: relative; height: 260px;"><canvas id="engagementChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== FINANCEIRO ========== -->
+    <div id="page-financeiro" class="page p-4 md:p-8">
+      <div class="mb-6">
+        <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">Gestão Financeira</h2>
+        <p class="text-neutral-500">DRE automático · Fluxo de caixa em tempo real · ROI por campanha</p>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+        <div class="glass rounded-xl p-5">
+          <div class="text-xs text-neutral-500 uppercase mb-2">Receita (MTD)</div>
+          <div class="text-2xl font-bold text-green-400">R$ 847K</div>
+          <div class="text-xs text-neutral-500 mt-1">Meta: R$ 900K (94%)</div>
+        </div>
+        <div class="glass rounded-xl p-5">
+          <div class="text-xs text-neutral-500 uppercase mb-2">Despesas (MTD)</div>
+          <div class="text-2xl font-bold text-red-400">R$ 312K</div>
+          <div class="text-xs text-neutral-500 mt-1">36.8% da receita</div>
+        </div>
+        <div class="glass rounded-xl p-5">
+          <div class="text-xs text-neutral-500 uppercase mb-2">Lucro Líquido</div>
+          <div class="text-2xl font-bold text-yellow-500">R$ 535K</div>
+          <div class="text-xs text-green-400 mt-1">Margem 63.2%</div>
+        </div>
+        <div class="glass rounded-xl p-5">
+          <div class="text-xs text-neutral-500 uppercase mb-2">Caixa Atual</div>
+          <div class="text-xl md:text-2xl font-bold text-white">R$ 2.1M</div>
+          <div class="text-xs text-neutral-500 mt-1">Runway: 14 meses</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="col-span-2 glass rounded-xl p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-semibold text-white">Fluxo de Caixa (últimos 6 meses)</h3>
+          </div>
+          <div style="position: relative; height: 280px;"><canvas id="cashflowChart"></canvas></div>
+        </div>
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold text-white mb-4">ROI por Campanha</h3>
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-neutral-300">Meta Ads</span>
+                <span class="text-green-400 font-bold">4.8x</span>
+              </div>
+              <div class="h-1.5 bg-neutral-900 rounded"><div class="h-1.5 bg-green-500 rounded" style="width:96%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-neutral-300">Google Ads</span>
+                <span class="text-green-400 font-bold">3.2x</span>
+              </div>
+              <div class="h-1.5 bg-neutral-900 rounded"><div class="h-1.5 bg-green-500 rounded" style="width:64%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-neutral-300">Indicações</span>
+                <span class="text-yellow-500 font-bold">8.7x</span>
+              </div>
+              <div class="h-1.5 bg-neutral-900 rounded"><div class="h-1.5 bg-gradient-gold rounded" style="width:100%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-neutral-300">Orgânico</span>
+                <span class="text-green-400 font-bold">∞</span>
+              </div>
+              <div class="h-1.5 bg-neutral-900 rounded"><div class="h-1.5 bg-green-500 rounded" style="width:85%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-xl p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-semibold text-white">DRE — Abril 2026</h3>
+          <button class="text-xs bg-neutral-900 border border-neutral-800 rounded px-3 py-1.5 text-neutral-400">Exportar PDF</button>
+        </div>
+        <table class="w-full text-sm">
+          <tr class="border-b border-neutral-800">
+            <td class="py-3 text-neutral-400">Receita Bruta</td>
+            <td class="py-3 text-right text-white font-medium">R$ 847.320</td>
+          </tr>
+          <tr class="border-b border-neutral-800">
+            <td class="py-3 text-neutral-400 pl-4">(-) Impostos</td>
+            <td class="py-3 text-right text-red-400">R$ 76.259</td>
+          </tr>
+          <tr class="border-b border-neutral-800">
+            <td class="py-3 text-neutral-400 pl-4">(-) Comissões</td>
+            <td class="py-3 text-right text-red-400">R$ 42.366</td>
+          </tr>
+          <tr class="border-b border-neutral-800 bg-neutral-900/50">
+            <td class="py-3 text-white font-semibold">Receita Líquida</td>
+            <td class="py-3 text-right text-white font-semibold">R$ 728.695</td>
+          </tr>
+          <tr class="border-b border-neutral-800">
+            <td class="py-3 text-neutral-400 pl-4">(-) Marketing</td>
+            <td class="py-3 text-right text-red-400">R$ 124.500</td>
+          </tr>
+          <tr class="border-b border-neutral-800">
+            <td class="py-3 text-neutral-400 pl-4">(-) Pessoal</td>
+            <td class="py-3 text-right text-red-400">R$ 189.200</td>
+          </tr>
+          <tr class="border-b border-neutral-800">
+            <td class="py-3 text-neutral-400 pl-4">(-) Operacional</td>
+            <td class="py-3 text-right text-red-400">R$ 68.100</td>
+          </tr>
+          <tr class="bg-yellow-600/10">
+            <td class="py-3 text-yellow-500 font-bold">= LUCRO LÍQUIDO</td>
+            <td class="py-3 text-right text-yellow-500 font-bold text-lg">R$ 346.895</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== BI ========== -->
+    <div id="page-bi" class="page p-4 md:p-8">
+      <div class="mb-6">
+        <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">Business Intelligence</h2>
+        <p class="text-neutral-500">KPIs em tempo real · Cruzamento multi-módulo · Decisões baseadas em dados</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="glass rounded-xl p-5">
+          <div class="text-xs text-neutral-500 uppercase mb-2">CAC</div>
+          <div class="text-xl md:text-2xl font-bold text-white">R$ 187</div>
+          <div class="text-xs text-green-400 mt-1">↓ 12% vs mês anterior</div>
+        </div>
+        <div class="glass rounded-xl p-5">
+          <div class="text-xs text-neutral-500 uppercase mb-2">LTV</div>
+          <div class="text-xl md:text-2xl font-bold text-white">R$ 4.248</div>
+          <div class="text-xs text-green-400 mt-1">Ratio LTV/CAC: 22.7x</div>
+        </div>
+        <div class="glass rounded-xl p-5">
+          <div class="text-xs text-neutral-500 uppercase mb-2">MRR</div>
+          <div class="text-xl md:text-2xl font-bold text-white">R$ 284K</div>
+          <div class="text-xs text-green-400 mt-1">↑ 18% MoM</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold text-white mb-4">Conversão por Canal</h3>
+          <div style="position: relative; height: 280px;"><canvas id="channelChart"></canvas></div>
+        </div>
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold text-white mb-4">Cohort de Retenção</h3>
+          <div class="grid grid-cols-7 gap-1 text-xs">
+            <div></div>
+            <div class="text-center text-neutral-500">M1</div>
+            <div class="text-center text-neutral-500">M2</div>
+            <div class="text-center text-neutral-500">M3</div>
+            <div class="text-center text-neutral-500">M4</div>
+            <div class="text-center text-neutral-500">M5</div>
+            <div class="text-center text-neutral-500">M6</div>
+
+            <div class="text-neutral-400">Jan</div>
+            <div class="bg-green-600 text-white text-center py-1 rounded">100</div>
+            <div class="bg-green-500 text-white text-center py-1 rounded">94</div>
+            <div class="bg-green-500 text-white text-center py-1 rounded">89</div>
+            <div class="bg-green-400 text-black text-center py-1 rounded">85</div>
+            <div class="bg-green-400 text-black text-center py-1 rounded">82</div>
+            <div class="bg-yellow-500 text-black text-center py-1 rounded">78</div>
+
+            <div class="text-neutral-400">Fev</div>
+            <div class="bg-green-600 text-white text-center py-1 rounded">100</div>
+            <div class="bg-green-500 text-white text-center py-1 rounded">96</div>
+            <div class="bg-green-500 text-white text-center py-1 rounded">91</div>
+            <div class="bg-green-400 text-black text-center py-1 rounded">87</div>
+            <div class="bg-green-400 text-black text-center py-1 rounded">84</div>
+            <div class="bg-neutral-800 text-neutral-500 text-center py-1 rounded">-</div>
+
+            <div class="text-neutral-400">Mar</div>
+            <div class="bg-green-600 text-white text-center py-1 rounded">100</div>
+            <div class="bg-green-500 text-white text-center py-1 rounded">97</div>
+            <div class="bg-green-500 text-white text-center py-1 rounded">93</div>
+            <div class="bg-green-400 text-black text-center py-1 rounded">89</div>
+            <div class="bg-neutral-800 text-neutral-500 text-center py-1 rounded">-</div>
+            <div class="bg-neutral-800 text-neutral-500 text-center py-1 rounded">-</div>
+
+            <div class="text-neutral-400">Abr</div>
+            <div class="bg-green-600 text-white text-center py-1 rounded">100</div>
+            <div class="bg-green-500 text-white text-center py-1 rounded">98</div>
+            <div class="bg-neutral-800 text-neutral-500 text-center py-1 rounded">-</div>
+            <div class="bg-neutral-800 text-neutral-500 text-center py-1 rounded">-</div>
+            <div class="bg-neutral-800 text-neutral-500 text-center py-1 rounded">-</div>
+            <div class="bg-neutral-800 text-neutral-500 text-center py-1 rounded">-</div>
+          </div>
+          <div class="text-xs text-neutral-500 mt-4">% de alunos retidos após N meses. Cohort Abr performando 2pp acima.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== INTELIGÊNCIA IA ========== -->
+    <div id="page-inteligencia" class="page p-4 md:p-8">
+      <div class="mb-6">
+        <div class="flex items-center gap-3 mb-1">
+          <h2 class="text-3xl font-bold text-white">Inteligência de Mercado</h2>
+          <span class="text-[10px] bg-gradient-gold text-black px-2 py-1 rounded font-bold">IA POWERED</span>
+        </div>
+        <p class="text-neutral-500">Insights preditivos · Oportunidades identificadas · Recomendações acionáveis</p>
+      </div>
+
+      <!-- AI Insights Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="glass rounded-xl p-6 border-l-4 border-yellow-500">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-2xl">💡</span>
+            <span class="text-xs text-yellow-500 uppercase tracking-wider font-semibold">Oportunidade</span>
+          </div>
+          <div class="text-white font-medium mb-2">47 alunos prontos para upsell</div>
+          <div class="text-sm text-neutral-400 mb-3">Concluíram o curso básico com nota &gt; 85 e têm perfil para o Premium.</div>
+          <div class="text-xs text-yellow-500">Potencial: R$ 672K</div>
+        </div>
+        <div class="glass rounded-xl p-6 border-l-4 border-red-500">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-2xl">⚠️</span>
+            <span class="text-xs text-red-400 uppercase tracking-wider font-semibold">Risco de Churn</span>
+          </div>
+          <div class="text-white font-medium mb-2">12 alunos em risco</div>
+          <div class="text-sm text-neutral-400 mb-3">Não acessam a plataforma há 14+ dias. Score preditivo de churn &gt; 75%.</div>
+          <div class="text-xs text-red-400">Ação: Contato proativo</div>
+        </div>
+        <div class="glass rounded-xl p-6 border-l-4 border-blue-500">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-2xl">🎯</span>
+            <span class="text-xs text-blue-400 uppercase tracking-wider font-semibold">Tendência</span>
+          </div>
+          <div class="text-white font-medium mb-2">Demanda por IA em vendas</div>
+          <div class="text-sm text-neutral-400 mb-3">+340% nas buscas por "IA + vendas" no último trimestre. Criar produto?</div>
+          <div class="text-xs text-blue-400">Sugestão: Curso novo</div>
+        </div>
+      </div>
+
+      <!-- Competitor Intelligence -->
+      <div class="glass rounded-xl p-6 mb-6">
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-gradient-gold flex items-center justify-center">
+              <span class="text-black text-sm">🎯</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-white">Monitor de Concorrentes</h3>
+              <p class="text-xs text-neutral-500">Atualizado há 2h · Scraping automático + curadoria IA</p>
+            </div>
+          </div>
+          <button class="text-xs bg-neutral-900 border border-neutral-800 rounded px-3 py-1.5 text-neutral-400 hover:border-yellow-600">+ Adicionar concorrente</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+          <!-- Caio Carneiro -->
+          <div class="bg-neutral-900/50 rounded-xl p-5 border border-neutral-800">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center text-white font-bold">CC</div>
+              <div>
+                <div class="font-semibold text-white">Caio Carneiro</div>
+                <div class="text-xs text-neutral-500">Seja Foda · Sonho Grande</div>
+              </div>
+              <span class="ml-auto text-[10px] bg-red-500/20 text-red-400 px-2 py-1 rounded">ATIVO</span>
+            </div>
+            <div class="space-y-2 mb-3">
+              <div class="text-xs text-yellow-500 font-semibold uppercase tracking-wider">🚀 Lançamento recente</div>
+              <div class="text-sm text-white">Imersão "Seja Foda 2026"</div>
+              <div class="text-xs text-neutral-400">Presencial · 3 dias · São Paulo</div>
+              <div class="text-sm font-bold text-yellow-500">R$ 4.997 - R$ 12.997</div>
+            </div>
+            <div class="border-t border-neutral-800 pt-3 space-y-1 text-xs">
+              <div class="flex justify-between"><span class="text-neutral-500">Audiência IG:</span><span class="text-white">3.2M</span></div>
+              <div class="flex justify-between"><span class="text-neutral-500">Engajamento:</span><span class="text-green-400">4.8%</span></div>
+              <div class="flex justify-between"><span class="text-neutral-500">Última campanha:</span><span class="text-white">Meta Ads</span></div>
+            </div>
+            <div class="mt-3 p-2 bg-yellow-500/10 rounded text-xs text-yellow-400">
+              💡 Oportunidade: apela pro público jovem empreendedor — diferenciar via mentoria 1:1 personalizada
+            </div>
+          </div>
+
+          <!-- Flávio Augusto -->
+          <div class="bg-neutral-900/50 rounded-xl p-5 border border-neutral-800">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white font-bold">FA</div>
+              <div>
+                <div class="font-semibold text-white">Flávio Augusto</div>
+                <div class="text-xs text-neutral-500">Geração de Valor · Wise</div>
+              </div>
+              <span class="ml-auto text-[10px] bg-red-500/20 text-red-400 px-2 py-1 rounded">ATIVO</span>
+            </div>
+            <div class="space-y-2 mb-3">
+              <div class="text-xs text-yellow-500 font-semibold uppercase tracking-wider">🚀 Lançamento recente</div>
+              <div class="text-sm text-white">Mentoria Geração de Valor</div>
+              <div class="text-xs text-neutral-400">Online · 12 meses · Turmas fechadas</div>
+              <div class="text-sm font-bold text-yellow-500">R$ 9.900 - R$ 24.000</div>
+            </div>
+            <div class="border-t border-neutral-800 pt-3 space-y-1 text-xs">
+              <div class="flex justify-between"><span class="text-neutral-500">Audiência IG:</span><span class="text-white">4.1M</span></div>
+              <div class="flex justify-between"><span class="text-neutral-500">Engajamento:</span><span class="text-green-400">3.6%</span></div>
+              <div class="flex justify-between"><span class="text-neutral-500">Foco atual:</span><span class="text-white">Empresários</span></div>
+            </div>
+            <div class="mt-3 p-2 bg-blue-500/10 rounded text-xs text-blue-400">
+              💡 Oportunidade: posicionamento premium/elite — seu ticket médio ainda é acessível
+            </div>
+          </div>
+
+          <!-- G4 Educação -->
+          <div class="bg-neutral-900/50 rounded-xl p-5 border border-neutral-800">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold">G4</div>
+              <div>
+                <div class="font-semibold text-white">G4 Educação</div>
+                <div class="text-xs text-neutral-500">Tallis Gomes · Alfredo</div>
+              </div>
+              <span class="ml-auto text-[10px] bg-red-500/20 text-red-400 px-2 py-1 rounded">ATIVO</span>
+            </div>
+            <div class="space-y-2 mb-3">
+              <div class="text-xs text-yellow-500 font-semibold uppercase tracking-wider">🚀 Lançamento recente</div>
+              <div class="text-sm text-white">G4 Skills · Programa Vendas B2B</div>
+              <div class="text-xs text-neutral-400">Híbrido · 6 meses · In-company</div>
+              <div class="text-sm font-bold text-yellow-500">R$ 15.000 - R$ 80.000</div>
+            </div>
+            <div class="border-t border-neutral-800 pt-3 space-y-1 text-xs">
+              <div class="flex justify-between"><span class="text-neutral-500">Audiência IG:</span><span class="text-white">890K</span></div>
+              <div class="flex justify-between"><span class="text-neutral-500">Engajamento:</span><span class="text-green-400">5.2%</span></div>
+              <div class="flex justify-between"><span class="text-neutral-500">Foco atual:</span><span class="text-white">Corporativo</span></div>
+            </div>
+            <div class="mt-3 p-2 bg-purple-500/10 rounded text-xs text-purple-400">
+              💡 Oportunidade: dominam B2B — seu espaço é o B2C de alta performance
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Tendências agregadas -->
+        <div class="border-t border-neutral-800 pt-5">
+          <h4 class="font-semibold text-white mb-3 flex items-center gap-2">
+            <span>📊</span> Tendências de mercado detectadas nos últimos 30 dias
+          </h4>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex gap-3 p-3 bg-neutral-900/50 rounded-lg">
+              <div class="text-2xl">🎪</div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-white">Imersões presenciais estão em alta</div>
+                <div class="text-xs text-neutral-400 mt-1">3 dos 4 grandes players lançaram nova imersão no Q1/2026. Ticket médio: R$ 8.900.</div>
+                <div class="text-xs text-yellow-500 mt-1">Ação sugerida: acelerar a Imersão GSS Liderança 360</div>
+              </div>
+            </div>
+            <div class="flex gap-3 p-3 bg-neutral-900/50 rounded-lg">
+              <div class="text-2xl">🤖</div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-white">Narrativa "IA em vendas" dominando</div>
+                <div class="text-xs text-neutral-400 mt-1">+340% menções. Concorrentes ainda não têm produto dedicado.</div>
+                <div class="text-xs text-yellow-500 mt-1">Ação sugerida: ocupar esse espaço com a MAESTR.IA</div>
+              </div>
+            </div>
+            <div class="flex gap-3 p-3 bg-neutral-900/50 rounded-lg">
+              <div class="text-2xl">💎</div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-white">Tickets acima de R$ 15K crescendo</div>
+                <div class="text-xs text-neutral-400 mt-1">Mercado premium 1:1 cresceu 62% YoY. Margem média: 78%.</div>
+                <div class="text-xs text-yellow-500 mt-1">Ação sugerida: criar tier Mentoria Elite Silene</div>
+              </div>
+            </div>
+            <div class="flex gap-3 p-3 bg-neutral-900/50 rounded-lg">
+              <div class="text-2xl">📱</div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-white">Conteúdo vertical curto é o novo CAC baixo</div>
+                <div class="text-xs text-neutral-400 mt-1">Caio Carneiro reduziu CAC em 41% com Reels diários.</div>
+                <div class="text-xs text-yellow-500 mt-1">Ação sugerida: plano editorial de Reels diários</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Chat (Funcional - Gemini) -->
+      <div class="glass rounded-xl p-6 mb-6">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-gradient-gold flex items-center justify-center">
+            <span class="text-black text-lg">✨</span>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white">Silvia · Sua assistente pessoal de IA</h3>
+            <p class="text-xs text-neutral-500">Pergunte qualquer coisa sobre o seu negócio em tempo real</p>
+          </div>
+          <span class="ml-auto text-xs text-green-400 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot"></span>
+            Online
+          </span>
+        </div>
+
+        <!-- Sugestões de perguntas -->
+        <div id="chatSuggestions" class="flex flex-wrap gap-2 mb-4">
+          <button class="suggestion-chip text-xs bg-neutral-900 hover:bg-yellow-500/10 hover:border-yellow-600 border border-neutral-800 rounded-full px-3 py-1.5 text-neutral-300 transition">
+            Quanto faturamos este mês?
+          </button>
+          <button class="suggestion-chip text-xs bg-neutral-900 hover:bg-yellow-500/10 hover:border-yellow-600 border border-neutral-800 rounded-full px-3 py-1.5 text-neutral-300 transition">
+            Quais os leads mais quentes agora?
+          </button>
+          <button class="suggestion-chip text-xs bg-neutral-900 hover:bg-yellow-500/10 hover:border-yellow-600 border border-neutral-800 rounded-full px-3 py-1.5 text-neutral-300 transition">
+            Qual campanha tem o melhor ROI?
+          </button>
+          <button class="suggestion-chip text-xs bg-neutral-900 hover:bg-yellow-500/10 hover:border-yellow-600 border border-neutral-800 rounded-full px-3 py-1.5 text-neutral-300 transition">
+            Quantos alunos estão em risco de churn?
+          </button>
+          <button class="suggestion-chip text-xs bg-neutral-900 hover:bg-yellow-500/10 hover:border-yellow-600 border border-neutral-800 rounded-full px-3 py-1.5 text-neutral-300 transition">
+            O que o Caio Carneiro lançou?
+          </button>
+          <button class="suggestion-chip text-xs bg-neutral-900 hover:bg-yellow-500/10 hover:border-yellow-600 border border-neutral-800 rounded-full px-3 py-1.5 text-neutral-300 transition">
+            Qual o próximo evento?
+          </button>
+        </div>
+
+        <div id="chatMessages" class="space-y-4 mb-4 max-h-[480px] overflow-y-auto pr-2">
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gradient-gold flex items-center justify-center text-black text-sm flex-shrink-0">✨</div>
+            <div class="bg-neutral-900 rounded-lg rounded-tl-none p-3 text-sm max-w-2xl">
+              Oi Silene! 💛 Eu sou a <strong class="text-yellow-500">Silvia</strong>, sua assistente pessoal. Tenho acesso em tempo real a tudo que está rolando na GSS: financeiro, leads, alunos, campanhas e até o que os concorrentes estão fazendo. É só me perguntar — o que você quer saber?
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <input id="chatInput" type="text" placeholder="Pergunte qualquer coisa sobre o seu negócio..." class="flex-1 bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-yellow-600"/>
+          <button id="chatSend" class="bg-gradient-gold text-black font-semibold px-6 rounded-lg hover:opacity-90 transition">Enviar</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Sidebar mobile toggle
+  function toggleSidebar(open) {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (!sidebar || !overlay) return;
+    const shouldOpen = open === undefined ? !sidebar.classList.contains('open') : open;
+    sidebar.classList.toggle('open', shouldOpen);
+    overlay.classList.toggle('open', shouldOpen);
+    document.body.style.overflow = shouldOpen ? 'hidden' : '';
+  }
+
+  // State: which charts have been initialized
+  const initializedCharts = {};
+  const chartInitializers = {}; // filled below
+
+  // Splash → App transition
+  setTimeout(() => {
+    document.getElementById('splash').style.transition = 'opacity 0.6s';
+    document.getElementById('splash').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('splash').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      setupChartDefaults();
+      ensurePageCharts('dashboard');
+    }, 600);
+  }, 1600);
+
+  // Navigation
+  function navigate(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    event.currentTarget.classList.add('active');
+
+    const titles = {
+      dashboard: 'Dashboard Executivo',
+      crm: 'CRM & Vendas',
+      educacional: 'Gestão Educacional',
+      financeiro: 'Gestão Financeira',
+      bi: 'BI & Analytics',
+      inteligencia: 'Inteligência IA'
+    };
+    document.getElementById('pageTitle').textContent = titles[page];
+
+    // Fecha sidebar no mobile após navegar
+    if (window.innerWidth < 1024) toggleSidebar(false);
+
+    // Lazy-init charts on page visible
+    requestAnimationFrame(() => ensurePageCharts(page));
+  }
+
+  function ensurePageCharts(page) {
+    const map = {
+      dashboard: ['revenueChart', 'productChart'],
+      educacional: ['engagementChart'],
+      financeiro: ['cashflowChart'],
+      bi: ['channelChart']
+    };
+    const chartsForPage = map[page] || [];
+    chartsForPage.forEach(id => {
+      if (!initializedCharts[id] && chartInitializers[id]) {
+        chartInitializers[id]();
+        initializedCharts[id] = true;
+      }
+    });
+  }
+
+  function setupChartDefaults() {
+    Chart.defaults.color = '#737373';
+    Chart.defaults.borderColor = '#262626';
+    Chart.defaults.font.family = 'Inter';
+  }
+
+  chartInitializers.revenueChart = () => new Chart(document.getElementById('revenueChart'), {
+    type: 'line',
+    data: {
+      labels: ['Mai','Jun','Jul','Ago','Set','Out','Nov','Dez','Jan','Fev','Mar','Abr'],
+      datasets: [{
+        label: 'Receita (R$)',
+        data: [312,345,378,412,456,489,523,567,612,678,712,847],
+        borderColor: '#D4AF37',
+        backgroundColor: 'rgba(212,175,55,0.1)',
+        tension: 0.4,
+        fill: true,
+        borderWidth: 2,
+        pointRadius: 3,
+        pointBackgroundColor: '#D4AF37'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { grid: { color: '#1a1a1a' }, ticks: { callback: (v) => 'R$ ' + v + 'K' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  chartInitializers.productChart = () => new Chart(document.getElementById('productChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Mentoria', 'Cursos', 'Eventos', 'Premium'],
+      datasets: [{
+        data: [42, 28, 18, 12],
+        backgroundColor: ['#D4AF37', '#A78B2F', '#6B5A1F', '#3D3414'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } }
+      },
+      cutout: '65%'
+    }
+  });
+
+  chartInitializers.engagementChart = () => new Chart(document.getElementById('engagementChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Turma A','Turma B','Turma C','Turma D','Turma E'],
+      datasets: [{
+        label: 'Engajamento',
+        data: [92, 88, 95, 82, 89],
+        backgroundColor: '#D4AF37',
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { grid: { color: '#1a1a1a' }, max: 100 },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  chartInitializers.cashflowChart = () => new Chart(document.getElementById('cashflowChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Nov','Dez','Jan','Fev','Mar','Abr'],
+      datasets: [
+        { label: 'Receita', data: [523,567,612,678,712,847], backgroundColor: '#10b981', borderRadius: 4 },
+        { label: 'Despesas', data: [198,212,245,268,289,312], backgroundColor: '#ef4444', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', align: 'end' } },
+      scales: {
+        y: { grid: { color: '#1a1a1a' }, ticks: { callback: (v) => 'R$' + v + 'K' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  chartInitializers.channelChart = () => new Chart(document.getElementById('channelChart'), {
+    type: 'radar',
+    data: {
+      labels: ['Meta Ads', 'Google', 'Orgânico', 'Indicação', 'Email', 'WhatsApp'],
+      datasets: [{
+        label: 'Conversão %',
+        data: [32, 28, 45, 62, 18, 38],
+        backgroundColor: 'rgba(212,175,55,0.2)',
+        borderColor: '#D4AF37',
+        borderWidth: 2,
+        pointBackgroundColor: '#D4AF37'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        r: {
+          grid: { color: '#262626' },
+          angleLines: { color: '#262626' },
+          pointLabels: { color: '#a3a3a3', font: { size: 10 } },
+          ticks: { display: false, backdropColor: 'transparent' },
+          suggestedMin: 0,
+          suggestedMax: 70
+        }
+      }
+    }
+  });
+
+  // ============================================
+  // CHAT IA FUNCIONAL (Gemini via /api/chat)
+  // ============================================
+  const chatHistory = [];
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function renderMarkdownLite(text) {
+    // Conversão simples e segura de markdown → HTML
+    let html = escapeHtml(text);
+    // Bold: **texto**
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="text-yellow-500">$1</strong>');
+    // Italic: *texto*
+    html = html.replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
+    // Code: `texto`
+    html = html.replace(/`([^`]+)`/g, '<code class="bg-neutral-800 px-1 rounded text-yellow-400">$1</code>');
+    // Listas com - ou *
+    html = html.replace(/^[\s]*[-*] (.+)$/gm, '<li class="ml-4">$1</li>');
+    html = html.replace(/(<li[^>]*>.*<\/li>\s*)+/g, (m) => '<ul class="list-disc space-y-1 my-2">' + m + '</ul>');
+    // Listas numeradas
+    html = html.replace(/^\s*\d+\. (.+)$/gm, '<li class="ml-4">$1</li>');
+    // Quebras de linha
+    html = html.replace(/\n\n/g, '</p><p class="mt-2">');
+    html = '<p>' + html + '</p>';
+    return html;
+  }
+
+  function addMessage(role, content) {
+    const messages = document.getElementById('chatMessages');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'flex gap-3';
+
+    if (role === 'user') {
+      wrapper.innerHTML = `
+        <div class="w-8 h-8 rounded-full bg-gradient-gold flex items-center justify-center text-black text-xs font-bold flex-shrink-0">S</div>
+        <div class="bg-neutral-900 rounded-lg rounded-tl-none p-3 text-sm max-w-2xl">${escapeHtml(content)}</div>
+      `;
+    } else if (role === 'assistant') {
+      wrapper.innerHTML = `
+        <div class="w-8 h-8 rounded-lg bg-gradient-gold flex items-center justify-center text-black text-sm flex-shrink-0">✨</div>
+        <div class="bg-neutral-900 rounded-lg rounded-tl-none p-3 text-sm max-w-2xl leading-relaxed">${renderMarkdownLite(content)}</div>
+      `;
+    } else if (role === 'loading') {
+      wrapper.id = 'loading-msg';
+      wrapper.innerHTML = `
+        <div class="w-8 h-8 rounded-lg bg-gradient-gold flex items-center justify-center text-black text-sm flex-shrink-0">✨</div>
+        <div class="bg-neutral-900 rounded-lg rounded-tl-none p-3 text-sm">
+          <span class="inline-flex gap-1">
+            <span class="w-2 h-2 rounded-full bg-yellow-600 pulse-dot"></span>
+            <span class="w-2 h-2 rounded-full bg-yellow-600 pulse-dot" style="animation-delay: 0.3s"></span>
+            <span class="w-2 h-2 rounded-full bg-yellow-600 pulse-dot" style="animation-delay: 0.6s"></span>
+          </span>
+        </div>
+      `;
+    }
+
+    messages.appendChild(wrapper);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function removeLoading() {
+    const loading = document.getElementById('loading-msg');
+    if (loading) loading.remove();
+  }
+
+  async function sendChatMessage(text) {
+    if (!text || !text.trim()) return;
+
+    // Esconder sugestões após primeira pergunta
+    const suggestions = document.getElementById('chatSuggestions');
+    if (suggestions) suggestions.style.display = 'none';
+
+    // Adicionar mensagem do usuário
+    addMessage('user', text);
+    chatHistory.push({ role: 'user', content: text });
+
+    // Limpar input e desabilitar
+    const input = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('chatSend');
+    input.value = '';
+    input.disabled = true;
+    sendBtn.disabled = true;
+    sendBtn.textContent = '...';
+
+    // Loading
+    addMessage('loading');
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: text,
+          history: chatHistory.slice(0, -1), // tudo menos a msg que acabou de ser enviada (ela já vai no body)
+        }),
+      });
+
+      removeLoading();
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Erro ${res.status}`);
+      }
+
+      const data = await res.json();
+      const reply = data.reply || 'Desculpa, não consegui responder agora.';
+      addMessage('assistant', reply);
+      chatHistory.push({ role: 'assistant', content: reply });
+    } catch (err) {
+      removeLoading();
+      addMessage('assistant', `😔 Tive um problema pra responder: ${err.message}. Tenta de novo?`);
+    } finally {
+      input.disabled = false;
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Enviar';
+      input.focus();
+    }
+  }
+
+  // Event listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('chatSend');
+
+    if (sendBtn) {
+      sendBtn.addEventListener('click', () => sendChatMessage(input.value));
+    }
+    if (input) {
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendChatMessage(input.value);
+        }
+      });
+    }
+
+    // Clique nas sugestões
+    document.querySelectorAll('.suggestion-chip').forEach(chip => {
+      chip.addEventListener('click', () => sendChatMessage(chip.textContent.trim()));
+    });
+  });
+</script>
+
+</body>
+</html>

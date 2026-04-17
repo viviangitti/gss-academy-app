@@ -7,7 +7,7 @@ import { addPoints } from '../services/gamification';
 import type { Task } from '../types';
 import './Timer.css';
 
-const API_KEY = 'REMOVED_KEY';
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);

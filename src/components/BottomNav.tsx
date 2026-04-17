@@ -1,15 +1,15 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, CalendarDays, BookOpen, MessageCircle, User } from 'lucide-react';
+import { Home, BookOpen, Swords, Sparkles } from 'lucide-react';
 import './BottomNav.css';
 
-const CONTENT_PATHS = ['/conteudo', '/objecoes', '/scripts', '/tecnicas', '/checklists', '/noticias', '/gatilhos', '/treino', '/pre-reuniao'];
+const LIBRARY_PATHS = ['/biblioteca', '/objecoes', '/scripts', '/tecnicas', '/noticias'];
+const TRAINING_PATHS = ['/treino-hub', '/treino', '/pre-reuniao'];
 
 const tabs = [
   { path: '/', icon: Home, label: 'Início' },
-  { path: '/calendario', icon: CalendarDays, label: 'Agenda' },
-  { path: '/conteudo', icon: BookOpen, label: 'Conteúdo' },
-  { path: '/ia-coach', icon: MessageCircle, label: 'Pergunte à IA' },
-  { path: '/perfil', icon: User, label: 'Perfil' },
+  { path: '/biblioteca', icon: BookOpen, label: 'Biblioteca' },
+  { path: '/treino-hub', icon: Swords, label: 'Treino' },
+  { path: '/ia-coach', icon: Sparkles, label: 'IA' },
 ];
 
 export default function BottomNav() {
@@ -19,9 +19,10 @@ export default function BottomNav() {
   return (
     <nav className="bottom-nav">
       {tabs.map(({ path, icon: Icon, label }) => {
-        const isActive = path === '/conteudo'
-          ? CONTENT_PATHS.includes(location.pathname)
-          : location.pathname === path;
+        let isActive = location.pathname === path;
+        if (path === '/biblioteca') isActive = LIBRARY_PATHS.includes(location.pathname);
+        if (path === '/treino-hub') isActive = TRAINING_PATHS.includes(location.pathname);
+
         return (
           <button
             key={path}

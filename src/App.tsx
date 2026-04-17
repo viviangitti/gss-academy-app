@@ -4,18 +4,13 @@ import Header from './components/Header';
 import BottomNav from './components/BottomNav';
 import Onboarding from './components/Onboarding';
 import Home from './pages/Home';
-import Calendar from './pages/Calendar';
-import Content from './pages/Content';
-import Checklists from './pages/Checklists';
+import Library from './pages/Library';
+import TrainingHub from './pages/TrainingHub';
 import Objections from './pages/Objections';
 import Scripts from './pages/Scripts';
 import Techniques from './pages/Techniques';
 import News from './pages/News';
-import Urgency from './pages/Urgency';
 import RolePlay from './pages/RolePlay';
-import Timer from './pages/Timer';
-import Clients from './pages/Clients';
-import Dashboard from './pages/Dashboard';
 import PreMeeting from './pages/PreMeeting';
 import AICoach from './pages/AICoach';
 import Profile from './pages/Profile';
@@ -37,18 +32,13 @@ function App() {
         <main className="app-content">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/calendario" element={<Calendar />} />
-            <Route path="/conteudo" element={<Content />} />
-            <Route path="/checklists" element={<Checklists />} />
+            <Route path="/biblioteca" element={<Library />} />
             <Route path="/objecoes" element={<Objections />} />
             <Route path="/scripts" element={<Scripts />} />
             <Route path="/tecnicas" element={<Techniques />} />
             <Route path="/noticias" element={<News />} />
-            <Route path="/gatilhos" element={<Urgency />} />
+            <Route path="/treino-hub" element={<TrainingHub />} />
             <Route path="/treino" element={<RolePlay />} />
-            <Route path="/cronometro" element={<Timer />} />
-            <Route path="/clientes" element={<Clients />} />
-            <Route path="/painel" element={<Dashboard />} />
             <Route path="/pre-reuniao" element={<PreMeeting />} />
             <Route path="/ia-coach" element={<AICoach />} />
             <Route path="/perfil" element={<Profile />} />

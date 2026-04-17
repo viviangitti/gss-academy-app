@@ -22,7 +22,7 @@ const ROLEPLAY_PROMPT = `Você é um cliente DIFÍCIL em uma simulação de vend
 
 IMPORTANTE: Não dê dicas ao vendedor durante a simulação.`;
 
-const EVALUATOR_PROMPT = `Você é um avaliador de vendas da GSS Academy. Analise a conversa de treino abaixo e dê:
+const EVALUATOR_PROMPT = `Você é um avaliador de vendas da Maestr.IA em Vendas. Analise a conversa de treino abaixo e dê:
 
 1. Uma NOTA de 1 a 10
 2. O que o vendedor fez BEM (2-3 pontos)

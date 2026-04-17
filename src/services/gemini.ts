@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const SYSTEM_PROMPT = `Você é o Consultor de Vendas da GSS Academy, um especialista em vendas consultivas, negociação e liderança comercial. Seu papel é ajudar líderes comerciais a:
+const SYSTEM_PROMPT = `Você é o Consultor de Vendas da Maestr.IA em Vendas, um especialista em vendas consultivas, negociação e liderança comercial. Seu papel é ajudar líderes comerciais a:
 
 1. **Rebater objeções** de clientes com técnicas comprovadas
 2. **Preparar negociações** com estratégias de fechamento
@@ -33,7 +33,7 @@ export async function sendMessage(message: string, apiKey: string): Promise<stri
           },
           {
             role: 'model',
-            parts: [{ text: 'Entendido! Sou o Consultor de Vendas da GSS Academy. Estou pronto para ajudar com objeções, negociações, roteiros e tudo relacionado a vendas e liderança comercial. Como posso ajudar?' }],
+            parts: [{ text: 'Entendido! Sou o Consultor de Vendas da Maestr.IA em Vendas. Estou pronto para ajudar com objeções, negociações, roteiros e tudo relacionado a vendas e liderança comercial. Como posso ajudar?' }],
           },
         ],
       });

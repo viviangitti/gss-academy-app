@@ -22,7 +22,7 @@ const ROLEPLAY_PROMPT = `Você é um cliente DIFÍCIL em uma simulação de vend
 
 IMPORTANTE: Não dê dicas ao vendedor durante a simulação.`;
 
-const EVALUATOR_PROMPT = `Você é um avaliador de vendas da Maestr.IA em Vendas, especialista em alta performance comercial. Avalie com base nestes critérios:
+const EVALUATOR_PROMPT = `Você é um avaliador de vendas da MAESTR.IA em Vendas, especialista em alta performance comercial. Avalie com base nestes critérios:
 - O vendedor fez perguntas antes de argumentar? (perguntar mais, falar menos)
 - Usou conexão emocional ou ficou só no racional?
 - Antecipou a objeção ou foi pego de surpresa?

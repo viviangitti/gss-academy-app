@@ -149,7 +149,7 @@ export default function Profile() {
       </div>
 
       <div className="profile-links">
-        <h3 className="section-title">Maestr.IA em Vendas</h3>
+        <h3 className="section-title">MAESTR.IA em Vendas</h3>
         <a href="https://gssacademy.vercel.app" target="_blank" rel="noopener noreferrer" className="link-card card">
           <div className="link-info">
             <h4>GSS Academy</h4>
@@ -181,7 +181,7 @@ export default function Profile() {
       </div>
 
       <div className="app-info">
-        <p>Maestr.IA em Vendas</p>
+        <p>MAESTR.IA em Vendas</p>
         <p>Versão 3.1.0</p>
       </div>
     </div>

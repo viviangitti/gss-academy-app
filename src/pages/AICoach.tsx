@@ -8,7 +8,7 @@ import SpeakButton from '../components/SpeakButton';
 import './AICoach.css';
 
 const QUICK_PROMPTS = [
-  'Como rebater objeção de preço?',
+  'Como responder à objeção de preço?',
   'Roteiro para ligação fria',
   'Técnicas de fechamento',
   'Como motivar minha equipe?',

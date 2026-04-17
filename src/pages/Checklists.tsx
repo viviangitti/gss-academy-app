@@ -45,7 +45,7 @@ const DEFAULT_TEMPLATES: Checklist[] = [
     icon: '🤝',
     isTemplate: true,
     items: [
-      { id: '1', text: 'Definir sua melhor alternativa caso não feche', checked: false },
+      { id: '1', text: 'Definir sua melhor alternativa para qualquer cenário', checked: false },
       { id: '2', text: 'Mapear decisores e influenciadores', checked: false },
       { id: '3', text: 'Preparar faixa de preço/condições', checked: false },
       { id: '4', text: 'Listar benefícios e diferenciais', checked: false },

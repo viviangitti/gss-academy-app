@@ -19,7 +19,7 @@ export default function Urgency() {
     <div className="urgency-page">
       <div className="urgency-intro card">
         <Flame size={20} />
-        <p>Frases que criam urgência legítima sem ser apelativo. Use com responsabilidade para acelerar decisões.</p>
+        <p>Frases de urgência legítima e elegante. Use com responsabilidade para acelerar decisões.</p>
       </div>
 
       <div className="urgency-list">

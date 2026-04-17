@@ -89,7 +89,7 @@ export default function Timer() {
       );
       setAiSummary(result.response.text());
     } catch {
-      setAiSummary('Não foi possível gerar o resumo.');
+      setAiSummary('O resumo ficou indisponível. Toque para tentar de novo.');
     }
     setLoadingSummary(false);
   };
@@ -139,7 +139,7 @@ export default function Timer() {
             </button>
             <button className="outcome-btn perdeu" onClick={() => handleOutcome('perdeu')}>
               <X size={24} />
-              <span>Perdi</span>
+              <span>Não avançou</span>
             </button>
           </div>
 

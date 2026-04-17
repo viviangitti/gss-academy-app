@@ -139,7 +139,7 @@ export default function RolePlay() {
       );
       setEvaluation(result.response.text());
     } catch {
-      setEvaluation('Não foi possível gerar a avaliação. Tente novamente.');
+      setEvaluation('A avaliação ficou indisponível. Toque para tentar de novo.');
     }
     setLoading(false);
   };
@@ -167,7 +167,7 @@ export default function RolePlay() {
           <Swords size={28} />
           <div>
             <h3>Simulador de Treino</h3>
-            <p>Pratique rebater objeções com um cliente virtual difícil</p>
+            <p>Pratique responder objeções com um cliente virtual realista</p>
           </div>
         </div>
 

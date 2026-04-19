@@ -10,6 +10,7 @@ import Objections from './pages/Objections';
 import Scripts from './pages/Scripts';
 import Techniques from './pages/Techniques';
 import News from './pages/News';
+import Favorites from './pages/Favorites';
 import RolePlay from './pages/RolePlay';
 import PreMeeting from './pages/PreMeeting';
 import AICoach from './pages/AICoach';
@@ -37,6 +38,7 @@ function App() {
             <Route path="/scripts" element={<Scripts />} />
             <Route path="/tecnicas" element={<Techniques />} />
             <Route path="/noticias" element={<News />} />
+            <Route path="/favoritos" element={<Favorites />} />
             <Route path="/treino-hub" element={<TrainingHub />} />
             <Route path="/treino" element={<RolePlay />} />
             <Route path="/pre-reuniao" element={<PreMeeting />} />

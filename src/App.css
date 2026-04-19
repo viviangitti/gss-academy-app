@@ -21,6 +21,46 @@
   --warning-bg: #fef3c7;
   --info: #3b82f6;
   --info-bg: #dbeafe;
+}
+
+/* Dark theme - manual or auto via prefers-color-scheme */
+[data-theme="dark"] {
+  --primary: #0f0f1e;
+  --primary-light: #1a1a2e;
+  --primary-deep: #05050e;
+  --bg: #0f0f1a;
+  --white: #1a1a2a;
+  --text: #f3f4f6;
+  --text-light: #9ca3af;
+  --text-soft: #6b7280;
+  --border: #2a2a3e;
+  --border-strong: #3a3a52;
+  --success-bg: rgba(16, 185, 129, 0.15);
+  --danger-bg: rgba(239, 68, 68, 0.15);
+  --warning-bg: rgba(245, 158, 11, 0.15);
+  --info-bg: rgba(59, 130, 246, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --primary: #0f0f1e;
+    --primary-light: #1a1a2e;
+    --primary-deep: #05050e;
+    --bg: #0f0f1a;
+    --white: #1a1a2a;
+    --text: #f3f4f6;
+    --text-light: #9ca3af;
+    --text-soft: #6b7280;
+    --border: #2a2a3e;
+    --border-strong: #3a3a52;
+    --success-bg: rgba(16, 185, 129, 0.15);
+    --danger-bg: rgba(239, 68, 68, 0.15);
+    --warning-bg: rgba(245, 158, 11, 0.15);
+    --info-bg: rgba(59, 130, 246, 0.15);
+  }
+}
+
+:root {
 
   /* Radius */
   --radius-xs: 6px;

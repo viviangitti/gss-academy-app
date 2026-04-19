@@ -36,7 +36,7 @@ export default function Onboarding({ onComplete }: Props) {
     {
       icon: <CalendarCheck size={48} />,
       title: 'Organize suas reuniões e entre sempre com confiança',
-      description: 'Checklists, agenda e modo pré-reunião para que cada encontro com o cliente seja produtivo.',
+      description: 'Use o modo pré-reunião para entrar preparado em cada encontro com cliente.',
     },
   ];
 

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Shield, FileText, BookOpen, Newspaper } from 'lucide-react';
+import { Shield, FileText, BookOpen, Newspaper, Star } from 'lucide-react';
 import { loadData, KEYS } from '../services/storage';
 import { SEGMENTS } from '../types';
 import type { UserProfile } from '../types';
@@ -10,6 +10,7 @@ const MENU_ITEMS = [
   { path: '/scripts', icon: FileText, label: 'Roteiros', desc: 'Abordagens, acompanhamento e gatilhos', color: '#3b82f6' },
   { path: '/tecnicas', icon: BookOpen, label: 'Técnicas', desc: 'Perguntas estratégicas, qualificação e mais', color: '#8b5cf6' },
   { path: '/noticias', icon: Newspaper, label: 'Notícias', desc: 'Novidades do seu mercado', color: '#f59e0b' },
+  { path: '/favoritos', icon: Star, label: 'Favoritos', desc: 'Seus itens marcados com estrela', color: '#c9a84c' },
 ];
 
 export default function Library() {

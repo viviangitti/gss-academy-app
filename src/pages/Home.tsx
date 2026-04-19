@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, Target, Newspaper, ExternalLink, Star, ArrowRight } from 'lucide-react';
+import { Zap, Target, Newspaper, ExternalLink, Star, ArrowRight, Plus, Check, X, Clock, CheckSquare } from 'lucide-react';
 import { loadData, KEYS } from '../services/storage';
 import { fetchNews } from '../services/news';
 import { getFavorites } from '../services/favorites';
+import { getDay, setFocus, addMeeting, removeMeeting, addTask, toggleTask, removeTask } from '../services/day';
 import { SEGMENTS } from '../types';
 import type { UserProfile, NewsItem } from '../types';
 import type { Favorite } from '../services/favorites';
+import type { DayData } from '../services/day';
 import './Home.css';
 
 const TIPS = [
@@ -29,6 +31,10 @@ export default function Home() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [segmentLabel, setSegmentLabel] = useState('');
   const [favs, setFavs] = useState<Favorite[]>([]);
+  const [day, setDay] = useState<DayData>({ date: '', focuses: ['', '', ''], meetings: [], tasks: [] });
+  const [newMeeting, setNewMeeting] = useState({ time: '', title: '' });
+  const [newTask, setNewTask] = useState('');
+  const [showNewMeeting, setShowNewMeeting] = useState(false);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -42,10 +48,31 @@ export default function Home() {
       fetchNews(profile.segment).then(items => setNews(items.slice(0, 3)));
     }
     setFavs(getFavorites().sort((a, b) => b.addedAt - a.addedAt).slice(0, 3));
+    setDay(getDay());
   }, []);
 
   const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '' });
   const name = profile.name ? `, ${profile.name.split(' ')[0]}` : '';
+
+  const handleFocusChange = (i: number, value: string) => {
+    setDay(setFocus(i, value));
+  };
+
+  const handleAddMeeting = () => {
+    if (!newMeeting.title.trim() || !newMeeting.time) return;
+    setDay(addMeeting(newMeeting));
+    setNewMeeting({ time: '', title: '' });
+    setShowNewMeeting(false);
+  };
+
+  const handleAddTask = () => {
+    if (!newTask.trim()) return;
+    setDay(addTask(newTask.trim()));
+    setNewTask('');
+  };
+
+  const pendingTasks = day.tasks.filter(t => !t.done).length;
+  const totalTasks = day.tasks.length;
 
   return (
     <div className="home">
@@ -60,6 +87,109 @@ export default function Home() {
         <Zap size={18} />
         <span>Vou entrar numa reunião</span>
       </button>
+
+      {/* 3 Focos do Dia */}
+      <div className="day-section">
+        <h3 className="section-title"><Target size={16} /> Seus 3 focos de hoje</h3>
+        <div className="focuses card">
+          {[0, 1, 2].map(i => (
+            <div key={i} className="focus-row">
+              <span className="focus-num">{i + 1}</span>
+              <input
+                type="text"
+                placeholder={`Foco ${i + 1}...`}
+                value={day.focuses[i] || ''}
+                onChange={e => handleFocusChange(i, e.target.value)}
+                className="focus-input"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Reuniões de hoje */}
+      <div className="day-section">
+        <div className="day-section-header">
+          <h3 className="section-title"><Clock size={16} /> Reuniões de hoje</h3>
+          <button className="btn btn-outline btn-sm" onClick={() => setShowNewMeeting(!showNewMeeting)}>
+            <Plus size={12} /> Nova
+          </button>
+        </div>
+
+        {showNewMeeting && (
+          <div className="new-meeting card">
+            <input
+              type="time"
+              value={newMeeting.time}
+              onChange={e => setNewMeeting({ ...newMeeting, time: e.target.value })}
+              className="meeting-time-input"
+            />
+            <input
+              type="text"
+              placeholder="Cliente / reunião"
+              value={newMeeting.title}
+              onChange={e => setNewMeeting({ ...newMeeting, title: e.target.value })}
+              className="meeting-title-input"
+            />
+            <button className="btn btn-primary btn-sm" onClick={handleAddMeeting}>
+              <Check size={14} />
+            </button>
+          </div>
+        )}
+
+        {day.meetings.length === 0 && !showNewMeeting ? (
+          <div className="day-empty">Nenhuma reunião agendada para hoje.</div>
+        ) : (
+          <div className="meetings-list">
+            {day.meetings.map(m => (
+              <div key={m.id} className="meeting-item card">
+                <span className="meeting-time">{m.time}</span>
+                <span className="meeting-title">{m.title}</span>
+                <button className="meeting-remove" onClick={() => setDay(removeMeeting(m.id))}>
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Tarefas do dia */}
+      <div className="day-section">
+        <div className="day-section-header">
+          <h3 className="section-title">
+            <CheckSquare size={16} /> Tarefas
+            {totalTasks > 0 && <span className="task-counter">{totalTasks - pendingTasks}/{totalTasks}</span>}
+          </h3>
+        </div>
+
+        <div className="tasks-card card">
+          {day.tasks.map(t => (
+            <div key={t.id} className={`task-row ${t.done ? 'done' : ''}`}>
+              <button className="task-check" onClick={() => setDay(toggleTask(t.id))}>
+                {t.done && <Check size={12} />}
+              </button>
+              <span className="task-text">{t.text}</span>
+              <button className="task-remove" onClick={() => setDay(removeTask(t.id))}>
+                <X size={12} />
+              </button>
+            </div>
+          ))}
+          <div className="task-add-row">
+            <input
+              type="text"
+              placeholder="Adicionar tarefa..."
+              value={newTask}
+              onChange={e => setNewTask(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleAddTask()}
+              className="task-input"
+            />
+            <button className="task-add-btn" onClick={handleAddTask} disabled={!newTask.trim()}>
+              <Plus size={14} />
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div className="tip-card card">
         <div className="tip-icon"><Target size={18} /></div>

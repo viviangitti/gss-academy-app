@@ -43,6 +43,7 @@ export interface UserProfile {
   role: string;
   company: string;
   segment: Segment;
+  monthlyGoal?: number;
 }
 
 export interface NewsItem {

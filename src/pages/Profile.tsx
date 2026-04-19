@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Briefcase, Save, ExternalLink, Factory, Moon, Sun } from 'lucide-react';
+import { User, Building2, Briefcase, Save, ExternalLink, Factory, Moon, Sun, Target } from 'lucide-react';
 import { loadData, saveData, KEYS } from '../services/storage';
 import { SEGMENTS } from '../types';
 import type { UserProfile } from '../types';
@@ -8,12 +8,12 @@ import './Profile.css';
 type Theme = 'light' | 'dark' | 'auto';
 
 export default function Profile() {
-  const [profile, setProfile] = useState<UserProfile>({ name: '', role: '', company: '', segment: '' });
+  const [profile, setProfile] = useState<UserProfile>({ name: '', role: '', company: '', segment: '', monthlyGoal: 0 });
   const [saved, setSaved] = useState(false);
   const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('gss_theme') as Theme) || 'auto');
 
   useEffect(() => {
-    setProfile(loadData(KEYS.PROFILE, { name: '', role: '', company: '', segment: '' }));
+    setProfile(loadData(KEYS.PROFILE, { name: '', role: '', company: '', segment: '', monthlyGoal: 0 }));
   }, []);
 
   const handleSave = () => {
@@ -77,6 +77,16 @@ export default function Profile() {
             ))}
           </select>
           <span className="form-hint">Personaliza objeções, roteiros e notícias do seu mercado</span>
+        </div>
+        <div className="form-group">
+          <label><Target size={14} /> Meta mensal (R$)</label>
+          <input
+            type="number"
+            value={profile.monthlyGoal || ''}
+            onChange={e => setProfile({ ...profile, monthlyGoal: Number(e.target.value) || 0 })}
+            placeholder="Ex: 100000"
+          />
+          <span className="form-hint">Acompanhe seu progresso e ritmo na Home</span>
         </div>
         <button className={`btn btn-primary save-btn ${saved ? 'saved' : ''}`} onClick={handleSave}>
           <Save size={16} /> {saved ? 'Salvo!' : 'Salvar'}

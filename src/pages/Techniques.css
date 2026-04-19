@@ -37,6 +37,13 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.technique-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
 .technique-icon {
   font-size: 28px;
   flex-shrink: 0;

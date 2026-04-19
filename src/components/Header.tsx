@@ -9,6 +9,7 @@ const titles: Record<string, string> = {
   '/scripts': 'Roteiros',
   '/tecnicas': 'Técnicas',
   '/noticias': 'Notícias',
+  '/favoritos': 'Favoritos',
   '/treino-hub': 'Treino',
   '/treino': 'Simulador de Treino',
   '/pre-reuniao': 'Pré-reunião',
@@ -16,7 +17,7 @@ const titles: Record<string, string> = {
   '/perfil': 'Perfil',
 };
 
-const LIBRARY_SUB_PAGES = ['/objecoes', '/scripts', '/tecnicas', '/noticias'];
+const LIBRARY_SUB_PAGES = ['/objecoes', '/scripts', '/tecnicas', '/noticias', '/favoritos'];
 const TRAINING_SUB_PAGES = ['/treino', '/pre-reuniao'];
 
 export default function Header() {

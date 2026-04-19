@@ -135,6 +135,24 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.script-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.script-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.script-card.segment-specific {
+  border-left: 3px solid var(--info);
+}
+
 .script-header h4 {
   font-size: 16px;
   font-weight: 600;

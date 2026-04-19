@@ -143,6 +143,47 @@
   color: var(--accent);
 }
 
+/* Theme switcher */
+.theme-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.theme-options {
+  display: flex;
+  gap: 6px;
+}
+
+.theme-opt {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border-strong);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s var(--ease);
+}
+
+.theme-opt:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.theme-opt.active {
+  background: var(--accent);
+  color: var(--primary);
+  border-color: var(--accent);
+}
+
 .form-hint {
   font-size: 15px;
   color: var(--text-light);

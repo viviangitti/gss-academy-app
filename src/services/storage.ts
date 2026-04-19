@@ -1,13 +1,8 @@
-// LocalStorage service - ready to swap for Firebase later
+// LocalStorage service
 
 const KEYS = {
-  EVENTS: 'gss_events',
-  CHECKLISTS: 'gss_checklists',
   CHAT_HISTORY: 'gss_chat',
   PROFILE: 'gss_profile',
-  TASKS: 'gss_tasks',
-  CLIENTS: 'gss_clients',
-  GAME_POINTS: 'gss_points',
 };
 
 export function loadData<T>(key: string, fallback: T): T {

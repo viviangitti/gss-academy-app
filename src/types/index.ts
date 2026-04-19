@@ -1,67 +1,3 @@
-export interface CalendarEvent {
-  id: string;
-  title: string;
-  date: string; // YYYY-MM-DD
-  time: string; // HH:mm
-  endTime?: string; // HH:mm
-  category: 'reuniao' | 'ritual' | 'followup' | 'treinamento';
-  notes?: string;
-  value?: number; // valor da oportunidade em R$
-  outcome?: 'fechou' | 'acompanhamento' | 'perdeu' | '';
-}
-
-export interface Client {
-  id: string;
-  name: string;
-  nomeFantasia?: string;
-  razaoSocial?: string;
-  cnpj?: string;
-  company: string;
-  notes?: string;
-  objections: string[];
-  meetings: ClientMeeting[];
-  createdAt: number;
-}
-
-export interface ClientMeeting {
-  date: string;
-  type: string;
-  outcome: 'fechou' | 'acompanhamento' | 'perdeu' | '';
-  objections: string[];
-  notes: string;
-  value?: number;
-}
-
-export interface Task {
-  id: string;
-  title: string;
-  dueDate: string; // YYYY-MM-DD
-  linkedEventId?: string;
-  status: 'pendente' | 'concluida';
-  createdAt: number;
-}
-
-export interface GamePoints {
-  total: number;
-  streak: number;
-  lastActiveDate: string;
-  history: { action: string; points: number; date: string }[];
-}
-
-export interface ChecklistItem {
-  id: string;
-  text: string;
-  checked: boolean;
-}
-
-export interface Checklist {
-  id: string;
-  title: string;
-  icon: string;
-  items: ChecklistItem[];
-  isTemplate?: boolean;
-}
-
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -107,7 +43,6 @@ export interface UserProfile {
   role: string;
   company: string;
   segment: Segment;
-  monthlyGoal?: number;
 }
 
 export interface NewsItem {

@@ -282,6 +282,13 @@
   flex: 1;
 }
 
+.response-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+  align-items: flex-start;
+}
+
 /* Stage variants */
 .stage-variants {
   display: flex;

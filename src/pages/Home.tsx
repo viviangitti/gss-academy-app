@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, Target, Newspaper, ExternalLink } from 'lucide-react';
+import { Zap, Target, Newspaper, ExternalLink, Star, ArrowRight } from 'lucide-react';
 import { loadData, KEYS } from '../services/storage';
 import { fetchNews } from '../services/news';
+import { getFavorites } from '../services/favorites';
 import { SEGMENTS } from '../types';
 import type { UserProfile, NewsItem } from '../types';
+import type { Favorite } from '../services/favorites';
 import './Home.css';
 
 const TIPS = [
@@ -26,6 +28,7 @@ export default function Home() {
   const [greeting, setGreeting] = useState('');
   const [news, setNews] = useState<NewsItem[]>([]);
   const [segmentLabel, setSegmentLabel] = useState('');
+  const [favs, setFavs] = useState<Favorite[]>([]);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -38,6 +41,7 @@ export default function Home() {
       setSegmentLabel(SEGMENTS.find(s => s.value === profile.segment)?.label || '');
       fetchNews(profile.segment).then(items => setNews(items.slice(0, 3)));
     }
+    setFavs(getFavorites().sort((a, b) => b.addedAt - a.addedAt).slice(0, 3));
   }, []);
 
   const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '' });
@@ -61,6 +65,27 @@ export default function Home() {
         <div className="tip-icon"><Target size={18} /></div>
         <p className="tip-text">{tip}</p>
       </div>
+
+      {favs.length > 0 && (
+        <div className="home-favs">
+          <div className="news-section-header">
+            <h3 className="section-title"><Star size={16} /> Seus favoritos</h3>
+            <button className="btn btn-outline btn-sm" onClick={() => navigate('/favoritos')}>Ver todos</button>
+          </div>
+          {favs.map(f => (
+            <button key={`${f.type}-${f.id}`} className="home-fav-item card" onClick={() => {
+              const route = f.type === 'objection' ? '/objecoes'
+                : f.type === 'script' ? '/scripts'
+                : f.type === 'technique' ? '/tecnicas'
+                : '/scripts';
+              navigate(route);
+            }}>
+              <span>{f.label}</span>
+              <ArrowRight size={14} />
+            </button>
+          ))}
+        </div>
+      )}
 
       {news.length > 0 && (
         <div className="home-news">

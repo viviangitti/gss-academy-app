@@ -190,6 +190,97 @@ const GENERAL_OBJECTIONS: Objection[] = [
       'Podemos começar com um plano menor e escalar conforme os resultados aparecem. Assim o próprio resultado paga a expansão.',
     ],
   },
+  {
+    id: 'g9', objection: '"Preciso pensar melhor sobre isso"', segment: 'geral',
+    quickResponses: [
+      'O que especificamente te deixa em dúvida?',
+      'Posso esclarecer alguma parte agora?',
+      'Que tal marcarmos 10 minutos amanhã para finalizar?',
+    ],
+    commonMistake: 'Deixar o cliente ir sem agendar um próximo passo concreto com data e hora.',
+    responses: [
+      'Claro! Para eu te ajudar a pensar melhor, qual é a parte que ainda não ficou 100% clara? Assim posso te enviar as informações focadas.',
+      'Entendo. Só para garantir: posso te mandar um resumo dos pontos principais para ajudar a decisão? E marco 10 minutos amanhã para concluirmos?',
+    ],
+  },
+  {
+    id: 'g10', objection: '"Seu produto não tem [feature específica]"', segment: 'geral',
+    quickResponses: [
+      'O que você precisa resolver com essa feature?',
+      'Temos uma forma diferente de resolver isso.',
+      'Vamos olhar o todo, não uma função isolada.',
+    ],
+    commonMistake: 'Prometer o que não tem só para fechar. Isso volta como problema pós-venda.',
+    responses: [
+      'Me conta mais: o que você precisa resolver com essa funcionalidade? Muitas vezes temos uma forma diferente (e melhor) de chegar no mesmo resultado.',
+      'Essa funcionalidade específica está no nosso roadmap. Mas antes de decidir por ela isoladamente, vamos olhar o conjunto — o que importa é o resultado final.',
+    ],
+  },
+  {
+    id: 'g11', objection: '"Já tentei algo parecido e não funcionou"', segment: 'geral',
+    quickResponses: [
+      'O que exatamente não funcionou da última vez?',
+      'Nosso diferencial é justamente [X].',
+      'Te mostro um case de alguém que disse o mesmo e hoje tem resultado.',
+    ],
+    commonMistake: 'Ignorar a experiência anterior. Você precisa entender o que falhou para não prometer a mesma coisa.',
+    responses: [
+      'Entendo perfeitamente. Me conta: o que especificamente não funcionou? Assim consigo te mostrar em que somos diferentes e se faz sentido tentar de novo.',
+      'Frustração com tentativa anterior é comum. Mas há diferenças importantes no nosso método: [X, Y, Z]. Posso te conectar com um cliente que passou pela mesma situação.',
+    ],
+  },
+  {
+    id: 'g12', objection: '"Me liga daqui a 6 meses"', segment: 'geral',
+    quickResponses: [
+      'O que muda em 6 meses para viabilizar?',
+      'Vou te mandar conteúdo útil até lá.',
+      'Posso reservar sua condição atual por 30 dias?',
+    ],
+    commonMistake: 'Sumir 6 meses e aparecer de novo do zero. Mantenha contato útil (sem pressão) nesse período.',
+    responses: [
+      'Combinado. Só para eu entender: o que você espera que mude em 6 meses? Assim consigo te ajudar a chegar lá mais rápido.',
+      'Posso te mandar conteúdo útil sobre o tema nesse período, sem pressão. Quando chegar a hora, você já estará informado e podemos fechar rápido.',
+    ],
+  },
+  {
+    id: 'g13', objection: '"Preciso de descontos maiores"', segment: 'geral',
+    quickResponses: [
+      'Qual valor faz esse negócio acontecer hoje?',
+      'Posso trocar preço por condições melhores.',
+      'Desconto maior implica escopo menor. Prefere?',
+    ],
+    commonMistake: 'Ceder desconto sem contrapartida. Cada ponto de desconto precisa vir com algo em troca (volume, prazo, exclusividade).',
+    responses: [
+      'Entendo. Antes de falarmos de desconto: qual valor exato faz esse negócio acontecer hoje? Prefiro fechar com condições criativas do que só baixar preço.',
+      'Posso ajustar as condições: mais prazo para pagamento, entrega parcelada, bônus de implementação. O que ajuda mais: preço menor ou condições melhores?',
+    ],
+  },
+  {
+    id: 'g14', objection: '"Minha equipe não vai aceitar mudança"', segment: 'geral',
+    quickResponses: [
+      'Temos onboarding que reduz a resistência.',
+      'A equipe sofre mais com o problema atual.',
+      'Posso falar com os usuários-chave?',
+    ],
+    commonMistake: 'Tratar resistência à mudança como barreira técnica. É emocional — precisa de comunicação e envolvimento, não só treinamento.',
+    responses: [
+      'Resistência à mudança é natural. Temos um programa de onboarding que reduz essa barreira: envolvemos os usuários-chave desde o início e a adoção fica acima de 80% em 30 dias.',
+      'A equipe já sofre com o problema atual — a diferença é que ela se acostumou. Posso conversar com os usuários-chave para entender o contexto e criar uma transição mais suave?',
+    ],
+  },
+  {
+    id: 'g15', objection: '"Estamos em um momento de corte de custos"', segment: 'geral',
+    quickResponses: [
+      'Exatamente por isso vale a conversa.',
+      'Nossa solução reduz custos em [X].',
+      'Podemos estruturar como investimento com retorno rápido.',
+    ],
+    commonMistake: 'Ir embora na primeira objeção. Momento de corte de custos é exatamente quando soluções que geram economia são mais atraentes.',
+    responses: [
+      'Entendo o momento. Paradoxalmente, é o cenário ideal para nós: nossa solução reduz custos em [X%] e o retorno vem no [prazo]. Posso te mostrar a análise?',
+      'Se conseguirmos provar que o investimento gera economia maior que o próprio custo em 6 meses, faz sentido continuarmos essa conversa?',
+    ],
+  },
 ];
 
 const SEGMENT_OBJECTIONS: Record<string, Objection[]> = {
@@ -329,6 +420,26 @@ const SEGMENT_OBJECTIONS: Record<string, Objection[]> = {
         'Os insumos têm prazo de entrega. Quem compra antecipado garante preço e disponibilidade. Podemos travar o preço agora e ajustar o pagamento para pós-safra.',
       ]},
   ],
+  industria: [
+    { id: 'in1', objection: '"Precisamos validar com a engenharia"', segment: 'industria',
+      quickResponses: ['Levo nossa engenharia para uma reunião técnica.', 'Nossas especificações atendem norma [X].'],
+      responses: [
+        'Claro! Nossa engenharia pode participar de uma reunião técnica com o time de vocês. Resolvemos dúvidas rapidamente e vocês já saem com proposta técnica validada.',
+        'Tenho todas as especificações e normas atendidas. Posso te enviar a ficha técnica completa e marcar uma call com nossa engenharia para validação conjunta.',
+      ]},
+    { id: 'in2', objection: '"O lead time da entrega é longo demais"', segment: 'industria',
+      quickResponses: ['Posso priorizar sua ordem na produção.', 'Temos estoque parcial disponível.'],
+      responses: [
+        'Entendo a urgência. Posso conversar com a produção para priorizar sua ordem. Em casos estratégicos, conseguimos reduzir o prazo em [X%].',
+        'Temos estoque parcial disponível para início imediato e o restante em produção. Assim vocês já começam a operar sem esperar 100% da entrega.',
+      ]},
+    { id: 'in3', objection: '"Já tenho um fornecedor homologado"', segment: 'industria',
+      quickResponses: ['Ótimo! Podemos ser o segundo fornecedor.', 'Ter backup reduz risco de supply chain.'],
+      responses: [
+        'Ótimo que já tem um fornecedor homologado. Muitas indústrias grandes têm política de dual-sourcing para reduzir risco de supply chain. Podemos ser o segundo fornecedor estratégico.',
+        'Entendo. Nosso processo de homologação é rápido — fazemos juntos e em paralelo com o atual. Vocês ganham segurança e negociação melhor com os dois.',
+      ]},
+  ],
   energia: [
     { id: 'en1', objection: '"O prazo de retorno é muito longo"', segment: 'energia',
       quickResponses: ['Prazo real é menor que o projetado.', 'Valorização do imóvel + proteção contra aumentos.'],
@@ -369,8 +480,66 @@ const GENERAL_SCRIPTS: Script[] = [
   },
 ];
 
-export function getScripts(_segment: Segment): Script[] {
-  return GENERAL_SCRIPTS;
+const SEGMENT_SCRIPTS: Record<string, Script[]> = {
+  farmaceutico: [
+    { id: 'sc-f1', title: 'Abordagem — Visita médica', context: 'Primeira visita ao consultório médico', segment: 'farmaceutico',
+      script: `"Doutor(a) [Nome], bom dia. Sou [Seu Nome], representante da [Laboratório]. Prometo 3 minutos.\n\nEstou aqui para apresentar [produto] — é indicado para pacientes com [perfil clínico] que não respondem bem a [alternativa atual].\n\nTenho estudo clínico recente comparativo e amostras para você testar. Posso deixar o material e voltar na próxima semana para saber sua impressão?"` },
+  ],
+  automotivo: [
+    { id: 'sc-a1', title: 'Abordagem — Cliente no showroom', context: 'Cliente olhando o carro no showroom', segment: 'automotivo',
+      script: `"Olá! Sou [Seu Nome]. Vi que você está interessado no [modelo]. Posso te mostrar algumas configurações que talvez você não tenha visto no site?\n\nMe conta: é para uso urbano, viagens, ou os dois? E quantas pessoas normalmente andam com você?\n\nCom essas informações eu já consigo te indicar a versão ideal e te mostrar as condições que temos essa semana."` },
+    { id: 'sc-a2', title: 'WhatsApp — Pós test-drive', context: 'Cliente que fez test-drive mas não fechou', segment: 'automotivo',
+      script: `"Oi [Nome], tudo bem?\n\n[Seu Nome] da [Concessionária]. Obrigado pelo test-drive de ontem! Como foi a experiência?\n\nConsegui uma condição especial com a gerência hoje: [benefício concreto]. Válida até [data].\n\nPosso te mandar a proposta personalizada para você avaliar?"` },
+  ],
+  automotivo_luxo: [
+    { id: 'sc-al1', title: 'Abordagem — Cliente exigente', context: 'Primeira conversa com cliente premium', segment: 'automotivo_luxo',
+      script: `"Olá [Nome]. Sou [Seu Nome], seu consultor exclusivo para o [modelo].\n\nAntes de falarmos do carro, me conta: qual é o momento na sua vida que este carro representa? É uma conquista, presente, realização?\n\nPergunto porque cada cliente vive essa compra de forma única. Quero preparar uma experiência à altura."` },
+  ],
+  tecnologia: [
+    { id: 'sc-t1', title: 'Cold call — Cliente enterprise', context: 'Ligação para decisor de tecnologia', segment: 'tecnologia',
+      script: `"Olá [Nome], aqui é [Seu Nome] da [Empresa].\n\nEstamos ajudando empresas do porte da sua a reduzir custo de [área] em [%] com nossa plataforma. Sei que vocês usam [concorrente/solução interna].\n\nNão estou ligando para vender — só para entender se faz sentido uma conversa de 20 minutos na próxima semana. Posso mandar um e-mail com case de [cliente similar]?"` },
+  ],
+  varejo: [
+    { id: 'sc-v1', title: 'Visita — Loja do varejista', context: 'Visita no ponto de venda', segment: 'varejo',
+      script: `"Oi [Nome], passando aqui para entender como está o giro do [produto] e se tem alguma oportunidade.\n\nTenho novidade: campanha de ativação com material de ponto de venda, desconto por volume e treinamento de equipe para a sua loja.\n\nVocê tem 10 minutos para me mostrar a gôndola e alinharmos uma ação?"` },
+  ],
+  imobiliario: [
+    { id: 'sc-i1', title: 'WhatsApp — Lead aquecido', context: 'Cliente pediu informações e parou de responder', segment: 'imobiliario',
+      script: `"Oi [Nome], aqui é [Seu Nome] da [Imobiliária].\n\nVocê se interessou pelo [imóvel] na semana passada. Sabia que saiu uma condição nova para entrada facilitada e taxa fixa por 3 anos?\n\nPosso te mandar a simulação personalizada para essa condição? Leva 5 minutos."` },
+  ],
+  financeiro: [
+    { id: 'sc-fi1', title: 'Abordagem — Cliente investidor', context: 'Primeira conversa com cliente que já investe', segment: 'financeiro',
+      script: `"Olá [Nome]. Obrigado pelo tempo. Me conta: como está distribuída sua carteira hoje?\n\nPergunto porque faço uma análise gratuita — aponto oportunidades sem custo e sem compromisso. Se fizer sentido depois, a gente conversa. Se não, você sai com informação valiosa.\n\nTopa marcar 30 minutos essa semana?"` },
+  ],
+  saude: [
+    { id: 'sc-s1', title: 'Abordagem — Paciente na clínica', context: 'Conversa com paciente sobre tratamento', segment: 'saude',
+      script: `"[Nome do paciente], analisei seu caso e temos duas opções.\n\nA primeira é o tratamento padrão: [descrição e preço]. Resolve o sintoma mas exige manutenção frequente.\n\nA segunda é o tratamento completo: [descrição], um pouco mais de investimento mas resolve de vez. Grande parte dos nossos pacientes escolhe essa.\n\nQual faz mais sentido para o seu momento?"` },
+  ],
+  educacao: [
+    { id: 'sc-e1', title: 'Abordagem — Pai/mãe em visita à escola', context: 'Visita presencial à escola', segment: 'educacao',
+      script: `"Obrigado por virem conhecer a escola! Antes do tour, me contam: o que é mais importante para vocês na educação do [filho/filha]?\n\nA resposta de vocês vai direcionar o que eu mostro aqui. Nossa escola tem diferenciais em [áreas], mas vocês sentem o que faz sentido ao ver na prática.\n\nVamos começar?"` },
+  ],
+  servicos: [
+    { id: 'sc-sv1', title: 'Proposta — Reunião de fechamento', context: 'Apresentando proposta de serviço', segment: 'servicos',
+      script: `"Antes de eu apresentar a proposta, quero confirmar que entendi o desafio de vocês: [resumir dor em 1 frase].\n\nNossa proposta resolve isso em 3 frentes: [A, B, C]. O investimento é de [R$] e o retorno esperado é [resultado em prazo].\n\nTem alguma dúvida antes de eu entrar nos detalhes?"` },
+  ],
+  agro: [
+    { id: 'sc-ag1', title: 'Visita — Produtor rural', context: 'Visita técnica na propriedade', segment: 'agro',
+      script: `"Seu [Nome], obrigado por receber. Vamos dar uma volta na lavoura para eu entender o manejo atual?\n\nMinha proposta é simples: entender o que você faz hoje, ver onde tem ganho real de produtividade com [produto/solução] e te mostrar cases de fazendas similares na região.\n\nDepois disso, se fizer sentido, a gente fecha condição."` },
+  ],
+  energia: [
+    { id: 'sc-en1', title: 'Apresentação — Proposta solar', context: 'Reunião de apresentação do sistema solar', segment: 'energia',
+      script: `"Sua conta de luz hoje é R$ [X] por mês — isso dá R$ [X × 12] por ano. Em 20 anos, R$ [total].\n\nCom nosso sistema, em 4-5 anos o investimento já se paga. Depois, você tem 15+ anos de energia praticamente gratuita.\n\nMais: o imóvel valoriza em [%]. Faz sentido continuarmos essa análise?"` },
+  ],
+  industria: [
+    { id: 'sc-in1', title: 'Abordagem — Compras industriais', context: 'Primeira conversa com comprador industrial', segment: 'industria',
+      script: `"[Nome do comprador], aqui é [Seu Nome] da [Fornecedora]. Sei que vocês trabalham com [fornecedor atual] — não quero substituir, quero ser uma segunda opção estratégica.\n\nMuitas indústrias têm política de dual-sourcing para reduzir risco. Posso fazer uma cotação para vocês compararem? Leva 2 dias."` },
+  ],
+};
+
+export function getScripts(segment: Segment): Script[] {
+  const segmentSpecific = segment ? (SEGMENT_SCRIPTS[segment] || []) : [];
+  return [...segmentSpecific, ...GENERAL_SCRIPTS];
 }
 
 // ==================== TÉCNICAS ====================

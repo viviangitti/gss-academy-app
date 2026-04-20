@@ -94,6 +94,86 @@ export function getStats(goal: number): GoalStats {
   };
 }
 
+export type Period = 'dia' | 'semana' | 'mes' | 'ano';
+
+export function getSalesByPeriod(period: Period): Sale[] {
+  const now = new Date();
+  return getSales().filter(s => {
+    const d = new Date(s.date);
+    if (period === 'dia') return d.toDateString() === now.toDateString();
+    if (period === 'semana') {
+      const weekStart = new Date(now);
+      weekStart.setDate(now.getDate() - now.getDay());
+      weekStart.setHours(0, 0, 0, 0);
+      return d >= weekStart;
+    }
+    if (period === 'mes') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    if (period === 'ano') return d.getFullYear() === now.getFullYear();
+    return false;
+  });
+}
+
+export function getPeriodStats(period: Period): { total: number; count: number; average: number } {
+  const sales = getSalesByPeriod(period);
+  const total = sales.reduce((s, x) => s + x.amount, 0);
+  const count = sales.length;
+  const average = count > 0 ? total / count : 0;
+  return { total, count, average };
+}
+
+// Dados para gráfico mensal (por dia)
+export function getMonthChartData(): { label: string; value: number }[] {
+  const sales = getSalesByPeriod('mes').sort((a, b) => a.date.localeCompare(b.date));
+  const now = new Date();
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const today = now.getDate();
+  const result: { label: string; value: number }[] = [];
+  let acc = 0;
+  let idx = 0;
+  for (let d = 1; d <= Math.min(today, lastDay); d++) {
+    while (idx < sales.length && new Date(sales[idx].date).getDate() <= d) {
+      acc += sales[idx].amount;
+      idx++;
+    }
+    result.push({ label: String(d), value: acc });
+  }
+  return result;
+}
+
+// Dados para gráfico anual (por mês, acumulado)
+export function getYearChartData(): { label: string; value: number }[] {
+  const sales = getSalesByPeriod('ano');
+  const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+  const now = new Date();
+  const result: { label: string; value: number }[] = [];
+  let acc = 0;
+  for (let m = 0; m <= now.getMonth(); m++) {
+    const monthTotal = sales
+      .filter(s => new Date(s.date).getMonth() === m)
+      .reduce((sum, s) => sum + s.amount, 0);
+    acc += monthTotal;
+    result.push({ label: months[m], value: acc });
+  }
+  return result;
+}
+
+// Dados para gráfico semanal (por dia da semana)
+export function getWeekChartData(): { label: string; value: number }[] {
+  const sales = getSalesByPeriod('semana');
+  const labels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const now = new Date();
+  const result: { label: string; value: number }[] = [];
+  let acc = 0;
+  for (let d = 0; d <= now.getDay(); d++) {
+    const dayTotal = sales
+      .filter(s => new Date(s.date).getDay() === d)
+      .reduce((sum, s) => sum + s.amount, 0);
+    acc += dayTotal;
+    result.push({ label: labels[d], value: acc });
+  }
+  return result;
+}
+
 // Agrupa vendas por dia do mês atual para gráfico
 export function getDailyAccumulation(): { day: number; accumulated: number }[] {
   const sales = getCurrentMonthSales().sort((a, b) => a.date.localeCompare(b.date));

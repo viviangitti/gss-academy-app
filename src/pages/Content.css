@@ -36,7 +36,7 @@
   cursor: pointer;
   font-family: inherit;
   transition: all 0.25s var(--ease);
-  background: var(--white);
+  background: var(--surface);
   border-radius: var(--radius);
   position: relative;
   overflow: hidden;

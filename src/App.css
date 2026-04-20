@@ -8,6 +8,7 @@
   --accent-deep: #a88936;
   --bg: #f7f7fa;
   --white: #ffffff;
+  --surface: #ffffff;
   --text: #1a1a2e;
   --text-light: #6b7280;
   --text-soft: #9ca3af;
@@ -29,10 +30,10 @@
   --primary-light: #1a1a2e;
   --primary-deep: #05050e;
   --bg: #0f0f1a;
-  --white: #1a1a2a;
+  --surface: #1a1a2a;
   --text: #f3f4f6;
-  --text-light: #9ca3af;
-  --text-soft: #6b7280;
+  --text-light: #d1d5db;
+  --text-soft: #9ca3af;
   --border: #2a2a3e;
   --border-strong: #3a3a52;
   --success-bg: rgba(16, 185, 129, 0.15);
@@ -47,10 +48,10 @@
     --primary-light: #1a1a2e;
     --primary-deep: #05050e;
     --bg: #0f0f1a;
-    --white: #1a1a2a;
+    --surface: #1a1a2a;
     --text: #f3f4f6;
-    --text-light: #9ca3af;
-    --text-soft: #6b7280;
+    --text-light: #d1d5db;
+    --text-soft: #9ca3af;
     --border: #2a2a3e;
     --border-strong: #3a3a52;
     --success-bg: rgba(16, 185, 129, 0.15);
@@ -135,7 +136,7 @@ input, textarea {
 
 /* Cards modernos */
 .card {
-  background: var(--white);
+  background: var(--surface);
   border-radius: var(--radius);
   padding: 18px;
   box-shadow: var(--shadow-sm);
@@ -204,7 +205,7 @@ input, textarea {
   font-size: 15px;
   font-weight: 700;
   margin-bottom: 12px;
-  color: var(--primary);
+  color: var(--text);
   letter-spacing: -0.01em;
   display: flex;
   align-items: center;
@@ -221,7 +222,7 @@ input, textarea, select {
   font-family: inherit;
   outline: none;
   transition: all 0.2s var(--ease);
-  background: var(--white);
+  background: var(--surface);
   color: var(--text);
 }
 
@@ -268,7 +269,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .modal {
-  background: var(--white);
+  background: var(--surface);
   border-radius: var(--radius-lg);
   padding: 28px;
   width: 100%;

@@ -44,6 +44,11 @@ export interface UserProfile {
   company: string;
   segment: Segment;
   monthlyGoal?: number;
+  email?: string;
+  teamId?: string | null;
+  isAdmin?: boolean;
+  uid?: string;
+  createdAt?: number;
 }
 
 export interface NewsItem {

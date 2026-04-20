@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
@@ -23,12 +23,69 @@ import Feedback from './pages/Feedback';
 import Sales from './pages/Sales';
 import AICoach from './pages/AICoach';
 import Profile from './pages/Profile';
+import Auth from './pages/Auth';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { getRemoteProfile, saveRemoteProfile } from './services/firestore/profile';
+import { loadData, saveData, KEYS } from './services/storage';
+import type { UserProfile } from './types';
 import './App.css';
 
-function App() {
+function AppContent() {
+  const { user, loading, firebaseEnabled } = useAuth();
+  const [profileReady, setProfileReady] = useState(!firebaseEnabled);
   const [showOnboarding, setShowOnboarding] = useState(
     () => !localStorage.getItem('gss_onboarding_done')
   );
+
+  // Quando usuário loga, garantimos que o perfil local reflete o remoto
+  useEffect(() => {
+    if (!firebaseEnabled) {
+      setProfileReady(true);
+      return;
+    }
+    if (!user) {
+      setProfileReady(true);
+      return;
+    }
+    (async () => {
+      const remote = await getRemoteProfile(user.uid);
+      if (remote) {
+        saveData(KEYS.PROFILE, remote);
+      } else {
+        // Primeiro login: usa perfil local (se existir) e salva remoto
+        const local = loadData<UserProfile>(KEYS.PROFILE, {
+          name: user.displayName || '',
+          role: '',
+          company: '',
+          segment: '',
+          monthlyGoal: 0,
+        });
+        const merged: UserProfile = {
+          ...local,
+          name: local.name || user.displayName || '',
+          email: user.email || '',
+          uid: user.uid,
+          createdAt: Date.now(),
+        };
+        await saveRemoteProfile(user.uid, merged);
+        saveData(KEYS.PROFILE, merged);
+      }
+      setProfileReady(true);
+    })();
+  }, [user, firebaseEnabled]);
+
+  if (loading || !profileReady) {
+    return (
+      <div className="app-loading">
+        <div className="app-loading-logo">M</div>
+      </div>
+    );
+  }
+
+  // Se Firebase está ativo e não há usuário logado → tela de auth
+  if (firebaseEnabled && !user) {
+    return <Auth />;
+  }
 
   if (showOnboarding) {
     return <Onboarding onComplete={() => setShowOnboarding(false)} />;
@@ -65,6 +122,14 @@ function App() {
         <BottomNav />
       </div>
     </BrowserRouter>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

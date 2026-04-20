@@ -134,6 +134,32 @@ input, textarea {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Loading inicial */
+.app-loading {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, var(--primary-deep), var(--primary));
+}
+
+.app-loading-logo {
+  width: 68px;
+  height: 68px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  color: var(--primary);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 36px;
+  font-weight: 800;
+  box-shadow: var(--shadow-accent);
+  animation: pulse-glow 1.6s ease-in-out infinite;
+}
+
 /* Cards modernos */
 .card {
   background: var(--surface);

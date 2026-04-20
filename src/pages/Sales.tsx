@@ -40,11 +40,11 @@ export default function Sales() {
   const navigate = useNavigate();
   const [period, setPeriod] = useState<Period>('mes');
   const [sales, setSales] = useState<Sale[]>([]);
-  const [stats, setStats] = useState({ total: 0, count: 0, average: 0 });
+  const [stats, setStats] = useState({ total: 0, commission: 0, count: 0, average: 0 });
   const [monthlyGoal, setMonthlyGoal] = useState(0);
   const [chartData, setChartData] = useState<{ label: string; value: number }[]>([]);
   const [showAddSale, setShowAddSale] = useState(false);
-  const [saleForm, setSaleForm] = useState({ amount: '', client: '' });
+  const [saleForm, setSaleForm] = useState({ amount: '', commission: '', client: '' });
 
   const refresh = (p: Period) => {
     setStats(getPeriodStats(p));
@@ -69,9 +69,10 @@ export default function Sales() {
 
   const handleAddSale = () => {
     const amount = Number(saleForm.amount);
+    const commission = Number(saleForm.commission);
     if (!amount || !saleForm.client.trim()) return;
-    addSale(amount, saleForm.client);
-    setSaleForm({ amount: '', client: '' });
+    addSale(amount, commission || 0, saleForm.client);
+    setSaleForm({ amount: '', commission: '', client: '' });
     setShowAddSale(false);
     refresh(period);
   };
@@ -85,7 +86,7 @@ export default function Sales() {
 
   const maxVal = Math.max(...chartData.map(d => d.value), monthlyGoal, 1);
   const goalToShow = period === 'mes' ? monthlyGoal : 0;
-  const progress = goalToShow > 0 ? Math.min((stats.total / goalToShow) * 100, 100) : 0;
+  const progress = goalToShow > 0 ? Math.min((stats.commission / goalToShow) * 100, 100) : 0;
 
   return (
     <div className="sales-page">
@@ -105,8 +106,9 @@ export default function Sales() {
       {/* Resumo */}
       <div className="sales-summary card">
         <div className="summary-main">
-          <span className="summary-label">Total</span>
-          <span className="summary-value">{formatBRL(stats.total)}</span>
+          <span className="summary-label">Comissão no período</span>
+          <span className="summary-value">{formatBRL(stats.commission)}</span>
+          <span className="summary-sub">Vendido: {formatBRL(stats.total)}</span>
         </div>
         <div className="summary-divider" />
         <div className="summary-stats">
@@ -125,7 +127,7 @@ export default function Sales() {
             <div className="summary-divider" />
             <div className="summary-goal">
               <div className="goal-row">
-                <span><Award size={14} /> Meta do mês</span>
+                <span><Award size={14} /> Meta de comissão</span>
                 <span className="goal-val">{formatBRL(monthlyGoal)}</span>
               </div>
               <div className="goal-progress-bar">
@@ -133,7 +135,7 @@ export default function Sales() {
               </div>
               <div className="goal-row-small">
                 <span>{Math.round(progress)}% concluído</span>
-                <span>{formatBRL(Math.max(0, monthlyGoal - stats.total))} faltando</span>
+                <span>{formatBRL(Math.max(0, monthlyGoal - stats.commission))} faltando</span>
               </div>
             </div>
           </>
@@ -192,23 +194,29 @@ export default function Sales() {
       </div>
 
       {showAddSale && (
-        <div className="new-sale card">
-          <input
-            type="number"
-            placeholder="Valor R$"
-            value={saleForm.amount}
-            onChange={e => setSaleForm({ ...saleForm, amount: e.target.value })}
-            className="sale-amount-input"
-          />
+        <div className="new-sale-form card">
           <input
             type="text"
             placeholder="Cliente"
             value={saleForm.client}
             onChange={e => setSaleForm({ ...saleForm, client: e.target.value })}
-            className="sale-client-input"
           />
-          <button className="btn btn-primary btn-sm" onClick={handleAddSale}>
-            <Check size={14} />
+          <div className="sale-amount-row">
+            <input
+              type="number"
+              placeholder="Venda R$"
+              value={saleForm.amount}
+              onChange={e => setSaleForm({ ...saleForm, amount: e.target.value })}
+            />
+            <input
+              type="number"
+              placeholder="Comissão R$"
+              value={saleForm.commission}
+              onChange={e => setSaleForm({ ...saleForm, commission: e.target.value })}
+            />
+          </div>
+          <button className="btn btn-primary" onClick={handleAddSale}>
+            <Check size={14} /> Registrar
           </button>
         </div>
       )}
@@ -228,8 +236,12 @@ export default function Sales() {
               <div className="sale-info">
                 <span className="sale-client">{sale.client}</span>
                 <span className="sale-date">{formatDate(sale.date)} • {formatTime(sale.date)}</span>
+                <span className="sale-value-row">Venda: {formatBRL(sale.amount)}</span>
               </div>
-              <span className="sale-amount">{formatBRL(sale.amount)}</span>
+              <div className="sale-commission-box">
+                <span className="sale-commission-label">comissão</span>
+                <span className="sale-amount">{formatBRL(sale.commission ?? 0)}</span>
+              </div>
               <button className="sale-delete" onClick={() => handleRemove(sale.id)}>
                 <Trash2 size={14} />
               </button>

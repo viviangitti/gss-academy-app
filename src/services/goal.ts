@@ -2,20 +2,22 @@
 
 export interface Sale {
   id: string;
-  amount: number;
+  amount: number;       // valor total da venda
+  commission: number;   // comissão do vendedor nessa venda
   client: string;
   date: string; // ISO
   notes?: string;
 }
 
 export interface GoalStats {
-  goal: number;
-  monthTotal: number;
+  goal: number;                // meta de comissão
+  monthCommission: number;     // comissão acumulada no mês
+  monthTotal: number;          // valor vendido no mês (referência)
   monthCount: number;
   progress: number; // 0-100
   daysLeft: number;
   pace: 'atras' | 'no_ritmo' | 'adiantado' | 'sem_meta';
-  dailyTarget: number; // quanto precisa por dia para bater
+  dailyTarget: number;
 }
 
 const SALES_KEY = 'gss_sales';
@@ -37,17 +39,20 @@ export function getSales(): Sale[] {
   }
 }
 
-export function addSale(amount: number, client: string, notes?: string): Sale {
+export function addSale(amount: number, commission: number, client: string, notes?: string): Sale {
   const sale: Sale = {
     id: generateId(),
     amount,
+    commission,
     client,
     notes,
     date: new Date().toISOString(),
   };
   const sales = getSales();
-  sales.push(sale);
-  localStorage.setItem(SALES_KEY, JSON.stringify(sales));
+  // Compat: adicionar commission a vendas antigas que não tinham
+  const normalized = sales.map(s => ({ ...s, commission: s.commission ?? 0 }));
+  normalized.push(sale);
+  localStorage.setItem(SALES_KEY, JSON.stringify(normalized));
   return sale;
 }
 
@@ -63,14 +68,15 @@ export function getCurrentMonthSales(): Sale[] {
 
 export function getStats(goal: number): GoalStats {
   const monthSales = getCurrentMonthSales();
+  const monthCommission = monthSales.reduce((sum, s) => sum + (s.commission ?? 0), 0);
   const monthTotal = monthSales.reduce((sum, s) => sum + s.amount, 0);
-  const progress = goal > 0 ? Math.min((monthTotal / goal) * 100, 100) : 0;
+  const progress = goal > 0 ? Math.min((monthCommission / goal) * 100, 100) : 0;
 
   const now = new Date();
   const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
   const daysLeft = Math.max(0, lastDay.getDate() - now.getDate());
 
-  const remaining = Math.max(0, goal - monthTotal);
+  const remaining = Math.max(0, goal - monthCommission);
   const dailyTarget = daysLeft > 0 ? remaining / daysLeft : remaining;
 
   let pace: GoalStats['pace'] = 'sem_meta';
@@ -85,6 +91,7 @@ export function getStats(goal: number): GoalStats {
 
   return {
     goal,
+    monthCommission,
     monthTotal,
     monthCount: monthSales.length,
     progress,
@@ -113,15 +120,16 @@ export function getSalesByPeriod(period: Period): Sale[] {
   });
 }
 
-export function getPeriodStats(period: Period): { total: number; count: number; average: number } {
+export function getPeriodStats(period: Period): { total: number; commission: number; count: number; average: number } {
   const sales = getSalesByPeriod(period);
   const total = sales.reduce((s, x) => s + x.amount, 0);
+  const commission = sales.reduce((s, x) => s + (x.commission ?? 0), 0);
   const count = sales.length;
   const average = count > 0 ? total / count : 0;
-  return { total, count, average };
+  return { total, commission, count, average };
 }
 
-// Dados para gráfico mensal (por dia)
+// Dados para gráfico mensal (comissão acumulada por dia)
 export function getMonthChartData(): { label: string; value: number }[] {
   const sales = getSalesByPeriod('mes').sort((a, b) => a.date.localeCompare(b.date));
   const now = new Date();
@@ -132,7 +140,7 @@ export function getMonthChartData(): { label: string; value: number }[] {
   let idx = 0;
   for (let d = 1; d <= Math.min(today, lastDay); d++) {
     while (idx < sales.length && new Date(sales[idx].date).getDate() <= d) {
-      acc += sales[idx].amount;
+      acc += (sales[idx].commission ?? 0);
       idx++;
     }
     result.push({ label: String(d), value: acc });
@@ -140,7 +148,7 @@ export function getMonthChartData(): { label: string; value: number }[] {
   return result;
 }
 
-// Dados para gráfico anual (por mês, acumulado)
+// Dados para gráfico anual (comissão acumulada por mês)
 export function getYearChartData(): { label: string; value: number }[] {
   const sales = getSalesByPeriod('ano');
   const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
@@ -150,14 +158,14 @@ export function getYearChartData(): { label: string; value: number }[] {
   for (let m = 0; m <= now.getMonth(); m++) {
     const monthTotal = sales
       .filter(s => new Date(s.date).getMonth() === m)
-      .reduce((sum, s) => sum + s.amount, 0);
+      .reduce((sum, s) => sum + (s.commission ?? 0), 0);
     acc += monthTotal;
     result.push({ label: months[m], value: acc });
   }
   return result;
 }
 
-// Dados para gráfico semanal (por dia da semana)
+// Dados para gráfico semanal (comissão acumulada por dia da semana)
 export function getWeekChartData(): { label: string; value: number }[] {
   const sales = getSalesByPeriod('semana');
   const labels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -167,7 +175,7 @@ export function getWeekChartData(): { label: string; value: number }[] {
   for (let d = 0; d <= now.getDay(); d++) {
     const dayTotal = sales
       .filter(s => new Date(s.date).getDay() === d)
-      .reduce((sum, s) => sum + s.amount, 0);
+      .reduce((sum, s) => sum + (s.commission ?? 0), 0);
     acc += dayTotal;
     result.push({ label: labels[d], value: acc });
   }
@@ -189,7 +197,7 @@ export function getDailyAccumulation(): { day: number; accumulated: number }[] {
     while (saleIdx < sales.length) {
       const saleDay = new Date(sales[saleIdx].date).getDate();
       if (saleDay <= d) {
-        acc += sales[saleIdx].amount;
+        acc += (sales[saleIdx].commission ?? 0);
         saleIdx++;
       } else break;
     }

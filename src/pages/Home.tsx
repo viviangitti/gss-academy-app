@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, Target, Newspaper, ExternalLink, Star, ArrowRight, Plus, Check, X, Clock, CheckSquare, TrendingUp, Award, History, Activity } from 'lucide-react';
+import { Zap, Target, Newspaper, ExternalLink, Star, ArrowRight, Plus, Check, X, Clock, CheckSquare, TrendingUp, Award, Activity } from 'lucide-react';
 import { loadData, KEYS } from '../services/storage';
 import { fetchNews } from '../services/news';
 import { getFavorites } from '../services/favorites';
-import { getDay, setFocusText, toggleFocus, removeFocus, addMeeting, removeMeeting, addTask, toggleTask, removeTask } from '../services/day';
+import { getDay, addMeeting, removeMeeting, addTask, toggleTask, removeTask } from '../services/day';
 import { getStats, addSale, getDailyAccumulation } from '../services/goal';
 import { getWeekStats } from '../services/history';
 import { markActive, getWelcomeBackMessage } from '../services/notifications';
@@ -17,11 +17,11 @@ import type { GoalStats } from '../services/goal';
 import './Home.css';
 
 const TIPS = [
-  'Comece cada dia revisando suas 3 metas principais de vendas.',
+  'Comece cada dia revisando suas metas de comissão.',
   'Escute mais do que fala. O cliente que fala, compra.',
   'Faça o acompanhamento em até 24h. Velocidade fecha negócios.',
   'Prepare pelo menos 3 respostas para cada objeção comum.',
-  'Rituais diários criam consistência. Consistência gera resultados.',
+  'Rituais diários criam consistência. Consistência gera comissão.',
   'Pergunte "O que te impede de fechar hoje?" para acelerar decisões.',
   'Comemore cada pequena vitória com sua equipe.',
   'Revise seus números toda sexta-feira para ajustar a rota.',
@@ -40,7 +40,7 @@ export default function Home() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [segmentLabel, setSegmentLabel] = useState('');
   const [favs, setFavs] = useState<Favorite[]>([]);
-  const [day, setDay] = useState<DayData>({ date: '', focuses: [], meetings: [], tasks: [] });
+  const [day, setDay] = useState<DayData>({ date: '', meetings: [], tasks: [] });
   const [newMeeting, setNewMeeting] = useState({ time: '', title: '' });
   const [newTask, setNewTask] = useState('');
   const [showNewMeeting, setShowNewMeeting] = useState(false);
@@ -49,7 +49,7 @@ export default function Home() {
   const [weekStats, setWeekStats] = useState<WeekStats | null>(null);
   const [welcomeBack, setWelcomeBack] = useState<string | null>(null);
   const [showAddSale, setShowAddSale] = useState(false);
-  const [saleForm, setSaleForm] = useState({ amount: '', client: '' });
+  const [saleForm, setSaleForm] = useState({ amount: '', commission: '', client: '' });
 
   const refreshStats = (g: number) => {
     setStats(getStats(g));
@@ -83,10 +83,6 @@ export default function Home() {
   const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '', monthlyGoal: 0 });
   const name = profile.name ? `, ${profile.name.split(' ')[0]}` : '';
 
-  const handleFocusChange = (i: number, value: string) => {
-    setDay(setFocusText(i, value));
-  };
-
   const handleAddMeeting = () => {
     if (!newMeeting.title.trim() || !newMeeting.time) return;
     setDay(addMeeting(newMeeting));
@@ -102,18 +98,18 @@ export default function Home() {
 
   const handleRegisterSale = () => {
     const amount = Number(saleForm.amount);
+    const commission = Number(saleForm.commission);
     if (!amount || !saleForm.client.trim()) return;
-    addSale(amount, saleForm.client);
+    addSale(amount, commission || 0, saleForm.client);
     refreshStats(goal);
-    setSaleForm({ amount: '', client: '' });
+    setSaleForm({ amount: '', commission: '', client: '' });
     setShowAddSale(false);
   };
 
   const pendingTasks = day.tasks.filter(t => !t.done).length;
   const totalTasks = day.tasks.length;
-  const migratedFocuses = day.focuses.filter(f => f.fromYesterday && f.text.trim());
+  const pendingFromYesterday = day.tasks.filter(t => t.fromYesterday && !t.done);
 
-  // Micro-gráfico simples
   const chartData = stats && goal > 0 ? getDailyAccumulation() : [];
   const maxVal = Math.max(goal, ...chartData.map(d => d.accumulated), 1);
 
@@ -138,11 +134,11 @@ export default function Home() {
         <span>Vou entrar numa reunião</span>
       </button>
 
-      {/* Meta do mês */}
+      {/* Meta de comissão */}
       {stats && goal > 0 && (
         <div className="day-section">
           <div className="day-section-header">
-            <h3 className="section-title"><Award size={16} /> Meta do mês</h3>
+            <h3 className="section-title"><Award size={16} /> Meta de comissão do mês</h3>
             <div style={{ display: 'flex', gap: 6 }}>
               <button className="btn btn-outline btn-sm" onClick={() => navigate('/vendas')}>
                 Ver extrato
@@ -156,18 +152,25 @@ export default function Home() {
           {showAddSale && (
             <div className="new-sale card">
               <input
-                type="number"
-                placeholder="Valor R$"
-                value={saleForm.amount}
-                onChange={e => setSaleForm({ ...saleForm, amount: e.target.value })}
-                className="sale-amount-input"
-              />
-              <input
                 type="text"
                 placeholder="Cliente"
                 value={saleForm.client}
                 onChange={e => setSaleForm({ ...saleForm, client: e.target.value })}
                 className="sale-client-input"
+              />
+              <input
+                type="number"
+                placeholder="Venda R$"
+                value={saleForm.amount}
+                onChange={e => setSaleForm({ ...saleForm, amount: e.target.value })}
+                className="sale-amount-input"
+              />
+              <input
+                type="number"
+                placeholder="Comissão R$"
+                value={saleForm.commission}
+                onChange={e => setSaleForm({ ...saleForm, commission: e.target.value })}
+                className="sale-amount-input"
               />
               <button className="btn btn-primary btn-sm" onClick={handleRegisterSale}>
                 <Check size={14} />
@@ -178,8 +181,8 @@ export default function Home() {
           <div className="goal-card card">
             <div className="goal-numbers">
               <div>
-                <span className="goal-value">{formatBRL(stats.monthTotal)}</span>
-                <span className="goal-of">de {formatBRL(stats.goal)}</span>
+                <span className="goal-value">{formatBRL(stats.monthCommission)}</span>
+                <span className="goal-of">de {formatBRL(stats.goal)} em comissão</span>
               </div>
               <span className={`goal-pace goal-pace-${stats.pace}`}>
                 {stats.pace === 'adiantado' && '🔥 Adiantado'}
@@ -207,7 +210,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Mini gráfico de acumulado */}
             {chartData.length > 1 && (
               <div className="goal-chart">
                 <svg viewBox={`0 0 ${chartData.length * 20} 60`} preserveAspectRatio="none">
@@ -219,18 +221,13 @@ export default function Home() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
-                  {/* Linha da meta */}
                   <line
-                    x1="0"
-                    y1={60 - (goal / maxVal) * 55}
-                    x2={chartData.length * 20}
-                    y2={60 - (goal / maxVal) * 55}
-                    stroke="var(--text-soft)"
-                    strokeWidth="1"
-                    strokeDasharray="3 3"
+                    x1="0" y1={60 - (goal / maxVal) * 55}
+                    x2={chartData.length * 20} y2={60 - (goal / maxVal) * 55}
+                    stroke="var(--text-soft)" strokeWidth="1" strokeDasharray="3 3"
                   />
                 </svg>
-                <span className="goal-chart-label">Acumulado de vendas no mês</span>
+                <span className="goal-chart-label">Comissão acumulada no mês</span>
               </div>
             )}
           </div>
@@ -241,7 +238,7 @@ export default function Home() {
         <div className="goal-setup card" onClick={() => navigate('/perfil')}>
           <TrendingUp size={18} />
           <div>
-            <strong>Defina sua meta mensal</strong>
+            <strong>Defina sua meta de comissão</strong>
             <p>Configure no perfil para acompanhar seu progresso.</p>
           </div>
           <ArrowRight size={14} />
@@ -280,53 +277,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* De ontem (pendentes) */}
-      {migratedFocuses.length > 0 && (
-        <div className="day-section">
-          <h3 className="section-title"><History size={16} /> De ontem (pendentes)</h3>
-          <div className="migrated-card card">
-            {migratedFocuses.map((f, i) => {
-              const realIndex = day.focuses.findIndex(x => x === f);
-              return (
-                <div key={i} className={`focus-row migrated ${f.done ? 'done' : ''}`}>
-                  <button className="focus-check" onClick={() => setDay(toggleFocus(realIndex))}>
-                    {f.done && <Check size={12} />}
-                  </button>
-                  <span className="migrated-text">{f.text}</span>
-                  <button className="meeting-remove" onClick={() => setDay(removeFocus(realIndex))}>
-                    <X size={14} />
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* 3 Focos do Dia */}
-      <div className="day-section">
-        <h3 className="section-title"><Target size={16} /> Seus 3 focos de hoje</h3>
-        <div className="focuses card">
-          {[0, 1, 2].map(i => {
-            const f = day.focuses[i] || { text: '', done: false };
-            return (
-              <div key={i} className={`focus-row ${f.done ? 'done' : ''}`}>
-                <button className="focus-check" onClick={() => setDay(toggleFocus(i))}>
-                  {f.done ? <Check size={12} /> : <span className="focus-num">{i + 1}</span>}
-                </button>
-                <input
-                  type="text"
-                  placeholder={`Foco ${i + 1}...`}
-                  value={f.text}
-                  onChange={e => handleFocusChange(i, e.target.value)}
-                  className="focus-input"
-                />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
       {/* Reuniões de hoje */}
       <div className="day-section">
         <div className="day-section-header">
@@ -361,7 +311,7 @@ export default function Home() {
         )}
       </div>
 
-      {/* Tarefas do dia */}
+      {/* Tarefas */}
       <div className="day-section">
         <div className="day-section-header">
           <h3 className="section-title">
@@ -370,13 +320,25 @@ export default function Home() {
           </h3>
         </div>
 
+        {pendingFromYesterday.length > 0 && (
+          <div className="yesterday-hint">
+            {pendingFromYesterday.length} tarefa{pendingFromYesterday.length > 1 ? 's' : ''} de ontem {pendingFromYesterday.length > 1 ? 'continuam' : 'continua'} pendente.
+          </div>
+        )}
+
         <div className="tasks-card card">
+          {day.tasks.length === 0 && (
+            <div className="day-empty" style={{ padding: '14px 0', borderStyle: 'none' }}>
+              Nenhuma tarefa. Adicione abaixo.
+            </div>
+          )}
           {day.tasks.map(t => (
-            <div key={t.id} className={`task-row ${t.done ? 'done' : ''}`}>
+            <div key={t.id} className={`task-row ${t.done ? 'done' : ''} ${t.fromYesterday ? 'from-yesterday' : ''}`}>
               <button className="task-check" onClick={() => setDay(toggleTask(t.id))}>
                 {t.done && <Check size={12} />}
               </button>
               <span className="task-text">{t.text}</span>
+              {t.fromYesterday && <span className="yesterday-badge">ontem</span>}
               <button className="task-remove" onClick={() => setDay(removeTask(t.id))}>
                 <X size={12} />
               </button>

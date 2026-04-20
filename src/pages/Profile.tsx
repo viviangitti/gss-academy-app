@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Briefcase, Save, ExternalLink, Factory, Moon, Sun, Target, Shield, Download, MessageCircle } from 'lucide-react';
+import { User, Building2, Briefcase, Save, ExternalLink, Factory, Moon, Sun, Target, Shield, Download, MessageCircle, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { loadData, saveData, KEYS } from '../services/storage';
 import { SEGMENTS } from '../types';
 import type { UserProfile } from '../types';
+import { useAuth } from '../contexts/AuthContext';
+import { signOut } from '../services/auth';
+import { saveRemoteProfile } from '../services/firestore/profile';
 import './Profile.css';
 
 type Theme = 'light' | 'dark' | 'auto';
 
 export default function Profile() {
+  const { user, firebaseEnabled } = useAuth();
   const [profile, setProfile] = useState<UserProfile>({ name: '', role: '', company: '', segment: '', monthlyGoal: 0 });
   const [saved, setSaved] = useState(false);
   const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('gss_theme') as Theme) || 'auto');
@@ -17,10 +21,19 @@ export default function Profile() {
     setProfile(loadData(KEYS.PROFILE, { name: '', role: '', company: '', segment: '', monthlyGoal: 0 }));
   }, []);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     saveData(KEYS.PROFILE, profile);
+    if (user && firebaseEnabled) {
+      try { await saveRemoteProfile(user.uid, profile); } catch { /* offline, sync depois */ }
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleSignOut = async () => {
+    if (confirm('Sair da sua conta? Seus dados continuam salvos na nuvem.')) {
+      await signOut();
+    }
   };
 
   const applyTheme = (t: Theme) => {
@@ -142,9 +155,16 @@ export default function Profile() {
         </Link>
       </div>
 
+      {user && firebaseEnabled && (
+        <button className="btn btn-outline signout-btn" onClick={handleSignOut}>
+          <LogOut size={14} /> Sair da conta
+        </button>
+      )}
+
       <div className="app-info">
         <p>MAESTR.IA em Vendas</p>
         <p>Versão 4.0.0</p>
+        {user && <p style={{ marginTop: 4, fontSize: 11 }}>{user.email}</p>}
       </div>
     </div>
   );

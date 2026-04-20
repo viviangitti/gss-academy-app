@@ -37,7 +37,7 @@
   padding: 8px 14px;
   border-radius: var(--radius-full);
   border: 1.5px solid var(--border-strong);
-  background: var(--white);
+  background: var(--surface);
   font-size: 13px;
   font-weight: 600;
   color: var(--text-light);
@@ -188,7 +188,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  background: var(--white);
+  background: var(--surface);
   border: 1.5px solid var(--border-strong);
   border-radius: var(--radius-full);
   transition: all 0.2s var(--ease);

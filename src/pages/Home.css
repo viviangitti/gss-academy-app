@@ -337,7 +337,7 @@
   text-align: center;
   font-size: 13px;
   color: var(--text-soft);
-  background: var(--white);
+  background: var(--surface);
   border-radius: var(--radius);
   border: 1px dashed var(--border-strong);
 }
@@ -694,7 +694,7 @@
   color: var(--text);
   transition: all 0.2s var(--ease);
   border: 1px solid var(--border);
-  background: var(--white);
+  background: var(--surface);
   border-radius: var(--radius);
 }
 

@@ -46,7 +46,7 @@
   padding: 8px 16px;
   border-radius: var(--radius-full);
   border: 1.5px solid var(--border-strong);
-  background: var(--white);
+  background: var(--surface);
   font-size: 13px;
   font-weight: 600;
   color: var(--text-light);
@@ -74,7 +74,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--white);
+  background: var(--surface);
   border: 1.5px solid var(--border-strong);
   border-radius: var(--radius);
   padding: 0 14px;

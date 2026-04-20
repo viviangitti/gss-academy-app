@@ -14,12 +14,13 @@ const titles: Record<string, string> = {
   '/treino': 'Simulador de Treino',
   '/pre-reuniao': 'Pré-reunião',
   '/coach-mensagem': 'Coach de Mensagem',
+  '/analise-reuniao': 'Análise pós-reunião',
   '/ia-coach': 'Pergunte à IA',
   '/perfil': 'Perfil',
 };
 
 const LIBRARY_SUB_PAGES = ['/objecoes', '/scripts', '/tecnicas', '/noticias', '/favoritos'];
-const TRAINING_SUB_PAGES = ['/treino', '/pre-reuniao', '/coach-mensagem'];
+const TRAINING_SUB_PAGES = ['/treino', '/pre-reuniao', '/coach-mensagem', '/analise-reuniao'];
 
 export default function Header() {
   const location = useLocation();

@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { Swords, Zap, Wand2, Mic } from 'lucide-react';
+import { Swords, Zap, Wand2, Mic, Search } from 'lucide-react';
 import './Content.css';
 
 const MENU_ITEMS = [
+  { path: '/cliente-pesquisa', icon: Search, label: 'Pesquisar Cliente', desc: 'Dossiê completo da empresa em 10 segundos', color: '#3b82f6' },
   { path: '/pre-reuniao', icon: Zap, label: 'Pré-reunião', desc: 'Prepare-se em 2 minutos antes de cada encontro', color: '#c9a84c' },
   { path: '/coach-mensagem', icon: Wand2, label: 'Coach de Mensagem', desc: 'Revise seu WhatsApp ou e-mail antes de enviar', color: '#10b981' },
   { path: '/analise-reuniao', icon: Mic, label: 'Pós-reunião', desc: 'Grave 1 min falando como foi, a IA extrai tudo', color: '#ef4444' },

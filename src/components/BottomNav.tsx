@@ -3,7 +3,7 @@ import { Home, BookOpen, Swords, Sparkles } from 'lucide-react';
 import './BottomNav.css';
 
 const LIBRARY_PATHS = ['/biblioteca', '/objecoes', '/scripts', '/tecnicas', '/noticias', '/favoritos'];
-const TRAINING_PATHS = ['/treino-hub', '/treino', '/pre-reuniao', '/coach-mensagem', '/analise-reuniao'];
+const TRAINING_PATHS = ['/treino-hub', '/treino', '/pre-reuniao', '/coach-mensagem', '/analise-reuniao', '/cliente-pesquisa'];
 
 const tabs = [
   { path: '/', icon: Home, label: 'Início' },

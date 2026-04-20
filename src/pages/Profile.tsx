@@ -80,14 +80,14 @@ export default function Profile() {
           <span className="form-hint">Personaliza objeções, roteiros e notícias do seu mercado</span>
         </div>
         <div className="form-group">
-          <label><Target size={14} /> Meta mensal (R$)</label>
+          <label><Target size={14} /> Meta de comissão mensal (R$)</label>
           <input
             type="number"
             value={profile.monthlyGoal || ''}
             onChange={e => setProfile({ ...profile, monthlyGoal: Number(e.target.value) || 0 })}
-            placeholder="Ex: 100000"
+            placeholder="Ex: 10000"
           />
-          <span className="form-hint">Acompanhe seu progresso e ritmo na Home</span>
+          <span className="form-hint">Quanto você quer ganhar de comissão este mês — acompanhe na Home</span>
         </div>
         <button className={`btn btn-primary save-btn ${saved ? 'saved' : ''}`} onClick={handleSave}>
           <Save size={16} /> {saved ? 'Salvo!' : 'Salvar'}

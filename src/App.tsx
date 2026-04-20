@@ -19,6 +19,7 @@ import ClientResearch from './pages/ClientResearch';
 import History from './pages/History';
 import Privacy from './pages/Privacy';
 import Install from './pages/Install';
+import Feedback from './pages/Feedback';
 import AICoach from './pages/AICoach';
 import Profile from './pages/Profile';
 import './App.css';
@@ -54,6 +55,7 @@ function App() {
             <Route path="/historico" element={<History />} />
             <Route path="/privacidade" element={<Privacy />} />
             <Route path="/instalar" element={<Install />} />
+            <Route path="/feedback" element={<Feedback />} />
             <Route path="/ia-coach" element={<AICoach />} />
             <Route path="/perfil" element={<Profile />} />
           </Routes>

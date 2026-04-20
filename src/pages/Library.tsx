@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Shield, FileText, BookOpen, Newspaper, Star } from 'lucide-react';
+import { Shield, FileText, BookOpen, Newspaper, Star, History as HistoryIcon } from 'lucide-react';
 import { loadData, KEYS } from '../services/storage';
 import { SEGMENTS } from '../types';
 import type { UserProfile } from '../types';
@@ -11,6 +11,7 @@ const MENU_ITEMS = [
   { path: '/tecnicas', icon: BookOpen, label: 'Técnicas', desc: 'Perguntas estratégicas, qualificação e mais', color: '#8b5cf6' },
   { path: '/noticias', icon: Newspaper, label: 'Notícias', desc: 'Novidades do seu mercado', color: '#f59e0b' },
   { path: '/favoritos', icon: Star, label: 'Favoritos', desc: 'Seus itens marcados com estrela', color: '#c9a84c' },
+  { path: '/historico', icon: HistoryIcon, label: 'Histórico', desc: 'Tudo que você já fez com a IA', color: '#64748b' },
 ];
 
 export default function Library() {

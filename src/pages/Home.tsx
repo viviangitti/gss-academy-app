@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, Target, Newspaper, ExternalLink, Star, ArrowRight, Plus, Check, X, Clock, CheckSquare, TrendingUp, Award, History } from 'lucide-react';
+import { Zap, Target, Newspaper, ExternalLink, Star, ArrowRight, Plus, Check, X, Clock, CheckSquare, TrendingUp, Award, History, Activity } from 'lucide-react';
 import { loadData, KEYS } from '../services/storage';
 import { fetchNews } from '../services/news';
 import { getFavorites } from '../services/favorites';
 import { getDay, setFocusText, toggleFocus, removeFocus, addMeeting, removeMeeting, addTask, toggleTask, removeTask } from '../services/day';
 import { getStats, addSale, getDailyAccumulation } from '../services/goal';
+import { getWeekStats } from '../services/history';
+import { markActive, getWelcomeBackMessage } from '../services/notifications';
+import type { WeekStats } from '../services/history';
 import { SEGMENTS } from '../types';
 import type { UserProfile, NewsItem } from '../types';
 import type { Favorite } from '../services/favorites';
@@ -43,6 +46,8 @@ export default function Home() {
   const [showNewMeeting, setShowNewMeeting] = useState(false);
   const [goal, setGoal] = useState(0);
   const [stats, setStats] = useState<GoalStats | null>(null);
+  const [weekStats, setWeekStats] = useState<WeekStats | null>(null);
+  const [welcomeBack, setWelcomeBack] = useState<string | null>(null);
   const [showAddSale, setShowAddSale] = useState(false);
   const [saleForm, setSaleForm] = useState({ amount: '', client: '' });
 
@@ -67,6 +72,12 @@ export default function Home() {
 
     setFavs(getFavorites().sort((a, b) => b.addedAt - a.addedAt).slice(0, 3));
     setDay(getDay());
+
+    const ws = getWeekStats();
+    if (ws.totalInteractions > 0) setWeekStats(ws);
+
+    setWelcomeBack(getWelcomeBackMessage());
+    markActive();
   }, []);
 
   const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '', monthlyGoal: 0 });
@@ -114,6 +125,13 @@ export default function Home() {
           {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
         </p>
       </div>
+
+      {welcomeBack && (
+        <div className="welcome-back card" onClick={() => setWelcomeBack(null)}>
+          <span>👋 {welcomeBack}</span>
+          <X size={14} />
+        </div>
+      )}
 
       <button className="premeeting-btn" onClick={() => navigate('/pre-reuniao')}>
         <Zap size={18} />
@@ -222,6 +240,38 @@ export default function Home() {
             <p>Configure no perfil para acompanhar seu progresso.</p>
           </div>
           <ArrowRight size={14} />
+        </div>
+      )}
+
+      {/* Progresso semanal */}
+      {weekStats && (
+        <div className="day-section">
+          <div className="day-section-header">
+            <h3 className="section-title"><Activity size={16} /> Essa semana</h3>
+            <button className="btn btn-outline btn-sm" onClick={() => navigate('/historico')}>Ver histórico</button>
+          </div>
+          <div className="week-stats card">
+            <div className="week-stat">
+              <span className="week-stat-value">{weekStats.researches}</span>
+              <span className="week-stat-label">Pesquisas</span>
+            </div>
+            <div className="week-stat">
+              <span className="week-stat-value">{weekStats.messages}</span>
+              <span className="week-stat-label">Mensagens</span>
+            </div>
+            <div className="week-stat">
+              <span className="week-stat-value">{weekStats.meetings}</span>
+              <span className="week-stat-label">Reuniões</span>
+            </div>
+            <div className="week-stat">
+              <span className="week-stat-value">
+                {weekStats.averageSimScore !== null ? weekStats.averageSimScore.toFixed(1) : weekStats.simulations}
+              </span>
+              <span className="week-stat-label">
+                {weekStats.averageSimScore !== null ? 'Nota média' : 'Treinos'}
+              </span>
+            </div>
+          </div>
         </div>
       )}
 

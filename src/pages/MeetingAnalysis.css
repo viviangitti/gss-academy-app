@@ -214,6 +214,41 @@
   to { transform: rotate(360deg); }
 }
 
+.manalysis-example {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px dashed var(--border-strong);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-light);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s var(--ease);
+}
+
+.manalysis-example:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  border-style: solid;
+}
+
+.recorder-options {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.manalysis-create-tasks {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
 .manalysis-error {
   padding: 14px;
   border-left: 3px solid var(--danger);

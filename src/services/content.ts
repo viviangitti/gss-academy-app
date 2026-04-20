@@ -387,6 +387,18 @@ const SEGMENT_OBJECTIONS: Record<string, Objection[]> = {
         'Não precisa trocar, pode diversificar. Muitos clientes mantêm 2-3 instituições para comparar taxas e ter mais opções. Vamos fazer uma simulação sem compromisso?',
         'Ótimo que você já investe. A pergunta é: você está no melhor produto para seu perfil? Uma análise gratuita da sua carteira pode revelar oportunidades.',
       ]},
+    { id: 'fi2', objection: '"Não confio em investimentos, prefiro poupança"', segment: 'financeiro',
+      quickResponses: ['Poupança perde para a inflação. Vou te mostrar os números.', 'Temos opções com mesma segurança e rendimento melhor.'],
+      responses: [
+        'Entendo a preocupação. Mas poupança hoje rende menos que a inflação — ou seja, seu dinheiro perde poder de compra. Existem opções tão seguras quanto (como Tesouro Direto) com rendimento muito melhor.',
+        'Segurança é prioridade, concordo. Mas segurança não precisa custar rentabilidade. Posso te mostrar 3 opções com a mesma garantia da poupança e retorno de 2-3x?',
+      ]},
+    { id: 'fi3', objection: '"Taxas são muito altas"', segment: 'financeiro',
+      quickResponses: ['Vamos olhar o retorno líquido, não só taxa.', 'Minha taxa cai com volume. Vamos ver seu caso.'],
+      responses: [
+        'Taxa isolada não diz nada. O que importa é o retorno líquido. Muitas vezes uma taxa um pouco maior vem com gestão melhor e retorno maior. Posso fazer a comparação para você.',
+        'Nossas taxas são competitivas e caem conforme o volume. Me conta seu perfil de investimento que eu faço uma simulação transparente, sem compromisso.',
+      ]},
   ],
   saude: [
     { id: 's1', objection: '"Meus pacientes não vão pagar isso"', segment: 'saude',
@@ -394,6 +406,18 @@ const SEGMENT_OBJECTIONS: Record<string, Objection[]> = {
       responses: [
         'Quando o paciente entende o valor do resultado, o preço deixa de ser barreira. Posso ajudar a criar uma comunicação de valor que mude essa percepção.',
         'Temos planos de parcelamento que tornam o tratamento acessível. O valor por sessão fica menor que [comparação do dia a dia].',
+      ]},
+    { id: 's2', objection: '"O plano de saúde já cobre"', segment: 'saude',
+      quickResponses: ['Plano tem rede limitada e espera longa.', 'O que cobre é básico. O resultado completo não.'],
+      responses: [
+        'Plano de saúde cobre o básico e tem rede limitada. Para quem quer resultado mais rápido, personalização e profissional específico, vale o investimento particular.',
+        'Entendo. Só considere: qual o tempo de espera no plano? E a liberdade de escolher profissional? Muitos pacientes preferem pagar e resolver rápido que esperar meses.',
+      ]},
+    { id: 's3', objection: '"Vou pensar e volto a te procurar"', segment: 'saude',
+      quickResponses: ['Posso segurar essa condição por 7 dias.', 'O problema que te trouxe aqui não espera.'],
+      responses: [
+        'Claro! Posso segurar essa condição especial por 7 dias. Mas te pergunto: o desconforto que te trouxe aqui vai esperar também? Quanto antes começarmos, antes resolve.',
+        'Pensar é importante. Mas me diz o que falta pra ter certeza agora? Se for dúvida técnica, eu esclareço. Se for valor, vejo o que posso fazer.',
       ]},
   ],
   educacao: [
@@ -403,6 +427,18 @@ const SEGMENT_OBJECTIONS: Record<string, Objection[]> = {
         'Conteúdo gratuito existe, mas sem metodologia, acompanhamento e certificação. Nossa taxa de conclusão é X% vs 3% dos cursos gratuitos. Resultado custa investimento.',
         'Gratuito não tem suporte, rede de contatos nem empregabilidade. Nossos alunos têm X% de colocação no mercado em Y meses.',
       ]},
+    { id: 'e2', objection: '"A mensalidade é alta demais"', segment: 'educacao',
+      quickResponses: ['Divida o investimento pelas aulas: R$ X por aula.', 'Bolsas e parcelamento tornam viável.'],
+      responses: [
+        'Se você dividir o investimento pelo número de aulas e horas de conteúdo, dá menos de R$ X por aula. É mais barato que muitos cursos pontuais.',
+        'Temos bolsas por mérito, desconto por indicação e parcelamento. Vamos ver qual formato cabe melhor pra você?',
+      ]},
+    { id: 'e3', objection: '"Não tenho tempo para estudar"', segment: 'educacao',
+      quickResponses: ['Nosso formato é 100% flexível, estuda quando quiser.', 'Basta 30 min por dia para completar.'],
+      responses: [
+        'Esse é o principal medo de quem começa. Por isso nosso formato é 100% online e assíncrono. Nossos alunos completam com 30-45 min por dia nos horários que conseguem.',
+        'Tempo não é questão de ter, é de priorizar. Com o quanto você ganharia ao dominar isso em X meses, vale o tempo investido?',
+      ]},
   ],
   servicos: [
     { id: 'sv1', objection: '"Posso fazer internamente"', segment: 'servicos',
@@ -410,6 +446,18 @@ const SEGMENT_OBJECTIONS: Record<string, Objection[]> = {
       responses: [
         'Pode, mas quanto custa em tempo e oportunidade? Enquanto sua equipe faz isso, deixa de focar no negócio principal. Nosso time especializado entrega em metade do tempo.',
         'Internalizar parece econômico, mas some: contratação, treinamento, ferramentas, gestão. Terceirizar é custo variável sem dor de cabeça.',
+      ]},
+    { id: 'sv2', objection: '"Como saber se o trabalho vai ser de qualidade?"', segment: 'servicos',
+      quickResponses: ['Começamos com um piloto pequeno.', 'Temos cases de clientes similares. Posso conectar.'],
+      responses: [
+        'Ótima pergunta. Começamos com um escopo pequeno de validação — você vê a qualidade antes de comprometer mais. Se não gostar, paramos sem problema.',
+        'Posso te conectar com 2-3 clientes do seu mesmo porte/setor. Eles contam como é trabalhar conosco na prática. Quer que eu envie as referências?',
+      ]},
+    { id: 'sv3', objection: '"Já contratei consultoria antes e não funcionou"', segment: 'servicos',
+      quickResponses: ['O que não funcionou? Quero entender antes de propor.', 'Nosso método é hands-on, não relatório.'],
+      responses: [
+        'Entendo a frustração. Me conta o que não funcionou da última vez? Isso vai me ajudar a mostrar em que somos diferentes e se faz sentido tentar.',
+        'A maioria das consultorias entrega relatório. Nós trabalhamos junto com sua equipe, mão na massa, até o resultado sair. Essa diferença muda muito o jogo.',
       ]},
   ],
   agro: [

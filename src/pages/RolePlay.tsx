@@ -3,6 +3,7 @@ import { Swords, Send, RotateCcw, Star, ChevronDown, Sparkles } from 'lucide-rea
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getObjections } from '../services/content';
 import { loadData, KEYS } from '../services/storage';
+import { addHistory } from '../services/history';
 import type { UserProfile } from '../types';
 import type { Objection } from '../services/content';
 import SpeakButton from '../components/SpeakButton';
@@ -144,7 +145,19 @@ export default function RolePlay() {
       const result = await model.generateContent(
         `${EVALUATOR_PROMPT}\n\nObjeção treinada: ${selectedObjection?.objection}\n\nConversa:\n${conversation}`
       );
-      setEvaluation(result.response.text());
+      const text = result.response.text();
+      setEvaluation(text);
+
+      // Extrair nota (formato "Nota: X/10") e salvar no histórico
+      const scoreMatch = text.match(/Nota:?\s*(\d+)\s*\/\s*10/i);
+      const score = scoreMatch ? parseInt(scoreMatch[1]) : null;
+      addHistory({
+        type: 'simulator_session',
+        title: `Treino: ${selectedObjection?.objection || ''}`,
+        subtitle: score ? `Nota ${score}/10` : 'Treino concluído',
+        preview: conversation.slice(0, 140),
+        data: { score, evaluation: text, conversation, objection: selectedObjection?.objection },
+      });
     } catch {
       setEvaluation('A avaliação ficou indisponível. Toque para tentar de novo.');
     }

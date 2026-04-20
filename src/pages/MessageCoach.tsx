@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { Wand2, Sparkles, Copy, Check, RotateCcw, AlertTriangle, ThumbsUp, MessageSquare } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Wand2, Sparkles, Copy, Check, RotateCcw, AlertTriangle, ThumbsUp, MessageSquare, Lightbulb } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { addHistory } from '../services/history';
 import ShareButton from '../components/ShareButton';
 import SpeakButton from '../components/SpeakButton';
 import './MessageCoach.css';
@@ -57,6 +58,13 @@ Responda EXATAMENTE neste formato JSON (sem markdown, sem crases), em português
 Seja honesto: se a mensagem for ruim, dê nota baixa. Se for excelente, dê nota alta.
 NÃO inclua nenhum texto antes ou depois do JSON.`;
 
+interface SavedAnalysis {
+  message: string;
+  context: string;
+  channel: string;
+  analysis: Analysis;
+}
+
 export default function MessageCoach() {
   const [message, setMessage] = useState('');
   const [context, setContext] = useState('');
@@ -65,6 +73,29 @@ export default function MessageCoach() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem('gss_history_open');
+    if (saved) {
+      try {
+        const entry = JSON.parse(saved);
+        if (entry.type === 'message_review' && entry.data) {
+          const data = entry.data as SavedAnalysis;
+          setMessage(data.message);
+          setContext(data.context);
+          setChannel(data.channel);
+          setAnalysis(data.analysis);
+        }
+      } catch { /* ignore */ }
+      sessionStorage.removeItem('gss_history_open');
+    }
+  }, []);
+
+  const handleExample = () => {
+    setChannel('whatsapp');
+    setContext('follow_up');
+    setMessage('Olá João, tudo bem? Gostaria de saber se teve tempo de analisar a proposta que enviei. Qualquer dúvida estou à disposição. Abraços.');
+  };
 
   const handleAnalyze = async () => {
     if (!message.trim() || loading) return;
@@ -84,6 +115,15 @@ export default function MessageCoach() {
       const cleaned = text.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
       const parsed = JSON.parse(cleaned) as Analysis;
       setAnalysis(parsed);
+
+      // Salvar no histórico
+      addHistory({
+        type: 'message_review',
+        title: `${channelLabel} — Nota ${parsed.score}/10`,
+        subtitle: parsed.tone,
+        preview: message.slice(0, 140),
+        data: { message, context, channel, analysis: parsed } as SavedAnalysis,
+      });
     } catch (e) {
       const msg = e instanceof Error ? e.message : '';
       setError(`A análise ficou indisponível. ${msg ? `(${msg})` : ''} Toque para tentar de novo.`);
@@ -158,6 +198,12 @@ export default function MessageCoach() {
             />
             <span className="msgcoach-hint">{message.length} caracteres</span>
           </div>
+
+          {!message && (
+            <button className="msgcoach-example" onClick={handleExample}>
+              <Lightbulb size={14} /> Ver exemplo de mensagem
+            </button>
+          )}
 
           <button
             className="btn btn-primary msgcoach-analyze"

@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, BookOpen, Swords, Sparkles } from 'lucide-react';
 import './BottomNav.css';
 
-const LIBRARY_PATHS = ['/biblioteca', '/objecoes', '/scripts', '/tecnicas', '/noticias', '/favoritos'];
+const LIBRARY_PATHS = ['/biblioteca', '/objecoes', '/scripts', '/tecnicas', '/noticias', '/favoritos', '/historico'];
 const TRAINING_PATHS = ['/treino-hub', '/treino', '/pre-reuniao', '/coach-mensagem', '/analise-reuniao', '/cliente-pesquisa'];
 
 const tabs = [

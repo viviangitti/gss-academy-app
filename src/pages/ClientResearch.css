@@ -80,6 +80,36 @@
   font-size: 15px;
 }
 
+.cresearch-example {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px dashed var(--border-strong);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-light);
+  cursor: pointer;
+  font-family: inherit;
+  align-self: center;
+  transition: all 0.2s var(--ease);
+}
+
+.cresearch-example:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  border-style: solid;
+}
+
+.cresearch-prepare {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
 .cresearch-error {
   padding: 14px;
   border-left: 3px solid var(--danger);

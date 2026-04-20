@@ -77,7 +77,7 @@ function AppContent() {
   if (loading || !profileReady) {
     return (
       <div className="app-loading">
-        <div className="app-loading-logo">M</div>
+        <div className="app-loading-logo">GSS</div>
       </div>
     );
   }

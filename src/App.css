@@ -145,8 +145,8 @@ input, textarea {
 }
 
 .app-loading-logo {
-  width: 68px;
-  height: 68px;
+  width: 78px;
+  height: 78px;
   background: linear-gradient(135deg, var(--accent), var(--accent-light));
   color: var(--primary);
   border-radius: 18px;
@@ -154,8 +154,9 @@ input, textarea {
   align-items: center;
   justify-content: center;
   font-family: 'Cinzel', serif;
-  font-size: 36px;
+  font-size: 24px;
   font-weight: 800;
+  letter-spacing: 0.02em;
   box-shadow: var(--shadow-accent);
   animation: pulse-glow 1.6s ease-in-out infinite;
 }

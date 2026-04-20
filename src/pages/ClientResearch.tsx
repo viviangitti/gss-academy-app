@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { Search, Sparkles, Building2, TrendingUp, AlertCircle, HelpCircle, Shield, BookOpen, RotateCcw, Copy, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Sparkles, Building2, TrendingUp, AlertCircle, HelpCircle, Shield, BookOpen, RotateCcw, Copy, Check, Zap, Lightbulb } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { loadData, KEYS } from '../services/storage';
+import { addHistory } from '../services/history';
 import { SEGMENTS } from '../types';
 import type { UserProfile } from '../types';
 import ShareButton from '../components/ShareButton';
 import './ClientResearch.css';
-
-// Removido ShareButton duplicado
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
@@ -52,11 +52,40 @@ IMPORTANTE:
 - NÃO inclua nenhum texto antes ou depois do JSON`;
 
 export default function ClientResearch() {
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [dossie, setDossie] = useState<Dossie | null>(null);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Se veio do histórico, carrega o dossiê já gerado
+    const saved = sessionStorage.getItem('gss_history_open');
+    if (saved) {
+      try {
+        const entry = JSON.parse(saved);
+        if (entry.type === 'client_research' && entry.data) {
+          setQuery(entry.title);
+          setDossie(entry.data as Dossie);
+        }
+      } catch { /* ignore */ }
+      sessionStorage.removeItem('gss_history_open');
+    }
+  }, []);
+
+  const handlePrepareMeeting = () => {
+    if (!dossie) return;
+    // Passa o dossiê para pré-reunião via sessionStorage
+    const note = `Cliente: ${query}\n${dossie.overview}\n\nPossíveis dores:\n${dossie.possiblePains.map(p => `- ${p}`).join('\n')}\n\nPerguntas:\n${dossie.smartQuestions.map((q, i) => `${i + 1}. ${q}`).join('\n')}\n\nObjeções prováveis:\n${dossie.likelyObjections.map(o => `- ${o}`).join('\n')}\n\nTécnica: ${dossie.recommendedApproach}`;
+    localStorage.setItem('gss_premeeting_notes', note);
+    navigate('/pre-reuniao');
+  };
+
+  const handleExample = () => {
+    setQuery('Ambev');
+    setTimeout(() => handleSearch(), 100);
+  };
 
   const handleSearch = async () => {
     if (!query.trim() || loading) return;
@@ -75,6 +104,15 @@ export default function ClientResearch() {
       const cleaned = text.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
       const parsed = JSON.parse(cleaned) as Dossie;
       setDossie(parsed);
+
+      // Salvar no histórico
+      addHistory({
+        type: 'client_research',
+        title: query,
+        subtitle: `${parsed.sector}${parsed.size ? ' • ' + parsed.size : ''}`,
+        preview: parsed.overview,
+        data: parsed,
+      });
     } catch (e) {
       const msg = e instanceof Error ? e.message : '';
       setError(`A pesquisa ficou indisponível. ${msg ? `(${msg})` : ''} Toque para tentar de novo.`);
@@ -192,6 +230,10 @@ export default function ClientResearch() {
           </div>
         </div>
 
+        <button className="btn btn-primary cresearch-prepare" onClick={handlePrepareMeeting}>
+          <Zap size={16} /> Preparar reunião com {query}
+        </button>
+
         <div className="cresearch-result-actions">
           <ShareButton text={buildShareText()} title={`Dossiê ${query}`} size={16} />
         </div>
@@ -239,6 +281,10 @@ export default function ClientResearch() {
       </div>
 
       {error && <div className="cresearch-error card" onClick={handleSearch}>{error}</div>}
+
+      <button className="cresearch-example" onClick={handleExample}>
+        <Lightbulb size={14} /> Ver exemplo com "Ambev"
+      </button>
 
       <div className="cresearch-explainer card">
         <h4>O que você vai ver</h4>

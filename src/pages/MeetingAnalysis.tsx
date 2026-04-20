@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Mic, Square, Sparkles, RotateCcw, Users, Shield, ArrowRight, AlertTriangle, Target, Edit3, Trash2 } from 'lucide-react';
+import { Mic, Square, Sparkles, RotateCcw, Users, Shield, ArrowRight, AlertTriangle, Target, Edit3, Trash2, CheckSquare, Lightbulb } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { addHistory } from '../services/history';
+import { addTask } from '../services/day';
 import ShareButton from '../components/ShareButton';
 import SpeakButton from '../components/SpeakButton';
 import './MeetingAnalysis.css';
@@ -62,7 +65,13 @@ interface SpeechRecognitionEvent {
   };
 }
 
+interface SavedMeeting {
+  transcript: string;
+  analysis: Analysis;
+}
+
 export default function MeetingAnalysis() {
+  const navigate = useNavigate();
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [interim, setInterim] = useState('');
@@ -71,6 +80,7 @@ export default function MeetingAnalysis() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [error, setError] = useState('');
   const [hasSupport, setHasSupport] = useState(true);
+  const [tasksCreated, setTasksCreated] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const finalTranscriptRef = useRef('');
 
@@ -81,7 +91,38 @@ export default function MeetingAnalysis() {
     if (!SpeechRec) {
       setHasSupport(false);
     }
+
+    // Restaura do histórico se veio de lá
+    const saved = sessionStorage.getItem('gss_history_open');
+    if (saved) {
+      try {
+        const entry = JSON.parse(saved);
+        if (entry.type === 'meeting_analysis' && entry.data) {
+          const data = entry.data as SavedMeeting;
+          setTranscript(data.transcript);
+          finalTranscriptRef.current = data.transcript;
+          setAnalysis(data.analysis);
+        }
+      } catch { /* ignore */ }
+      sessionStorage.removeItem('gss_history_open');
+    }
   }, []);
+
+  const handleExample = () => {
+    setManualEdit(true);
+    const exampleText = 'A reunião com a Alpha foi interessante. O João é o diretor e pareceu bem interessado. Já a Maria, que é a compradora, bateu muito na questão do preço, disse que temos que melhorar. Eles já viram 3 propostas de concorrentes. Combinamos que eu vou enviar o comparativo com nosso concorrente principal até sexta e marcar nova reunião na segunda.';
+    setTranscript(exampleText);
+    finalTranscriptRef.current = exampleText;
+  };
+
+  const handleCreateTasks = () => {
+    if (!analysis) return;
+    analysis.nextSteps.forEach(step => {
+      addTask(step);
+    });
+    setTasksCreated(true);
+    setTimeout(() => navigate('/'), 1500);
+  };
 
   const startRecording = () => {
     setError('');
@@ -148,6 +189,15 @@ export default function MeetingAnalysis() {
       const cleaned = text.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
       const parsed = JSON.parse(cleaned) as Analysis;
       setAnalysis(parsed);
+
+      // Salvar no histórico
+      addHistory({
+        type: 'meeting_analysis',
+        title: parsed.summary.slice(0, 60),
+        subtitle: `Qualidade ${parsed.quality}/5`,
+        preview: fullText.slice(0, 140),
+        data: { transcript: fullText, analysis: parsed } as SavedMeeting,
+      });
     } catch (e) {
       const msg = e instanceof Error ? e.message : '';
       setError(`A análise ficou indisponível. ${msg ? `(${msg})` : ''} Toque para tentar de novo.`);
@@ -273,6 +323,20 @@ export default function MeetingAnalysis() {
           </div>
         )}
 
+        {analysis.nextSteps.length > 0 && (
+          <button
+            className={`btn ${tasksCreated ? 'btn-copied' : 'btn-primary'} manalysis-create-tasks`}
+            onClick={handleCreateTasks}
+            disabled={tasksCreated}
+          >
+            {tasksCreated ? (
+              <><CheckSquare size={16} /> Tarefas criadas! Indo para o Dia...</>
+            ) : (
+              <><CheckSquare size={16} /> Virar próximos passos em tarefas do dia</>
+            )}
+          </button>
+        )}
+
         <div className="manalysis-result-actions">
           <ShareButton text={buildShareText()} title="Resumo da reunião" size={16} />
           <SpeakButton text={buildShareText().replace(/[📋👥💬✅🎯•]/g, '')} size={16} />
@@ -307,11 +371,16 @@ export default function MeetingAnalysis() {
                 <p className="recorder-hint">
                   {hasSupport ? 'Toque para começar a gravar' : 'Seu navegador não suporta gravação. Use o botão abaixo.'}
                 </p>
-                {!hasSupport && (
-                  <button className="btn btn-outline btn-sm" onClick={() => setManualEdit(true)}>
-                    <Edit3 size={12} /> Digitar no lugar
+                <div className="recorder-options">
+                  {!hasSupport && (
+                    <button className="btn btn-outline btn-sm" onClick={() => setManualEdit(true)}>
+                      <Edit3 size={12} /> Digitar no lugar
+                    </button>
+                  )}
+                  <button className="manalysis-example" onClick={handleExample}>
+                    <Lightbulb size={12} /> Ver exemplo
                   </button>
-                )}
+                </div>
               </div>
             )}
 

@@ -16,6 +16,7 @@ import PreMeeting from './pages/PreMeeting';
 import MessageCoach from './pages/MessageCoach';
 import MeetingAnalysis from './pages/MeetingAnalysis';
 import ClientResearch from './pages/ClientResearch';
+import History from './pages/History';
 import AICoach from './pages/AICoach';
 import Profile from './pages/Profile';
 import './App.css';
@@ -48,6 +49,7 @@ function App() {
             <Route path="/coach-mensagem" element={<MessageCoach />} />
             <Route path="/analise-reuniao" element={<MeetingAnalysis />} />
             <Route path="/cliente-pesquisa" element={<ClientResearch />} />
+            <Route path="/historico" element={<History />} />
             <Route path="/ia-coach" element={<AICoach />} />
             <Route path="/perfil" element={<Profile />} />
           </Routes>

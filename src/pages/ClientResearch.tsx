@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Sparkles, Building2, TrendingUp, AlertCircle, HelpCircle, Shield, BookOpen, RotateCcw, Copy, Check, Zap, Lightbulb } from 'lucide-react';
+import { Search, Sparkles, Building2, User as UserIcon, TrendingUp, AlertCircle, HelpCircle, Shield, BookOpen, RotateCcw, Copy, Check, Zap, Lightbulb } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { loadData, KEYS } from '../services/storage';
 import { addHistory } from '../services/history';
@@ -11,11 +11,13 @@ import './ClientResearch.css';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
+type ClientType = 'pj' | 'pf';
+
 interface Dossie {
   found: boolean;
   overview: string;
-  sector: string;
-  size: string;
+  sector: string;   // Para PJ: setor da empresa. Para PF: perfil/ocupação provável.
+  size: string;     // Para PJ: porte. Para PF: perfil de consumo (ex: "alto padrão").
   context: string[];
   possiblePains: string[];
   smartQuestions: string[];
@@ -24,35 +26,73 @@ interface Dossie {
   approachReason: string;
 }
 
-const RESEARCH_PROMPT = (query: string, mySegment: string) => `Você é um consultor de vendas B2B que prepara vendedores para reuniões. O vendedor vai fazer uma reunião e precisa de um dossiê rápido sobre a empresa cliente.
+const PJ_PROMPT = (query: string, vendorSegment: string, vendorRole: string) => `Você é um consultor de vendas B2B que prepara vendedores para uma reunião. O vendedor está preparando uma reunião de vendas com uma empresa cliente.
 
-EMPRESA / CNPJ PESQUISADO: ${query}
-SEGMENTO DO VENDEDOR: ${mySegment || 'não especificado'}
+VENDEDOR:
+- Cargo: ${vendorRole || 'vendedor'}
+- Vende no segmento: ${vendorSegment || 'não especificado'}
 
-Responda EXATAMENTE neste formato JSON (sem markdown, sem crases), em português brasileiro. Se NÃO conhecer a empresa, marque found: false e dê orientações GENÉRICAS baseadas no tipo provável de negócio (ex: pelo nome "Transportadora X" você pode inferir que é logística).
+EMPRESA CLIENTE (potencial comprador): ${query}
+
+IMPORTANTE: O cliente pode ter qualquer ramo de atuação — o que importa é que ele é o COMPRADOR do que o vendedor vende. O dossiê deve ajudar a ENTENDER O CLIENTE como comprador, considerando:
+- O ramo do cliente pode gerar demandas específicas pelo produto que o vendedor vende
+- Ex: se vendedor vende carros de luxo e o cliente é dono de uma rede de alimentos, trate-o como empresário de alto padrão que pode querer carros para frota executiva ou uso pessoal
+
+Responda EXATAMENTE neste formato JSON (sem markdown, sem crases), em português brasileiro. Se NÃO conhecer a empresa, marque found: false e dê orientações baseadas no que se pode inferir.
 
 {
-  "found": <true se conhece a empresa com certeza, false se não conhece ou só está inferindo>,
-  "overview": "<o que a empresa faz em 1-2 frases. Se não conhece, infira pelo nome ou diga 'sem informação pública'>",
-  "sector": "<setor de atuação>",
-  "size": "<porte provável, ex: 'pequena/média/grande empresa' ou 'sem informação'>",
-  "context": ["<2-3 pontos sobre contexto: tendências do setor, possíveis movimentos, desafios comuns>"],
-  "possiblePains": ["<3-4 dores prováveis baseadas no perfil de empresa/setor>"],
-  "smartQuestions": ["<5 perguntas INTELIGENTES de descoberta, específicas para esse tipo de negócio. Use 'vocês' na 2ª pessoa. Evite genéricas como 'qual seu desafio?'>"],
-  "likelyObjections": ["<2-3 objeções que esse perfil de cliente costuma dar>"],
-  "recommendedApproach": "<nome da técnica de vendas recomendada: Perguntas Estratégicas, Venda Consultiva, Venda Desafiadora, Qualificação em 4 Passos, Conexão e Confiança, Histórias que Vendem, Método Sanduíche, ou Fechamento Alternativo>",
-  "approachReason": "<1 frase explicando por que essa técnica se adequa a esse cliente>"
+  "found": <true se conhece, false se não conhece ou só está inferindo>,
+  "overview": "<o que a empresa faz em 1-2 frases>",
+  "sector": "<setor/ramo de atuação do cliente>",
+  "size": "<porte da empresa>",
+  "context": ["<2-3 pontos: contexto do ramo do cliente E como isso se conecta com o que o vendedor vende>"],
+  "possiblePains": ["<3-4 dores/necessidades que esse cliente pode ter E que o vendedor pode resolver>"],
+  "smartQuestions": ["<5 perguntas de descoberta específicas para esse cliente comprando o produto do vendedor. Use 'vocês'>"],
+  "likelyObjections": ["<2-3 objeções prováveis desse cliente>"],
+  "recommendedApproach": "<Perguntas Estratégicas | Venda Consultiva | Venda Desafiadora | Qualificação em 4 Passos | Conexão e Confiança | Histórias que Vendem | Método Sanduíche | Fechamento Alternativo>",
+  "approachReason": "<1 frase explicando por que essa técnica se adequa>"
 }
 
+NÃO inclua nenhum texto antes ou depois do JSON.`;
+
+const PF_PROMPT = (query: string, vendorSegment: string, vendorRole: string) => `Você é um consultor de vendas que prepara vendedores para atender um cliente pessoa física. O vendedor vai conversar com um cliente individual que está considerando comprar o produto/serviço que ele vende.
+
+VENDEDOR:
+- Cargo: ${vendorRole || 'vendedor'}
+- Vende no segmento: ${vendorSegment || 'não especificado'}
+
+CLIENTE PESSOA FÍSICA: ${query}
+
+Esse é um cliente individual (consumidor final). Pode ser:
+- Uma pessoa cujo nome você reconhece publicamente (empresário, figura pública, profissional conhecido)
+- Um nome qualquer sobre o qual o vendedor sabe algo (ex: "João Silva - engenheiro, casado, 2 filhos")
+- Uma descrição de perfil (ex: "empresário do ramo alimentício, 45 anos")
+
 IMPORTANTE:
-- Seja HONESTO: se não tem info pública da empresa, deixe found: false
-- Ainda assim preencha com base no que se pode INFERIR do nome/contexto
-- Se parece CNPJ mas não tem info, infira pelo setor possível
-- As perguntas inteligentes devem ser ESPECÍFICAS, não clichês
-- NÃO inclua nenhum texto antes ou depois do JSON`;
+- Se o nome for de alguém PÚBLICO, use o que você sabe sobre essa pessoa
+- Se for um nome comum sem contexto, infira um PERFIL DE COMPRADOR realista para o produto do vendedor
+- Foque no cliente como COMPRADOR do produto do vendedor — motivações, critérios de escolha, objeções típicas
+
+Responda EXATAMENTE neste formato JSON (sem markdown, sem crases), em português brasileiro:
+
+{
+  "found": <true se conhece a pessoa publicamente, false se está inferindo perfil>,
+  "overview": "<quem é a pessoa em 1-2 frases: ocupação, contexto de vida>",
+  "sector": "<ocupação/perfil profissional provável>",
+  "size": "<perfil de consumo: 'alto padrão' | 'médio-alto' | 'classe média' | 'popular'>",
+  "context": ["<2-3 pontos: contexto de vida/profissão E como isso se conecta com a compra>"],
+  "possiblePains": ["<3-4 necessidades/motivações que podem levar essa pessoa a comprar>"],
+  "smartQuestions": ["<5 perguntas de descoberta para um cliente pessoa física. Use 'você'. Ex: 'Você vai usar mais no dia a dia ou em ocasiões específicas?'>"],
+  "likelyObjections": ["<2-3 objeções típicas desse perfil de pessoa>"],
+  "recommendedApproach": "<Perguntas Estratégicas | Venda Consultiva | Venda Desafiadora | Qualificação em 4 Passos | Conexão e Confiança | Histórias que Vendem | Método Sanduíche | Fechamento Alternativo>",
+  "approachReason": "<1 frase explicando por que essa técnica se adequa>"
+}
+
+NÃO inclua nenhum texto antes ou depois do JSON.`;
 
 export default function ClientResearch() {
   const navigate = useNavigate();
+  const [clientType, setClientType] = useState<ClientType>('pj');
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [dossie, setDossie] = useState<Dossie | null>(null);
@@ -68,6 +108,7 @@ export default function ClientResearch() {
         if (entry.type === 'client_research' && entry.data) {
           setQuery(entry.title);
           setDossie(entry.data as Dossie);
+          if (entry.clientType === 'pf') setClientType('pf');
         }
       } catch { /* ignore */ }
       sessionStorage.removeItem('gss_history_open');
@@ -76,14 +117,18 @@ export default function ClientResearch() {
 
   const handlePrepareMeeting = () => {
     if (!dossie) return;
-    // Passa o dossiê para pré-reunião via sessionStorage
-    const note = `Cliente: ${query}\n${dossie.overview}\n\nPossíveis dores:\n${dossie.possiblePains.map(p => `- ${p}`).join('\n')}\n\nPerguntas:\n${dossie.smartQuestions.map((q, i) => `${i + 1}. ${q}`).join('\n')}\n\nObjeções prováveis:\n${dossie.likelyObjections.map(o => `- ${o}`).join('\n')}\n\nTécnica: ${dossie.recommendedApproach}`;
+    const label = clientType === 'pj' ? 'Empresa' : 'Cliente';
+    const note = `${label}: ${query}\n${dossie.overview}\n\nPossíveis dores/motivações:\n${dossie.possiblePains.map(p => `- ${p}`).join('\n')}\n\nPerguntas:\n${dossie.smartQuestions.map((q, i) => `${i + 1}. ${q}`).join('\n')}\n\nObjeções prováveis:\n${dossie.likelyObjections.map(o => `- ${o}`).join('\n')}\n\nTécnica: ${dossie.recommendedApproach}`;
     localStorage.setItem('gss_premeeting_notes', note);
     navigate('/pre-reuniao');
   };
 
   const handleExample = () => {
-    setQuery('Ambev');
+    if (clientType === 'pj') {
+      setQuery('Ambev');
+    } else {
+      setQuery('Empresário do ramo alimentício, 45 anos, interessado em carro de luxo');
+    }
     setTimeout(() => handleSearch(), 100);
   };
 
@@ -95,23 +140,25 @@ export default function ClientResearch() {
 
     const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '' });
     const sLabel = SEGMENTS.find(s => s.value === profile.segment)?.label || '';
+    const prompt = clientType === 'pj'
+      ? PJ_PROMPT(query, sLabel, profile.role)
+      : PF_PROMPT(query, sLabel, profile.role);
 
     try {
       const genAI = new GoogleGenerativeAI(API_KEY);
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
-      const result = await model.generateContent(RESEARCH_PROMPT(query, sLabel));
+      const result = await model.generateContent(prompt);
       const text = result.response.text().trim();
       const cleaned = text.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
       const parsed = JSON.parse(cleaned) as Dossie;
       setDossie(parsed);
 
-      // Salvar no histórico
       addHistory({
         type: 'client_research',
         title: query,
-        subtitle: `${parsed.sector}${parsed.size ? ' • ' + parsed.size : ''}`,
+        subtitle: `${clientType === 'pj' ? '🏢' : '👤'} ${parsed.sector}${parsed.size ? ' • ' + parsed.size : ''}`,
         preview: parsed.overview,
-        data: parsed,
+        data: { ...parsed, clientType },
       });
     } catch (e) {
       const msg = e instanceof Error ? e.message : '';
@@ -136,11 +183,12 @@ export default function ClientResearch() {
 
   const buildShareText = () => {
     if (!dossie) return '';
+    const icon = clientType === 'pj' ? '🏢' : '👤';
     return [
-      `📋 DOSSIÊ — ${query}`,
+      `📋 DOSSIÊ ${icon} — ${query}`,
       dossie.overview,
       '',
-      '💡 Possíveis dores:',
+      '💡 Possíveis dores / motivações:',
       ...dossie.possiblePains.map(p => `• ${p}`),
       '',
       '❓ Perguntas para a reunião:',
@@ -151,12 +199,12 @@ export default function ClientResearch() {
   };
 
   if (dossie) {
+    const HeaderIcon = clientType === 'pj' ? Building2 : UserIcon;
     return (
       <div className="cresearch-page">
-        {/* Header do dossiê */}
         <div className="dossie-header card">
           <div className="dossie-company">
-            <Building2 size={18} />
+            <HeaderIcon size={18} />
             <div>
               <h3>{query}</h3>
               <span className="dossie-sector">{dossie.sector} {dossie.size && `• ${dossie.size}`}</span>
@@ -167,32 +215,28 @@ export default function ClientResearch() {
           )}
         </div>
 
-        {/* Overview */}
         <div className="cresearch-section card">
           <p className="dossie-overview">{dossie.overview}</p>
         </div>
 
-        {/* Contexto */}
         {dossie.context.length > 0 && (
           <div className="cresearch-section card">
-            <h4><TrendingUp size={15} /> Contexto do mercado</h4>
+            <h4><TrendingUp size={15} /> Contexto</h4>
             <ul className="cresearch-list">
               {dossie.context.map((c, i) => <li key={i}>{c}</li>)}
             </ul>
           </div>
         )}
 
-        {/* Possíveis dores */}
         {dossie.possiblePains.length > 0 && (
           <div className="cresearch-section card">
-            <h4><AlertCircle size={15} /> Possíveis dores</h4>
+            <h4><AlertCircle size={15} /> {clientType === 'pj' ? 'Possíveis dores' : 'Possíveis motivações'}</h4>
             <ul className="cresearch-list pains">
               {dossie.possiblePains.map((p, i) => <li key={i}>{p}</li>)}
             </ul>
           </div>
         )}
 
-        {/* Perguntas inteligentes */}
         {dossie.smartQuestions.length > 0 && (
           <div className="cresearch-section card highlight">
             <div className="section-header">
@@ -210,7 +254,6 @@ export default function ClientResearch() {
           </div>
         )}
 
-        {/* Objeções prováveis */}
         {dossie.likelyObjections.length > 0 && (
           <div className="cresearch-section card">
             <h4><Shield size={15} /> Objeções prováveis</h4>
@@ -220,7 +263,6 @@ export default function ClientResearch() {
           </div>
         )}
 
-        {/* Técnica recomendada */}
         <div className="cresearch-approach card">
           <BookOpen size={18} />
           <div>
@@ -239,11 +281,15 @@ export default function ClientResearch() {
         </div>
 
         <button className="btn btn-outline cresearch-reset" onClick={handleReset}>
-          <RotateCcw size={14} /> Pesquisar outra empresa
+          <RotateCcw size={14} /> Pesquisar outro cliente
         </button>
       </div>
     );
   }
+
+  const placeholder = clientType === 'pj'
+    ? 'Ex: Alpha Tecnologia ou 12.345.678/0001-99'
+    : 'Ex: João Silva - engenheiro, 40 anos';
 
   return (
     <div className="cresearch-page">
@@ -251,8 +297,24 @@ export default function ClientResearch() {
         <Search size={26} />
         <div>
           <h3>Pesquisa de Cliente</h3>
-          <p>Antes da reunião, descubra tudo em 10 segundos. Nome da empresa ou CNPJ.</p>
+          <p>Dossiê completo do comprador em 10 segundos. Funciona pra empresa (PJ) ou pessoa física (PF).</p>
         </div>
+      </div>
+
+      {/* Toggle PJ / PF */}
+      <div className="client-type-toggle">
+        <button
+          className={`type-opt ${clientType === 'pj' ? 'active' : ''}`}
+          onClick={() => { setClientType('pj'); setQuery(''); }}
+        >
+          <Building2 size={14} /> Empresa
+        </button>
+        <button
+          className={`type-opt ${clientType === 'pf' ? 'active' : ''}`}
+          onClick={() => { setClientType('pf'); setQuery(''); }}
+        >
+          <UserIcon size={14} /> Pessoa
+        </button>
       </div>
 
       <div className="cresearch-search">
@@ -263,7 +325,7 @@ export default function ClientResearch() {
             value={query}
             onChange={e => setQuery(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSearch()}
-            placeholder="Ex: Alpha Tecnologia ou 12.345.678/0001-99"
+            placeholder={placeholder}
             autoFocus
           />
         </div>
@@ -283,16 +345,16 @@ export default function ClientResearch() {
       {error && <div className="cresearch-error card" onClick={handleSearch}>{error}</div>}
 
       <button className="cresearch-example" onClick={handleExample}>
-        <Lightbulb size={14} /> Ver exemplo com "Ambev"
+        <Lightbulb size={14} /> {clientType === 'pj' ? 'Ver exemplo com "Ambev"' : 'Ver exemplo: empresário de alimentos'}
       </button>
 
       <div className="cresearch-explainer card">
         <h4>O que você vai ver</h4>
         <ul>
-          <li>📋 Resumo do que a empresa faz</li>
-          <li>📊 Contexto do mercado dela</li>
-          <li>💡 Possíveis dores que pode resolver</li>
-          <li>❓ 5 perguntas inteligentes para fazer</li>
+          <li>📋 Resumo de quem é o cliente</li>
+          <li>📊 Contexto e conexão com o que você vende</li>
+          <li>💡 {clientType === 'pj' ? 'Dores que você pode resolver' : 'Motivações pra comprar'}</li>
+          <li>❓ 5 perguntas inteligentes pra reunião</li>
           <li>🛡️ Objeções prováveis</li>
           <li>🎯 Técnica de vendas recomendada</li>
         </ul>

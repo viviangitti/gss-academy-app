@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { Swords, Zap } from 'lucide-react';
+import { Swords, Zap, Wand2 } from 'lucide-react';
 import './Content.css';
 
 const MENU_ITEMS = [
   { path: '/pre-reuniao', icon: Zap, label: 'Pré-reunião', desc: 'Prepare-se em 2 minutos antes de cada encontro', color: '#c9a84c' },
+  { path: '/coach-mensagem', icon: Wand2, label: 'Coach de Mensagem', desc: 'Revise seu WhatsApp ou e-mail antes de enviar', color: '#10b981' },
   { path: '/treino', icon: Swords, label: 'Simulador', desc: 'Treine objeções com um cliente virtual', color: '#8b5cf6' },
 ];
 

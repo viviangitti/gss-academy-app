@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Newspaper, ExternalLink, RefreshCw, AlertCircle, Sparkles, Tag, Users, TrendingUp, Globe } from 'lucide-react';
+import { Newspaper, ExternalLink, RefreshCw, AlertCircle, Sparkles, Tag, Users, TrendingUp, Globe, Search, X } from 'lucide-react';
 import { fetchNewsByCategory, clearNewsCache } from '../services/news';
 import { loadData, KEYS } from '../services/storage';
 import { SEGMENTS } from '../types';
@@ -75,6 +75,7 @@ export default function News() {
   const [segment, setSegment] = useState('');
   const [category, setCategory] = useState<NewsCategory>('tudo');
   const [refreshing, setRefreshing] = useState(false);
+  const [search, setSearch] = useState('');
 
   const loadNews = async (seg: string, cat: NewsCategory, force = false) => {
     setLoading(true);
@@ -110,7 +111,14 @@ export default function News() {
 
   const segmentLabel = SEGMENTS.find(s => s.value === segment)?.label || '';
   const currentCategory = CATEGORIES.find(c => c.value === category);
-  const groups = groupByDate(news);
+  const q = search.trim().toLowerCase();
+  const filtered = q
+    ? news.filter(n =>
+        n.title.toLowerCase().includes(q) ||
+        (n.description || '').toLowerCase().includes(q)
+      )
+    : news;
+  const groups = groupByDate(filtered);
 
   if (!segment) {
     return (
@@ -158,6 +166,22 @@ export default function News() {
         <p className="news-cat-desc">{currentCategory.desc}</p>
       )}
 
+      {/* Busca */}
+      <div className="news-search">
+        <Search size={14} className="news-search-icon" />
+        <input
+          type="text"
+          placeholder="Pesquisar nesta categoria..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        {search && (
+          <button className="news-search-clear" onClick={() => setSearch('')} aria-label="Limpar">
+            <X size={14} />
+          </button>
+        )}
+      </div>
+
       {loading ? (
         <div className="news-loading">
           {[1, 2, 3, 4].map(i => <div key={i} className="news-skeleton card" />)}
@@ -168,6 +192,14 @@ export default function News() {
           <p>Nenhuma notícia nesta categoria agora. Tente outra aba ou atualize.</p>
           <button className="btn btn-outline btn-sm" onClick={handleForceRefresh}>
             <RefreshCw size={14} /> Atualizar
+          </button>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="news-empty card">
+          <Search size={32} />
+          <p>Nenhuma notícia encontrada para "<strong>{search}</strong>".</p>
+          <button className="btn btn-outline btn-sm" onClick={() => setSearch('')}>
+            <X size={14} /> Limpar busca
           </button>
         </div>
       ) : (

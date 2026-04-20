@@ -181,3 +181,60 @@
   font-size: 15px;
   max-width: 260px;
 }
+
+/* Busca */
+.news-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--white);
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  transition: all 0.2s var(--ease);
+}
+
+.news-search:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12);
+}
+
+.news-search-icon {
+  color: var(--text-soft);
+  flex-shrink: 0;
+}
+
+.news-search input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  padding: 0;
+  min-width: 0;
+}
+
+.news-search input::placeholder {
+  color: var(--text-soft);
+}
+
+.news-search-clear {
+  background: none;
+  border: none;
+  color: var(--text-soft);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: all 0.2s var(--ease);
+}
+
+.news-search-clear:hover {
+  color: var(--danger);
+  background: var(--danger-bg);
+}

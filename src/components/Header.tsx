@@ -19,6 +19,7 @@ const titles: Record<string, string> = {
   '/historico': 'Meu Histórico',
   '/privacidade': 'Privacidade',
   '/instalar': 'Instalar o app',
+  '/feedback': 'Enviar Feedback',
   '/ia-coach': 'Pergunte à IA',
   '/perfil': 'Perfil',
 };

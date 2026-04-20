@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Briefcase, Save, ExternalLink, Factory, Moon, Sun, Target, Shield, Download } from 'lucide-react';
+import { User, Building2, Briefcase, Save, ExternalLink, Factory, Moon, Sun, Target, Shield, Download, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { loadData, saveData, KEYS } from '../services/storage';
 import { SEGMENTS } from '../types';
@@ -123,6 +123,13 @@ export default function Profile() {
           <div className="link-info">
             <h4><Download size={14} /> Instalar no celular</h4>
             <p>Passo a passo para iPhone ou Android</p>
+          </div>
+          <ExternalLink size={16} />
+        </Link>
+        <Link to="/feedback" className="link-card card">
+          <div className="link-info">
+            <h4><MessageCircle size={14} /> Enviar Feedback</h4>
+            <p>Ajude a melhorar o app</p>
           </div>
           <ExternalLink size={16} />
         </Link>

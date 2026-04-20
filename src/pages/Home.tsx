@@ -143,9 +143,14 @@ export default function Home() {
         <div className="day-section">
           <div className="day-section-header">
             <h3 className="section-title"><Award size={16} /> Meta do mês</h3>
-            <button className="btn btn-outline btn-sm" onClick={() => setShowAddSale(!showAddSale)}>
-              <Plus size={12} /> Registrar venda
-            </button>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button className="btn btn-outline btn-sm" onClick={() => navigate('/vendas')}>
+                Ver extrato
+              </button>
+              <button className="btn btn-outline btn-sm" onClick={() => setShowAddSale(!showAddSale)}>
+                <Plus size={12} /> Registrar
+              </button>
+            </div>
           </div>
 
           {showAddSale && (

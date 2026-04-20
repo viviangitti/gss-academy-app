@@ -169,7 +169,7 @@ export default function Auth() {
   return (
     <div className="auth-page">
       <div className="auth-brand">
-        <div className="auth-logo">M</div>
+        <div className="auth-logo">GSS</div>
         <h1>MAESTR.IA</h1>
         <p>em Vendas</p>
       </div>

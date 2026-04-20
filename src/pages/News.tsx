@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Newspaper, ExternalLink, RefreshCw, AlertCircle, Sparkles, Tag, Users, TrendingUp, Globe } from 'lucide-react';
-import { fetchNewsByCategory } from '../services/news';
+import { fetchNewsByCategory, clearNewsCache } from '../services/news';
 import { loadData, KEYS } from '../services/storage';
 import { SEGMENTS } from '../types';
 import type { NewsItem, UserProfile } from '../types';
@@ -9,23 +9,83 @@ import './News.css';
 
 const CATEGORIES: { value: NewsCategory; label: string; icon: React.ComponentType<{ size?: number }>; desc: string }[] = [
   { value: 'tudo', label: 'Tudo', icon: Globe, desc: 'Todas as notícias do segmento' },
-  { value: 'lancamentos', label: 'Lançamentos', icon: Sparkles, desc: 'Novidades, novos produtos e inovações' },
-  { value: 'ofertas', label: 'Ofertas', icon: Tag, desc: 'Promoções, descontos e campanhas' },
-  { value: 'concorrencia', label: 'Concorrência', icon: Users, desc: 'Movimentos dos concorrentes' },
+  { value: 'lancamentos', label: 'Lançamentos', icon: Sparkles, desc: 'Novos produtos, inovações e estreias' },
+  { value: 'ofertas', label: 'Ofertas', icon: Tag, desc: 'Promoções, descontos e condições especiais' },
+  { value: 'concorrencia', label: 'Concorrência', icon: Users, desc: 'Movimentos, fusões e estratégias do mercado' },
   { value: 'mercado', label: 'Mercado', icon: TrendingUp, desc: 'Tendências e análises' },
 ];
+
+function relativeTime(dateStr: string): string {
+  try {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMin = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffMin < 60) return `Há ${Math.max(1, diffMin)} min`;
+    if (diffHours < 24) return `Há ${diffHours}h`;
+    if (diffDays === 0) return 'Hoje';
+    if (diffDays === 1) return 'Ontem';
+    if (diffDays < 7) return `Há ${diffDays} dias`;
+    return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+  } catch {
+    return '';
+  }
+}
+
+function groupByDate(items: NewsItem[]): { label: string; items: NewsItem[] }[] {
+  const today: NewsItem[] = [];
+  const yesterday: NewsItem[] = [];
+  const thisWeek: NewsItem[] = [];
+  const older: NewsItem[] = [];
+
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const yDay = new Date(now);
+  yDay.setDate(yDay.getDate() - 1);
+  const weekAgo = new Date(now);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+
+  items.forEach(item => {
+    try {
+      const d = new Date(item.pubDate);
+      d.setHours(0, 0, 0, 0);
+      if (d >= now) today.push(item);
+      else if (d.getTime() === yDay.getTime()) yesterday.push(item);
+      else if (d >= weekAgo) thisWeek.push(item);
+      else older.push(item);
+    } catch {
+      older.push(item);
+    }
+  });
+
+  const groups: { label: string; items: NewsItem[] }[] = [];
+  if (today.length) groups.push({ label: 'Hoje', items: today });
+  if (yesterday.length) groups.push({ label: 'Ontem', items: yesterday });
+  if (thisWeek.length) groups.push({ label: 'Essa semana', items: thisWeek });
+  if (older.length) groups.push({ label: 'Mais antigas', items: older });
+  return groups;
+}
 
 export default function News() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [segment, setSegment] = useState('');
-  const [category, setCategory] = useState<NewsCategory>('lancamentos');
+  const [category, setCategory] = useState<NewsCategory>('tudo');
+  const [refreshing, setRefreshing] = useState(false);
 
-  const loadNews = async (seg: string, cat: NewsCategory) => {
+  const loadNews = async (seg: string, cat: NewsCategory, force = false) => {
     setLoading(true);
+    if (force) {
+      clearNewsCache();
+      setRefreshing(true);
+    }
     const items = await fetchNewsByCategory(seg as UserProfile['segment'], cat);
     setNews(items);
     setLoading(false);
+    setRefreshing(false);
   };
 
   useEffect(() => {
@@ -44,16 +104,13 @@ export default function News() {
     if (segment) loadNews(segment, cat);
   };
 
-  const formatDate = (dateStr: string) => {
-    try {
-      return new Date(dateStr).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-    } catch {
-      return '';
-    }
+  const handleForceRefresh = () => {
+    if (segment) loadNews(segment, category, true);
   };
 
   const segmentLabel = SEGMENTS.find(s => s.value === segment)?.label || '';
   const currentCategory = CATEGORIES.find(c => c.value === category);
+  const groups = groupByDate(news);
 
   if (!segment) {
     return (
@@ -74,8 +131,9 @@ export default function News() {
           <h3 className="section-title"><Newspaper size={16} /> Notícias</h3>
           <span className="news-segment">{segmentLabel}</span>
         </div>
-        <button className="btn btn-outline btn-sm" onClick={() => loadNews(segment, category)} disabled={loading}>
-          <RefreshCw size={14} className={loading ? 'spinning' : ''} />
+        <button className="btn btn-outline btn-sm" onClick={handleForceRefresh} disabled={loading || refreshing}>
+          <RefreshCw size={14} className={loading || refreshing ? 'spinning' : ''} />
+          {refreshing ? ' Atualizando...' : ''}
         </button>
       </div>
 
@@ -102,24 +160,34 @@ export default function News() {
 
       {loading ? (
         <div className="news-loading">
-          {[1, 2, 3].map(i => <div key={i} className="news-skeleton card" />)}
+          {[1, 2, 3, 4].map(i => <div key={i} className="news-skeleton card" />)}
         </div>
       ) : news.length === 0 ? (
         <div className="news-empty card">
           <Newspaper size={32} />
-          <p>Nenhuma notícia nesta categoria agora. Tente outra aba.</p>
+          <p>Nenhuma notícia nesta categoria agora. Tente outra aba ou atualize.</p>
+          <button className="btn btn-outline btn-sm" onClick={handleForceRefresh}>
+            <RefreshCw size={14} /> Atualizar
+          </button>
         </div>
       ) : (
-        <div className="news-list">
-          {news.map((item, i) => (
-            <a key={i} href={item.link} target="_blank" rel="noopener noreferrer" className="news-card card">
-              <h4 className="news-title">{item.title}</h4>
-              {item.description && <p className="news-desc">{item.description}</p>}
-              <div className="news-footer">
-                <span className="news-date">{formatDate(item.pubDate)}</span>
-                <ExternalLink size={12} />
+        <div className="news-groups">
+          {groups.map(group => (
+            <div key={group.label} className="news-group">
+              <h4 className="news-group-label">{group.label}</h4>
+              <div className="news-list">
+                {group.items.map((item, i) => (
+                  <a key={i} href={item.link} target="_blank" rel="noopener noreferrer" className="news-card card">
+                    <h4 className="news-title">{item.title}</h4>
+                    {item.description && <p className="news-desc">{item.description}</p>}
+                    <div className="news-footer">
+                      <span className="news-date">{relativeTime(item.pubDate)}</span>
+                      <ExternalLink size={12} />
+                    </div>
+                  </a>
+                ))}
               </div>
-            </a>
+            </div>
           ))}
         </div>
       )}

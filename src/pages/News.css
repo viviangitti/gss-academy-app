@@ -67,6 +67,28 @@
   padding: 0 4px;
 }
 
+/* Groups */
+.news-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.news-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.news-group-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 0 2px;
+}
+
 .spinning {
   animation: spin 1s linear infinite;
 }

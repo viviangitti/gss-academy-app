@@ -17,6 +17,8 @@ const titles: Record<string, string> = {
   '/analise-reuniao': 'Análise pós-reunião',
   '/cliente-pesquisa': 'Pesquisa de Cliente',
   '/historico': 'Meu Histórico',
+  '/privacidade': 'Privacidade',
+  '/instalar': 'Instalar o app',
   '/ia-coach': 'Pergunte à IA',
   '/perfil': 'Perfil',
 };

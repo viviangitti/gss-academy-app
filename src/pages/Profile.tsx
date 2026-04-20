@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Briefcase, Save, ExternalLink, Factory, Moon, Sun, Target } from 'lucide-react';
+import { User, Building2, Briefcase, Save, ExternalLink, Factory, Moon, Sun, Target, Shield, Download } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { loadData, saveData, KEYS } from '../services/storage';
 import { SEGMENTS } from '../types';
 import type { UserProfile } from '../types';
@@ -118,6 +119,20 @@ export default function Profile() {
           </div>
           <ExternalLink size={16} />
         </a>
+        <Link to="/instalar" className="link-card card">
+          <div className="link-info">
+            <h4><Download size={14} /> Instalar no celular</h4>
+            <p>Passo a passo para iPhone ou Android</p>
+          </div>
+          <ExternalLink size={16} />
+        </Link>
+        <Link to="/privacidade" className="link-card card">
+          <div className="link-info">
+            <h4><Shield size={14} /> Política de Privacidade</h4>
+            <p>Como tratamos seus dados</p>
+          </div>
+          <ExternalLink size={16} />
+        </Link>
       </div>
 
       <div className="app-info">

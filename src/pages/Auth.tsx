@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Mail, Lock, User as UserIcon, Briefcase, Building2, Factory, Target, Users, Eye, EyeOff, ArrowRight, Globe } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, Briefcase, Building2, Factory, Target, Eye, EyeOff, ArrowRight, Globe } from 'lucide-react';
 import { signUpWithEmail, signInWithEmail, signInWithGoogle, resetPassword, translateAuthError } from '../services/auth';
 import { saveRemoteProfile } from '../services/firestore/profile';
-import { createTeam, joinTeamByCode } from '../services/firestore/teams';
 import { saveData, loadData, KEYS } from '../services/storage';
 import { SEGMENTS } from '../types';
 import type { UserProfile, Segment } from '../types';
@@ -29,10 +28,6 @@ export default function Auth() {
   const [company, setCompany] = useState('');
   const [segment, setSegment] = useState<Segment>('');
   const [monthlyGoal, setMonthlyGoal] = useState('');
-  const [teamMode, setTeamMode] = useState<'none' | 'create' | 'join'>('none');
-  const [teamCode, setTeamCode] = useState('');
-  const [teamName, setTeamName] = useState('');
-
   // Pré-carrega do localStorage se existir (migração)
   const existing = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '', monthlyGoal: 0 });
 
@@ -76,22 +71,6 @@ export default function Auth() {
         isAdmin: false,
         createdAt: Date.now(),
       };
-
-      // Time: cria ou entra
-      if (teamMode === 'create' && teamName.trim()) {
-        const team = await createTeam(user.uid, teamName.trim());
-        profile.teamId = team.id;
-        profile.isAdmin = true;
-      } else if (teamMode === 'join' && teamCode.trim()) {
-        try {
-          const team = await joinTeamByCode(user.uid, teamCode.trim().toUpperCase());
-          profile.teamId = team.id;
-        } catch (e) {
-          setError(e instanceof Error ? e.message : 'Código de time inválido.');
-          setLoading(false);
-          return;
-        }
-      }
 
       await saveRemoteProfile(user.uid, profile);
       saveData(KEYS.PROFILE, profile);
@@ -269,49 +248,6 @@ export default function Auth() {
                 value={monthlyGoal}
                 onChange={e => setMonthlyGoal(e.target.value)}
               />
-            </div>
-
-            {/* Time */}
-            <div className="auth-team-section">
-              <div className="auth-team-header">
-                <Users size={14} />
-                <span>Time (opcional)</span>
-              </div>
-              <div className="auth-team-options">
-                <button
-                  type="button"
-                  className={`team-opt ${teamMode === 'none' ? 'active' : ''}`}
-                  onClick={() => setTeamMode('none')}
-                >Sozinho</button>
-                <button
-                  type="button"
-                  className={`team-opt ${teamMode === 'join' ? 'active' : ''}`}
-                  onClick={() => setTeamMode('join')}
-                >Entrar em time</button>
-                <button
-                  type="button"
-                  className={`team-opt ${teamMode === 'create' ? 'active' : ''}`}
-                  onClick={() => setTeamMode('create')}
-                >Sou líder</button>
-              </div>
-              {teamMode === 'join' && (
-                <input
-                  type="text"
-                  placeholder="Código do time (ex: GSS-A7K2)"
-                  value={teamCode}
-                  onChange={e => setTeamCode(e.target.value.toUpperCase())}
-                  style={{ marginTop: 8 }}
-                />
-              )}
-              {teamMode === 'create' && (
-                <input
-                  type="text"
-                  placeholder="Nome do time (ex: Equipe Sul)"
-                  value={teamName}
-                  onChange={e => setTeamName(e.target.value)}
-                  style={{ marginTop: 8 }}
-                />
-              )}
             </div>
 
             {error && <div className="auth-error">{error}</div>}

@@ -4,6 +4,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { addHistory } from '../services/history';
 import ShareButton from '../components/ShareButton';
 import SpeakButton from '../components/SpeakButton';
+import OfflineState from '../components/OfflineState';
+import { useOnline } from '../hooks/useOnline';
 import './MessageCoach.css';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
@@ -66,6 +68,7 @@ interface SavedAnalysis {
 }
 
 export default function MessageCoach() {
+  const isOnline = useOnline();
   const [message, setMessage] = useState('');
   const [context, setContext] = useState('');
   const [channel, setChannel] = useState('whatsapp');
@@ -152,6 +155,8 @@ export default function MessageCoach() {
     : analysis.score >= 4 ? 'ok'
     : 'bad'
     : '';
+
+  if (!isOnline) return <OfflineState feature="o Coach de Mensagem" />;
 
   return (
     <div className="msgcoach-page">

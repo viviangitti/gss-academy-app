@@ -7,6 +7,8 @@ import { addHistory } from '../services/history';
 import type { UserProfile } from '../types';
 import type { Objection } from '../services/content';
 import SpeakButton from '../components/SpeakButton';
+import OfflineState from '../components/OfflineState';
+import { useOnline } from '../hooks/useOnline';
 import './RolePlay.css';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
@@ -59,6 +61,7 @@ interface TrainingMessage {
 }
 
 export default function RolePlay() {
+  const isOnline = useOnline();
   const [objections, setObjections] = useState<Objection[]>([]);
   const [selectedObjection, setSelectedObjection] = useState<Objection | null>(null);
   const [messages, setMessages] = useState<TrainingMessage[]>([]);
@@ -178,6 +181,8 @@ export default function RolePlay() {
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       .replace(/\n/g, '<br/>');
   };
+
+  if (!isOnline) return <OfflineState feature="o Simulador de Treino" />;
 
   // Selection screen
   if (!selectedObjection) {

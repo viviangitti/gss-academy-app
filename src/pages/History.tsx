@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { History as HistoryIcon, Search, Wand2, Mic, Swords, Trash2, Clock } from 'lucide-react';
+import { History as HistoryIcon, Wand2, Mic, Swords, Trash2, Clock } from 'lucide-react';
 import { getAllHistory, removeHistory, clearHistory } from '../services/history';
 import type { HistoryEntry, HistoryType } from '../services/history';
 import './History.css';
 
 const TYPE_CONFIG: Record<HistoryType, { label: string; icon: React.ComponentType<{ size?: number }>; color: string; route: string }> = {
-  client_research: { label: 'Pesquisa', icon: Search, color: '#3b82f6', route: '/cliente-pesquisa' },
+  client_research: { label: 'Pesquisa', icon: Wand2, color: '#3b82f6', route: '/' },
   message_review: { label: 'Mensagem', icon: Wand2, color: '#10b981', route: '/coach-mensagem' },
   meeting_analysis: { label: 'Pós-reunião', icon: Mic, color: '#ef4444', route: '/analise-reuniao' },
   simulator_session: { label: 'Simulador', icon: Swords, color: '#8b5cf6', route: '/treino' },
@@ -14,7 +14,6 @@ const TYPE_CONFIG: Record<HistoryType, { label: string; icon: React.ComponentTyp
 
 const FILTERS: { value: HistoryType | 'all'; label: string }[] = [
   { value: 'all', label: 'Tudo' },
-  { value: 'client_research', label: 'Pesquisas' },
   { value: 'message_review', label: 'Mensagens' },
   { value: 'meeting_analysis', label: 'Reuniões' },
   { value: 'simulator_session', label: 'Simulador' },

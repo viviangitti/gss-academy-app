@@ -5,6 +5,8 @@ import { sendMessage, resetChat } from '../services/gemini';
 import { loadData, saveData, KEYS } from '../services/storage';
 import type { ChatMessage } from '../types';
 import SpeakButton from '../components/SpeakButton';
+import OfflineState from '../components/OfflineState';
+import { useOnline } from '../hooks/useOnline';
 import './AICoach.css';
 
 const QUICK_PROMPTS = [
@@ -32,6 +34,7 @@ function parseSuggestions(text: string): { clean: string; suggestions: string[] 
 
 export default function AICoach() {
   const navigate = useNavigate();
+  const isOnline = useOnline();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -138,6 +141,8 @@ export default function AICoach() {
 
   const hasSpeechRecognition = typeof window !== 'undefined' &&
     ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+
+  if (!isOnline) return <OfflineState feature="o Coach de IA" />;
 
   return (
     <div className="ai-coach-page">

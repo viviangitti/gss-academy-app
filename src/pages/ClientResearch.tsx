@@ -7,6 +7,8 @@ import { addHistory } from '../services/history';
 import { SEGMENTS } from '../types';
 import type { UserProfile } from '../types';
 import ShareButton from '../components/ShareButton';
+import OfflineState from '../components/OfflineState';
+import { useOnline } from '../hooks/useOnline';
 import './ClientResearch.css';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
@@ -92,6 +94,7 @@ NÃO inclua nenhum texto antes ou depois do JSON.`;
 
 export default function ClientResearch() {
   const navigate = useNavigate();
+  const isOnline = useOnline();
   const [clientType, setClientType] = useState<ClientType>('pj');
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
@@ -290,6 +293,8 @@ export default function ClientResearch() {
   const placeholder = clientType === 'pj'
     ? 'Ex: Alpha Tecnologia ou 12.345.678/0001-99'
     : 'Ex: João Silva - engenheiro, 40 anos';
+
+  if (!isOnline) return <OfflineState feature="a Pesquisa de Cliente" />;
 
   return (
     <div className="cresearch-page">

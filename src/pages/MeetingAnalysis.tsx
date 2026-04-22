@@ -6,6 +6,8 @@ import { addHistory } from '../services/history';
 import { addTask } from '../services/day';
 import ShareButton from '../components/ShareButton';
 import SpeakButton from '../components/SpeakButton';
+import OfflineState from '../components/OfflineState';
+import { useOnline } from '../hooks/useOnline';
 import './MeetingAnalysis.css';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
@@ -72,6 +74,7 @@ interface SavedMeeting {
 
 export default function MeetingAnalysis() {
   const navigate = useNavigate();
+  const isOnline = useOnline();
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [interim, setInterim] = useState('');
@@ -348,6 +351,8 @@ export default function MeetingAnalysis() {
       </div>
     );
   }
+
+  if (!isOnline) return <OfflineState feature="a Análise de Reunião" />;
 
   return (
     <div className="manalysis-page">

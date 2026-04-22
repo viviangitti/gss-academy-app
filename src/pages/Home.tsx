@@ -393,6 +393,67 @@ export default function Home() {
           ))}
         </div>
       )}
+
+      {/* FAB: Registrar venda rápida */}
+      <button className="fab-sale" onClick={() => setShowAddSale(true)} title="Registrar venda">
+        <TrendingUp size={22} />
+      </button>
+
+      {/* Modal de venda rápida */}
+      {showAddSale && (
+        <div className="quick-sale-overlay" onClick={() => setShowAddSale(false)}>
+          <div className="quick-sale-sheet" onClick={e => e.stopPropagation()}>
+            <div className="quick-sale-handle" />
+            <h3 className="quick-sale-title"><TrendingUp size={18} /> Registrar venda</h3>
+            <div className="quick-sale-fields">
+              <div className="quick-sale-field">
+                <label>Comissão R$ <span className="required">*</span></label>
+                <input
+                  type="number"
+                  placeholder="Ex: 800"
+                  value={saleForm.commission}
+                  onChange={e => setSaleForm({ ...saleForm, commission: e.target.value })}
+                  autoFocus
+                  inputMode="numeric"
+                />
+              </div>
+              <div className="quick-sale-field">
+                <label>Valor da venda R$</label>
+                <input
+                  type="number"
+                  placeholder="Ex: 10000"
+                  value={saleForm.amount}
+                  onChange={e => setSaleForm({ ...saleForm, amount: e.target.value })}
+                  inputMode="numeric"
+                />
+              </div>
+              <div className="quick-sale-field">
+                <label>Cliente</label>
+                <input
+                  type="text"
+                  placeholder="Nome do cliente"
+                  value={saleForm.client}
+                  onChange={e => setSaleForm({ ...saleForm, client: e.target.value })}
+                />
+              </div>
+            </div>
+            <button
+              className="btn btn-primary quick-sale-btn"
+              onClick={() => {
+                if (!saleForm.commission) return;
+                const commission = Number(saleForm.commission);
+                const amount = Number(saleForm.amount) || commission;
+                addSale(amount, commission, saleForm.client || 'Venda');
+                refreshStats(goal);
+                setSaleForm({ amount: '', commission: '', client: '' });
+                setShowAddSale(false);
+              }}
+            >
+              <Check size={16} /> Confirmar venda
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

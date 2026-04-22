@@ -204,46 +204,6 @@
   text-decoration: underline;
 }
 
-.auth-team-section {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-
-.auth-team-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-light);
-  margin-bottom: 10px;
-}
-
-.auth-team-options {
-  display: flex;
-  gap: 6px;
-}
-
-.team-opt {
-  flex: 1;
-  padding: 9px 8px;
-  border-radius: var(--radius-sm);
-  border: 1.5px solid var(--border-strong);
-  background: var(--surface);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-light);
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.2s var(--ease);
-}
-
-.team-opt.active {
-  background: rgba(201, 168, 76, 0.1);
-  border-color: var(--accent);
-  color: var(--accent);
-}
 
 .auth-footer {
   font-size: 12px;

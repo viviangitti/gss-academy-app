@@ -41,12 +41,12 @@ export default function Privacy() {
         <section>
           <h3>3. Onde seus dados ficam armazenados</h3>
           <p>
-            <strong>Todos os dados ficam apenas no seu dispositivo</strong>, no armazenamento local do navegador
-            (localStorage). Nada é enviado para servidores nossos.
+            Seus dados são armazenados de forma segura no <strong>Firebase (Google Cloud)</strong>, vinculados à sua conta.
+            Isso garante que seus dados estejam disponíveis em qualquer dispositivo após o login.
           </p>
           <p>
-            Se você limpar os dados do navegador ou desinstalar o app, <strong>todos os seus dados são apagados</strong>
-            e não podem ser recuperados. Recomendamos anotar informações importantes em outro lugar.
+            Uma cópia local também é mantida no seu dispositivo para funcionamento offline.
+            Se você excluir sua conta, todos os seus dados são removidos permanentemente dos nossos servidores.
           </p>
         </section>
 
@@ -80,8 +80,8 @@ export default function Privacy() {
         <section>
           <h3>6. Compartilhamento de dados</h3>
           <p>
-            <strong>Não compartilhamos seus dados com terceiros.</strong> Não temos servidores próprios que
-            armazenem suas informações. O que você digita no app permanece no seu dispositivo.
+            <strong>Seus dados são seus.</strong> Nenhum outro usuário — incluindo administradores — tem acesso
+            aos seus dados de vendas, tarefas ou perfil. Cada conta é isolada e protegida por regras de segurança.
           </p>
           <p>
             A única exceção é o texto enviado deliberadamente à API do Gemini (Google) quando você usa as funcionalidades de IA.

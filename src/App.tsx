@@ -15,7 +15,7 @@ import RolePlay from './pages/RolePlay';
 import PreMeeting from './pages/PreMeeting';
 import MessageCoach from './pages/MessageCoach';
 import MeetingAnalysis from './pages/MeetingAnalysis';
-import ClientResearch from './pages/ClientResearch';
+import LostSales from './pages/LostSales';
 import History from './pages/History';
 import Privacy from './pages/Privacy';
 import Install from './pages/Install';
@@ -109,7 +109,7 @@ function AppContent() {
             <Route path="/pre-reuniao" element={<PreMeeting />} />
             <Route path="/coach-mensagem" element={<MessageCoach />} />
             <Route path="/analise-reuniao" element={<MeetingAnalysis />} />
-            <Route path="/cliente-pesquisa" element={<ClientResearch />} />
+            <Route path="/vendas-perdidas" element={<LostSales />} />
             <Route path="/historico" element={<History />} />
             <Route path="/privacidade" element={<Privacy />} />
             <Route path="/instalar" element={<Install />} />

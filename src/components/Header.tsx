@@ -15,7 +15,7 @@ const titles: Record<string, string> = {
   '/pre-reuniao': 'Pré-reunião',
   '/coach-mensagem': 'Coach de Mensagem',
   '/analise-reuniao': 'Análise pós-reunião',
-  '/cliente-pesquisa': 'Pesquisa de Cliente',
+  '/vendas-perdidas': 'Vendas Perdidas',
   '/historico': 'Meu Histórico',
   '/privacidade': 'Privacidade',
   '/instalar': 'Instalar o app',
@@ -26,7 +26,7 @@ const titles: Record<string, string> = {
 };
 
 const LIBRARY_SUB_PAGES = ['/objecoes', '/scripts', '/tecnicas', '/noticias', '/favoritos', '/historico'];
-const TRAINING_SUB_PAGES = ['/treino', '/pre-reuniao', '/coach-mensagem', '/analise-reuniao', '/cliente-pesquisa'];
+const TRAINING_SUB_PAGES = ['/treino', '/pre-reuniao', '/coach-mensagem', '/analise-reuniao', '/vendas-perdidas'];
 
 export default function Header() {
   const location = useLocation();

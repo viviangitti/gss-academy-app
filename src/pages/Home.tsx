@@ -23,7 +23,7 @@ const TIPS = [
   'Prepare pelo menos 3 respostas para cada objeção comum.',
   'Rituais diários criam consistência. Consistência gera comissão.',
   'Pergunte "O que te impede de fechar hoje?" para acelerar decisões.',
-  'Comemore cada pequena vitória com sua equipe.',
+  'Comemore cada pequena vitória — celebrar faz parte do processo.',
   'Revise seus números toda sexta-feira para ajustar a rota.',
   'Antes de qualquer reunião, use o modo Pré-reunião do app.',
   'Conheça as objeções do seu segmento como a palma da mão.',

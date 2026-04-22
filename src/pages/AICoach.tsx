@@ -11,7 +11,7 @@ const QUICK_PROMPTS = [
   'Como responder à objeção de preço?',
   'Roteiro para ligação fria',
   'Técnicas de fechamento',
-  'Como motivar minha equipe?',
+  'Como manter minha energia e foco durante o mês?',
   'Roteiro de reunião de vendas',
   'Como qualificar um cliente potencial?',
 ];

@@ -108,7 +108,7 @@
       ctx.fillStyle = glowGrad;
       ctx.fillRect(0, 0, size, size);
 
-      // Big "M" letter
+      // Big "GSS" letters
       const goldGrad = ctx.createLinearGradient(0, 0, size, size);
       goldGrad.addColorStop(0, '#d4b96a');
       goldGrad.addColorStop(1, '#a88936');
@@ -116,9 +116,10 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      const fontSize = size * 0.55;
-      ctx.font = `900 ${fontSize}px Georgia, serif`;
-      ctx.fillText('M', size / 2, size * 0.50);
+      const fontSize = size * 0.38;
+      ctx.font = `900 ${fontSize}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
+      ctx.letterSpacing = `-${size * 0.008}px`;
+      ctx.fillText('GSS', size / 2, size * 0.50);
 
       // Small dot (representando o .IA)
       ctx.beginPath();

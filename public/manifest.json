@@ -1,7 +1,7 @@
 {
   "name": "MAESTR.IA em Vendas",
   "short_name": "MAESTR.IA",
-  "description": "App de bolso para líderes comerciais e vendedores de alta performance. Pesquise clientes, treine objeções, revise mensagens, analise reuniões e organize seu dia — tudo com IA. Complemento do curso MAESTR.IA em Vendas da GSS Academy.",
+  "description": "App de bolso para vendedores de alta performance. Treine objeções, revise mensagens, analise reuniões e organize seu dia — tudo com IA. Complemento do curso MAESTR.IA em Vendas da GSS Academy.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
@@ -40,13 +40,6 @@
       "icons": [{ "src": "/icon.svg", "sizes": "any" }]
     },
     {
-      "name": "Pesquisar Cliente",
-      "short_name": "Pesquisar",
-      "description": "Gere um dossiê da empresa antes da reunião",
-      "url": "/cliente-pesquisa",
-      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
-    },
-    {
       "name": "Revisar Mensagem",
       "short_name": "Mensagem",
       "description": "Reescreva seu WhatsApp antes de enviar",
@@ -58,6 +51,13 @@
       "short_name": "Reunião",
       "description": "Prepare-se antes de entrar",
       "url": "/pre-reuniao",
+      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Vendas Perdidas",
+      "short_name": "Perdidas",
+      "description": "Registre e aprenda com as perdas",
+      "url": "/vendas-perdidas",
       "icons": [{ "src": "/icon.svg", "sizes": "any" }]
     }
   ],

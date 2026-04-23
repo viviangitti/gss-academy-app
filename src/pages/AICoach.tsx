@@ -102,82 +102,39 @@ export default function AICoach() {
     resetChat();
   };
 
-  const shouldListenRef = useRef(false);
-  const restartListenRef = useRef(false);
   const micBtnRef = useRef<HTMLButtonElement>(null);
 
-  const startListenSession = () => {
+  const toggleListening = () => {
+    if (isListening) {
+      // Para e transcreve
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
     const recognition = new SpeechRecognition();
     recognition.lang = 'pt-BR';
-    recognition.continuous = false;
-    recognition.interimResults = true;
+    recognition.continuous = true;
+    recognition.interimResults = false;
 
-    let interimText = '';
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      let finalText = '';
-      interimText = '';
-      for (let i = 0; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          finalText += event.results[i][0].transcript;
-        } else {
-          interimText += event.results[i][0].transcript;
-        }
+      let text = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) text += event.results[i][0].transcript + ' ';
       }
-      if (finalText) {
-        setInput(prev => (prev + ' ' + finalText).trim());
-        interimText = '';
-      }
+      if (text.trim()) setInput(prev => (prev + ' ' + text).trim());
     };
 
-    recognition.onerror = () => { /* onend cuida do reinício */ };
-
-    recognition.onend = () => {
-      // Salva texto intermediário não finalizado (quando usuário solta antes do fim)
-      if (interimText.trim()) {
-        setInput(prev => (prev + ' ' + interimText).trim());
-        interimText = '';
-      }
-      if (shouldListenRef.current && !restartListenRef.current) {
-        restartListenRef.current = true;
-        setTimeout(() => {
-          restartListenRef.current = false;
-          if (shouldListenRef.current) startListenSession();
-        }, 150);
-      } else if (!shouldListenRef.current) {
-        setIsListening(false);
-      }
-    };
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
 
     recognitionRef.current = recognition;
-    try { recognition.start(); } catch { /* ignore */ }
-  };
-
-  const stopListening = () => {
-    shouldListenRef.current = false;
-    // stop() (não abort()) deixa o reconhecimento finalizar e retornar o texto
-    recognitionRef.current?.stop();
-    // fallback: se onend não disparar em 2s, força o estado
-    setTimeout(() => setIsListening(false), 2000);
-  };
-
-  // Touch events — segurar para gravar, soltar para parar (estilo WhatsApp)
-  const handleMicStart = (e: React.TouchEvent | React.MouseEvent) => {
-    e.preventDefault();
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
-    if (shouldListenRef.current) return; // já gravando
-    shouldListenRef.current = true;
+    recognition.start();
     setIsListening(true);
     setAutoSpeak(true);
-    startListenSession();
-  };
-
-  const handleMicEnd = (e: React.TouchEvent | React.MouseEvent) => {
-    e.preventDefault();
-    if (shouldListenRef.current) stopListening();
   };
 
   const formatMessage = (content: string) => {
@@ -268,14 +225,7 @@ export default function AICoach() {
             <button
               ref={micBtnRef}
               className={`mic-btn ${isListening ? 'listening' : ''}`}
-              onTouchStart={handleMicStart}
-              onTouchEnd={handleMicEnd}
-              onTouchCancel={handleMicEnd}
-              onMouseDown={handleMicStart}
-              onMouseUp={handleMicEnd}
-              onMouseLeave={handleMicEnd}
-              onContextMenu={e => e.preventDefault()}
-              style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+              onClick={toggleListening}
             >
               {isListening ? <MicOff size={18} /> : <Mic size={18} />}
             </button>

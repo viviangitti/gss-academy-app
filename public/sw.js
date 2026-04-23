@@ -1,57 +1,56 @@
-const CACHE_NAME = 'gss-academy-v5';
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-];
+// Service Worker — network first, sem cache de JS/CSS (evita versões travadas)
+const CACHE_NAME = 'gss-academy-v6';
+const STATIC_CACHE = ['/', '/manifest.json'];
 
-// Install - cache shell
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
-  );
+  // Assume controle imediatamente sem esperar aba fechar
   self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_CACHE))
+  );
 });
 
-// Activate - clean old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-      );
-    })
+    // Limpa TODOS os caches antigos
+    caches.keys().then((keys) =>
+      Promise.all(keys.map((key) => caches.delete(key)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Fetch - network first, fallback to cache
 self.addEventListener('fetch', (event) => {
-  // Skip non-GET and API calls
   if (event.request.method !== 'GET') return;
-  if (event.request.url.includes('googleapis.com')) return;
-  if (event.request.url.includes('rss2json.com')) return;
-  if (event.request.url.includes('news.google.com')) return;
 
+  const url = event.request.url;
+
+  // JS e CSS: sempre da rede, nunca do cache
+  if (url.includes('/assets/')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // APIs externas: passa direto
+  if (
+    url.includes('googleapis.com') ||
+    url.includes('rss2json.com') ||
+    url.includes('news.google.com') ||
+    url.includes('firestore') ||
+    url.includes('gemini')
+  ) return;
+
+  // Resto: network first, fallback para cache
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Cache successful responses
         if (response.ok) {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, clone);
-          });
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }
         return response;
       })
-      .catch(() => {
-        // Fallback to cache
-        return caches.match(event.request).then((cached) => {
-          return cached || caches.match('/');
-        });
-      })
+      .catch(() =>
+        caches.match(event.request).then((cached) => cached || caches.match('/'))
+      )
   );
 });

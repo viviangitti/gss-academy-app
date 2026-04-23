@@ -253,6 +253,8 @@ export default function AICoach() {
               onPointerDown={handleMicPointerDown}
               onPointerUp={handleMicPointerUp}
               onPointerCancel={handleMicPointerUp}
+              onContextMenu={e => e.preventDefault()}
+              style={{ userSelect: 'none', WebkitUserSelect: 'none', touchAction: 'none' }}
             >
               {isListening ? <MicOff size={18} /> : <Mic size={18} />}
             </button>

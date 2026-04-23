@@ -51,6 +51,7 @@ interface SpeechRecognition extends EventTarget {
   lang: string;
   start: () => void;
   stop: () => void;
+  abort: () => void;
   onresult: ((event: SpeechRecognitionEvent) => void) | null;
   onerror: (() => void) | null;
   onend: (() => void) | null;
@@ -86,6 +87,7 @@ export default function MeetingAnalysis() {
   const [tasksCreated, setTasksCreated] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const finalTranscriptRef = useRef('');
+  const shouldRecordRef = useRef(false); // controla reinício automático
 
   useEffect(() => {
     const SpeechRec =
@@ -127,19 +129,14 @@ export default function MeetingAnalysis() {
     setTimeout(() => navigate('/'), 1500);
   };
 
-  const startRecording = () => {
-    setError('');
+  const startSession = () => {
     const SpeechRec =
       (window as unknown as { SpeechRecognition?: new () => SpeechRecognition }).SpeechRecognition ||
       (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognition }).webkitSpeechRecognition;
-    if (!SpeechRec) {
-      setError('Seu navegador não suporta gravação de voz. Use o campo de texto abaixo.');
-      setManualEdit(true);
-      return;
-    }
+    if (!SpeechRec) return;
 
     const rec = new SpeechRec();
-    rec.continuous = true;
+    rec.continuous = false; // false = mais compatível com mobile
     rec.interimResults = true;
     rec.lang = 'pt-BR';
 
@@ -158,23 +155,46 @@ export default function MeetingAnalysis() {
     };
 
     rec.onerror = () => {
-      setError('Erro na gravação. Tente novamente ou digite no campo abaixo.');
-      setIsRecording(false);
+      // Ignora erros de no-speech (silêncio), reinicia se ainda estiver gravando
+      if (shouldRecordRef.current) {
+        setTimeout(() => { if (shouldRecordRef.current) startSession(); }, 200);
+      }
     };
 
     rec.onend = () => {
-      setIsRecording(false);
       setInterim('');
+      if (shouldRecordRef.current) {
+        // Reinício automático para simular gravação contínua
+        setTimeout(() => { if (shouldRecordRef.current) startSession(); }, 100);
+      } else {
+        setIsRecording(false);
+      }
     };
 
     recognitionRef.current = rec;
-    rec.start();
+    try { rec.start(); } catch { /* já estava rodando */ }
+  };
+
+  const startRecording = () => {
+    setError('');
+    const SpeechRec =
+      (window as unknown as { SpeechRecognition?: new () => SpeechRecognition }).SpeechRecognition ||
+      (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognition }).webkitSpeechRecognition;
+    if (!SpeechRec) {
+      setError('Seu navegador não suporta gravação de voz. Use o campo de texto abaixo.');
+      setManualEdit(true);
+      return;
+    }
+    shouldRecordRef.current = true;
     setIsRecording(true);
+    startSession();
   };
 
   const stopRecording = () => {
-    recognitionRef.current?.stop();
+    shouldRecordRef.current = false;  // impede reinício automático
+    recognitionRef.current?.abort();  // abort() = para imediatamente
     setIsRecording(false);
+    setInterim('');
   };
 
   const handleAnalyze = async () => {

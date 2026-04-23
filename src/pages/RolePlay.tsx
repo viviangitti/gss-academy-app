@@ -183,6 +183,7 @@ export default function RolePlay() {
   };
 
   if (!isOnline) return <OfflineState feature="o Simulador de Treino" />;
+  if (!API_KEY) return <OfflineState feature="o Simulador de Treino" subtitle="Configuração de IA indisponível. Fale com o suporte." />;
 
   // Selection screen
   if (!selectedObjection) {

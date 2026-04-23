@@ -157,6 +157,7 @@ export default function MessageCoach() {
     : '';
 
   if (!isOnline) return <OfflineState feature="o Coach de Mensagem" />;
+  if (!API_KEY) return <OfflineState feature="o Coach de Mensagem" subtitle="Configuração de IA indisponível. Fale com o suporte." />;
 
   return (
     <div className="msgcoach-page">

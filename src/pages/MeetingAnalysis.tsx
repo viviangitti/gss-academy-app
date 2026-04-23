@@ -353,6 +353,7 @@ export default function MeetingAnalysis() {
   }
 
   if (!isOnline) return <OfflineState feature="a Análise de Reunião" />;
+  if (!API_KEY) return <OfflineState feature="a Análise de Reunião" subtitle="Configuração de IA indisponível. Fale com o suporte." />;
 
   return (
     <div className="manalysis-page">

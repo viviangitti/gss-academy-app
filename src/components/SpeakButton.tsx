@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import './SpeakButton.css';
 
@@ -10,23 +10,21 @@ interface Props {
 export default function SpeakButton({ text, size = 16 }: Props) {
   const [speaking, setSpeaking] = useState(false);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-  const speakingRef = useRef(false); // ref para closures
+  const speakingRef = useRef(false);
 
-  useEffect(() => {
-    return () => {
-      window.speechSynthesis.cancel();
-      speakingRef.current = false;
-    };
-  }, []);
+  const stopSpeaking = () => {
+    // pause() antes de cancel() é mais confiável no iOS
+    window.speechSynthesis.pause();
+    window.speechSynthesis.cancel();
+    speakingRef.current = false;
+    setSpeaking(false);
+  };
 
   const handleSpeak = (e: React.MouseEvent) => {
     e.stopPropagation();
 
     if (speakingRef.current) {
-      // Para a leitura
-      window.speechSynthesis.cancel();
-      speakingRef.current = false;
-      setSpeaking(false);
+      stopSpeaking();
       return;
     }
 
@@ -34,15 +32,9 @@ export default function SpeakButton({ text, size = 16 }: Props) {
     utterance.lang = 'pt-BR';
     utterance.rate = 0.95;
 
-    // iOS carrega vozes de forma assíncrona
     const voices = window.speechSynthesis.getVoices();
     const ptVoice = voices.find(v => v.lang.startsWith('pt'));
     if (ptVoice) utterance.voice = ptVoice;
-
-    utterance.onstart = () => {
-      speakingRef.current = true;
-      setSpeaking(true);
-    };
 
     utterance.onend = () => {
       speakingRef.current = false;
@@ -55,20 +47,19 @@ export default function SpeakButton({ text, size = 16 }: Props) {
     };
 
     utteranceRef.current = utterance;
-    window.speechSynthesis.cancel(); // limpa qualquer fala anterior
 
-    // iOS precisa de um pequeno delay após cancel()
+    // Cancela qualquer fala anterior
+    window.speechSynthesis.pause();
+    window.speechSynthesis.cancel();
+
+    // Marca como "falando" imediatamente — não espera onstart (não dispara no iOS)
+    speakingRef.current = true;
+    setSpeaking(true);
+
+    // iOS precisa de delay após cancel()
     setTimeout(() => {
       window.speechSynthesis.speak(utterance);
-    }, 50);
-
-    // Fallback: se onstart não disparar em 1s, assume que está falando
-    setTimeout(() => {
-      if (!speakingRef.current && utteranceRef.current === utterance) {
-        speakingRef.current = true;
-        setSpeaking(true);
-      }
-    }, 1000);
+    }, 100);
   };
 
   if (!('speechSynthesis' in window)) return null;

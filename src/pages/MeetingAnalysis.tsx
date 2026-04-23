@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Mic, Square, Sparkles, RotateCcw, Users, Shield, ArrowRight, AlertTriangle, Target, Edit3, Trash2, CheckSquare, Lightbulb } from 'lucide-react';
+import { Mic, Sparkles, RotateCcw, Users, Shield, ArrowRight, AlertTriangle, Target, Edit3, Trash2, CheckSquare, Lightbulb } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { addHistory } from '../services/history';
@@ -76,7 +76,9 @@ interface SavedMeeting {
 export default function MeetingAnalysis() {
   const navigate = useNavigate();
   const isOnline = useOnline();
-  const [isRecording, setIsRecording] = useState(false);
+  // 'idle' | 'holding' | 'locked' | 'done'
+  type RecordState = 'idle' | 'holding' | 'locked' | 'done';
+  const [recState, setRecState] = useState<RecordState>('idle');
   const [transcript, setTranscript] = useState('');
   const [interim, setInterim] = useState('');
   const [manualEdit, setManualEdit] = useState(false);
@@ -87,8 +89,18 @@ export default function MeetingAnalysis() {
   const [tasksCreated, setTasksCreated] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const finalTranscriptRef = useRef('');
-  const shouldRecordRef = useRef(false); // controla reinício automático
-  const restartScheduledRef = useRef(false); // evita duplo reinício (onerror + onend)
+  const shouldRecordRef = useRef(false);
+  const restartScheduledRef = useRef(false);
+  const recStateRef = useRef<RecordState>('idle'); // ref espelhando recState para closures
+  const pointerStartY = useRef(0);
+  const lockedRef = useRef(false);
+
+  const isRecording = recState === 'holding' || recState === 'locked';
+
+  const setRecordState = (s: RecordState) => {
+    recStateRef.current = s;
+    setRecState(s);
+  };
 
   useEffect(() => {
     const SpeechRec =
@@ -167,8 +179,6 @@ export default function MeetingAnalysis() {
           restartScheduledRef.current = false;
           if (shouldRecordRef.current) startSession();
         }, 150);
-      } else if (!shouldRecordRef.current) {
-        setIsRecording(false);
       }
     };
 
@@ -187,15 +197,56 @@ export default function MeetingAnalysis() {
       return;
     }
     shouldRecordRef.current = true;
-    setIsRecording(true);
+    lockedRef.current = false;
     startSession();
   };
 
-  const stopRecording = () => {
-    shouldRecordRef.current = false;  // impede reinício automático
-    recognitionRef.current?.abort();  // abort() = para imediatamente
-    setIsRecording(false);
+  const stopRecording = (cancel = false) => {
+    shouldRecordRef.current = false;
+    lockedRef.current = false;
+    recognitionRef.current?.abort();
     setInterim('');
+    if (cancel) {
+      // cancela: apaga o que foi gravado
+      finalTranscriptRef.current = '';
+      setTranscript('');
+      setRecordState('idle');
+    } else {
+      setRecordState(finalTranscriptRef.current.trim() ? 'done' : 'idle');
+    }
+  };
+
+  // Pointer events — estilo WhatsApp
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (!hasSupport) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    pointerStartY.current = e.clientY;
+    setRecordState('holding');
+    startRecording();
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (recStateRef.current !== 'holding') return;
+    const dy = pointerStartY.current - e.clientY; // positivo = subiu
+    const rect = e.currentTarget.getBoundingClientRect();
+    const moveX = e.clientX - (rect.left + rect.width / 2);
+
+    if (dy > 60) {
+      // Deslizou para cima → trava
+      lockedRef.current = true;
+      setRecordState('locked');
+    } else if (moveX < -80) {
+      // Deslizou para esquerda → cancela
+      stopRecording(true);
+    }
+  };
+
+  const handlePointerUp = () => {
+    if (recStateRef.current === 'holding') {
+      // Soltou sem travar → para e salva
+      stopRecording(false);
+    }
+    // Se 'locked', não faz nada — usuário precisa apertar o botão parar
   };
 
   const handleAnalyze = async () => {
@@ -230,12 +281,14 @@ export default function MeetingAnalysis() {
   };
 
   const handleReset = () => {
+    stopRecording(true);
     setTranscript('');
     setInterim('');
     setAnalysis(null);
     setError('');
     finalTranscriptRef.current = '';
     setManualEdit(false);
+    setRecordState('idle');
   };
 
   const handleTranscriptChange = (v: string) => {
@@ -388,59 +441,94 @@ export default function MeetingAnalysis() {
 
       {!manualEdit ? (
         <>
-          {/* Recording area */}
-          <div className={`manalysis-recorder card ${isRecording ? 'recording' : ''}`}>
-            {!isRecording && !transcript && (
-              <div className="recorder-empty">
-                <button className="record-btn" onClick={startRecording} disabled={!hasSupport}>
-                  <Mic size={28} />
+          {/* Transcript ao vivo (holding/locked) */}
+          {isRecording && (transcript || interim) && (
+            <div className="recorder-live-transcript card">
+              <p>{transcript}<span className="interim">{interim}</span></p>
+            </div>
+          )}
+
+          {/* Transcript final (done) */}
+          {recState === 'done' && (
+            <div className="recorder-done card">
+              <div className="transcript-final">
+                <h5>Seu relato:</h5>
+                <p>{transcript}</p>
+              </div>
+              <div className="recorder-done-actions">
+                <button className="btn btn-outline btn-sm" onClick={() => setManualEdit(true)}>
+                  <Edit3 size={12} /> Editar
                 </button>
-                <p className="recorder-hint">
-                  {hasSupport ? 'Toque para começar a gravar' : 'Seu navegador não suporta gravação. Use o botão abaixo.'}
-                </p>
-                <div className="recorder-options">
-                  {!hasSupport && (
-                    <button className="btn btn-outline btn-sm" onClick={() => setManualEdit(true)}>
-                      <Edit3 size={12} /> Digitar no lugar
-                    </button>
-                  )}
+                <button className="btn btn-outline btn-sm" onClick={handleReset}>
+                  <Trash2 size={12} /> Apagar
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Barra de gravação estilo WhatsApp */}
+          <div className={`wa-recorder ${recState}`}>
+            {/* Estado: travado → botão cancelar + waveform + botão parar */}
+            {recState === 'locked' && (
+              <>
+                <button className="wa-cancel-btn" onClick={() => stopRecording(true)}>
+                  <Trash2 size={18} />
+                </button>
+                <div className="wa-waveform">
+                  <span className="pulse-dot" />
+                  <span className="wa-recording-label">Gravando...</span>
+                  {transcript && <span className="wa-word-count">{transcript.trim().split(/\s+/).length} palavras</span>}
+                </div>
+                <button className="wa-stop-btn" onClick={() => stopRecording(false)}>
+                  <CheckSquare size={22} />
+                </button>
+              </>
+            )}
+
+            {/* Estado: segurando → hints de deslizar */}
+            {recState === 'holding' && (
+              <>
+                <div className="wa-slide-hint wa-slide-left">
+                  <span>← Cancelar</span>
+                </div>
+                <div className="wa-waveform">
+                  <span className="pulse-dot" />
+                  <span className="wa-recording-label">Solte para parar</span>
+                </div>
+                <div className="wa-slide-hint wa-slide-up">
+                  <span>↑ Travar</span>
+                </div>
+              </>
+            )}
+
+            {/* Estado: idle ou done → botão mic (segurar para gravar) */}
+            {(recState === 'idle' || recState === 'done') && (
+              <div className="wa-idle">
+                {recState === 'idle' && !hasSupport && (
+                  <button className="btn btn-outline btn-sm" onClick={() => setManualEdit(true)}>
+                    <Edit3 size={12} /> Digitar
+                  </button>
+                )}
+                {recState === 'idle' && (
                   <button className="manalysis-example" onClick={handleExample}>
                     <Lightbulb size={12} /> Ver exemplo
                   </button>
-                </div>
-              </div>
-            )}
-
-            {isRecording && (
-              <div className="recorder-active">
-                <button className="record-btn recording" onClick={stopRecording}>
-                  <Square size={24} fill="currentColor" />
-                </button>
-                <p className="recorder-hint recording">
-                  <span className="pulse-dot" /> Gravando... toque para parar
-                </p>
-                <div className="transcript-live">
-                  <p>{transcript}<span className="interim">{interim}</span></p>
-                </div>
-              </div>
-            )}
-
-            {!isRecording && transcript && (
-              <div className="recorder-done">
-                <div className="transcript-final">
-                  <h5>Seu relato:</h5>
-                  <p>{transcript}</p>
-                </div>
-                <div className="recorder-done-actions">
-                  <button className="btn btn-outline btn-sm" onClick={() => setManualEdit(true)}>
-                    <Edit3 size={12} /> Editar
-                  </button>
-                  <button className="btn btn-outline btn-sm" onClick={handleReset}>
-                    <Trash2 size={12} /> Apagar
-                  </button>
-                  <button className="btn btn-outline btn-sm" onClick={startRecording}>
-                    <Mic size={12} /> Continuar
-                  </button>
+                )}
+                <div className="wa-mic-wrap">
+                  {hasSupport && (
+                    <button
+                      className={`wa-mic-btn ${recState === 'done' ? 'has-transcript' : ''}`}
+                      onPointerDown={handlePointerDown}
+                      onPointerMove={handlePointerMove}
+                      onPointerUp={handlePointerUp}
+                      onPointerCancel={handlePointerUp}
+                    >
+                      <Mic size={26} />
+                    </button>
+                  )}
+                  <span className="wa-mic-hint">
+                    {recState === 'done' ? 'Segurar para continuar' : hasSupport ? 'Segurar para gravar' : 'Gravação não suportada'}
+                  </span>
                 </div>
               </div>
             )}

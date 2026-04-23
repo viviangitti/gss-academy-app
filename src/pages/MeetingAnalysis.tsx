@@ -88,6 +88,7 @@ export default function MeetingAnalysis() {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const finalTranscriptRef = useRef('');
   const shouldRecordRef = useRef(false); // controla reinício automático
+  const restartScheduledRef = useRef(false); // evita duplo reinício (onerror + onend)
 
   useEffect(() => {
     const SpeechRec =
@@ -155,18 +156,18 @@ export default function MeetingAnalysis() {
     };
 
     rec.onerror = () => {
-      // Ignora erros de no-speech (silêncio), reinicia se ainda estiver gravando
-      if (shouldRecordRef.current) {
-        setTimeout(() => { if (shouldRecordRef.current) startSession(); }, 200);
-      }
+      // onerror sempre é seguido de onend — deixa o onend cuidar do reinício
     };
 
     rec.onend = () => {
       setInterim('');
-      if (shouldRecordRef.current) {
-        // Reinício automático para simular gravação contínua
-        setTimeout(() => { if (shouldRecordRef.current) startSession(); }, 100);
-      } else {
+      if (shouldRecordRef.current && !restartScheduledRef.current) {
+        restartScheduledRef.current = true;
+        setTimeout(() => {
+          restartScheduledRef.current = false;
+          if (shouldRecordRef.current) startSession();
+        }, 150);
+      } else if (!shouldRecordRef.current) {
         setIsRecording(false);
       }
     };

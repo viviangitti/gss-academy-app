@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { History as HistoryIcon, Wand2, Mic, Swords, Trash2, Clock } from 'lucide-react';
+import { History as HistoryIcon, Wand2, Mic, Swords, Trash2, Clock, Search } from 'lucide-react';
 import { getAllHistory, removeHistory, clearHistory } from '../services/history';
 import type { HistoryEntry, HistoryType } from '../services/history';
 import './History.css';

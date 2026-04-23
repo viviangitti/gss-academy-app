@@ -104,6 +104,7 @@ export default function AICoach() {
 
   const shouldListenRef = useRef(false);
   const restartListenRef = useRef(false);
+  const micBtnRef = useRef<HTMLButtonElement>(null);
 
   const startListenSession = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -140,19 +141,25 @@ export default function AICoach() {
     try { recognition.start(); } catch { /* ignore */ }
   };
 
-  const toggleListening = () => {
-    if (isListening) {
-      shouldListenRef.current = false;
-      recognitionRef.current?.abort?.();
-      setIsListening(false);
-      return;
-    }
+  const stopListening = () => {
+    shouldListenRef.current = false;
+    recognitionRef.current?.abort?.();
+    setIsListening(false);
+  };
+
+  // Pointer events — segurar para gravar, soltar para parar (estilo WhatsApp)
+  const handleMicPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
     shouldListenRef.current = true;
     setIsListening(true);
     setAutoSpeak(true);
     startListenSession();
+  };
+
+  const handleMicPointerUp = () => {
+    if (shouldListenRef.current) stopListening();
   };
 
   const formatMessage = (content: string) => {
@@ -241,8 +248,11 @@ export default function AICoach() {
         <div className="input-wrapper">
           {hasSpeechRecognition && (
             <button
+              ref={micBtnRef}
               className={`mic-btn ${isListening ? 'listening' : ''}`}
-              onClick={toggleListening}
+              onPointerDown={handleMicPointerDown}
+              onPointerUp={handleMicPointerUp}
+              onPointerCancel={handleMicPointerUp}
             >
               {isListening ? <MicOff size={18} /> : <Mic size={18} />}
             </button>

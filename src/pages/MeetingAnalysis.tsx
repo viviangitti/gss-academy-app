@@ -93,7 +93,9 @@ export default function MeetingAnalysis() {
   const restartScheduledRef = useRef(false);
   const recStateRef = useRef<RecordState>('idle'); // ref espelhando recState para closures
   const pointerStartY = useRef(0);
+  const pointerStartX = useRef(0);
   const lockedRef = useRef(false);
+  const recorderDivRef = useRef<HTMLDivElement>(null);
 
   const isRecording = recState === 'holding' || recState === 'locked';
 
@@ -219,8 +221,11 @@ export default function MeetingAnalysis() {
   // Pointer events — estilo WhatsApp
   const handlePointerDown = (e: React.PointerEvent) => {
     if (!hasSupport) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
+    if (recStateRef.current !== 'idle' && recStateRef.current !== 'done') return;
+    // Captura no container para receber eventos mesmo após o botão desmontar
+    recorderDivRef.current?.setPointerCapture(e.pointerId);
     pointerStartY.current = e.clientY;
+    pointerStartX.current = e.clientX;
     setRecordState('holding');
     startRecording();
   };
@@ -228,25 +233,20 @@ export default function MeetingAnalysis() {
   const handlePointerMove = (e: React.PointerEvent) => {
     if (recStateRef.current !== 'holding') return;
     const dy = pointerStartY.current - e.clientY; // positivo = subiu
-    const rect = e.currentTarget.getBoundingClientRect();
-    const moveX = e.clientX - (rect.left + rect.width / 2);
+    const dx = e.clientX - pointerStartX.current;  // negativo = esquerda
 
     if (dy > 60) {
-      // Deslizou para cima → trava
       lockedRef.current = true;
       setRecordState('locked');
-    } else if (moveX < -80) {
-      // Deslizou para esquerda → cancela
+    } else if (dx < -80) {
       stopRecording(true);
     }
   };
 
   const handlePointerUp = () => {
     if (recStateRef.current === 'holding') {
-      // Soltou sem travar → para e salva
       stopRecording(false);
     }
-    // Se 'locked', não faz nada — usuário precisa apertar o botão parar
   };
 
   const handleAnalyze = async () => {
@@ -467,7 +467,14 @@ export default function MeetingAnalysis() {
           )}
 
           {/* Barra de gravação estilo WhatsApp */}
-          <div className={`wa-recorder ${recState}`}>
+          <div
+            ref={recorderDivRef}
+            className={`wa-recorder ${recState}`}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+          >
             {/* Estado: travado → botão cancelar + waveform + botão parar */}
             {recState === 'locked' && (
               <>
@@ -518,10 +525,6 @@ export default function MeetingAnalysis() {
                   {hasSupport && (
                     <button
                       className={`wa-mic-btn ${recState === 'done' ? 'has-transcript' : ''}`}
-                      onPointerDown={handlePointerDown}
-                      onPointerMove={handlePointerMove}
-                      onPointerUp={handlePointerUp}
-                      onPointerCancel={handlePointerUp}
                     >
                       <Mic size={26} />
                     </button>

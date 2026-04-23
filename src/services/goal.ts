@@ -1,4 +1,11 @@
 // Meta mensal e histórico de vendas registradas
+import { auth } from './firebase';
+import { pushData } from './firestore/sync';
+
+function syncSales(sales: Sale[]) {
+  const uid = auth?.currentUser?.uid;
+  if (uid) pushData(uid, 'sales', sales).catch(() => {});
+}
 
 export interface Sale {
   id: string;
@@ -49,16 +56,17 @@ export function addSale(amount: number, commission: number, client: string, note
     date: new Date().toISOString(),
   };
   const sales = getSales();
-  // Compat: adicionar commission a vendas antigas que não tinham
   const normalized = sales.map(s => ({ ...s, commission: s.commission ?? 0 }));
   normalized.push(sale);
   localStorage.setItem(SALES_KEY, JSON.stringify(normalized));
+  syncSales(normalized);
   return sale;
 }
 
 export function removeSale(id: string): void {
   const sales = getSales().filter(s => s.id !== id);
   localStorage.setItem(SALES_KEY, JSON.stringify(sales));
+  syncSales(sales);
 }
 
 export function getCurrentMonthSales(): Sale[] {

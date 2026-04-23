@@ -1,3 +1,6 @@
+import { auth } from './firebase';
+import { pushData } from './firestore/sync';
+
 const KEY = 'gss_favorites';
 
 export type FavoriteType = 'objection' | 'script' | 'technique' | 'urgency';
@@ -7,6 +10,11 @@ export interface Favorite {
   type: FavoriteType;
   label: string;
   addedAt: number;
+}
+
+function syncFavs(items: Favorite[]) {
+  const uid = auth?.currentUser?.uid;
+  if (uid) pushData(uid, 'favorites', items).catch(() => {});
 }
 
 export function getFavorites(): Favorite[] {
@@ -28,10 +36,12 @@ export function toggleFavorite(type: FavoriteType, id: string, label: string): b
   if (existing >= 0) {
     favs.splice(existing, 1);
     localStorage.setItem(KEY, JSON.stringify(favs));
+    syncFavs(favs);
     return false;
   }
   favs.push({ id, type, label, addedAt: Date.now() });
   localStorage.setItem(KEY, JSON.stringify(favs));
+  syncFavs(favs);
   return true;
 }
 

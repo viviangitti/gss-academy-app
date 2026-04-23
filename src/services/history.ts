@@ -1,5 +1,12 @@
 // Histórico unificado de todas as interações com a IA
 // Salva pesquisas, análises de mensagens, análises pós-reunião e sessões do simulador
+import { auth } from './firebase';
+import { pushData } from './firestore/sync';
+
+function syncHistory(items: HistoryEntry[]) {
+  const uid = auth?.currentUser?.uid;
+  if (uid) pushData(uid, 'history', items).catch(() => {});
+}
 
 export type HistoryType = 'client_research' | 'message_review' | 'meeting_analysis' | 'simulator_session';
 
@@ -39,6 +46,7 @@ export function addHistory(entry: Omit<HistoryEntry, 'id' | 'createdAt'>): Histo
   all.unshift(newEntry);
   const trimmed = all.slice(0, MAX_ENTRIES);
   localStorage.setItem(KEY, JSON.stringify(trimmed));
+  syncHistory(trimmed);
   return newEntry;
 }
 
@@ -49,10 +57,12 @@ export function getHistoryById(id: string): HistoryEntry | null {
 export function removeHistory(id: string): void {
   const all = getAllHistory().filter(h => h.id !== id);
   localStorage.setItem(KEY, JSON.stringify(all));
+  syncHistory(all);
 }
 
 export function clearHistory(): void {
   localStorage.removeItem(KEY);
+  syncHistory([]);
 }
 
 export function getHistoryByType(type: HistoryType): HistoryEntry[] {

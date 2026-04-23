@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gss-academy-v4';
+const CACHE_NAME = 'gss-academy-v5';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

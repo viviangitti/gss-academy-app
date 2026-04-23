@@ -3,18 +3,18 @@ import './OfflineState.css';
 
 interface Props {
   feature?: string; // ex: "o Coach de IA"
+  subtitle?: string; // mensagem customizada (ex: erro de configuração)
 }
 
-export default function OfflineState({ feature = 'esta funcionalidade' }: Props) {
+export default function OfflineState({ feature = 'esta funcionalidade', subtitle }: Props) {
   return (
     <div className="offline-state">
       <div className="offline-icon">
         <WifiOff size={40} />
       </div>
-      <h3>Sem conexão</h3>
+      <h3>{subtitle ? 'Indisponível' : 'Sem conexão'}</h3>
       <p>
-        {feature} precisa de internet para funcionar.
-        Verifique sua conexão e tente novamente.
+        {subtitle ?? `${feature} precisa de internet para funcionar. Verifique sua conexão e tente novamente.`}
       </p>
       <div className="offline-works">
         <span className="offline-works-label">Funciona offline:</span>

@@ -143,6 +143,7 @@ export default function AICoach() {
     ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
   if (!isOnline) return <OfflineState feature="o Coach de IA" />;
+  if (!API_KEY) return <OfflineState feature="o Coach de IA" subtitle="Configuração de IA indisponível. Fale com o suporte." />;
 
   return (
     <div className="ai-coach-page">

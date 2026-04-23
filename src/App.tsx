@@ -92,7 +92,17 @@ function AppContent() {
       if (history) localStorage.setItem('gss_history', JSON.stringify(history));
       if (favorites) localStorage.setItem('gss_favorites', JSON.stringify(favorites));
       if (lostSales) localStorage.setItem('gss_lost_sales', JSON.stringify(lostSales));
-      if (dayArr?.[0]) localStorage.setItem('gss_day', JSON.stringify(dayArr[0]));
+      if (dayArr?.[0]) {
+        // Merge: só sobrescreve se Firestore for mais recente que o localStorage
+        const remoteDay = dayArr[0];
+        const localRaw = localStorage.getItem('gss_day');
+        const localDay = localRaw ? JSON.parse(localRaw) : null;
+        const today = new Date().toISOString().split('T')[0];
+        // Se o local tem dados do dia de hoje, mantém o local (pode ser mais atualizado)
+        if (!localDay || localDay.date !== today) {
+          localStorage.setItem('gss_day', JSON.stringify(remoteDay));
+        }
+      }
 
       setProfileReady(true);
     })();

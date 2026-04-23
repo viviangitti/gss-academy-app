@@ -254,10 +254,6 @@ export default function Home() {
           </div>
           <div className="week-stats card">
             <div className="week-stat">
-              <span className="week-stat-value">{weekStats.researches}</span>
-              <span className="week-stat-label">Pesquisas</span>
-            </div>
-            <div className="week-stat">
               <span className="week-stat-value">{weekStats.messages}</span>
               <span className="week-stat-label">Mensagens</span>
             </div>

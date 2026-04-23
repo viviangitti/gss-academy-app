@@ -6,7 +6,6 @@ import type { HistoryEntry, HistoryType } from '../services/history';
 import './History.css';
 
 const TYPE_CONFIG: Record<HistoryType, { label: string; icon: React.ComponentType<{ size?: number }>; color: string; route: string }> = {
-  client_research: { label: 'Pesquisa', icon: Wand2, color: '#3b82f6', route: '/' },
   message_review: { label: 'Mensagem', icon: Wand2, color: '#10b981', route: '/coach-mensagem' },
   meeting_analysis: { label: 'Pós-reunião', icon: Mic, color: '#ef4444', route: '/analise-reuniao' },
   simulator_session: { label: 'Simulador', icon: Swords, color: '#8b5cf6', route: '/treino' },
@@ -72,7 +71,7 @@ export default function History() {
         <div className="history-empty card">
           <HistoryIcon size={40} />
           <h3>Sem histórico ainda</h3>
-          <p>Tudo que você fizer com a IA (pesquisar clientes, revisar mensagens, analisar reuniões, treinar no simulador) vai aparecer aqui automaticamente.</p>
+          <p>Tudo que você fizer com a IA (revisar mensagens, analisar reuniões, treinar no simulador) vai aparecer aqui automaticamente.</p>
         </div>
       </div>
     );

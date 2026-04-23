@@ -42,7 +42,7 @@ export default function AICoach() {
   const [isListening, setIsListening] = useState(false);
   const [autoSpeak, setAutoSpeak] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<(SpeechRecognition & { abort?: () => void }) | null>(null);
 
   useEffect(() => {
     setMessages(loadData(KEYS.CHAT_HISTORY, []));
@@ -102,34 +102,57 @@ export default function AICoach() {
     resetChat();
   };
 
-  const toggleListening = () => {
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-      return;
-    }
+  const shouldListenRef = useRef(false);
+  const restartListenRef = useRef(false);
 
+  const startListenSession = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
     const recognition = new SpeechRecognition();
     recognition.lang = 'pt-BR';
     recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.interimResults = true;
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = event.results[0][0].transcript;
-      setInput(transcript);
-      setIsListening(false);
+      let text = '';
+      for (let i = 0; i < event.results.length; i++) {
+        if (event.results[i].isFinal) text += event.results[i][0].transcript;
+      }
+      if (text) setInput(prev => (prev + ' ' + text).trim());
     };
 
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => { /* onend cuida do reinício */ };
+
+    recognition.onend = () => {
+      if (shouldListenRef.current && !restartListenRef.current) {
+        restartListenRef.current = true;
+        setTimeout(() => {
+          restartListenRef.current = false;
+          if (shouldListenRef.current) startListenSession();
+        }, 150);
+      } else if (!shouldListenRef.current) {
+        setIsListening(false);
+      }
+    };
 
     recognitionRef.current = recognition;
-    recognition.start();
+    try { recognition.start(); } catch { /* ignore */ }
+  };
+
+  const toggleListening = () => {
+    if (isListening) {
+      shouldListenRef.current = false;
+      recognitionRef.current?.abort?.();
+      setIsListening(false);
+      return;
+    }
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+    shouldListenRef.current = true;
     setIsListening(true);
     setAutoSpeak(true);
+    startListenSession();
   };
 
   const formatMessage = (content: string) => {

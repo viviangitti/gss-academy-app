@@ -115,17 +115,31 @@ export default function AICoach() {
     recognition.continuous = false;
     recognition.interimResults = true;
 
+    let interimText = '';
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      let text = '';
+      let finalText = '';
+      interimText = '';
       for (let i = 0; i < event.results.length; i++) {
-        if (event.results[i].isFinal) text += event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalText += event.results[i][0].transcript;
+        } else {
+          interimText += event.results[i][0].transcript;
+        }
       }
-      if (text) setInput(prev => (prev + ' ' + text).trim());
+      if (finalText) {
+        setInput(prev => (prev + ' ' + finalText).trim());
+        interimText = '';
+      }
     };
 
     recognition.onerror = () => { /* onend cuida do reinício */ };
 
     recognition.onend = () => {
+      // Salva texto intermediário não finalizado (quando usuário solta antes do fim)
+      if (interimText.trim()) {
+        setInput(prev => (prev + ' ' + interimText).trim());
+        interimText = '';
+      }
       if (shouldListenRef.current && !restartListenRef.current) {
         restartListenRef.current = true;
         setTimeout(() => {
@@ -143,15 +157,18 @@ export default function AICoach() {
 
   const stopListening = () => {
     shouldListenRef.current = false;
-    recognitionRef.current?.abort?.();
-    setIsListening(false);
+    // stop() (não abort()) deixa o reconhecimento finalizar e retornar o texto
+    recognitionRef.current?.stop();
+    // fallback: se onend não disparar em 2s, força o estado
+    setTimeout(() => setIsListening(false), 2000);
   };
 
-  // Touch/Pointer events — segurar para gravar, soltar para parar (estilo WhatsApp)
+  // Touch events — segurar para gravar, soltar para parar (estilo WhatsApp)
   const handleMicStart = (e: React.TouchEvent | React.MouseEvent) => {
     e.preventDefault();
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
+    if (shouldListenRef.current) return; // já gravando
     shouldListenRef.current = true;
     setIsListening(true);
     setAutoSpeak(true);

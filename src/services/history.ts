@@ -1,5 +1,5 @@
 // Histórico unificado de todas as interações com a IA
-// Salva pesquisas, análises de mensagens, análises pós-reunião e sessões do simulador
+// Salva análises de mensagens, análises pós-reunião e sessões do simulador
 import { auth } from './firebase';
 import { pushData } from './firestore/sync';
 
@@ -8,7 +8,7 @@ function syncHistory(items: HistoryEntry[]) {
   if (uid) pushData(uid, 'history', items).catch(() => {});
 }
 
-export type HistoryType = 'client_research' | 'message_review' | 'meeting_analysis' | 'simulator_session';
+export type HistoryType = 'message_review' | 'meeting_analysis' | 'simulator_session';
 
 export interface HistoryEntry {
   id: string;
@@ -71,7 +71,6 @@ export function getHistoryByType(type: HistoryType): HistoryEntry[] {
 
 // Estatísticas da semana atual para card de progresso
 export interface WeekStats {
-  researches: number;
   messages: number;
   meetings: number;
   simulations: number;
@@ -84,7 +83,6 @@ export function getWeekStats(): WeekStats {
   const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
   const all = getAllHistory().filter(h => h.createdAt >= weekAgo);
 
-  const researches = all.filter(h => h.type === 'client_research').length;
   const messages = all.filter(h => h.type === 'message_review').length;
   const meetings = all.filter(h => h.type === 'meeting_analysis').length;
   const sims = all.filter(h => h.type === 'simulator_session');
@@ -103,7 +101,6 @@ export function getWeekStats(): WeekStats {
   }
 
   return {
-    researches,
     messages,
     meetings,
     simulations: sims.length,

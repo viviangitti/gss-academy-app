@@ -29,7 +29,7 @@ export default function Privacy() {
             <li><strong>Perfil:</strong> nome, cargo, empresa e segmento de atuação (opcionais, preenchidos por você)</li>
             <li><strong>Meta mensal e vendas:</strong> quando você registra para acompanhar seu progresso</li>
             <li><strong>Atividades do dia:</strong> focos, tarefas, reuniões que você cria</li>
-            <li><strong>Histórico de uso:</strong> pesquisas de cliente, mensagens analisadas, reuniões e treinos</li>
+            <li><strong>Histórico de uso:</strong> mensagens analisadas, reuniões e treinos com a IA</li>
             <li><strong>Favoritos:</strong> objeções, roteiros e técnicas que você marca</li>
           </ul>
           <p>
@@ -54,7 +54,7 @@ export default function Privacy() {
           <h3>4. Uso de Inteligência Artificial</h3>
           <p>
             O app usa a API do <strong>Google Gemini</strong> para as funcionalidades de IA
-            (Pergunte à IA, Coach de Mensagem, Análise de Reunião, Simulador de Treino, Pesquisa de Cliente).
+            (Pergunte à IA, Coach de Mensagem, Análise de Reunião, Simulador de Treino).
           </p>
           <p>
             Quando você usa essas funcionalidades, <strong>o texto que você envia é processado pelo Google</strong>

@@ -50,7 +50,7 @@ export function showLocalNotification(title: string, body: string): void {
 // Reminder contextual: mostra toast inline se o usuário voltou depois de dias sem uso
 export function getWelcomeBackMessage(): string | null {
   const days = getDaysInactive();
-  if (days >= 7) return `Bem-vindo de volta! Faz ${days} dias. Que tal pesquisar um cliente da próxima reunião?`;
+  if (days >= 7) return `Bem-vindo de volta! Faz ${days} dias. Que tal treinar uma objeção ou preparar sua próxima reunião?`;
   if (days >= 3) return `Bom te ver de volta! Pronto pra preparar a próxima reunião?`;
   return null;
 }

@@ -1,5 +1,12 @@
 // "Meu Dia" — organizador simples do dia
 // Apenas reuniões e tarefas (focos foram removidos por redundância).
+import { auth } from './firebase';
+import { pushData } from './firestore/sync';
+
+function syncDay(data: DayData) {
+  const uid = auth?.currentUser?.uid;
+  if (uid) pushData(uid, 'day', [data]).catch(() => {});
+}
 
 export interface DayMeeting {
   id: string;
@@ -83,7 +90,9 @@ function archiveDay(day: DayData): void {
 }
 
 export function saveDay(data: DayData): void {
-  localStorage.setItem(KEY, JSON.stringify({ ...data, date: todayStr() }));
+  const saved = { ...data, date: todayStr() };
+  localStorage.setItem(KEY, JSON.stringify(saved));
+  syncDay(saved);
 }
 
 export function addMeeting(meeting: Omit<DayMeeting, 'id'>): DayData {

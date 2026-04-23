@@ -1,4 +1,11 @@
 import { loadData, saveData } from './storage';
+import { auth } from './firebase';
+import { pushData } from './firestore/sync';
+
+function syncLost(items: LostSale[]) {
+  const uid = auth?.currentUser?.uid;
+  if (uid) pushData(uid, 'lostSales', items).catch(() => {});
+}
 
 const KEY = 'gss_lost_sales';
 
@@ -61,12 +68,16 @@ export function getLostSales(): LostSale[] {
 export function addLostSale(data: Omit<LostSale, 'id' | 'date'>): LostSale {
   const all = getLostSales();
   const entry: LostSale = { ...data, id: generateId(), date: new Date().toISOString() };
-  saveData(KEY, [entry, ...all]);
+  const updated = [entry, ...all];
+  saveData(KEY, updated);
+  syncLost(updated);
   return entry;
 }
 
 export function removeLostSale(id: string) {
-  saveData(KEY, getLostSales().filter(s => s.id !== id));
+  const updated = getLostSales().filter(s => s.id !== id);
+  saveData(KEY, updated);
+  syncLost(updated);
 }
 
 export interface LostStats {

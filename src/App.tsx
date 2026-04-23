@@ -26,8 +26,14 @@ import Profile from './pages/Profile';
 import Auth from './pages/Auth';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { getRemoteProfile, saveRemoteProfile } from './services/firestore/profile';
+import { pullData } from './services/firestore/sync';
 import { loadData, saveData, KEYS } from './services/storage';
 import type { UserProfile } from './types';
+import type { Sale } from './services/goal';
+import type { HistoryEntry } from './services/history';
+import type { Favorite } from './services/favorites';
+import type { LostSale } from './services/lostSales';
+import type { DayData } from './services/day';
 import './App.css';
 
 function AppContent() {
@@ -48,11 +54,13 @@ function AppContent() {
       return;
     }
     (async () => {
-      const remote = await getRemoteProfile(user.uid);
+      const uid = user.uid;
+
+      // 1. Perfil
+      const remote = await getRemoteProfile(uid);
       if (remote) {
         saveData(KEYS.PROFILE, remote);
       } else {
-        // Primeiro login: usa perfil local (se existir) e salva remoto
         const local = loadData<UserProfile>(KEYS.PROFILE, {
           name: user.displayName || '',
           role: '',
@@ -64,12 +72,28 @@ function AppContent() {
           ...local,
           name: local.name || user.displayName || '',
           email: user.email || '',
-          uid: user.uid,
+          uid,
           createdAt: Date.now(),
         };
-        await saveRemoteProfile(user.uid, merged);
+        await saveRemoteProfile(uid, merged);
         saveData(KEYS.PROFILE, merged);
       }
+
+      // 2. Dados do app — puxa do Firestore se existir, senão mantém localStorage
+      const [sales, history, favorites, lostSales, dayArr] = await Promise.all([
+        pullData<Sale>(uid, 'sales'),
+        pullData<HistoryEntry>(uid, 'history'),
+        pullData<Favorite>(uid, 'favorites'),
+        pullData<LostSale>(uid, 'lostSales'),
+        pullData<DayData>(uid, 'day'),
+      ]);
+
+      if (sales) localStorage.setItem('gss_sales', JSON.stringify(sales));
+      if (history) localStorage.setItem('gss_history', JSON.stringify(history));
+      if (favorites) localStorage.setItem('gss_favorites', JSON.stringify(favorites));
+      if (lostSales) localStorage.setItem('gss_lost_sales', JSON.stringify(lostSales));
+      if (dayArr?.[0]) localStorage.setItem('gss_day', JSON.stringify(dayArr[0]));
+
       setProfileReady(true);
     })();
   }, [user, firebaseEnabled]);

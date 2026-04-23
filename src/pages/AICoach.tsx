@@ -147,18 +147,19 @@ export default function AICoach() {
     setIsListening(false);
   };
 
-  // Pointer events — segurar para gravar, soltar para parar (estilo WhatsApp)
-  const handleMicPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+  // Touch/Pointer events — segurar para gravar, soltar para parar (estilo WhatsApp)
+  const handleMicStart = (e: React.TouchEvent | React.MouseEvent) => {
+    e.preventDefault();
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
     shouldListenRef.current = true;
     setIsListening(true);
     setAutoSpeak(true);
     startListenSession();
   };
 
-  const handleMicPointerUp = () => {
+  const handleMicEnd = (e: React.TouchEvent | React.MouseEvent) => {
+    e.preventDefault();
     if (shouldListenRef.current) stopListening();
   };
 
@@ -250,11 +251,14 @@ export default function AICoach() {
             <button
               ref={micBtnRef}
               className={`mic-btn ${isListening ? 'listening' : ''}`}
-              onPointerDown={handleMicPointerDown}
-              onPointerUp={handleMicPointerUp}
-              onPointerCancel={handleMicPointerUp}
+              onTouchStart={handleMicStart}
+              onTouchEnd={handleMicEnd}
+              onTouchCancel={handleMicEnd}
+              onMouseDown={handleMicStart}
+              onMouseUp={handleMicEnd}
+              onMouseLeave={handleMicEnd}
               onContextMenu={e => e.preventDefault()}
-              style={{ userSelect: 'none', WebkitUserSelect: 'none', touchAction: 'none' }}
+              style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
             >
               {isListening ? <MicOff size={18} /> : <Mic size={18} />}
             </button>

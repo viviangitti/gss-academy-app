@@ -61,7 +61,7 @@ export default function AICoach() {
   const [interimText, setInterimText] = useState('');
   const [recordSec, setRecordSec] = useState(0);
   const liveTranscriptRef = useRef('');
-  const pendingSendRef = useRef(false);
+  // pendingSendRef removido — stopAndSend age diretamente sem depender de onend
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const recognitionRef = useRef<(SpeechRecognition & { abort?: () => void }) | null>(null);
   const restartScheduledRef = useRef(false);
@@ -158,21 +158,10 @@ export default function AICoach() {
 
     rec.onend = () => {
       setInterimText('');
-      if (pendingSendRef.current) {
-        // Usuário tocou ✅ — para e envia
-        pendingSendRef.current = false;
-        const text = liveTranscriptRef.current.trim();
-        if (timerRef.current) clearInterval(timerRef.current);
-        setRecordingBoth(false);
-        setLiveTranscript('');
-        setInterimText('');
-        setRecordSec(0);
-        if (text) {
-          setAutoSpeak(true);
-          handleSend(text);
-        }
-      } else if (isRecordingRef.current && !restartScheduledRef.current) {
-        // Auto-reinicia para gravação contínua
+      // Se isRecordingRef já é false, foi o stopAndSend/cancelRecording que agiu — ignora
+      if (!isRecordingRef.current) return;
+      // Auto-reinicia para gravação contínua
+      if (!restartScheduledRef.current) {
         restartScheduledRef.current = true;
         setTimeout(() => {
           restartScheduledRef.current = false;
@@ -192,7 +181,6 @@ export default function AICoach() {
     liveTranscriptRef.current = '';
     setLiveTranscript('');
     setInterimText('');
-    pendingSendRef.current = false;
     setRecordSec(0);
     setRecordingBoth(true);
 
@@ -201,19 +189,32 @@ export default function AICoach() {
   };
 
   const stopAndSend = () => {
-    pendingSendRef.current = true;
-    recognitionRef.current?.stop();
-  };
-
-  const cancelRecording = () => {
-    pendingSendRef.current = false;
-    recognitionRef.current?.abort?.();
+    // Captura o texto AGORA, antes de qualquer coisa
+    const text = liveTranscriptRef.current.trim();
+    // Marca como "não gravando" — onend não vai reiniciar
     if (timerRef.current) clearInterval(timerRef.current);
+    setRecordingBoth(false);
     liveTranscriptRef.current = '';
     setLiveTranscript('');
     setInterimText('');
     setRecordSec(0);
+    // Para o mic (resultado pode chegar depois via onresult, ignoramos)
+    try { recognitionRef.current?.stop(); } catch { /* */ }
+    // Envia se tiver texto
+    if (text) {
+      setAutoSpeak(true);
+      handleSend(text);
+    }
+  };
+
+  const cancelRecording = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
     setRecordingBoth(false);
+    liveTranscriptRef.current = '';
+    setLiveTranscript('');
+    setInterimText('');
+    setRecordSec(0);
+    try { recognitionRef.current?.abort?.(); } catch { /* */ }
   };
 
   // ──────────────────────────────────────────────────────────────────────────

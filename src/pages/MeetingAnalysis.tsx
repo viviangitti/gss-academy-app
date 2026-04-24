@@ -101,7 +101,7 @@ export default function MeetingAnalysis() {
 
   const recognitionRef = useRef<SpeechRecognitionAPI | null>(null);
   const finalTranscriptRef = useRef('');
-  const pendingStopRef = useRef(false);
+  // pendingStopRef removido — stopRecording age diretamente sem depender de onend
   const restartScheduledRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -179,12 +179,10 @@ export default function MeetingAnalysis() {
 
     rec.onend = () => {
       setInterimText('');
-      if (pendingStopRef.current) {
-        // Usuário tocou ✅ — finaliza
-        pendingStopRef.current = false;
-        if (timerRef.current) clearInterval(timerRef.current);
-        setRecStateBoth(finalTranscriptRef.current.trim() ? 'done' : 'idle');
-      } else if (recStateRef.current === 'recording' && !restartScheduledRef.current) {
+      // Se recState já não é 'recording', stopRecording/cancelRecording já agiu — ignora
+      if (recStateRef.current !== 'recording') return;
+      // Auto-reinicia para gravação contínua
+      if (!restartScheduledRef.current) {
         restartScheduledRef.current = true;
         setTimeout(() => {
           restartScheduledRef.current = false;
@@ -207,7 +205,6 @@ export default function MeetingAnalysis() {
     finalTranscriptRef.current = '';
     setTranscript('');
     setInterimText('');
-    pendingStopRef.current = false;
     setRecordSec(0);
     setRecStateBoth('recording');
     timerRef.current = setInterval(() => setRecordSec(s => s + 1), 1000);
@@ -215,19 +212,24 @@ export default function MeetingAnalysis() {
   };
 
   const stopRecording = () => {
-    pendingStopRef.current = true;
-    recognitionRef.current?.stop();
+    // Captura texto AGORA — não espera onend
+    const text = finalTranscriptRef.current.trim();
+    if (timerRef.current) clearInterval(timerRef.current);
+    setRecStateBoth(text ? 'done' : 'idle');
+    setInterimText('');
+    setRecordSec(0);
+    // Para o mic; onend verá recState !== 'recording' e não vai reiniciar
+    try { recognitionRef.current?.stop(); } catch { /* */ }
   };
 
   const cancelRecording = () => {
-    pendingStopRef.current = false;
-    recognitionRef.current?.abort();
     if (timerRef.current) clearInterval(timerRef.current);
+    setRecStateBoth('idle');
     finalTranscriptRef.current = '';
     setTranscript('');
     setInterimText('');
     setRecordSec(0);
-    setRecStateBoth('idle');
+    try { recognitionRef.current?.abort(); } catch { /* */ }
   };
 
   const handleReset = () => {

@@ -26,6 +26,8 @@ const SEGMENT_BASE: Record<string, string> = {
   servicos: '(serviços OR consultoria empresarial OR terceirização)',
   agro: '(agronegócio OR agricultura OR safra OR commodities OR pecuária)',
   energia: '(energia solar OR renovável OR fotovoltaico OR sustentabilidade energética)',
+  bebidas_alcoolicas: '(bebidas alcoólicas OR cerveja OR destilados OR cachaça OR gin OR whisky OR distribuidora de bebidas OR mercado de bebidas Brasil)',
+  bebidas_alcoolicas_vinho: '(vinho OR vinhos OR importadora de vinho OR enologia OR adega OR safra vinho OR mercado de vinhos Brasil)',
 };
 
 // Queries específicas por categoria — múltiplas para garantir volume

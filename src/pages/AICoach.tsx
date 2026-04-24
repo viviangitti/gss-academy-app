@@ -61,7 +61,7 @@ export default function AICoach() {
   const [interimText, setInterimText] = useState('');
   const [recordSec, setRecordSec] = useState(0);
   const liveTranscriptRef = useRef('');
-  // pendingSendRef removido — stopAndSend age diretamente sem depender de onend
+  const interimTextRef = useRef(''); // para capturar interim ao tocar ✅
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const recognitionRef = useRef<(SpeechRecognition & { abort?: () => void }) | null>(null);
   const restartScheduledRef = useRef(false);
@@ -145,13 +145,17 @@ export default function AICoach() {
       for (let i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
           liveTranscriptRef.current += event.results[i][0].transcript + ' ';
+          interimTextRef.current = '';
           setLiveTranscript(liveTranscriptRef.current);
           setInterimText('');
         } else {
           interim += event.results[i][0].transcript;
         }
       }
-      if (interim) setInterimText(interim);
+      if (interim) {
+        interimTextRef.current = interim;
+        setInterimText(interim);
+      }
     };
 
     rec.onerror = () => { /* onend will handle */ };
@@ -189,18 +193,17 @@ export default function AICoach() {
   };
 
   const stopAndSend = () => {
-    // Captura o texto AGORA, antes de qualquer coisa
-    const text = liveTranscriptRef.current.trim();
+    // Captura final + interim (caso o usuário toque ✅ enquanto ainda está falando)
+    const text = (liveTranscriptRef.current + ' ' + interimTextRef.current).trim();
     // Marca como "não gravando" — onend não vai reiniciar
     if (timerRef.current) clearInterval(timerRef.current);
     setRecordingBoth(false);
     liveTranscriptRef.current = '';
+    interimTextRef.current = '';
     setLiveTranscript('');
     setInterimText('');
     setRecordSec(0);
-    // Para o mic (resultado pode chegar depois via onresult, ignoramos)
     try { recognitionRef.current?.stop(); } catch { /* */ }
-    // Envia se tiver texto
     if (text) {
       setAutoSpeak(true);
       handleSend(text);
@@ -211,6 +214,7 @@ export default function AICoach() {
     if (timerRef.current) clearInterval(timerRef.current);
     setRecordingBoth(false);
     liveTranscriptRef.current = '';
+    interimTextRef.current = '';
     setLiveTranscript('');
     setInterimText('');
     setRecordSec(0);

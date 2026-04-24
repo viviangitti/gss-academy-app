@@ -101,7 +101,7 @@ export default function MeetingAnalysis() {
 
   const recognitionRef = useRef<SpeechRecognitionAPI | null>(null);
   const finalTranscriptRef = useRef('');
-  // pendingStopRef removido — stopRecording age diretamente sem depender de onend
+  const interimTextRef = useRef(''); // captura interim ao tocar ✅
   const restartScheduledRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -166,13 +166,17 @@ export default function MeetingAnalysis() {
         const r = event.results[i];
         if (r.isFinal) {
           finalTranscriptRef.current += r[0].transcript + ' ';
+          interimTextRef.current = '';
           setTranscript(finalTranscriptRef.current);
           setInterimText('');
         } else {
           interim += r[0].transcript;
         }
       }
-      if (interim) setInterimText(interim);
+      if (interim) {
+        interimTextRef.current = interim;
+        setInterimText(interim);
+      }
     };
 
     rec.onerror = () => { /* onend cuidará */ };
@@ -212,13 +216,18 @@ export default function MeetingAnalysis() {
   };
 
   const stopRecording = () => {
-    // Captura texto AGORA — não espera onend
-    const text = finalTranscriptRef.current.trim();
+    // Captura final + interim (caso toque ✅ enquanto ainda está falando)
+    const text = (finalTranscriptRef.current + ' ' + interimTextRef.current).trim();
     if (timerRef.current) clearInterval(timerRef.current);
+    // Atualiza transcript com o texto completo antes de mudar estado
+    if (text) {
+      finalTranscriptRef.current = text;
+      setTranscript(text);
+    }
     setRecStateBoth(text ? 'done' : 'idle');
+    interimTextRef.current = '';
     setInterimText('');
     setRecordSec(0);
-    // Para o mic; onend verá recState !== 'recording' e não vai reiniciar
     try { recognitionRef.current?.stop(); } catch { /* */ }
   };
 
@@ -226,6 +235,7 @@ export default function MeetingAnalysis() {
     if (timerRef.current) clearInterval(timerRef.current);
     setRecStateBoth('idle');
     finalTranscriptRef.current = '';
+    interimTextRef.current = '';
     setTranscript('');
     setInterimText('');
     setRecordSec(0);

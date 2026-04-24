@@ -19,10 +19,14 @@ export type Segment =
   | 'servicos'
   | 'agro'
   | 'energia'
+  | 'bebidas_alcoolicas'
+  | 'bebidas_alcoolicas_vinho'
   | '';
 
 export const SEGMENTS: { value: Segment; label: string }[] = [
   { value: '', label: 'Selecione seu segmento' },
+  { value: 'bebidas_alcoolicas', label: 'Bebidas Alcoólicas - Geral' },
+  { value: 'bebidas_alcoolicas_vinho', label: 'Bebidas Alcoólicas - Vinho' },
   { value: 'farmaceutico', label: 'Farmacêutico' },
   { value: 'automotivo', label: 'Automotivo' },
   { value: 'automotivo_luxo', label: 'Automotivo de Luxo' },

@@ -9,13 +9,19 @@ interface Props {
 
 export default function SpeakButton({ text, size = 16 }: Props) {
   const [speaking, setSpeaking] = useState(false);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const speakingRef = useRef(false);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
-  const stopSpeaking = () => {
-    // pause() antes de cancel() é mais confiável no iOS
+  const isSpeaking = () =>
+    speakingRef.current ||
+    window.speechSynthesis.speaking ||
+    window.speechSynthesis.pending;
+
+  const forceStop = () => {
+    // Cancela tudo — pause() primeiro torna o cancel() mais confiável no iOS
     window.speechSynthesis.pause();
     window.speechSynthesis.cancel();
+    utteranceRef.current = null;
     speakingRef.current = false;
     setSpeaking(false);
   };
@@ -23,8 +29,9 @@ export default function SpeakButton({ text, size = 16 }: Props) {
   const handleSpeak = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (speakingRef.current) {
-      stopSpeaking();
+    // Se está falando (pelo ref OU pelo estado real do speechSynthesis), para
+    if (isSpeaking()) {
+      forceStop();
       return;
     }
 
@@ -37,28 +44,37 @@ export default function SpeakButton({ text, size = 16 }: Props) {
     if (ptVoice) utterance.voice = ptVoice;
 
     utterance.onend = () => {
-      speakingRef.current = false;
-      setSpeaking(false);
+      if (utteranceRef.current === utterance) {
+        speakingRef.current = false;
+        setSpeaking(false);
+        utteranceRef.current = null;
+      }
     };
 
     utterance.onerror = () => {
-      speakingRef.current = false;
-      setSpeaking(false);
+      if (utteranceRef.current === utterance) {
+        speakingRef.current = false;
+        setSpeaking(false);
+        utteranceRef.current = null;
+      }
     };
 
     utteranceRef.current = utterance;
 
-    // Cancela qualquer fala anterior
+    // Limpa qualquer fala anterior
     window.speechSynthesis.pause();
     window.speechSynthesis.cancel();
 
-    // Marca como "falando" imediatamente — não espera onstart (não dispara no iOS)
+    // Marca como falando imediatamente (onstart não dispara no iOS)
     speakingRef.current = true;
     setSpeaking(true);
 
-    // iOS precisa de delay após cancel()
+    // iOS exige delay após cancel() para aceitar um novo speak()
     setTimeout(() => {
-      window.speechSynthesis.speak(utterance);
+      // Só fala se ainda for a mesma utterance (usuário não cancelou entre os 100ms)
+      if (utteranceRef.current === utterance) {
+        window.speechSynthesis.speak(utterance);
+      }
     }, 100);
   };
 

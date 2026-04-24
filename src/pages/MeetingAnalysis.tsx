@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Mic, Sparkles, RotateCcw, Users, Shield, ArrowRight, AlertTriangle, Target, Edit3, Trash2, CheckSquare, Lightbulb } from 'lucide-react';
+import { Mic, Sparkles, RotateCcw, Users, Shield, ArrowRight, AlertTriangle, Target, Edit3, Trash2, CheckSquare, Lightbulb, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { addHistory } from '../services/history';
@@ -14,7 +14,7 @@ const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
 interface Analysis {
   summary: string;
-  quality: number; // 1-5
+  quality: number;
   participants: string[];
   objections: string[];
   nextSteps: string[];
@@ -45,7 +45,7 @@ Se o relato não tiver informação para um campo, retorne array vazio [].
 Seja DIRETO e PRÁTICO. Nada de generalidades.
 NÃO inclua nenhum texto antes ou depois do JSON.`;
 
-interface SpeechRecognition extends EventTarget {
+interface SpeechRecognitionAPI extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
@@ -61,10 +61,7 @@ interface SpeechRecognitionEvent {
   resultIndex: number;
   results: {
     length: number;
-    [index: number]: {
-      isFinal: boolean;
-      [index: number]: { transcript: string };
-    };
+    [index: number]: { isFinal: boolean; [index: number]: { transcript: string } };
   };
 }
 
@@ -73,46 +70,52 @@ interface SavedMeeting {
   analysis: Analysis;
 }
 
+// Delays pseudo-aleatórios para a waveform
+const BAR_DELAYS = [0, 0.15, 0.3, 0.08, 0.45, 0.22, 0.6, 0.38, 0.52, 0.12,
+                    0.7, 0.28, 0.18, 0.55, 0.42, 0.65, 0.05, 0.35, 0.48, 0.75];
+const BAR_DURS   = [0.8, 1.1, 0.7, 0.95, 1.2, 0.85, 0.75, 1.05, 0.9, 1.15,
+                    0.8, 0.7, 1.0, 0.88, 0.78, 1.1, 0.95, 0.82, 1.0, 0.72];
+
+function formatTime(sec: number) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+type RecState = 'idle' | 'recording' | 'done';
+
 export default function MeetingAnalysis() {
   const navigate = useNavigate();
   const isOnline = useOnline();
-  // 'idle' | 'holding' | 'locked' | 'done'
-  type RecordState = 'idle' | 'holding' | 'locked' | 'done';
-  const [recState, setRecState] = useState<RecordState>('idle');
+  const [recState, setRecState] = useState<RecState>('idle');
+  const recStateRef = useRef<RecState>('idle');
   const [transcript, setTranscript] = useState('');
-  const [interim, setInterim] = useState('');
+  const [interimText, setInterimText] = useState('');
+  const [recordSec, setRecordSec] = useState(0);
   const [manualEdit, setManualEdit] = useState(false);
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [error, setError] = useState('');
   const [hasSupport, setHasSupport] = useState(true);
   const [tasksCreated, setTasksCreated] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  const recognitionRef = useRef<SpeechRecognitionAPI | null>(null);
   const finalTranscriptRef = useRef('');
-  const shouldRecordRef = useRef(false);
+  const pendingStopRef = useRef(false);
   const restartScheduledRef = useRef(false);
-  const recStateRef = useRef<RecordState>('idle'); // ref espelhando recState para closures
-  const pointerStartY = useRef(0);
-  const pointerStartX = useRef(0);
-  const lockedRef = useRef(false);
-  const recorderDivRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const isRecording = recState === 'holding' || recState === 'locked';
-
-  const setRecordState = (s: RecordState) => {
+  const setRecStateBoth = (s: RecState) => {
     recStateRef.current = s;
     setRecState(s);
   };
 
   useEffect(() => {
     const SpeechRec =
-      (window as unknown as { SpeechRecognition?: new () => SpeechRecognition }).SpeechRecognition ||
-      (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognition }).webkitSpeechRecognition;
-    if (!SpeechRec) {
-      setHasSupport(false);
-    }
+      (window as unknown as { SpeechRecognition?: new () => SpeechRecognitionAPI }).SpeechRecognition ||
+      (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognitionAPI }).webkitSpeechRecognition;
+    if (!SpeechRec) setHasSupport(false);
 
-    // Restaura do histórico se veio de lá
     const saved = sessionStorage.getItem('gss_history_open');
     if (saved) {
       try {
@@ -130,124 +133,111 @@ export default function MeetingAnalysis() {
 
   const handleExample = () => {
     setManualEdit(true);
-    const exampleText = 'A reunião com a Alpha foi interessante. O João é o diretor e pareceu bem interessado. Já a Maria, que é a compradora, bateu muito na questão do preço, disse que temos que melhorar. Eles já viram 3 propostas de concorrentes. Combinamos que eu vou enviar o comparativo com nosso concorrente principal até sexta e marcar nova reunião na segunda.';
-    setTranscript(exampleText);
-    finalTranscriptRef.current = exampleText;
+    const ex = 'A reunião com a Alpha foi interessante. O João é o diretor e pareceu bem interessado. Já a Maria, que é a compradora, bateu muito na questão do preço, disse que temos que melhorar. Eles já viram 3 propostas de concorrentes. Combinamos que eu vou enviar o comparativo com nosso concorrente principal até sexta e marcar nova reunião na segunda.';
+    setTranscript(ex);
+    finalTranscriptRef.current = ex;
   };
 
   const handleCreateTasks = () => {
     if (!analysis) return;
-    analysis.nextSteps.forEach(step => {
-      addTask(step);
-    });
+    analysis.nextSteps.forEach(step => addTask(step));
     setTasksCreated(true);
     setTimeout(() => navigate('/'), 1500);
   };
 
+  // ── Recorder ──────────────────────────────────────────────────────────────
+
+  const getSpeechRec = () =>
+    (window as unknown as { SpeechRecognition?: new () => SpeechRecognitionAPI }).SpeechRecognition ||
+    (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognitionAPI }).webkitSpeechRecognition;
+
   const startSession = () => {
-    const SpeechRec =
-      (window as unknown as { SpeechRecognition?: new () => SpeechRecognition }).SpeechRecognition ||
-      (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognition }).webkitSpeechRecognition;
+    const SpeechRec = getSpeechRec();
     if (!SpeechRec) return;
 
     const rec = new SpeechRec();
-    rec.continuous = false; // false = mais compatível com mobile
+    rec.continuous = false;
     rec.interimResults = true;
     rec.lang = 'pt-BR';
 
     rec.onresult = (event: SpeechRecognitionEvent) => {
-      let interimText = '';
+      let interim = '';
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i];
-        if (result.isFinal) {
-          finalTranscriptRef.current += result[0].transcript + ' ';
+        const r = event.results[i];
+        if (r.isFinal) {
+          finalTranscriptRef.current += r[0].transcript + ' ';
+          setTranscript(finalTranscriptRef.current);
+          setInterimText('');
         } else {
-          interimText += result[0].transcript;
+          interim += r[0].transcript;
         }
       }
-      setTranscript(finalTranscriptRef.current);
-      setInterim(interimText);
+      if (interim) setInterimText(interim);
     };
 
-    rec.onerror = () => {
-      // onerror sempre é seguido de onend — deixa o onend cuidar do reinício
-    };
+    rec.onerror = () => { /* onend cuidará */ };
 
     rec.onend = () => {
-      setInterim('');
-      if (shouldRecordRef.current && !restartScheduledRef.current) {
+      setInterimText('');
+      if (pendingStopRef.current) {
+        // Usuário tocou ✅ — finaliza
+        pendingStopRef.current = false;
+        if (timerRef.current) clearInterval(timerRef.current);
+        setRecStateBoth(finalTranscriptRef.current.trim() ? 'done' : 'idle');
+      } else if (recStateRef.current === 'recording' && !restartScheduledRef.current) {
         restartScheduledRef.current = true;
         setTimeout(() => {
           restartScheduledRef.current = false;
-          if (shouldRecordRef.current) startSession();
+          if (recStateRef.current === 'recording') startSession();
         }, 150);
       }
     };
 
     recognitionRef.current = rec;
-    try { rec.start(); } catch { /* já estava rodando */ }
+    try { rec.start(); } catch { /* */ }
   };
 
   const startRecording = () => {
-    setError('');
-    const SpeechRec =
-      (window as unknown as { SpeechRecognition?: new () => SpeechRecognition }).SpeechRecognition ||
-      (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognition }).webkitSpeechRecognition;
-    if (!SpeechRec) {
-      setError('Seu navegador não suporta gravação de voz. Use o campo de texto abaixo.');
+    if (!getSpeechRec()) {
+      setError('Seu navegador não suporta gravação de voz. Use o campo de texto.');
       setManualEdit(true);
       return;
     }
-    shouldRecordRef.current = true;
-    lockedRef.current = false;
+    setError('');
+    finalTranscriptRef.current = '';
+    setTranscript('');
+    setInterimText('');
+    pendingStopRef.current = false;
+    setRecordSec(0);
+    setRecStateBoth('recording');
+    timerRef.current = setInterval(() => setRecordSec(s => s + 1), 1000);
     startSession();
   };
 
-  const stopRecording = (cancel = false) => {
-    shouldRecordRef.current = false;
-    lockedRef.current = false;
+  const stopRecording = () => {
+    pendingStopRef.current = true;
+    recognitionRef.current?.stop();
+  };
+
+  const cancelRecording = () => {
+    pendingStopRef.current = false;
     recognitionRef.current?.abort();
-    setInterim('');
-    if (cancel) {
-      // cancela: apaga o que foi gravado
-      finalTranscriptRef.current = '';
-      setTranscript('');
-      setRecordState('idle');
-    } else {
-      setRecordState(finalTranscriptRef.current.trim() ? 'done' : 'idle');
-    }
+    if (timerRef.current) clearInterval(timerRef.current);
+    finalTranscriptRef.current = '';
+    setTranscript('');
+    setInterimText('');
+    setRecordSec(0);
+    setRecStateBoth('idle');
   };
 
-  // Pointer events — estilo WhatsApp
-  const handlePointerDown = (e: React.PointerEvent) => {
-    if (!hasSupport) return;
-    if (recStateRef.current !== 'idle' && recStateRef.current !== 'done') return;
-    // Captura no container para receber eventos mesmo após o botão desmontar
-    recorderDivRef.current?.setPointerCapture(e.pointerId);
-    pointerStartY.current = e.clientY;
-    pointerStartX.current = e.clientX;
-    setRecordState('holding');
-    startRecording();
+  const handleReset = () => {
+    cancelRecording();
+    setAnalysis(null);
+    setError('');
+    setManualEdit(false);
   };
 
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (recStateRef.current !== 'holding') return;
-    const dy = pointerStartY.current - e.clientY; // positivo = subiu
-    const dx = e.clientX - pointerStartX.current;  // negativo = esquerda
-
-    if (dy > 60) {
-      lockedRef.current = true;
-      setRecordState('locked');
-    } else if (dx < -80) {
-      stopRecording(true);
-    }
-  };
-
-  const handlePointerUp = () => {
-    if (recStateRef.current === 'holding') {
-      stopRecording(false);
-    }
-  };
+  // ──────────────────────────────────────────────────────────────────────────
 
   const handleAnalyze = async () => {
     const fullText = transcript.trim();
@@ -265,7 +255,6 @@ export default function MeetingAnalysis() {
       const parsed = JSON.parse(cleaned) as Analysis;
       setAnalysis(parsed);
 
-      // Salvar no histórico
       addHistory({
         type: 'meeting_analysis',
         title: parsed.summary.slice(0, 60),
@@ -280,17 +269,6 @@ export default function MeetingAnalysis() {
     setLoading(false);
   };
 
-  const handleReset = () => {
-    stopRecording(true);
-    setTranscript('');
-    setInterim('');
-    setAnalysis(null);
-    setError('');
-    finalTranscriptRef.current = '';
-    setManualEdit(false);
-    setRecordState('idle');
-  };
-
   const handleTranscriptChange = (v: string) => {
     setTranscript(v);
     finalTranscriptRef.current = v;
@@ -298,29 +276,11 @@ export default function MeetingAnalysis() {
 
   const buildShareText = () => {
     if (!analysis) return '';
-    const parts = [
-      `📋 RESUMO DA REUNIÃO`,
-      analysis.summary,
-      '',
-    ];
-    if (analysis.participants.length) {
-      parts.push('👥 Participantes:');
-      analysis.participants.forEach(p => parts.push(`• ${p}`));
-      parts.push('');
-    }
-    if (analysis.objections.length) {
-      parts.push('💬 Objeções:');
-      analysis.objections.forEach(o => parts.push(`• ${o}`));
-      parts.push('');
-    }
-    if (analysis.nextSteps.length) {
-      parts.push('✅ Próximos passos:');
-      analysis.nextSteps.forEach(s => parts.push(`• ${s}`));
-      parts.push('');
-    }
-    if (analysis.nextAction) {
-      parts.push(`🎯 Próxima ação recomendada: ${analysis.nextAction}`);
-    }
+    const parts = [`📋 RESUMO DA REUNIÃO`, analysis.summary, ''];
+    if (analysis.participants.length) { parts.push('👥 Participantes:'); analysis.participants.forEach(p => parts.push(`• ${p}`)); parts.push(''); }
+    if (analysis.objections.length)  { parts.push('💬 Objeções:'); analysis.objections.forEach(o => parts.push(`• ${o}`)); parts.push(''); }
+    if (analysis.nextSteps.length)   { parts.push('✅ Próximos passos:'); analysis.nextSteps.forEach(s => parts.push(`• ${s}`)); parts.push(''); }
+    if (analysis.nextAction)          { parts.push(`🎯 Próxima ação recomendada: ${analysis.nextAction}`); }
     return parts.join('\n');
   };
 
@@ -332,16 +292,14 @@ export default function MeetingAnalysis() {
     return { text: 'Muito difícil', color: 'bad' };
   };
 
+  // ── Resultado da análise ────────────────────────────────────────────────
   if (analysis) {
     const q = qualityLabel(analysis.quality);
     return (
       <div className="manalysis-page">
-        {/* Quality */}
         <div className={`manalysis-quality card ${q.color}`}>
           <div className="quality-stars">
-            {[1, 2, 3, 4, 5].map(i => (
-              <span key={i} className={`star ${i <= analysis.quality ? 'filled' : ''}`}>★</span>
-            ))}
+            {[1,2,3,4,5].map(i => <span key={i} className={`star ${i <= analysis.quality ? 'filled' : ''}`}>★</span>)}
           </div>
           <div className="quality-info">
             <span className="quality-label">{q.text}</span>
@@ -349,47 +307,34 @@ export default function MeetingAnalysis() {
           </div>
         </div>
 
-        {/* Participants */}
         {analysis.participants.length > 0 && (
           <div className="manalysis-section card">
             <h4><Users size={15} /> Participantes</h4>
-            <ul className="manalysis-list">
-              {analysis.participants.map((p, i) => <li key={i}>{p}</li>)}
-            </ul>
+            <ul className="manalysis-list">{analysis.participants.map((p, i) => <li key={i}>{p}</li>)}</ul>
           </div>
         )}
 
-        {/* Objections */}
         {analysis.objections.length > 0 && (
           <div className="manalysis-section card">
             <h4><Shield size={15} /> Objeções que surgiram</h4>
-            <ul className="manalysis-list obj">
-              {analysis.objections.map((o, i) => <li key={i}>{o}</li>)}
-            </ul>
+            <ul className="manalysis-list obj">{analysis.objections.map((o, i) => <li key={i}>{o}</li>)}</ul>
           </div>
         )}
 
-        {/* Next steps */}
         {analysis.nextSteps.length > 0 && (
           <div className="manalysis-section card">
             <h4><ArrowRight size={15} /> Próximos passos combinados</h4>
-            <ul className="manalysis-list steps">
-              {analysis.nextSteps.map((s, i) => <li key={i}>{s}</li>)}
-            </ul>
+            <ul className="manalysis-list steps">{analysis.nextSteps.map((s, i) => <li key={i}>{s}</li>)}</ul>
           </div>
         )}
 
-        {/* Warnings */}
         {analysis.warnings.length > 0 && (
           <div className="manalysis-section card warning">
             <h4><AlertTriangle size={15} /> Pontos de atenção</h4>
-            <ul className="manalysis-list">
-              {analysis.warnings.map((w, i) => <li key={i}>{w}</li>)}
-            </ul>
+            <ul className="manalysis-list">{analysis.warnings.map((w, i) => <li key={i}>{w}</li>)}</ul>
           </div>
         )}
 
-        {/* Next action */}
         {analysis.nextAction && (
           <div className="manalysis-next-action card">
             <Target size={18} />
@@ -406,11 +351,9 @@ export default function MeetingAnalysis() {
             onClick={handleCreateTasks}
             disabled={tasksCreated}
           >
-            {tasksCreated ? (
-              <><CheckSquare size={16} /> Tarefas criadas! Indo para o Dia...</>
-            ) : (
-              <><CheckSquare size={16} /> Virar próximos passos em tarefas do dia</>
-            )}
+            {tasksCreated
+              ? <><CheckSquare size={16} /> Tarefas criadas! Indo para o Dia...</>
+              : <><CheckSquare size={16} /> Virar próximos passos em tarefas do dia</>}
           </button>
         )}
 
@@ -429,6 +372,7 @@ export default function MeetingAnalysis() {
   if (!isOnline) return <OfflineState feature="a Análise de Reunião" />;
   if (!API_KEY) return <OfflineState feature="a Análise de Reunião" subtitle="Configuração de IA indisponível. Fale com o suporte." />;
 
+  // ── Tela de gravação ────────────────────────────────────────────────────
   return (
     <div className="manalysis-page">
       <div className="manalysis-hero card">
@@ -441,101 +385,79 @@ export default function MeetingAnalysis() {
 
       {!manualEdit ? (
         <>
-          {/* Transcript ao vivo (holding/locked) */}
-          {isRecording && (transcript || interim) && (
+          {/* Transcrição ao vivo / feita */}
+          {(recState === 'recording' || recState === 'done') && (
             <div className="recorder-live-transcript card">
-              <p>{transcript}<span className="interim">{interim}</span></p>
+              <p>{transcript}<span className="interim">{interimText}</span></p>
             </div>
           )}
 
-          {/* Transcript final (done) */}
+          {/* Se concluído: botões de editar/apagar */}
           {recState === 'done' && (
-            <div className="recorder-done card">
-              <div className="transcript-final">
-                <h5>Seu relato:</h5>
-                <p>{transcript}</p>
-              </div>
-              <div className="recorder-done-actions">
-                <button className="btn btn-outline btn-sm" onClick={() => setManualEdit(true)}>
-                  <Edit3 size={12} /> Editar
-                </button>
-                <button className="btn btn-outline btn-sm" onClick={handleReset}>
-                  <Trash2 size={12} /> Apagar
-                </button>
-              </div>
+            <div className="recorder-done-actions">
+              <button className="btn btn-outline btn-sm" onClick={() => setManualEdit(true)}>
+                <Edit3 size={12} /> Editar
+              </button>
+              <button className="btn btn-outline btn-sm" onClick={handleReset}>
+                <Trash2 size={12} /> Apagar
+              </button>
             </div>
           )}
 
-          {/* Barra de gravação estilo WhatsApp */}
-          <div
-            ref={recorderDivRef}
-            className={`wa-recorder ${recState}`}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
-          >
-            {/* Estado: travado → botão cancelar + waveform + botão parar */}
-            {recState === 'locked' && (
-              <>
-                <button className="wa-cancel-btn" onClick={() => stopRecording(true)}>
-                  <Trash2 size={18} />
-                </button>
-                <div className="wa-waveform">
-                  <span className="pulse-dot" />
-                  <span className="wa-recording-label">Gravando...</span>
-                  {transcript && <span className="wa-word-count">{transcript.trim().split(/\s+/).length} palavras</span>}
-                </div>
-                <button className="wa-stop-btn" onClick={() => stopRecording(false)}>
-                  <CheckSquare size={22} />
-                </button>
-              </>
-            )}
+          {/* ── Barra do recorder estilo WhatsApp ── */}
+          {recState === 'recording' ? (
+            <div className="ma-wa-bar">
+              {/* Cancelar */}
+              <button className="ma-wa-cancel" onClick={cancelRecording} aria-label="Cancelar gravação">
+                <Trash2 size={22} />
+              </button>
 
-            {/* Estado: segurando → hints de deslizar */}
-            {recState === 'holding' && (
-              <>
-                <div className="wa-slide-hint wa-slide-left">
-                  <span>← Cancelar</span>
+              {/* Timer + Waveform */}
+              <div className="ma-wa-center">
+                <div className="ma-wa-timer">
+                  <span className="ma-wa-dot" />
+                  {formatTime(recordSec)}
                 </div>
-                <div className="wa-waveform">
-                  <span className="pulse-dot" />
-                  <span className="wa-recording-label">Solte para parar</span>
-                </div>
-                <div className="wa-slide-hint wa-slide-up">
-                  <span>↑ Travar</span>
-                </div>
-              </>
-            )}
-
-            {/* Estado: idle ou done → botão mic (segurar para gravar) */}
-            {(recState === 'idle' || recState === 'done') && (
-              <div className="wa-idle">
-                {recState === 'idle' && !hasSupport && (
-                  <button className="btn btn-outline btn-sm" onClick={() => setManualEdit(true)}>
-                    <Edit3 size={12} /> Digitar
-                  </button>
-                )}
-                {recState === 'idle' && (
-                  <button className="manalysis-example" onClick={handleExample}>
-                    <Lightbulb size={12} /> Ver exemplo
-                  </button>
-                )}
-                <div className="wa-mic-wrap">
-                  {hasSupport && (
-                    <button
-                      className={`wa-mic-btn ${recState === 'done' ? 'has-transcript' : ''}`}
-                    >
-                      <Mic size={26} />
-                    </button>
-                  )}
-                  <span className="wa-mic-hint">
-                    {recState === 'done' ? 'Segurar para continuar' : hasSupport ? 'Segurar para gravar' : 'Gravação não suportada'}
-                  </span>
+                <div className="ma-wa-bars" aria-hidden>
+                  {BAR_DELAYS.map((delay, i) => (
+                    <div
+                      key={i}
+                      className="ma-wa-bar"
+                      style={{ animationDelay: `${delay}s`, animationDuration: `${BAR_DURS[i]}s` }}
+                    />
+                  ))}
                 </div>
               </div>
-            )}
-          </div>
+
+              {/* Parar e confirmar */}
+              <button className="ma-wa-stop" onClick={stopRecording} aria-label="Parar gravação">
+                <Check size={24} strokeWidth={3} />
+              </button>
+            </div>
+          ) : (
+            /* Idle / Done — botão de mic grande */
+            <div className="ma-mic-area">
+              {recState === 'idle' && (
+                <button className="manalysis-example" onClick={handleExample}>
+                  <Lightbulb size={12} /> Ver exemplo
+                </button>
+              )}
+              {recState === 'idle' && !manualEdit && (
+                <button className="btn btn-outline btn-sm" onClick={() => setManualEdit(true)}>
+                  <Edit3 size={12} /> Digitar
+                </button>
+              )}
+              {hasSupport && recState === 'idle' && (
+                <button className="ma-mic-btn" onClick={startRecording} aria-label="Iniciar gravação">
+                  <Mic size={32} />
+                  <span>Toque para gravar</span>
+                </button>
+              )}
+              {!hasSupport && (
+                <p className="ma-no-support">Gravação de voz não disponível neste navegador.</p>
+              )}
+            </div>
+          )}
         </>
       ) : (
         <div className="form-group">
@@ -547,22 +469,25 @@ export default function MeetingAnalysis() {
             placeholder="Escreva aqui como foi a reunião..."
             className="manalysis-textarea"
           />
+          <button className="btn btn-outline btn-sm mt-8" onClick={() => setManualEdit(false)}>
+            ← Voltar
+          </button>
         </div>
       )}
 
       <button
         className="btn btn-primary manalysis-analyze"
         onClick={handleAnalyze}
-        disabled={!transcript.trim() || loading || isRecording}
+        disabled={!transcript.trim() || loading || recState === 'recording'}
       >
-        {loading ? (
-          <><Sparkles size={16} className="spinning" /> Analisando...</>
-        ) : (
-          <><Sparkles size={16} /> Analisar reunião</>
-        )}
+        {loading
+          ? <><Sparkles size={16} className="spinning" /> Analisando...</>
+          : <><Sparkles size={16} /> Analisar reunião</>}
       </button>
 
-      {error && <div className="manalysis-error card" onClick={handleAnalyze}>{error}</div>}
+      {error && (
+        <div className="manalysis-error card" onClick={handleAnalyze}>{error}</div>
+      )}
     </div>
   );
 }

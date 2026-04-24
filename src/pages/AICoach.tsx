@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, RotateCcw, Mic, MicOff, Swords } from 'lucide-react';
+import { Send, Sparkles, RotateCcw, Mic, Swords, Trash2, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { sendMessage, resetChat } from '../services/gemini';
 import { loadData, saveData, KEYS } from '../services/storage';
@@ -32,6 +32,18 @@ function parseSuggestions(text: string): { clean: string; suggestions: string[] 
   return { clean, suggestions };
 }
 
+function formatTime(sec: number) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+// Delays pseudo-aleatórios para a waveform
+const BAR_DELAYS = [0, 0.15, 0.3, 0.08, 0.45, 0.22, 0.6, 0.38, 0.52, 0.12,
+                    0.7, 0.28, 0.18, 0.55, 0.42, 0.65, 0.05, 0.35, 0.48, 0.75];
+const BAR_DURS   = [0.8, 1.1, 0.7, 0.95, 1.2, 0.85, 0.75, 1.05, 0.9, 1.15,
+                    0.8, 0.7, 1.0, 0.88, 0.78, 1.1, 0.95, 0.82, 1.0, 0.72];
+
 export default function AICoach() {
   const navigate = useNavigate();
   const isOnline = useOnline();
@@ -39,10 +51,25 @@ export default function AICoach() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [isListening, setIsListening] = useState(false);
   const [autoSpeak, setAutoSpeak] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Recorder
+  const [isRecording, setIsRecording] = useState(false);
+  const isRecordingRef = useRef(false);
+  const [liveTranscript, setLiveTranscript] = useState('');
+  const [interimText, setInterimText] = useState('');
+  const [recordSec, setRecordSec] = useState(0);
+  const liveTranscriptRef = useRef('');
+  const pendingSendRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const recognitionRef = useRef<(SpeechRecognition & { abort?: () => void }) | null>(null);
+  const restartScheduledRef = useRef(false);
+
+  const setRecordingBoth = (v: boolean) => {
+    isRecordingRef.current = v;
+    setIsRecording(v);
+  };
 
   useEffect(() => {
     setMessages(loadData(KEYS.CHAT_HISTORY, []));
@@ -63,12 +90,12 @@ export default function AICoach() {
     setSuggestions([]);
     setLoading(true);
 
-    const promptWithSuggestions = msg + '\n\n(Ao final da resposta, inclua exatamente neste formato: [SUGESTÕES: pergunta 1 | pergunta 2 | pergunta 3] com 2-3 perguntas que o vendedor poderia fazer ao cliente em seguida)';
+    const withSuggestions = msg + '\n\n(Ao final da resposta, inclua exatamente neste formato: [SUGESTÕES: pergunta 1 | pergunta 2 | pergunta 3] com 2-3 perguntas que o vendedor poderia fazer ao cliente em seguida)';
 
     try {
-      const response = await sendMessage(promptWithSuggestions, API_KEY);
-      const { clean, suggestions: newSuggestions } = parseSuggestions(response);
-      setSuggestions(newSuggestions);
+      const response = await sendMessage(withSuggestions, API_KEY);
+      const { clean, suggestions: newSug } = parseSuggestions(response);
+      setSuggestions(newSug);
 
       const assistantMsg: ChatMessage = { id: generateId(), role: 'assistant', content: clean, timestamp: Date.now() };
       const final = [...updated, assistantMsg];
@@ -102,47 +129,100 @@ export default function AICoach() {
     resetChat();
   };
 
-  const micBtnRef = useRef<HTMLButtonElement>(null);
+  // ── Recorder ──────────────────────────────────────────────────────────────
 
-  const toggleListening = () => {
-    if (isListening) {
-      // Para e transcreve
-      recognitionRef.current?.stop();
-      setIsListening(false);
-      return;
-    }
+  const startRecognitionSession = () => {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) return;
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
+    const rec = new SpeechRec();
+    rec.lang = 'pt-BR';
+    rec.continuous = false;
+    rec.interimResults = true;
 
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'pt-BR';
-    recognition.continuous = true;
-    recognition.interimResults = false;
-
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      let text = '';
+    rec.onresult = (event: SpeechRecognitionEvent) => {
+      let interim = '';
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) text += event.results[i][0].transcript + ' ';
+        if (event.results[i].isFinal) {
+          liveTranscriptRef.current += event.results[i][0].transcript + ' ';
+          setLiveTranscript(liveTranscriptRef.current);
+          setInterimText('');
+        } else {
+          interim += event.results[i][0].transcript;
+        }
       }
-      if (text.trim()) setInput(prev => (prev + ' ' + text).trim());
+      if (interim) setInterimText(interim);
     };
 
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
+    rec.onerror = () => { /* onend will handle */ };
 
-    recognitionRef.current = recognition;
-    recognition.start();
-    setIsListening(true);
-    setAutoSpeak(true);
+    rec.onend = () => {
+      setInterimText('');
+      if (pendingSendRef.current) {
+        // Usuário tocou ✅ — para e envia
+        pendingSendRef.current = false;
+        const text = liveTranscriptRef.current.trim();
+        if (timerRef.current) clearInterval(timerRef.current);
+        setRecordingBoth(false);
+        setLiveTranscript('');
+        setInterimText('');
+        setRecordSec(0);
+        if (text) {
+          setAutoSpeak(true);
+          handleSend(text);
+        }
+      } else if (isRecordingRef.current && !restartScheduledRef.current) {
+        // Auto-reinicia para gravação contínua
+        restartScheduledRef.current = true;
+        setTimeout(() => {
+          restartScheduledRef.current = false;
+          if (isRecordingRef.current) startRecognitionSession();
+        }, 150);
+      }
+    };
+
+    recognitionRef.current = rec;
+    try { rec.start(); } catch { /* já em execução */ }
   };
 
-  const formatMessage = (content: string) => {
-    return content
+  const startRecording = () => {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) return;
+
+    liveTranscriptRef.current = '';
+    setLiveTranscript('');
+    setInterimText('');
+    pendingSendRef.current = false;
+    setRecordSec(0);
+    setRecordingBoth(true);
+
+    timerRef.current = setInterval(() => setRecordSec(s => s + 1), 1000);
+    startRecognitionSession();
+  };
+
+  const stopAndSend = () => {
+    pendingSendRef.current = true;
+    recognitionRef.current?.stop();
+  };
+
+  const cancelRecording = () => {
+    pendingSendRef.current = false;
+    recognitionRef.current?.abort?.();
+    if (timerRef.current) clearInterval(timerRef.current);
+    liveTranscriptRef.current = '';
+    setLiveTranscript('');
+    setInterimText('');
+    setRecordSec(0);
+    setRecordingBoth(false);
+  };
+
+  // ──────────────────────────────────────────────────────────────────────────
+
+  const formatMessage = (content: string) =>
+    content
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       .replace(/\n/g, '<br/>');
-  };
 
   const hasSpeechRecognition = typeof window !== 'undefined' &&
     ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
@@ -154,9 +234,7 @@ export default function AICoach() {
     <div className="ai-coach-page">
       {messages.length === 0 ? (
         <div className="ai-welcome">
-          <div className="ai-welcome-icon">
-            <Sparkles size={40} />
-          </div>
+          <div className="ai-welcome-icon"><Sparkles size={40} /></div>
           <h3>Pergunte ao Especialista</h3>
           <p>Tire dúvidas sobre vendas, negociação e liderança comercial.</p>
 
@@ -196,7 +274,6 @@ export default function AICoach() {
             </div>
           ))}
 
-          {/* Suggestions */}
           {suggestions.length > 0 && !loading && (
             <div className="suggestions">
               {suggestions.map((s, i) => (
@@ -219,29 +296,69 @@ export default function AICoach() {
         </div>
       )}
 
-      <div className="input-area">
-        <div className="input-wrapper">
-          {hasSpeechRecognition && (
-            <button
-              ref={micBtnRef}
-              className={`mic-btn ${isListening ? 'listening' : ''}`}
-              onClick={toggleListening}
-            >
-              {isListening ? <MicOff size={18} /> : <Mic size={18} />}
-            </button>
+      {/* ── Barra de gravação estilo WhatsApp ── */}
+      {isRecording ? (
+        <>
+          {/* Prévia da transcrição ao vivo */}
+          {(liveTranscript || interimText) && (
+            <div className="wa-live-preview">
+              {liveTranscript}
+              <span className="wa-interim">{interimText}</span>
+            </div>
           )}
-          <input
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleSend()}
-            placeholder={isListening ? 'Ouvindo...' : 'Pergunte sobre vendas...'}
-            disabled={loading}
-          />
-          <button className="send-btn" onClick={() => handleSend()} disabled={!input.trim() || loading}>
-            <Send size={18} />
-          </button>
+
+          <div className="wa-recorder-bar">
+            {/* Cancelar */}
+            <button className="wa-cancel-btn" onClick={cancelRecording} aria-label="Cancelar gravação">
+              <Trash2 size={22} />
+            </button>
+
+            {/* Timer + Waveform */}
+            <div className="wa-rec-center">
+              <div className="wa-timer">
+                <span className="wa-rec-dot" />
+                {formatTime(recordSec)}
+              </div>
+              <div className="wa-bars" aria-hidden>
+                {BAR_DELAYS.map((delay, i) => (
+                  <div
+                    key={i}
+                    className="wa-bar"
+                    style={{ animationDelay: `${delay}s`, animationDuration: `${BAR_DURS[i]}s` }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Enviar */}
+            <button className="wa-send-btn" onClick={stopAndSend} aria-label="Parar e enviar">
+              <Check size={24} strokeWidth={3} />
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="input-area">
+          <div className="input-wrapper">
+            <input
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSend()}
+              placeholder="Pergunte sobre vendas..."
+              disabled={loading}
+            />
+            {/* Mic aparece quando não há texto; Send aparece quando há texto */}
+            {!input.trim() && hasSpeechRecognition ? (
+              <button className="mic-btn" onClick={startRecording} aria-label="Gravar mensagem de voz">
+                <Mic size={20} />
+              </button>
+            ) : (
+              <button className="send-btn" onClick={() => handleSend()} disabled={!input.trim() || loading}>
+                <Send size={18} />
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

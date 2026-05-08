@@ -7,7 +7,7 @@ import type { UserProfile } from '../types';
 import './Feedback.css';
 
 // Número do WhatsApp para receber notificação de feedback (só números, com DDI)
-const WHATSAPP_NUMBER = '5511999999999'; // ← substitua pelo número real
+const WHATSAPP_NUMBER = '5511956590973';
 
 export default function Feedback() {
   const { user } = useAuth();

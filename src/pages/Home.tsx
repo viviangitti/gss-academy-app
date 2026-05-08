@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, Target, Newspaper, ExternalLink, Star, ArrowRight, Plus, Check, X, Clock, CheckSquare, TrendingUp, Award, Activity } from 'lucide-react';
+import { Zap, Target, Newspaper, ExternalLink, Star, ArrowRight, Plus, Check, X, Clock, CheckSquare, TrendingUp, Award, Activity, MessageCircle } from 'lucide-react';
 import { loadData, KEYS } from '../services/storage';
 import { fetchNews } from '../services/news';
 import { getFavorites } from '../services/favorites';
@@ -50,6 +50,7 @@ export default function Home() {
   const [welcomeBack, setWelcomeBack] = useState<string | null>(null);
   const [showAddSale, setShowAddSale] = useState(false);
   const [saleForm, setSaleForm] = useState({ amount: '', commission: '', client: '' });
+  const [showFeedbackBanner, setShowFeedbackBanner] = useState(false);
 
   const refreshStats = (g: number) => {
     setStats(getStats(g));
@@ -78,6 +79,13 @@ export default function Home() {
 
     setWelcomeBack(getWelcomeBackMessage());
     markActive();
+
+    // Lembrete semanal de feedback — mostra se faz 7+ dias sem feedback ou sem dispensar
+    const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+    const lastAction = Number(localStorage.getItem('gss_feedback_last_action') || 0);
+    if (Date.now() - lastAction > WEEK_MS) {
+      setShowFeedbackBanner(true);
+    }
   }, []);
 
   const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '', monthlyGoal: 0 });
@@ -113,8 +121,35 @@ export default function Home() {
   const chartData = stats && goal > 0 ? getDailyAccumulation() : [];
   const maxVal = Math.max(goal, ...chartData.map(d => d.accumulated), 1);
 
+  const dismissFeedbackBanner = () => {
+    localStorage.setItem('gss_feedback_last_action', String(Date.now()));
+    setShowFeedbackBanner(false);
+  };
+
+  const goToFeedback = () => {
+    localStorage.setItem('gss_feedback_last_action', String(Date.now()));
+    setShowFeedbackBanner(false);
+    navigate('/feedback');
+  };
+
   return (
     <div className="home">
+
+      {/* Banner semanal de feedback */}
+      {showFeedbackBanner && (
+        <div className="feedback-banner card">
+          <MessageCircle size={18} className="feedback-banner-icon" />
+          <div className="feedback-banner-text">
+            <strong>Como está o app?</strong>
+            <span>Leva 1 minuto — seu feedback melhora a ferramenta para toda a equipe.</span>
+          </div>
+          <button className="feedback-banner-cta" onClick={goToFeedback}>Avaliar</button>
+          <button className="feedback-banner-close" onClick={dismissFeedbackBanner} aria-label="Fechar">
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
       <div className="greeting-card card">
         <h2>{greeting}{name}!</h2>
         <p className="greeting-date">

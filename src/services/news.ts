@@ -93,10 +93,9 @@ function setCached(segment: string, cat: NewsCategory, items: NewsItem[]): void 
 }
 
 async function fetchFromGoogleNews(query: string, limit: number): Promise<NewsItem[]> {
-  const encoded = encodeURIComponent(query);
-  const rssUrl = `https://news.google.com/rss/search?q=${encoded}&hl=pt-BR&gl=BR&ceid=BR:pt-419`;
-  // rss2json free não aceita 'count' — limitamos no cliente
-  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+  // Função serverless própria (/api/news) — substitui o rss2json.com,
+  // que o Google News passou a bloquear no lado servidor.
+  const apiUrl = `/api/news?q=${encodeURIComponent(query)}&limit=${limit}`;
 
   try {
     const res = await fetch(apiUrl);

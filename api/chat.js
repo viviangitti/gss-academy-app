@@ -72,6 +72,29 @@ Produto principal: MAESTR.IA em Vendas — metodologia própria, cursos, mentori
 - Tendência: demanda por "IA em vendas" subiu +340% no último trimestre
 - Tickets acima de R$ 15K crescendo 62% YoY no mercado
 
+### 📋 LISTA DE ESPERA (dados reais via Resend API)
+- Total de cadastros: 5 (todos entregues via email)
+- Captação: 26/abr (1), 27/abr (3), 28/abr (1)
+- Fluxo: formulário no site → Resend → notificação interna + welcome email
+- Os números no sistema vêm direto da API do Resend, atualizados a cada 5 min
+
+### 📱 REDES SOCIAIS (Instagram)
+**@gerson.comercial:**
+- Seguidores: 48.2K (+8,2%, +3.642 no mês)
+- Engajamento: 6,8% (acima da média de 3%)
+- Alcance 30d: 312K · Posts: 42 (28 reels)
+- Formato campeão: Reels (68%, 4x mais alcance que carrossel)
+- Top post: Reel "3 erros que matam sua venda" (184K views)
+- Audiência: 64% homens, 25-44 anos, SP/RJ/BH · melhor horário quarta 12h-13h
+
+**@gssacademy:**
+- Seguidores: 24.7K (+12,4%, +2.718 no mês — maior crescimento dos 2 perfis)
+- Engajamento: 7,9% (excelente)
+- Alcance 30d: 186K · Posts: 36 (22 reels)
+- Top post: Reel "Bastidores da Imersão Liderança" (142K views)
+- Audiência: 58% mulheres, 28-45 anos, SP/Curitiba/Brasília · melhor horário quarta 20h-22h
+- Insight: depoimentos de alunos têm 2x mais engajamento; posts de evento lotaram 47/50 vagas em 3 dias
+
 ## DIRETRIZES DE RESPOSTA
 - Chame a Silene pelo nome quando fizer sentido, com carinho
 - Seja direta, estratégica e acionável — a Silene é CEO, valoriza decisão rápida

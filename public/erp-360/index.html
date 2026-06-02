@@ -152,6 +152,11 @@
         <span>Lista de Espera</span>
         <span class="ml-auto text-[9px] bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded font-bold">LIVE</span>
       </button>
+      <button onclick="navigate('social', event)" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-neutral-300 hover:bg-neutral-900">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+        <span>Redes Sociais</span>
+        <span class="ml-auto text-[9px] bg-gradient-gold text-black px-1.5 py-0.5 rounded font-bold">NEW</span>
+      </button>
 
       <div class="px-4 mt-6 mb-2 text-xs text-neutral-600 uppercase tracking-wider">Produtos</div>
       <button onclick="navigate('maestria', event)" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-neutral-300 hover:bg-neutral-900">
@@ -718,23 +723,98 @@
 
     <!-- ========== LISTA DE ESPERA ========== -->
     <div id="page-lista-espera" class="page p-4 md:p-8">
-      <div class="max-w-5xl mx-auto space-y-6">
 
-        <!-- Header -->
-        <div class="glass rounded-xl p-6 md:p-8">
-          <div class="flex items-start gap-4">
-            <div class="w-12 h-12 rounded-lg bg-gradient-gold flex items-center justify-center flex-shrink-0">
-              <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      <!-- Header -->
+      <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-start gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-gold flex items-center justify-center flex-shrink-0">
+            <svg class="w-7 h-7 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <h2 class="text-2xl md:text-3xl font-bold text-white">Lista de Espera · Growth</h2>
+              <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full font-bold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot"></span>LIVE
+              </span>
             </div>
-            <div class="flex-1 min-w-0">
-              <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Lista de Espera</h2>
-              <p class="text-neutral-400 text-sm md:text-base">
-                Leads capturados pelo formulário "Entrar na Lista de Espera" no site
-                <a href="https://gssacademy.vercel.app" target="_blank" class="text-yellow-500 hover:underline">gssacademy.vercel.app</a>.
-              </p>
-            </div>
+            <p class="text-sm text-neutral-500">Dados reais via Resend API · sem informação pessoal</p>
           </div>
         </div>
+      </div>
+
+      <!-- Status banner -->
+      <div id="waitlistStatusBanner" class="glass rounded-xl p-3 mb-4 border border-yellow-500/20 bg-yellow-500/5 text-xs text-neutral-400 flex items-center gap-2" style="display:none">
+        <span id="waitlistStatusIcon">🔄</span>
+        <span id="waitlistStatusText">Carregando dados reais...</span>
+      </div>
+
+      <!-- KPIs principais -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+        <div class="glass rounded-xl p-5 card-hover">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider">Total na Lista</span>
+            <span class="text-xs text-green-400">📈 desde sempre</span>
+          </div>
+          <div id="waitlist-kpi-total" class="text-xl md:text-3xl font-bold text-white">—</div>
+          <div class="mt-2 text-xs text-neutral-500">cadastros confirmados</div>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider">Últimos 30 dias</span>
+            <span class="text-xs text-green-400">📊</span>
+          </div>
+          <div id="waitlist-kpi-30d" class="text-xl md:text-3xl font-bold text-white">—</div>
+          <div class="mt-2 text-xs text-neutral-500">novos cadastros</div>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider">Últimos 7 dias</span>
+            <span class="text-xs text-green-400">⏱️</span>
+          </div>
+          <div id="waitlist-kpi-7d" class="text-xl md:text-3xl font-bold text-white">—</div>
+          <div class="mt-2 text-xs text-neutral-500">cadastros recentes</div>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider">Hoje</span>
+            <span class="text-xs text-green-400">🔥</span>
+          </div>
+          <div id="waitlist-kpi-today" class="text-xl md:text-3xl font-bold text-white">—</div>
+          <div class="mt-2 text-xs text-neutral-500">cadastros hoje</div>
+        </div>
+      </div>
+
+      <!-- Captação diária -->
+      <div class="glass rounded-xl p-6 mb-6">
+        <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+          <h3 class="font-semibold text-white">📈 Captação diária (últimos 30 dias)</h3>
+          <span class="text-xs text-neutral-500" id="waitlistChartSubtitle">dados em tempo real</span>
+        </div>
+        <div style="position: relative; height: 280px;"><canvas id="waitlistDailyChart"></canvas></div>
+      </div>
+
+      <!-- Status de entrega -->
+      <div class="glass rounded-xl p-6 mb-6">
+        <h3 class="font-semibold text-white mb-4">📨 Status de entrega dos emails</h3>
+        <div id="waitlistDeliveryStatus" class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+          <div class="text-neutral-500 col-span-full text-center py-4">Carregando...</div>
+        </div>
+      </div>
+
+      <!-- Cabeçalho técnico -->
+      <div class="glass rounded-xl p-6 md:p-8 mb-6">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-lg md:text-xl font-bold text-white mb-2">Captura de leads · gssacademy.com.br</h2>
+            <p class="text-neutral-400 text-sm">
+              Os números acima vêm direto da API do Resend (welcome emails enviados). Cache de 5 min.
+            </p>
+          </div>
+        </div>
+      </div>
 
         <!-- Como funciona -->
         <div class="glass rounded-xl p-6">
@@ -800,6 +880,60 @@
             </div>
           </div>
         </div>
+    </div>
+
+    <!-- ========== REDES SOCIAIS ========== -->
+    <div id="page-social" class="page p-4 md:p-8">
+      <!-- Header -->
+      <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-start gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 flex items-center justify-center flex-shrink-0">
+            <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <h2 class="text-2xl md:text-3xl font-bold text-white">Análise de Redes Sociais</h2>
+              <span class="text-[10px] bg-gradient-gold text-black px-2 py-1 rounded-full font-bold">INSTAGRAM</span>
+            </div>
+            <p class="text-sm text-neutral-500">Performance dos perfis @gerson.comercial e @gssacademy</p>
+          </div>
+        </div>
+        <span class="text-[10px] bg-neutral-800 text-neutral-400 px-3 py-1.5 rounded-full font-medium">Aguardando conexão</span>
+      </div>
+
+      <!-- Estado: não conectado (sem dados fictícios) -->
+      <div class="glass rounded-2xl p-8 md:p-12 text-center max-w-2xl mx-auto mt-8">
+        <div class="w-16 h-16 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center mx-auto mb-5">
+          <svg class="w-8 h-8 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Ainda não conectado</h3>
+        <p class="text-sm text-neutral-400 leading-relaxed mb-6">
+          Esta área vai mostrar os dados <strong class="text-white">reais</strong> dos perfis
+          <span class="text-yellow-500">@gerson.comercial</span> e <span class="text-yellow-500">@gssacademy</span>
+          — seguidores, alcance, engajamento, melhores posts e horários.
+          <br/><br/>
+          Não vamos exibir nenhum número aqui até a conexão com dados reais estar pronta.
+        </p>
+
+        <div class="bg-neutral-900/50 rounded-xl p-5 text-left space-y-3">
+          <div class="text-xs text-neutral-500 uppercase tracking-wider mb-1">Caminhos pra conectar</div>
+          <div class="flex gap-3">
+            <div class="w-7 h-7 rounded-lg bg-pink-500/10 flex items-center justify-center flex-shrink-0 text-sm">📷</div>
+            <div>
+              <div class="text-sm text-white font-medium">Instagram Graph API</div>
+              <div class="text-xs text-neutral-500">Conexão oficial e automática. Atualiza sozinho. Precisa de conta Business + app no Meta.</div>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0 text-sm">✍️</div>
+            <div>
+              <div class="text-sm text-white font-medium">Entrada manual</div>
+              <div class="text-xs text-neutral-500">Você digita os números reais periodicamente. Sem setup técnico.</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-xs text-neutral-600 mt-6">Me avise qual caminho prefere e eu configuro.</p>
       </div>
     </div>
 
@@ -1161,12 +1295,113 @@
       bi: 'BI & Analytics',
       inteligencia: 'Inteligência IA',
       'lista-espera': 'Lista de Espera',
+      social: 'Redes Sociais',
       maestria: 'MAESTR.IA em Vendas'
     };
     document.getElementById('pageTitle').textContent = titles[page];
 
     if (window.innerWidth < 1024) toggleSidebar(false);
     requestAnimationFrame(() => ensurePageCharts(page));
+
+    if (page === 'lista-espera') {
+      fetchWaitlistStats();
+    }
+  }
+
+  // ============================================
+  // WAITLIST — busca dados reais (Resend API)
+  // ============================================
+  let waitlistFetched = false;
+  let waitlistData = null;
+
+  async function fetchWaitlistStats() {
+    if (waitlistFetched && waitlistData) {
+      applyWaitlistData(waitlistData);
+      return;
+    }
+
+    const banner = document.getElementById('waitlistStatusBanner');
+    const bannerText = document.getElementById('waitlistStatusText');
+    const bannerIcon = document.getElementById('waitlistStatusIcon');
+    if (banner) {
+      banner.style.display = 'flex';
+      if (bannerIcon) bannerIcon.textContent = '🔄';
+      if (bannerText) bannerText.textContent = 'Buscando dados reais da Lista de Espera...';
+    }
+
+    try {
+      const res = await fetch('/api/waitlist-stats');
+      const data = await res.json();
+      if (data.error || data.useMock) throw new Error(data.error || 'Sem dados reais');
+
+      waitlistFetched = true;
+      waitlistData = data;
+      applyWaitlistData(data);
+
+      if (banner) {
+        banner.classList.remove('border-yellow-500/20', 'bg-yellow-500/5');
+        banner.classList.add('border-green-500/20', 'bg-green-500/5');
+        if (bannerIcon) bannerIcon.textContent = '✅';
+        const updated = data.updatedAt ? new Date(data.updatedAt).toLocaleString('pt-BR') : 'agora';
+        if (bannerText) bannerText.innerHTML = `<strong>Dados reais sincronizados</strong> · atualizado ${updated}`;
+      }
+    } catch (err) {
+      console.error('Erro ao buscar stats:', err);
+      if (banner) {
+        if (bannerIcon) bannerIcon.textContent = '⚠️';
+        if (bannerText) bannerText.textContent = 'Não consegui buscar os dados. Tente recarregar.';
+      }
+    }
+  }
+
+  function applyWaitlistData(data) {
+    const setText = (id, val) => {
+      const el = document.getElementById(id);
+      if (el && typeof val === 'number') el.textContent = val.toLocaleString('pt-BR');
+    };
+    setText('waitlist-kpi-total', data.total);
+    setText('waitlist-kpi-30d', data.last30Days);
+    setText('waitlist-kpi-7d', data.last7Days);
+    setText('waitlist-kpi-today', data.today);
+
+    // Status de entrega
+    const deliveryEl = document.getElementById('waitlistDeliveryStatus');
+    if (deliveryEl && data.byDeliveryStatus) {
+      const labels = {
+        delivered: { label: 'Entregues', icon: '✅' },
+        bounced: { label: 'Não entregues', icon: '⚠️' },
+        complained: { label: 'Reclamados', icon: '🚨' },
+        opened: { label: 'Abertos', icon: '👁️' },
+        clicked: { label: 'Clicados', icon: '👆' },
+        sent: { label: 'Enviados', icon: '📤' },
+      };
+      const entries = Object.entries(data.byDeliveryStatus);
+      if (entries.length === 0) {
+        deliveryEl.innerHTML = '<div class="text-neutral-500 col-span-full text-center py-4">Sem dados de entrega ainda</div>';
+      } else {
+        deliveryEl.innerHTML = entries.map(([key, count]) => {
+          const meta = labels[key] || { label: key, icon: '📧' };
+          return `<div class="bg-neutral-900/50 rounded-lg p-4">
+            <div class="text-2xl mb-1">${meta.icon}</div>
+            <div class="text-2xl font-bold text-white">${count}</div>
+            <div class="text-xs text-neutral-400">${meta.label}</div>
+          </div>`;
+        }).join('');
+      }
+    }
+
+    // Atualiza chart se já existe
+    if (initializedCharts.waitlistDailyChart && data.byDay) {
+      const chart = Chart.getChart('waitlistDailyChart');
+      if (chart) {
+        chart.data.labels = data.byDay.map(d => {
+          const [, m, day] = d.date.split('-');
+          return `${day}/${m}`;
+        });
+        chart.data.datasets[0].data = data.byDay.map(d => d.count);
+        chart.update();
+      }
+    }
   }
 
   function ensurePageCharts(page) {
@@ -1175,7 +1410,9 @@
       educacional: ['engagementChart'],
       financeiro: ['cashflowChart'],
       bi: ['channelChart'],
-      maestria: ['maestriaUsageChart']
+      maestria: ['maestriaUsageChart'],
+      'lista-espera': ['waitlistDailyChart'],
+      social: []
     };
     (map[page] || []).forEach(id => {
       if (!initializedCharts[id] && chartInitializers[id]) {
@@ -1190,6 +1427,7 @@
     Chart.defaults.borderColor = '#262626';
     Chart.defaults.font.family = 'Inter';
   }
+
 
   chartInitializers.revenueChart = () => new Chart(document.getElementById('revenueChart'), {
     type: 'line',
@@ -1223,6 +1461,38 @@
     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', align: 'end' } },
       scales: { y: { grid: { color: '#1a1a1a' }, ticks: { callback: v => 'R$' + v + 'K' } }, x: { grid: { display: false } } } }
   });
+
+  chartInitializers.waitlistDailyChart = () => {
+    const data = waitlistData?.byDay || [];
+    const labels = data.length ? data.map(d => { const [, m, day] = d.date.split('-'); return `${day}/${m}`; }) : Array(30).fill('').map((_, i) => '');
+    const counts = data.length ? data.map(d => d.count) : Array(30).fill(0);
+    return new Chart(document.getElementById('waitlistDailyChart'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Cadastros',
+          data: counts,
+          backgroundColor: ctx => {
+            const v = ctx.parsed.y || 0;
+            if (v >= 5) return '#D4AF37';
+            if (v >= 2) return '#A78B2F';
+            if (v >= 1) return '#6B5A1F';
+            return '#3D3414';
+          },
+          borderRadius: 4,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.parsed.y + ' cadastro(s)' } } },
+        scales: {
+          y: { grid: { color: '#1a1a1a' }, beginAtZero: true, ticks: { precision: 0 } },
+          x: { grid: { display: false }, ticks: { font: { size: 9 } } }
+        }
+      }
+    });
+  };
 
   chartInitializers.maestriaUsageChart = () => new Chart(document.getElementById('maestriaUsageChart'), {
     type: 'bar',

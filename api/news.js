@@ -16,12 +16,13 @@ const cache = new Map(); // key: `${q}` -> { ts, items }
 function decodeEntities(str) {
   if (!str) return '';
   return str
-    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(parseInt(n, 10)));
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(parseInt(n, 10)))
+    .replace(/&amp;/g, '&'); // por último, pra não reintroduzir entidades
 }
 
 function tag(block, name) {
@@ -43,7 +44,8 @@ function parseRss(xml, limit) {
     const link = decodeEntities(tag(block, 'link'));
     const pubDate = tag(block, 'pubDate');
     const rawDesc = tag(block, 'description');
-    const description = decodeEntities(rawDesc.replace(/<[^>]*>/g, '')).slice(0, 150);
+    // decodifica entidades ANTES de tirar tags — senão &lt;a&gt; vira <a> e reaparece
+    const description = decodeEntities(rawDesc).replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 150);
     if (title && link) {
       items.push({ title, link, pubDate, description });
     }

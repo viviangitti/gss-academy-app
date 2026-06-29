@@ -937,9 +937,9 @@
       </div>
     </div>
 
-    <!-- ========== MAESTR.IA ========== -->
+    <!-- ========== MAESTR.IA (DADOS REAIS) ========== -->
     <div id="page-maestria" class="page p-4 md:p-8">
-      <!-- Header com identidade do produto -->
+      <!-- Header -->
       <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div class="flex items-start gap-4">
           <div class="w-14 h-14 rounded-2xl bg-gradient-gold flex items-center justify-center flex-shrink-0">
@@ -948,312 +948,294 @@
           <div>
             <div class="flex items-center gap-2 mb-1 flex-wrap">
               <h2 class="text-2xl md:text-3xl font-bold text-white">MAESTR.IA em Vendas</h2>
-              <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full font-bold flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot"></span>LIVE
-              </span>
+              <span id="maestria-status-badge" class="text-[10px] bg-neutral-800 text-neutral-400 px-2 py-1 rounded-full font-bold">Conectando...</span>
             </div>
-            <p class="text-sm text-neutral-500">Seu app de coaching de vendas com IA · Conectado em tempo real</p>
+            <p class="text-sm text-neutral-500">Quem está usando o app · sessões · atividades · em tempo real</p>
           </div>
-        </div>
-        <div class="flex gap-2">
-          <a href="https://gss-weld.vercel.app/" target="_blank" class="text-xs bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-lg px-4 py-2 text-neutral-300 transition flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-            Abrir App
-          </a>
-          <button class="text-xs bg-gradient-gold text-black font-semibold rounded-lg px-4 py-2 transition">Exportar Relatório</button>
         </div>
       </div>
 
-      <!-- Banner: Conectado ao Firebase -->
-      <div class="glass rounded-xl p-4 mb-6 border border-green-500/20 bg-green-500/5">
-        <div class="flex items-center gap-3 flex-wrap">
-          <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
-            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="text-sm font-medium text-white">📡 Dados sincronizados do Firebase Firestore</div>
-            <div class="text-xs text-neutral-400">Última sincronização: agora · Próxima: em 30s · Coleções: <code class="text-green-400">users</code>, <code class="text-green-400">teams</code>, <code class="text-green-400">history</code>, <code class="text-green-400">favorites</code></div>
-          </div>
-          <span class="text-xs bg-green-500/20 text-green-400 px-3 py-1 rounded-full">✓ Online</span>
-        </div>
+      <!-- Status banner + auto-refresh -->
+      <div id="maestriaStatusBanner" class="glass rounded-xl p-3 mb-4 border border-neutral-800 text-xs text-neutral-400 flex items-center gap-2 flex-wrap">
+        <span id="maestriaStatusIcon">🔄</span>
+        <span id="maestriaStatusText" class="flex-1 min-w-0">Buscando dados do Firebase...</span>
+        <label class="flex items-center gap-2 cursor-pointer ml-auto select-none">
+          <input id="maestriaAutoRefresh" type="checkbox" checked class="rounded" />
+          <span>Auto-refresh 60s</span>
+          <span id="maestriaCountdown" class="text-yellow-500 font-bold">—</span>
+        </label>
       </div>
 
-      <!-- KPIs principais do produto -->
+      <!-- KPIs -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
         <div class="glass rounded-xl p-5 card-hover">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider">Usuários Ativos (DAU)</span>
-            <span class="text-xs text-green-400">↑ 32%</span>
-          </div>
-          <div class="text-xl md:text-3xl font-bold text-white">847</div>
-          <div class="mt-2 text-xs text-neutral-500">2.184 WAU · 3.892 MAU</div>
+          <div class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider mb-2">Usuários totais</div>
+          <div id="maestria-kpi-total" class="text-xl md:text-3xl font-bold text-white">—</div>
+          <div class="mt-2 text-xs text-neutral-500">cadastros no app</div>
         </div>
         <div class="glass rounded-xl p-5 card-hover">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider">Sessões Hoje</span>
-            <span class="text-xs text-green-400">↑ 18%</span>
-          </div>
-          <div class="text-xl md:text-3xl font-bold text-white">2.341</div>
-          <div class="mt-2 text-xs text-neutral-500">Média 12 min/sessão</div>
+          <div class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider mb-2">Novos (7d)</div>
+          <div id="maestria-kpi-new7d" class="text-xl md:text-3xl font-bold text-white">—</div>
+          <div class="mt-2 text-xs text-neutral-500" id="maestria-kpi-new30d-sub">— últimos 30 dias</div>
         </div>
         <div class="glass rounded-xl p-5 card-hover">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider">Receita do Produto</span>
-            <span class="text-xs text-green-400">↑ 24%</span>
-          </div>
-          <div class="text-xl md:text-3xl font-bold text-white">R$ 284K</div>
-          <div class="mt-2 text-xs text-neutral-500">MRR · 33% da receita GSS</div>
+          <div class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider mb-2">Ativos (7d)</div>
+          <div id="maestria-kpi-active7d" class="text-xl md:text-3xl font-bold text-white">—</div>
+          <div class="mt-2 text-xs text-neutral-500" id="maestria-kpi-activetoday-sub">— hoje</div>
         </div>
         <div class="glass rounded-xl p-5 card-hover">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider">NPS do App</span>
-            <span class="text-xs text-green-400">↑ 6 pontos</span>
-          </div>
-          <div class="text-xl md:text-3xl font-bold text-white">78</div>
-          <div class="mt-2 text-xs text-neutral-500">Excelente · 412 respostas</div>
+          <div class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider mb-2">Sessões hoje</div>
+          <div id="maestria-kpi-sessionstoday" class="text-xl md:text-3xl font-bold text-white">—</div>
+          <div class="mt-2 text-xs text-neutral-500" id="maestria-kpi-sessions7d-sub">— últimos 7 dias</div>
         </div>
       </div>
 
-      <!-- Funcionalidades mais usadas -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        <div class="lg:col-span-2 glass rounded-xl p-6">
-          <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-            <h3 class="font-semibold text-white">Funcionalidades mais usadas (últimos 30 dias)</h3>
-            <span class="text-xs text-neutral-500">Eventos: 47.823</span>
-          </div>
-          <div class="space-y-3">
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span class="text-neutral-300 flex items-center gap-2"><span>🎤</span> AI Coach (chat com IA)</span>
-                <span class="text-white font-medium">14.892</span>
-              </div>
-              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:100%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span class="text-neutral-300 flex items-center gap-2"><span>🎭</span> Role Play de vendas</span>
-                <span class="text-white font-medium">9.487</span>
-              </div>
-              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:64%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span class="text-neutral-300 flex items-center gap-2"><span>📞</span> Análise de Reunião</span>
-                <span class="text-white font-medium">7.218</span>
-              </div>
-              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:48%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span class="text-neutral-300 flex items-center gap-2"><span>💬</span> Message Coach (WhatsApp)</span>
-                <span class="text-white font-medium">6.124</span>
-              </div>
-              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:41%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span class="text-neutral-300 flex items-center gap-2"><span>🛡️</span> Quebra de Objeções</span>
-                <span class="text-white font-medium">4.892</span>
-              </div>
-              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:33%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span class="text-neutral-300 flex items-center gap-2"><span>📋</span> Pré-Reunião</span>
-                <span class="text-white font-medium">3.218</span>
-              </div>
-              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:22%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span class="text-neutral-300 flex items-center gap-2"><span>📚</span> Biblioteca / Scripts</span>
-                <span class="text-white font-medium">1.992</span>
-              </div>
-              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:13%"></div></div>
-            </div>
-          </div>
-        </div>
+      <!-- 💡 Insights acionáveis -->
+      <div id="maestria-insights" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-6"></div>
 
-        <div class="glass rounded-xl p-6">
-          <h3 class="font-semibold text-white mb-4">Retenção</h3>
-          <div class="space-y-4">
-            <div>
-              <div class="flex justify-between items-baseline mb-1">
-                <span class="text-xs text-neutral-500 uppercase">Dia 1</span>
-                <span class="text-2xl font-bold text-green-400">87%</span>
-              </div>
-              <div class="h-1.5 bg-neutral-900 rounded"><div class="h-1.5 bg-green-500 rounded" style="width:87%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between items-baseline mb-1">
-                <span class="text-xs text-neutral-500 uppercase">Dia 7</span>
-                <span class="text-2xl font-bold text-yellow-500">62%</span>
-              </div>
-              <div class="h-1.5 bg-neutral-900 rounded"><div class="h-1.5 bg-yellow-500 rounded" style="width:62%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between items-baseline mb-1">
-                <span class="text-xs text-neutral-500 uppercase">Dia 30</span>
-                <span class="text-2xl font-bold text-yellow-500">48%</span>
-              </div>
-              <div class="h-1.5 bg-neutral-900 rounded"><div class="h-1.5 bg-yellow-500 rounded" style="width:48%"></div></div>
-            </div>
-            <div class="pt-2 border-t border-neutral-800 mt-3">
-              <div class="text-xs text-neutral-500">Benchmark SaaS: D30 ~35-40%. Você está acima.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Engajamento e satisfação -->
+      <!-- 📈 Pulso semanal + 🎯 Funil de ativação -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         <div class="glass rounded-xl p-6">
-          <h3 class="font-semibold text-white mb-4">Uso ao longo do dia (heatmap)</h3>
-          <div style="position: relative; height: 240px;"><canvas id="maestriaUsageChart"></canvas></div>
-          <div class="text-xs text-neutral-500 mt-3">Pico de uso: 19h-21h (treino pós-trabalho) e 8h-9h (revisão pré-reunião)</div>
+          <h3 class="font-semibold text-white mb-4 flex items-center gap-2">📈 Pulso semanal</h3>
+          <div id="maestria-pulse" class="space-y-4">
+            <div class="text-neutral-500 text-center py-4">Carregando...</div>
+          </div>
         </div>
-
         <div class="glass rounded-xl p-6">
-          <h3 class="font-semibold text-white mb-4">Top 10 power users</h3>
-          <div class="space-y-2 max-h-64 overflow-y-auto">
-            <div class="flex items-center gap-3 p-2 hover:bg-neutral-900 rounded">
-              <div class="w-8 h-8 rounded-full bg-gradient-gold flex items-center justify-center text-black text-xs font-bold flex-shrink-0">1</div>
-              <div class="flex-1 min-w-0">
-                <div class="text-sm font-medium text-white truncate">Rafael Souza</div>
-                <div class="text-xs text-neutral-500">Mentoria Premium · 142 sessões/mês</div>
-              </div>
-              <span class="text-xs text-yellow-500 font-bold">🔥</span>
-            </div>
-            <div class="flex items-center gap-3 p-2 hover:bg-neutral-900 rounded">
-              <div class="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">2</div>
-              <div class="flex-1 min-w-0"><div class="text-sm font-medium text-white truncate">Ana Beatriz Lima</div><div class="text-xs text-neutral-500">Curso Avançado · 128 sessões/mês</div></div>
-            </div>
-            <div class="flex items-center gap-3 p-2 hover:bg-neutral-900 rounded">
-              <div class="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">3</div>
-              <div class="flex-1 min-w-0"><div class="text-sm font-medium text-white truncate">Carlos Mendes</div><div class="text-xs text-neutral-500">Premium · 119 sessões/mês</div></div>
-            </div>
-            <div class="flex items-center gap-3 p-2 hover:bg-neutral-900 rounded">
-              <div class="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">4</div>
-              <div class="flex-1 min-w-0"><div class="text-sm font-medium text-white truncate">Juliana Rocha</div><div class="text-xs text-neutral-500">Mentoria · 102 sessões/mês</div></div>
-            </div>
-            <div class="flex items-center gap-3 p-2 hover:bg-neutral-900 rounded">
-              <div class="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">5</div>
-              <div class="flex-1 min-w-0"><div class="text-sm font-medium text-white truncate">Pedro Almeida</div><div class="text-xs text-neutral-500">Premium · 94 sessões/mês</div></div>
-            </div>
-            <div class="flex items-center gap-3 p-2 hover:bg-neutral-900 rounded">
-              <div class="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">6</div>
-              <div class="flex-1 min-w-0"><div class="text-sm font-medium text-white truncate">Fernanda Castro</div><div class="text-xs text-neutral-500">Curso · 87 sessões/mês</div></div>
-            </div>
+          <h3 class="font-semibold text-white mb-4">🎯 Funil de ativação</h3>
+          <div id="maestria-activation" class="space-y-3">
+            <div class="text-neutral-500 text-center py-4">Carregando...</div>
           </div>
         </div>
       </div>
 
-      <!-- Funnel + Insights -->
+      <!-- 🔥 Tópicos quentes + 🏢 Empresas -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         <div class="glass rounded-xl p-6">
-          <h3 class="font-semibold text-white mb-4">Funil de Ativação (novos usuários)</h3>
-          <div class="space-y-3">
-            <div>
-              <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">1. Cadastro</span><span class="text-white font-medium">100%</span></div>
-              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:100%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">2. Completou onboarding</span><span class="text-white font-medium">87%</span></div>
-              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:87%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">3. Primeira sessão IA Coach</span><span class="text-white font-medium">74%</span></div>
-              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:74%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">4. Primeiro Role Play</span><span class="text-white font-medium">52%</span></div>
-              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:52%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">5. Ativado (3+ sessões em 7d)</span><span class="text-green-400 font-medium">42%</span></div>
-              <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-green-500 rounded" style="width:42%"></div></div>
-            </div>
-          </div>
-          <div class="mt-4 p-3 bg-yellow-500/10 rounded text-xs text-yellow-400">
-            💡 <strong>Insight:</strong> 22pp de queda entre sessão IA Coach e primeiro Role Play. Adicionar tutorial guiado pode aumentar ativação.
+          <h3 class="font-semibold text-white mb-1 flex items-center gap-2">🔥 Sobre o que perguntam pra IA</h3>
+          <p class="text-xs text-neutral-500 mb-4">Tópicos detectados nas interações dos vendedores</p>
+          <div id="maestria-topics" class="space-y-2 text-sm">
+            <div class="text-neutral-500 text-center py-4">Carregando...</div>
           </div>
         </div>
-
         <div class="glass rounded-xl p-6">
-          <h3 class="font-semibold text-white mb-4">⚡ Insights da MAESTR.IA</h3>
-          <div class="space-y-3 text-sm">
-            <div class="flex gap-3 p-3 bg-neutral-900/50 rounded-lg">
-              <div class="text-2xl flex-shrink-0">🔥</div>
-              <div class="flex-1 min-w-0">
-                <div class="text-white font-medium">Tópico mais perguntado</div>
-                <div class="text-xs text-neutral-400 mt-1">"Como contornar a objeção 'tá caro'" — 1.247 vezes esse mês</div>
-              </div>
-            </div>
-            <div class="flex gap-3 p-3 bg-neutral-900/50 rounded-lg">
-              <div class="text-2xl flex-shrink-0">🎯</div>
-              <div class="flex-1 min-w-0">
-                <div class="text-white font-medium">Cenário mais treinado em Role Play</div>
-                <div class="text-xs text-neutral-400 mt-1">Venda consultiva B2B (R$ 5K-50K) — 38% das sessões</div>
-              </div>
-            </div>
-            <div class="flex gap-3 p-3 bg-neutral-900/50 rounded-lg">
-              <div class="text-2xl flex-shrink-0">📈</div>
-              <div class="flex-1 min-w-0">
-                <div class="text-white font-medium">Feature emergente</div>
-                <div class="text-xs text-neutral-400 mt-1">"Análise de Reunião" cresceu 184% em 30 dias</div>
-              </div>
-            </div>
-            <div class="flex gap-3 p-3 bg-neutral-900/50 rounded-lg">
-              <div class="text-2xl flex-shrink-0">⚠️</div>
-              <div class="flex-1 min-w-0">
-                <div class="text-white font-medium">Feature subutilizada</div>
-                <div class="text-xs text-neutral-400 mt-1">Biblioteca/Scripts (4% MAU) — divulgar mais via push</div>
-              </div>
-            </div>
-            <div class="flex gap-3 p-3 bg-neutral-900/50 rounded-lg">
-              <div class="text-2xl flex-shrink-0">💛</div>
-              <div class="flex-1 min-w-0">
-                <div class="text-white font-medium">Feedback recente</div>
-                <div class="text-xs text-neutral-400 mt-1">"Mudou minha forma de vender" — 47 menções no NPS</div>
-              </div>
-            </div>
+          <h3 class="font-semibold text-white mb-4">🏢 Empresas mais engajadas</h3>
+          <div id="maestria-companies" class="space-y-3 text-sm">
+            <div class="text-neutral-500 text-center py-4">Carregando...</div>
           </div>
         </div>
       </div>
 
-      <!-- Receita por plano -->
+      <!-- 🗓️ Heatmap de uso -->
+      <div class="glass rounded-xl p-6 mb-6">
+        <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+          <div>
+            <h3 class="font-semibold text-white">🗓️ Quando usam o app</h3>
+            <p class="text-xs text-neutral-500 mt-1">Mapa de calor: dia da semana × hora do dia</p>
+          </div>
+          <div class="flex items-center gap-2 text-xs text-neutral-500">
+            <span>menos</span>
+            <div class="flex gap-1">
+              <div class="w-4 h-3 bg-neutral-800 rounded-sm"></div>
+              <div class="w-4 h-3 bg-yellow-900 rounded-sm"></div>
+              <div class="w-4 h-3 bg-yellow-700 rounded-sm"></div>
+              <div class="w-4 h-3 bg-yellow-500 rounded-sm"></div>
+            </div>
+            <span>mais</span>
+          </div>
+        </div>
+        <div id="maestria-heatmap" class="overflow-x-auto">
+          <div class="text-neutral-500 text-center py-4">Carregando...</div>
+        </div>
+      </div>
+
+      <!-- 🏆 Power users -->
+      <div class="glass rounded-xl p-6 mb-6">
+        <h3 class="font-semibold text-white mb-4">🏆 Power users (top 10 por sessões)</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="text-xs text-neutral-500 uppercase">
+              <tr class="border-b border-neutral-800">
+                <th class="text-left py-2 px-2">#</th>
+                <th class="text-left py-2 px-2">Nome</th>
+                <th class="text-left py-2 px-2">Empresa</th>
+                <th class="text-right py-2 px-2">Sessões</th>
+                <th class="text-right py-2 px-2">Features</th>
+                <th class="text-right py-2 px-2">Último uso</th>
+              </tr>
+            </thead>
+            <tbody id="maestria-power-tbody">
+              <tr><td colspan="6" class="text-center text-neutral-500 py-4">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Funcionalidades (mantém em versão compacta) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold text-white mb-4">🧩 Funcionalidades mais usadas</h3>
+          <div id="maestria-features" class="space-y-2 text-sm">
+            <div class="text-neutral-500 text-center py-4">Aguardando dados...</div>
+          </div>
+        </div>
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold text-white mb-4">🏢 Por segmento</h3>
+          <div id="maestria-segments" class="space-y-2 text-sm">
+            <div class="text-neutral-500 text-center py-4">Aguardando dados...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista de usuários -->
+      <div class="glass rounded-xl p-6 mb-6">
+        <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+          <div>
+            <h3 class="font-semibold text-white">👥 Usuários (clique pra ver histórico de acessos)</h3>
+            <p class="text-xs text-neutral-500 mt-1">Contas internas (Vivian, Silene) excluídas dos contadores</p>
+          </div>
+          <span class="text-xs text-neutral-500" id="maestria-users-count">—</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="text-xs text-neutral-500 uppercase">
+              <tr class="border-b border-neutral-800">
+                <th class="text-left py-3 px-2">Nome</th>
+                <th class="text-left py-3 px-2">Empresa</th>
+                <th class="text-left py-3 px-2">Segmento</th>
+                <th class="text-right py-3 px-2">Sessões</th>
+                <th class="text-right py-3 px-2">Último acesso</th>
+                <th class="text-right py-3 px-2">Cadastro</th>
+              </tr>
+            </thead>
+            <tbody id="maestria-users-tbody">
+              <tr><td colspan="6" class="text-center text-neutral-500 py-6">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ========== FEEDBACKS DO PRODUTO ========== -->
+      <div class="mt-8 mb-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h3 class="text-lg md:text-xl font-bold text-white">Feedbacks dos usuários</h3>
+            <span id="feedback-status-badge" class="text-[10px] bg-neutral-800 text-neutral-400 px-2 py-1 rounded-full font-bold">—</span>
+          </div>
+          <p class="text-xs text-neutral-500">O que estão dizendo sobre o app MAESTR.IA</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+        <div class="glass rounded-xl p-5">
+          <div class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider mb-2">Total recebido</div>
+          <div id="feedback-kpi-total" class="text-xl md:text-3xl font-bold text-white">—</div>
+        </div>
+        <div class="glass rounded-xl p-5">
+          <div class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider mb-2">Avaliação média</div>
+          <div id="feedback-kpi-avg" class="text-xl md:text-3xl font-bold text-white">—</div>
+          <div class="text-xs text-neutral-500 mt-2">de 5,0</div>
+        </div>
+        <div class="glass rounded-xl p-5">
+          <div class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider mb-2">Promotores (4-5★)</div>
+          <div id="feedback-kpi-promoters" class="text-xl md:text-3xl font-bold text-green-400">—</div>
+        </div>
+        <div class="glass rounded-xl p-5">
+          <div class="text-[10px] md:text-xs text-neutral-500 uppercase tracking-wider mb-2">Detratores (1-2★)</div>
+          <div id="feedback-kpi-detractors" class="text-xl md:text-3xl font-bold text-red-400">—</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold text-white mb-4">⭐ Distribuição de avaliações</h3>
+          <div id="feedback-distribution" class="space-y-3">
+            <div class="text-neutral-500 text-center py-4">Aguardando...</div>
+          </div>
+        </div>
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold text-white mb-4">🏆 Funcionalidades mais elogiadas</h3>
+          <div id="feedback-most-used" class="space-y-2 text-sm">
+            <div class="text-neutral-500 text-center py-4">Aguardando...</div>
+          </div>
+        </div>
+      </div>
+
       <div class="glass rounded-xl p-6">
-        <h3 class="font-semibold text-white mb-4">Receita por plano (MRR)</h3>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div class="bg-neutral-900/50 rounded-lg p-4">
-            <div class="text-xs text-neutral-500 uppercase mb-2">Free</div>
-            <div class="text-lg font-bold text-white">2.184 users</div>
-            <div class="text-xs text-neutral-400 mt-1">R$ 0 · funil de aquisição</div>
-          </div>
-          <div class="bg-neutral-900/50 rounded-lg p-4 border border-blue-500/20">
-            <div class="text-xs text-blue-400 uppercase mb-2">Pro</div>
-            <div class="text-lg font-bold text-white">847 users</div>
-            <div class="text-xs text-neutral-400 mt-1">R$ 97/mês · R$ 82.159 MRR</div>
-          </div>
-          <div class="bg-neutral-900/50 rounded-lg p-4 border border-yellow-500/20">
-            <div class="text-xs text-yellow-500 uppercase mb-2">Premium</div>
-            <div class="text-lg font-bold text-white">412 users</div>
-            <div class="text-xs text-neutral-400 mt-1">R$ 297/mês · R$ 122.364 MRR</div>
-          </div>
-          <div class="bg-neutral-900/50 rounded-lg p-4 border border-purple-500/20">
-            <div class="text-xs text-purple-400 uppercase mb-2">Enterprise</div>
-            <div class="text-lg font-bold text-white">12 times</div>
-            <div class="text-xs text-neutral-400 mt-1">R$ 6.7K/mês médio · R$ 80.477 MRR</div>
-          </div>
-        </div>
-        <div class="mt-4 pt-4 border-t border-neutral-800 flex justify-between items-center flex-wrap gap-2">
-          <div class="text-sm text-neutral-400">Total MRR MAESTR.IA</div>
-          <div class="text-2xl font-bold text-yellow-500">R$ 285.000</div>
+        <h3 class="font-semibold text-white mb-4">📝 Feedbacks mais recentes</h3>
+        <div id="feedback-list" class="space-y-3">
+          <div class="text-neutral-500 text-center py-6">Carregando...</div>
         </div>
       </div>
     </div>
 
   </main>
+</div>
+
+<!-- Modal de histórico do usuário -->
+<div id="userHistoryModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm overflow-y-auto" onclick="if(event.target===this) closeUserHistory()">
+  <div class="min-h-full flex items-start justify-center p-4 md:p-8">
+    <div class="glass rounded-2xl p-6 md:p-8 max-w-4xl w-full my-4" onclick="event.stopPropagation()">
+      <div class="flex justify-between items-start mb-6 gap-3">
+        <div class="min-w-0">
+          <h3 id="userHistoryTitle" class="text-xl md:text-2xl font-bold text-white">Carregando...</h3>
+          <p id="userHistorySubtitle" class="text-sm text-neutral-500"></p>
+        </div>
+        <button onclick="closeUserHistory()" class="text-neutral-500 hover:text-white p-2 -m-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Mini KPIs -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div class="bg-neutral-900/50 rounded-lg p-4">
+          <div class="text-[10px] text-neutral-500 uppercase mb-1">Total de sessões</div>
+          <div id="uh-total" class="text-2xl font-bold text-white">—</div>
+        </div>
+        <div class="bg-neutral-900/50 rounded-lg p-4">
+          <div class="text-[10px] text-neutral-500 uppercase mb-1">Dias ativos (30d)</div>
+          <div id="uh-days" class="text-2xl font-bold text-white">—</div>
+          <div class="text-xs text-neutral-500 mt-1">de 30</div>
+        </div>
+        <div class="bg-neutral-900/50 rounded-lg p-4">
+          <div class="text-[10px] text-neutral-500 uppercase mb-1">Sequência atual</div>
+          <div id="uh-streak" class="text-2xl font-bold text-white">—</div>
+          <div class="text-xs text-neutral-500 mt-1">dias consecutivos</div>
+        </div>
+        <div class="bg-neutral-900/50 rounded-lg p-4">
+          <div class="text-[10px] text-neutral-500 uppercase mb-1">Último acesso</div>
+          <div id="uh-last" class="text-2xl font-bold text-white">—</div>
+        </div>
+      </div>
+
+      <!-- Heatmap diário -->
+      <div class="bg-neutral-900/50 rounded-lg p-4 mb-6">
+        <div class="text-xs text-neutral-500 uppercase mb-3">📅 Acessos por dia (últimos 30 dias)</div>
+        <div id="uh-heatmap" class="grid grid-cols-30 gap-1" style="grid-template-columns: repeat(30, minmax(0, 1fr));"></div>
+        <div class="flex justify-between text-[10px] text-neutral-600 mt-2">
+          <span>30 dias atrás</span>
+          <span>hoje</span>
+        </div>
+      </div>
+
+      <!-- Por tipo -->
+      <div class="bg-neutral-900/50 rounded-lg p-4 mb-6">
+        <div class="text-xs text-neutral-500 uppercase mb-3">🧩 Funcionalidades usadas</div>
+        <div id="uh-bytype" class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm"></div>
+      </div>
+
+      <!-- Timeline de sessões -->
+      <div>
+        <div class="text-xs text-neutral-500 uppercase mb-3">🕐 Timeline de acessos (mais recentes primeiro)</div>
+        <div id="uh-timeline" class="space-y-2 max-h-96 overflow-y-auto pr-2">
+          <div class="text-neutral-500 text-center py-6">Carregando...</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1306,6 +1288,576 @@
     if (page === 'lista-espera') {
       fetchWaitlistStats();
     }
+    if (page === 'maestria') {
+      fetchMaestriaData();
+      fetchFeedbackData();
+      fetchMaestriaInsights();
+      startMaestriaAutoRefresh();
+    } else {
+      stopMaestriaAutoRefresh();
+    }
+  }
+
+  // ============================================
+  // AUTO-REFRESH da MAESTR.IA (60s)
+  // ============================================
+  let autoRefreshTimer = null;
+  let countdownTimer = null;
+  let countdown = 60;
+  const REFRESH_INTERVAL = 60;
+
+  function startMaestriaAutoRefresh() {
+    stopMaestriaAutoRefresh();
+    const checkbox = document.getElementById('maestriaAutoRefresh');
+    if (!checkbox || !checkbox.checked) return;
+
+    countdown = REFRESH_INTERVAL;
+    updateCountdownLabel();
+
+    countdownTimer = setInterval(() => {
+      countdown--;
+      if (countdown <= 0) {
+        countdown = REFRESH_INTERVAL;
+        // refresh todos os dados da MAESTR.IA
+        maestriaFetched = false;
+        feedbackFetched = false;
+        insightsFetched = false;
+        fetchMaestriaData();
+        fetchFeedbackData();
+        fetchMaestriaInsights();
+      }
+      updateCountdownLabel();
+    }, 1000);
+  }
+
+  function stopMaestriaAutoRefresh() {
+    if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+    if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
+    const c = document.getElementById('maestriaCountdown');
+    if (c) c.textContent = '—';
+  }
+
+  function updateCountdownLabel() {
+    const c = document.getElementById('maestriaCountdown');
+    if (c) c.textContent = countdown + 's';
+  }
+
+  document.addEventListener('change', (e) => {
+    if (e.target?.id === 'maestriaAutoRefresh') {
+      if (e.target.checked) startMaestriaAutoRefresh();
+      else stopMaestriaAutoRefresh();
+    }
+  });
+
+  // ============================================
+  // INSIGHTS da MAESTR.IA
+  // ============================================
+  let insightsFetched = false;
+  const DOW_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const SEVERITY_COLORS = {
+    success: { border: 'border-green-500/30', bg: 'bg-green-500/5', text: 'text-green-400' },
+    warning: { border: 'border-yellow-500/30', bg: 'bg-yellow-500/5', text: 'text-yellow-400' },
+    info: { border: 'border-blue-500/30', bg: 'bg-blue-500/5', text: 'text-blue-400' },
+  };
+
+  async function fetchMaestriaInsights() {
+    if (insightsFetched) return;
+    insightsFetched = true;
+    try {
+      const res = await fetch('/api/maestria-insights');
+      const data = await res.json();
+      if (data.error) { insightsFetched = false; renderInsightsError(data.error); return; }
+
+      renderInsightsCards(data.insights || []);
+      renderPulse(data.summary);
+      renderActivation(data.activation, data.summary?.totalRealUsers || 0);
+      renderTopics(data.topTopics || []);
+      renderCompanies(data.companies || []);
+      renderHeatmap(data.heatmap || []);
+      renderPowerUsers(data.powerUsers || []);
+    } catch (err) {
+      insightsFetched = false;
+      renderInsightsError(err.message);
+    }
+  }
+
+  function renderInsightsError(msg) {
+    const el = document.getElementById('maestria-insights');
+    if (el) el.innerHTML = `<div class="col-span-full text-xs text-yellow-400 bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-3">⚠️ Insights: ${escapeHtml(msg)}</div>`;
+  }
+
+  function renderInsightsCards(insights) {
+    const el = document.getElementById('maestria-insights');
+    if (!el) return;
+    if (!insights.length) {
+      el.innerHTML = '<div class="col-span-full text-xs text-neutral-500 text-center py-4">Ainda sem insights — quanto mais usuários, mais inteligência aqui.</div>';
+      return;
+    }
+    el.innerHTML = insights.map(i => {
+      const c = SEVERITY_COLORS[i.severity] || SEVERITY_COLORS.info;
+      return `<div class="glass rounded-xl p-5 border ${c.border} ${c.bg}">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-2xl">${i.icon}</span>
+          <span class="text-[10px] uppercase tracking-wider font-bold ${c.text}">${i.severity || 'info'}</span>
+        </div>
+        <div class="text-white font-semibold mb-1">${escapeHtml(i.title)}</div>
+        <div class="text-xs text-neutral-400 leading-relaxed">${escapeHtml(i.desc)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderPulse(s) {
+    const el = document.getElementById('maestria-pulse');
+    if (!el || !s) return;
+    const delta = s.weekDelta || 0;
+    const deltaPct = s.sessionsPrevWeek > 0 ? Math.round((delta / s.sessionsPrevWeek) * 100) : null;
+    const arrow = delta > 0 ? '↑' : delta < 0 ? '↓' : '→';
+    const color = delta > 0 ? 'text-green-400' : delta < 0 ? 'text-red-400' : 'text-neutral-400';
+
+    el.innerHTML = `
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-neutral-900/50 rounded-lg p-4">
+          <div class="text-[10px] text-neutral-500 uppercase mb-1">Sessões esta semana</div>
+          <div class="text-2xl font-bold text-white">${s.sessionsThisWeek}</div>
+          <div class="text-xs mt-1 ${color}">${arrow} ${Math.abs(delta)} vs anterior ${deltaPct !== null ? `(${deltaPct > 0 ? '+' : ''}${deltaPct}%)` : ''}</div>
+        </div>
+        <div class="bg-neutral-900/50 rounded-lg p-4">
+          <div class="text-[10px] text-neutral-500 uppercase mb-1">Sessões semana anterior</div>
+          <div class="text-2xl font-bold text-neutral-400">${s.sessionsPrevWeek}</div>
+          <div class="text-xs text-neutral-500 mt-1">base de comparação</div>
+        </div>
+        <div class="bg-neutral-900/50 rounded-lg p-4">
+          <div class="text-[10px] text-neutral-500 uppercase mb-1">Usuários ativos esta semana</div>
+          <div class="text-2xl font-bold text-white">${s.activeUsersThisWeek}</div>
+          <div class="text-xs text-neutral-500 mt-1">de ${s.totalRealUsers} cadastrados</div>
+        </div>
+        <div class="bg-neutral-900/50 rounded-lg p-4">
+          <div class="text-[10px] text-neutral-500 uppercase mb-1">Usuários ativos semana anterior</div>
+          <div class="text-2xl font-bold text-neutral-400">${s.activeUsersPrevWeek}</div>
+        </div>
+      </div>`;
+  }
+
+  function renderActivation(a, total) {
+    const el = document.getElementById('maestria-activation');
+    if (!el || !a) return;
+    const t = a.signedUp || total || 1;
+    const pct = (n) => t ? Math.round((n / t) * 100) : 0;
+
+    el.innerHTML = `
+      <div>
+        <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">📝 Cadastrados</span><span class="text-white font-medium">${a.signedUp} (100%)</span></div>
+        <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:100%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">🎬 Fizeram 1ª sessão</span><span class="text-white font-medium">${a.firstSession} (${pct(a.firstSession)}%)</span></div>
+        <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:${pct(a.firstSession)}%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">🔥 3+ sessões (engajados)</span><span class="text-white font-medium">${a.threePlus} (${pct(a.threePlus)}%)</span></div>
+        <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-yellow-500 rounded" style="width:${pct(a.threePlus)}%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm mb-1"><span class="text-neutral-400">💎 7+ sessões (ativados)</span><span class="text-green-400 font-medium">${a.sevenPlus} (${pct(a.sevenPlus)}%)</span></div>
+        <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-green-500 rounded" style="width:${pct(a.sevenPlus)}%"></div></div>
+      </div>
+    `;
+  }
+
+  function renderTopics(topics) {
+    const el = document.getElementById('maestria-topics');
+    if (!el) return;
+    if (!topics.length) {
+      el.innerHTML = '<div class="text-neutral-500 text-center py-4">Aguardando mais interações pra extrair tópicos…</div>';
+      return;
+    }
+    const max = topics[0].count;
+    el.innerHTML = topics.slice(0, 12).map((t, i) => {
+      const pct = max ? (t.count / max * 100) : 0;
+      const emoji = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '•';
+      return `<div>
+        <div class="flex justify-between text-sm mb-1"><span class="text-neutral-300">${emoji} ${escapeHtml(t.topic)}</span><span class="text-white font-medium">${t.count}</span></div>
+        <div class="h-1.5 bg-neutral-900 rounded"><div class="h-1.5 bg-gradient-gold rounded" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderCompanies(companies) {
+    const el = document.getElementById('maestria-companies');
+    if (!el) return;
+    if (!companies.length) { el.innerHTML = '<div class="text-neutral-500 text-center py-4">Sem dados ainda</div>'; return; }
+    el.innerHTML = companies.map(c => `
+      <div class="flex items-center justify-between p-3 bg-neutral-900/50 rounded-lg">
+        <div class="min-w-0">
+          <div class="text-sm text-white font-medium truncate">${escapeHtml(c.name)}</div>
+          <div class="text-xs text-neutral-500">${c.userCount} usuário(s) · média ${c.avgSessions}/usuário</div>
+        </div>
+        <div class="text-right ml-3">
+          <div class="text-lg font-bold text-yellow-500">${c.sessions}</div>
+          <div class="text-[10px] text-neutral-500">sessões</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderHeatmap(heatmap) {
+    const el = document.getElementById('maestria-heatmap');
+    if (!el || !heatmap.length) return;
+    let max = 0;
+    heatmap.forEach(row => row.forEach(v => { if (v > max) max = v; }));
+
+    if (max === 0) {
+      el.innerHTML = '<div class="text-neutral-500 text-center py-6">Sem dados de horário ainda</div>';
+      return;
+    }
+
+    let html = '<div style="display: inline-block; min-width: 100%;"><div class="grid" style="grid-template-columns: 60px repeat(24, minmax(20px, 1fr)); gap: 2px;">';
+    // header
+    html += '<div></div>';
+    for (let h = 0; h < 24; h++) html += `<div class="text-[10px] text-neutral-500 text-center">${String(h).padStart(2, '0')}</div>`;
+    // rows
+    for (let d = 0; d < 7; d++) {
+      html += `<div class="text-xs text-neutral-500 flex items-center">${DOW_LABELS[d]}</div>`;
+      for (let h = 0; h < 24; h++) {
+        const v = heatmap[d][h] || 0;
+        const intensity = v / max;
+        let bg = 'bg-neutral-800';
+        if (v > 0) bg = intensity > 0.66 ? 'bg-yellow-500' : intensity > 0.33 ? 'bg-yellow-700' : 'bg-yellow-900';
+        html += `<div class="${bg} aspect-square rounded-sm" style="min-height:20px" title="${DOW_LABELS[d]} ${h}h: ${v} sessão(ões)"></div>`;
+      }
+    }
+    html += '</div></div>';
+    el.innerHTML = html;
+  }
+
+  function renderPowerUsers(users) {
+    const tbody = document.getElementById('maestria-power-tbody');
+    if (!tbody) return;
+    if (!users.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-neutral-500 py-4">Nenhum power user ainda</td></tr>';
+      return;
+    }
+    tbody.innerHTML = users.map((u, i) => {
+      const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+      return `<tr class="border-b border-neutral-900 hover:bg-neutral-900/50 cursor-pointer" onclick="openUserHistory('${u.uid}')">
+        <td class="py-2 px-2 text-white">${medal}</td>
+        <td class="py-2 px-2 text-white">${escapeHtml(u.firstName || '—')}${u.lastInitial ? ' ' + escapeHtml(u.lastInitial) + '.' : ''}</td>
+        <td class="py-2 px-2 text-neutral-400">${escapeHtml(u.company || '—')}</td>
+        <td class="py-2 px-2 text-right text-white font-bold">${u.totalSessions}</td>
+        <td class="py-2 px-2 text-right text-neutral-400">${u.featuresUsed}</td>
+        <td class="py-2 px-2 text-right text-neutral-400">${formatRelative(u.lastActivity)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ============================================
+  // MAESTR.IA — busca dados reais (Firebase)
+  // ============================================
+  let maestriaFetched = false;
+
+  async function fetchMaestriaData() {
+    if (maestriaFetched) return;
+    maestriaFetched = true;
+
+    const badge = document.getElementById('maestria-status-badge');
+    const banner = document.getElementById('maestriaStatusBanner');
+    const bannerText = document.getElementById('maestriaStatusText');
+    const bannerIcon = document.getElementById('maestriaStatusIcon');
+
+    try {
+      const [statsRes, usersRes] = await Promise.all([
+        fetch('/api/maestria-stats'),
+        fetch('/api/maestria-users?limit=100')
+      ]);
+      const stats = await statsRes.json();
+      const usersData = await usersRes.json();
+
+      if (stats.error || usersData.error) {
+        const err = stats.error || usersData.error;
+        showMaestriaError(err);
+        return;
+      }
+
+      // KPIs
+      const setText = (id, v) => { const el=document.getElementById(id); if (el) el.textContent = (v ?? 0).toLocaleString('pt-BR'); };
+      setText('maestria-kpi-total', stats.users?.total);
+      setText('maestria-kpi-new7d', stats.users?.new7d);
+      setText('maestria-kpi-active7d', stats.users?.active7d);
+      setText('maestria-kpi-sessionstoday', stats.sessions?.today);
+
+      const subText = (id, txt) => { const el=document.getElementById(id); if (el) el.textContent = txt; };
+      subText('maestria-kpi-new30d-sub', `${(stats.users?.new30d ?? 0).toLocaleString('pt-BR')} últimos 30 dias`);
+      subText('maestria-kpi-activetoday-sub', `${(stats.users?.activeToday ?? 0).toLocaleString('pt-BR')} hoje`);
+      subText('maestria-kpi-sessions7d-sub', `${(stats.sessions?.last7d ?? 0).toLocaleString('pt-BR')} últimos 7 dias`);
+
+      // Features
+      renderBreakdown('maestria-features', stats.breakdown?.byFeature, {
+        message_review: '💬 Análise de mensagem',
+        meeting_analysis: '📞 Análise de reunião',
+        simulator_session: '🎭 Role Play',
+      });
+
+      // Segmentos / empresas
+      const segs = stats.breakdown?.bySegment || {};
+      const comps = stats.breakdown?.byCompany || {};
+      const combined = Object.entries(segs).length ? segs : comps;
+      renderBreakdown('maestria-segments', combined);
+
+      // Tabela
+      const tbody = document.getElementById('maestria-users-tbody');
+      const countEl = document.getElementById('maestria-users-count');
+      const users = usersData.users || [];
+      if (countEl) countEl.textContent = `${users.length} usuário(s)`;
+      if (tbody) {
+        if (users.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" class="text-center text-neutral-500 py-6">Nenhum usuário ainda</td></tr>';
+        } else {
+          tbody.innerHTML = users.map(u => `
+            <tr class="border-b border-neutral-900 hover:bg-neutral-900/50 cursor-pointer transition" onclick="openUserHistory('${u.uid}')">
+              <td class="py-3 px-2 text-white">${escapeHtml(u.firstName || '—')}${u.lastInitial ? ' ' + escapeHtml(u.lastInitial) + '.' : ''}${u.isAdmin ? ' <span class="text-[9px] bg-yellow-500/20 text-yellow-400 px-1.5 py-0.5 rounded">ADM</span>' : ''}</td>
+              <td class="py-3 px-2 text-neutral-400">${escapeHtml(u.company || '—')}</td>
+              <td class="py-3 px-2 text-neutral-400">${escapeHtml(u.segment || '—')}</td>
+              <td class="py-3 px-2 text-right text-white">${u.sessionsCount || 0}</td>
+              <td class="py-3 px-2 text-right text-neutral-400">${formatRelative(u.lastActivityAt)}</td>
+              <td class="py-3 px-2 text-right text-neutral-500">${formatDate(u.createdAt)}</td>
+            </tr>`).join('');
+        }
+      }
+
+      // Status banner verde
+      if (badge) { badge.textContent = 'CONECTADO'; badge.className = 'text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full font-bold'; }
+      if (banner) {
+        banner.className = 'glass rounded-xl p-3 mb-4 border border-green-500/20 bg-green-500/5 text-xs text-neutral-400 flex items-center gap-2';
+        if (bannerIcon) bannerIcon.textContent = '✅';
+        if (bannerText) bannerText.innerHTML = `<strong>Dados reais sincronizados</strong> · Firebase · ${new Date(stats.updatedAt).toLocaleString('pt-BR')}`;
+      }
+    } catch (err) {
+      showMaestriaError(err.message);
+    }
+  }
+
+  function showMaestriaError(msg) {
+    const badge = document.getElementById('maestria-status-badge');
+    const banner = document.getElementById('maestriaStatusBanner');
+    const bannerText = document.getElementById('maestriaStatusText');
+    const bannerIcon = document.getElementById('maestriaStatusIcon');
+    if (badge) { badge.textContent = 'NÃO CONECTADO'; badge.className = 'text-[10px] bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full font-bold'; }
+    if (banner) {
+      banner.className = 'glass rounded-xl p-3 mb-4 border border-yellow-500/20 bg-yellow-500/5 text-xs text-neutral-400 flex items-center gap-2';
+      if (bannerIcon) bannerIcon.textContent = '⚠️';
+      if (bannerText) bannerText.innerHTML = `<strong>Firebase não conectado:</strong> ${escapeHtml(msg || 'configure a env FIREBASE_SERVICE_ACCOUNT no Vercel')}`;
+    }
+    maestriaFetched = false; // permite retentar
+  }
+
+  // ============================================
+  // FEEDBACK — busca dados reais
+  // ============================================
+  let feedbackFetched = false;
+
+  async function fetchFeedbackData() {
+    if (feedbackFetched) return;
+    feedbackFetched = true;
+
+    const badge = document.getElementById('feedback-status-badge');
+    try {
+      const res = await fetch('/api/maestria-feedback');
+      const data = await res.json();
+      if (data.error) {
+        if (badge) { badge.textContent = 'NÃO CONECTADO'; badge.className = 'text-[10px] bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full font-bold'; }
+        document.getElementById('feedback-list').innerHTML = `<div class="text-center text-neutral-400 py-6">⚠️ ${escapeHtml(data.error)}</div>`;
+        feedbackFetched = false;
+        return;
+      }
+
+      // KPIs
+      const setText = (id, v) => { const el=document.getElementById(id); if (el) el.textContent = (v ?? 0).toLocaleString('pt-BR'); };
+      setText('feedback-kpi-total', data.total);
+      const avgEl = document.getElementById('feedback-kpi-avg');
+      if (avgEl) avgEl.textContent = data.averageRating != null ? data.averageRating.toString().replace('.', ',') : '—';
+
+      const dist = data.ratingDistribution || {};
+      const promoters = (dist[4] || 0) + (dist[5] || 0);
+      const detractors = (dist[1] || 0) + (dist[2] || 0);
+      setText('feedback-kpi-promoters', promoters);
+      setText('feedback-kpi-detractors', detractors);
+
+      // Distribuição
+      const total = data.total || 1;
+      const distEl = document.getElementById('feedback-distribution');
+      if (distEl) {
+        distEl.innerHTML = [5, 4, 3, 2, 1].map(r => {
+          const c = dist[r] || 0;
+          const pct = total ? (c / total * 100) : 0;
+          const stars = '⭐'.repeat(r);
+          const color = r >= 4 ? 'bg-green-500' : r === 3 ? 'bg-yellow-500' : 'bg-red-500';
+          return `<div>
+            <div class="flex justify-between text-sm mb-1"><span class="text-neutral-300">${stars}</span><span class="text-white font-medium">${c} (${pct.toFixed(0)}%)</span></div>
+            <div class="h-2 bg-neutral-900 rounded"><div class="h-2 ${color} rounded" style="width:${pct}%"></div></div>
+          </div>`;
+        }).join('');
+      }
+
+      renderBreakdown('feedback-most-used', data.byMostUsed);
+
+      // Lista
+      const listEl = document.getElementById('feedback-list');
+      if (listEl) {
+        if (!data.feedbacks?.length) {
+          listEl.innerHTML = '<div class="text-center text-neutral-500 py-6">Nenhum feedback ainda</div>';
+        } else {
+          listEl.innerHTML = data.feedbacks.map(f => `
+            <div class="bg-neutral-900/50 rounded-lg p-4">
+              <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">${'⭐'.repeat(f.rating)}</span>
+                  <span class="text-sm text-neutral-400">${escapeHtml(f.firstName || 'Anônimo')}</span>
+                </div>
+                <span class="text-xs text-neutral-500">${formatRelative(f.createdAt)}</span>
+              </div>
+              ${f.mostUsed ? `<div class="text-xs text-neutral-500 mb-2">Feature mais usada: <strong class="text-yellow-500">${escapeHtml(f.mostUsed)}</strong></div>` : ''}
+              ${f.suggestion ? `<div class="text-sm text-white mb-2">💡 <strong>Sugestão:</strong> ${escapeHtml(f.suggestion)}</div>` : ''}
+              ${f.whatMissing ? `<div class="text-sm text-neutral-300 mb-2">❓ <strong>Faltando:</strong> ${escapeHtml(f.whatMissing)}</div>` : ''}
+              ${f.bug ? `<div class="text-sm text-red-400">🐛 <strong>Bug:</strong> ${escapeHtml(f.bug)}</div>` : ''}
+            </div>`).join('');
+        }
+      }
+
+      if (badge) { badge.textContent = 'CONECTADO'; badge.className = 'text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full font-bold'; }
+    } catch (err) {
+      if (badge) { badge.textContent = 'ERRO'; badge.className = 'text-[10px] bg-red-500/20 text-red-400 px-2 py-1 rounded-full font-bold'; }
+      document.getElementById('feedback-list').innerHTML = `<div class="text-center text-neutral-400 py-6">⚠️ ${escapeHtml(err.message)}</div>`;
+      feedbackFetched = false;
+    }
+  }
+
+  // Helpers
+  function renderBreakdown(elId, map, labels = {}) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const entries = Object.entries(map || {});
+    if (!entries.length) {
+      el.innerHTML = '<div class="text-neutral-500 text-center py-4">Sem dados</div>';
+      return;
+    }
+    entries.sort((a, b) => b[1] - a[1]);
+    const max = entries[0][1];
+    el.innerHTML = entries.slice(0, 10).map(([key, val]) => {
+      const pct = max ? (val / max * 100) : 0;
+      const label = labels[key] || key;
+      return `<div>
+        <div class="flex justify-between text-sm mb-1"><span class="text-neutral-300">${escapeHtml(label)}</span><span class="text-white font-medium">${val}</span></div>
+        <div class="h-2 bg-neutral-900 rounded"><div class="h-2 bg-gradient-gold rounded" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
+  }
+
+  function formatRelative(iso) {
+    if (!iso) return '—';
+    const t = new Date(iso).getTime();
+    const diff = Date.now() - t;
+    const min = Math.floor(diff / 60000);
+    if (min < 1) return 'agora';
+    if (min < 60) return `${min}min`;
+    const h = Math.floor(min / 60);
+    if (h < 24) return `${h}h`;
+    const d = Math.floor(h / 24);
+    if (d < 7) return `${d}d`;
+    return new Date(iso).toLocaleDateString('pt-BR');
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleDateString('pt-BR');
+  }
+
+  // ============================================
+  // MODAL: Histórico detalhado de um usuário
+  // ============================================
+  const TYPE_LABELS = {
+    message_review: '💬 Análise de mensagem',
+    meeting_analysis: '📞 Análise de reunião',
+    simulator_session: '🎭 Role Play',
+    leadership_session: '🎯 Sessão de Liderança',
+  };
+
+  async function openUserHistory(uid) {
+    const modal = document.getElementById('userHistoryModal');
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    document.getElementById('userHistoryTitle').textContent = 'Carregando...';
+    document.getElementById('userHistorySubtitle').textContent = '';
+    document.getElementById('uh-timeline').innerHTML = '<div class="text-neutral-500 text-center py-6">Carregando...</div>';
+    document.getElementById('uh-heatmap').innerHTML = '';
+    document.getElementById('uh-bytype').innerHTML = '';
+
+    try {
+      const res = await fetch('/api/maestria-user-history?uid=' + encodeURIComponent(uid));
+      const data = await res.json();
+      if (data.error) {
+        document.getElementById('userHistoryTitle').textContent = 'Erro';
+        document.getElementById('uh-timeline').innerHTML = `<div class="text-red-400 text-center py-6">${escapeHtml(data.error)}</div>`;
+        return;
+      }
+
+      const u = data.user;
+      document.getElementById('userHistoryTitle').textContent = (u.firstName || 'Sem nome') + (u.lastInitial ? ' ' + u.lastInitial + '.' : '');
+      document.getElementById('userHistorySubtitle').textContent = [u.role, u.company, u.segment].filter(Boolean).join(' · ');
+
+      const s = data.stats;
+      document.getElementById('uh-total').textContent = s.totalSessions;
+      document.getElementById('uh-days').textContent = s.daysActive30d;
+      document.getElementById('uh-streak').textContent = s.currentStreak;
+      document.getElementById('uh-last').textContent = s.hoursSinceLastAccess == null ? '—' : (s.hoursSinceLastAccess < 24 ? s.hoursSinceLastAccess + 'h' : Math.floor(s.hoursSinceLastAccess / 24) + 'd');
+
+      // Heatmap (30 dias)
+      const max = Math.max(1, ...data.heatmap.map(d => d.count));
+      const heatEl = document.getElementById('uh-heatmap');
+      heatEl.innerHTML = data.heatmap.map(d => {
+        const intensity = d.count / max;
+        let color = 'bg-neutral-800';
+        if (d.count > 0) color = intensity > 0.66 ? 'bg-yellow-500' : intensity > 0.33 ? 'bg-yellow-700' : 'bg-yellow-900';
+        const [, m, day] = d.date.split('-');
+        return `<div class="${color} aspect-square rounded-sm" title="${day}/${m}: ${d.count} sessão(ões)"></div>`;
+      }).join('');
+
+      // Por tipo
+      const byTypeEntries = Object.entries(s.byType || {}).sort((a,b) => b[1] - a[1]);
+      document.getElementById('uh-bytype').innerHTML = byTypeEntries.length ? byTypeEntries.map(([t, c]) => `
+        <div class="bg-neutral-900 rounded-lg p-3">
+          <div class="text-xs text-neutral-400">${escapeHtml(TYPE_LABELS[t] || t)}</div>
+          <div class="text-lg font-bold text-white mt-1">${c}</div>
+        </div>`).join('') : '<div class="text-neutral-500 col-span-full text-center py-2">Sem sessões ainda</div>';
+
+      // Timeline
+      const tl = document.getElementById('uh-timeline');
+      if (!data.sessions.length) {
+        tl.innerHTML = '<div class="text-neutral-500 text-center py-6">Esse usuário ainda não fez nenhuma sessão</div>';
+      } else {
+        tl.innerHTML = data.sessions.map(s => {
+          const dt = new Date(s.createdAt);
+          const dateStr = dt.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+          const timeStr = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+          const label = TYPE_LABELS[s.type] || s.type;
+          return `<div class="flex gap-3 p-3 bg-neutral-900/50 rounded-lg">
+            <div class="text-xs text-neutral-500 flex-shrink-0 w-20">${dateStr}<br/><span class="text-neutral-600">${timeStr}</span></div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm text-white">${escapeHtml(label)}</div>
+              ${s.title ? `<div class="text-xs text-neutral-400 mt-1 truncate">${escapeHtml(s.title)}</div>` : ''}
+            </div>
+          </div>`;
+        }).join('');
+      }
+    } catch (err) {
+      document.getElementById('userHistoryTitle').textContent = 'Erro';
+      document.getElementById('uh-timeline').innerHTML = `<div class="text-red-400 text-center py-6">${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  function closeUserHistory() {
+    document.getElementById('userHistoryModal').classList.add('hidden');
+    document.body.style.overflow = '';
   }
 
   // ============================================

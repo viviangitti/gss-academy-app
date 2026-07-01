@@ -39,25 +39,39 @@ export default async function handler(req, res) {
       const u = userDoc.data();
       if (isInternalUser(u)) { excludedCount++; continue; }
 
-      // Pega contagem de sessões e última atividade do history
+      // Pega contagem de sessões (history) + ações extras (favoritos, vendas, etc)
       let sessionsCount = 0;
+      let extraActions = 0;
       let lastActivity = null;
       let firstActivity = null;
+
+      const updateActivity = (t) => {
+        if (!t) return;
+        if (!lastActivity || t > lastActivity) lastActivity = t;
+        if (!firstActivity || t < firstActivity) firstActivity = t;
+      };
+
+      // 1) HISTORY (sessões formais: RolePlay, Análise de Mensagem/Reunião, Liderança)
       try {
         const histSnap = await db.collection('users').doc(userDoc.id).collection('data').doc('history').get();
         if (histSnap.exists) {
           const items = histSnap.data()?.items || [];
           sessionsCount = items.length;
-          items.forEach((it) => {
-            const t = toDate(it.createdAt);
-            if (t) {
-              if (!lastActivity || t > lastActivity) lastActivity = t;
-              if (!firstActivity || t < firstActivity) firstActivity = t;
-            }
-          });
+          items.forEach((it) => updateActivity(toDate(it.createdAt)));
         }
-      } catch (e) {
-        // ignora
+      } catch (e) { /* ignora */ }
+
+      // 2) OUTRAS COLLECTIONS (favoritos, vendas, agenda, vendas perdidas) — também são sinais de uso
+      for (const collName of ['sales', 'day', 'favorites', 'lostSales']) {
+        try {
+          const s = await db.collection('users').doc(userDoc.id).collection('data').doc(collName).get();
+          if (!s.exists) continue;
+          const data = s.data();
+          const items = Array.isArray(data?.items) ? data.items : (Array.isArray(data) ? data : []);
+          if (!Array.isArray(items)) continue;
+          extraActions += items.length;
+          items.forEach((it) => updateActivity(toDate(it?.createdAt || it?.updatedAt || it?.date)));
+        } catch (e) { /* ignora */ }
       }
 
       users.push({
@@ -70,6 +84,8 @@ export default async function handler(req, res) {
         isAdmin: !!u.isAdmin,
         createdAt: toDate(u.createdAt)?.toISOString() || null,
         sessionsCount,
+        extraActions,
+        totalActivity: sessionsCount + extraActions,
         lastActivityAt: lastActivity?.toISOString() || null,
         firstActivityAt: firstActivity?.toISOString() || null,
       });

@@ -1087,6 +1087,22 @@
         </div>
       </div>
 
+      <!-- Aviso: o que é / não é rastreado hoje pelo app -->
+      <div class="glass rounded-xl p-4 mb-4 border border-blue-500/20 bg-blue-500/5">
+        <div class="flex items-start gap-3 text-xs">
+          <span class="text-lg flex-shrink-0">ℹ️</span>
+          <div class="flex-1 min-w-0">
+            <div class="text-white font-semibold mb-1">O que o app rastreia hoje</div>
+            <div class="text-neutral-400 leading-relaxed">
+              <strong class="text-green-400">Rastreado:</strong> Role Play, Análise de Mensagem, Análise de Reunião, IA Coach de Liderança, Vendas registradas, Favoritos, Vendas perdidas, Tarefas do dia.
+              <br/>
+              <strong class="text-yellow-400">NÃO rastreado:</strong> leitura de notícias, chat livre com IA Coach, navegação pela biblioteca/técnicas/objeções sem favoritar.
+              <span class="text-neutral-500">Ou seja: um usuário pode estar usando o app sem aparecer nas métricas abaixo.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Lista de usuários -->
       <div class="glass rounded-xl p-6 mb-6">
         <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
@@ -1103,13 +1119,14 @@
                 <th class="text-left py-3 px-2">Nome</th>
                 <th class="text-left py-3 px-2">Empresa</th>
                 <th class="text-left py-3 px-2">Segmento</th>
-                <th class="text-right py-3 px-2">Sessões</th>
+                <th class="text-right py-3 px-2" title="Role Play + Análises + Liderança">Sessões</th>
+                <th class="text-right py-3 px-2" title="Favoritos, vendas, tarefas — outros sinais de uso">Ações</th>
                 <th class="text-right py-3 px-2">Último acesso</th>
                 <th class="text-right py-3 px-2">Cadastro</th>
               </tr>
             </thead>
             <tbody id="maestria-users-tbody">
-              <tr><td colspan="6" class="text-center text-neutral-500 py-6">Carregando...</td></tr>
+              <tr><td colspan="7" class="text-center text-neutral-500 py-6">Carregando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1610,7 +1627,7 @@
       if (countEl) countEl.textContent = `${users.length} usuário(s)`;
       if (tbody) {
         if (users.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" class="text-center text-neutral-500 py-6">Nenhum usuário ainda</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" class="text-center text-neutral-500 py-6">Nenhum usuário ainda</td></tr>';
         } else {
           tbody.innerHTML = users.map(u => `
             <tr class="border-b border-neutral-900 hover:bg-neutral-900/50 cursor-pointer transition" onclick="openUserHistory('${u.uid}')">
@@ -1618,6 +1635,7 @@
               <td class="py-3 px-2 text-neutral-400">${escapeHtml(u.company || '—')}</td>
               <td class="py-3 px-2 text-neutral-400">${escapeHtml(u.segment || '—')}</td>
               <td class="py-3 px-2 text-right text-white">${u.sessionsCount || 0}</td>
+              <td class="py-3 px-2 text-right ${(u.extraActions || 0) > 0 ? 'text-yellow-400' : 'text-neutral-600'}">${u.extraActions || 0}</td>
               <td class="py-3 px-2 text-right text-neutral-400">${formatRelative(u.lastActivityAt)}</td>
               <td class="py-3 px-2 text-right text-neutral-500">${formatDate(u.createdAt)}</td>
             </tr>`).join('');

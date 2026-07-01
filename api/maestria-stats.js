@@ -56,9 +56,9 @@ export default async function handler(req, res) {
       if (u.role) byRole[u.role] = (byRole[u.role] || 0) + 1;
     });
 
-    // === ATIVIDADE (history) ===
-    // Cada user tem subcollection /users/{uid}/data/history → uma única doc com array
-    // (segundo o sync.ts visto na auditoria). Vamos iterar.
+    // === ATIVIDADE — busca em TODAS as subcollections que o app usa ===
+    // /users/{uid}/data/{history|sales|day|favorites|lostSales}
+    // Cada uma pode indicar "usou o app"
     let totalSessions = 0;
     let sessionsToday = 0;
     let sessionsLast7d = 0;
@@ -66,26 +66,50 @@ export default async function handler(req, res) {
     let activeUsers7d = 0;
     let activeUsersToday = 0;
 
-    for (const userDoc of usersDocs) {
-      const histRef = db.collection('users').doc(userDoc.id).collection('data').doc('history');
-      const histSnap = await histRef.get();
-      if (!histSnap.exists) continue;
-      const data = histSnap.data();
-      const items = Array.isArray(data?.items) ? data.items : [];
+    // Ações "não-history" que também indicam uso do app
+    const SIGNAL_COLLECTIONS = ['sales', 'day', 'favorites', 'lostSales'];
+    let extraSignals = 0; // itens fora do history
 
+    for (const userDoc of usersDocs) {
+      const uid = userDoc.id;
       let userHadActivity7d = false;
       let userHadActivityToday = false;
 
-      items.forEach((item) => {
-        totalSessions++;
-        const t = toDate(item.createdAt);
-        if (t) {
-          if (t >= today) { sessionsToday++; userHadActivityToday = true; }
-          if (t >= sevenDaysAgo) { sessionsLast7d++; userHadActivity7d = true; }
-        }
-        const type = String(item.type || 'unknown');
-        byFeature[type] = (byFeature[type] || 0) + 1;
-      });
+      // 1) HISTORY (RolePlay, Análise de Mensagem, Análise de Reunião, Liderança)
+      const histSnap = await db.collection('users').doc(uid).collection('data').doc('history').get();
+      if (histSnap.exists) {
+        const items = Array.isArray(histSnap.data()?.items) ? histSnap.data().items : [];
+        items.forEach((item) => {
+          totalSessions++;
+          const t = toDate(item.createdAt);
+          if (t) {
+            if (t >= today) { sessionsToday++; userHadActivityToday = true; }
+            if (t >= sevenDaysAgo) { sessionsLast7d++; userHadActivity7d = true; }
+          }
+          const type = String(item.type || 'unknown');
+          byFeature[type] = (byFeature[type] || 0) + 1;
+        });
+      }
+
+      // 2) OUTRAS COLLECTIONS (sinais de uso: favoritos, vendas, agenda, vendas perdidas)
+      for (const collName of SIGNAL_COLLECTIONS) {
+        const snap = await db.collection('users').doc(uid).collection('data').doc(collName).get();
+        if (!snap.exists) continue;
+        const data = snap.data();
+        const items = Array.isArray(data?.items) ? data.items : (Array.isArray(data) ? data : []);
+        if (!Array.isArray(items) || items.length === 0) continue;
+        // Cada item conta como "sinal de uso"
+        extraSignals += items.length;
+        // Verifica timestamps se houver
+        items.forEach((it) => {
+          const t = toDate(it?.createdAt || it?.updatedAt || it?.date);
+          if (t) {
+            if (t >= today) userHadActivityToday = true;
+            if (t >= sevenDaysAgo) userHadActivity7d = true;
+          }
+        });
+        byFeature[collName] = (byFeature[collName] || 0) + items.length;
+      }
 
       if (userHadActivity7d) activeUsers7d++;
       if (userHadActivityToday) activeUsersToday++;
@@ -110,7 +134,18 @@ export default async function handler(req, res) {
         byRole,
         byFeature,
       },
+      signals: {
+        // Ações extras (favoritos, vendas, agenda, vendas perdidas) que também
+        // indicam uso, mas não são "sessões formais" do history
+        extraActions: extraSignals,
+      },
       excludedInternalUsers: excludedCount,
+      // Aviso importante pra UI: o que o app NÃO rastreia hoje
+      untracked: [
+        'Leitura de notícias (News.tsx)',
+        'Chat livre com IA Coach (AICoach.tsx)',
+        'Navegação por Biblioteca / Técnicas / Objeções sem favoritar',
+      ],
       source: 'firestore',
       updatedAt: new Date().toISOString(),
     };

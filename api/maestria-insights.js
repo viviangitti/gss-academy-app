@@ -29,6 +29,7 @@ const TYPE_LABELS = {
   meeting_analysis: 'Análise de Reunião',
   simulator_session: 'Role Play',
   leadership_session: 'Sessão de Liderança',
+  ai_coach_question: 'Pergunta ao Coach IA',
 };
 
 export default async function handler(req, res) {

@@ -8,7 +8,7 @@ function syncHistory(items: HistoryEntry[]) {
   if (uid) pushData(uid, 'history', items).catch(() => {});
 }
 
-export type HistoryType = 'message_review' | 'meeting_analysis' | 'simulator_session';
+export type HistoryType = 'message_review' | 'meeting_analysis' | 'simulator_session' | 'ai_coach_question';
 
 export interface HistoryEntry {
   id: string;

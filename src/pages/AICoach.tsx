@@ -3,6 +3,7 @@ import { Send, Sparkles, RotateCcw, Mic, Swords, Trash2, Check } from 'lucide-re
 import { useNavigate } from 'react-router-dom';
 import { sendMessage, resetChat } from '../services/gemini';
 import { loadData, saveData, KEYS } from '../services/storage';
+import { addHistory } from '../services/history';
 import type { ChatMessage } from '../types';
 import SpeakButton from '../components/SpeakButton';
 import OfflineState from '../components/OfflineState';
@@ -89,6 +90,17 @@ export default function AICoach() {
     setInput('');
     setSuggestions([]);
     setLoading(true);
+
+    // Rastreia a pergunta no history (Firestore) pra o painel de gestão saber
+    // o que os vendedores mais perguntam pra IA. Fire-and-forget.
+    try {
+      addHistory({
+        type: 'ai_coach_question',
+        title: msg.slice(0, 120),
+        preview: msg,
+        data: { question: msg },
+      });
+    } catch { /* não bloqueia o chat */ }
 
     const withSuggestions = msg + '\n\n(Ao final da resposta, inclua exatamente neste formato: [SUGESTÕES: pergunta 1 | pergunta 2 | pergunta 3] com 2-3 perguntas que o vendedor poderia fazer ao cliente em seguida)';
 

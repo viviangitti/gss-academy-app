@@ -1,5 +1,5 @@
 // Service Worker — network first, sem cache de JS/CSS (evita versões travadas)
-const CACHE_NAME = 'gss-academy-v6';
+const CACHE_NAME = 'gss-academy-v7';
 const STATIC_CACHE = ['/', '/manifest.json'];
 
 self.addEventListener('install', (event) => {
@@ -26,6 +26,14 @@ self.addEventListener('fetch', (event) => {
 
   // JS e CSS: sempre da rede, nunca do cache
   if (url.includes('/assets/')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // Sistema de Gestão (/erp-360/) e APIs internas (/api/): sempre da rede,
+  // nunca do cache. Esses endpoints têm dados dinâmicos do Firebase/Resend
+  // e não podem ser servidos de cache antigo do SW.
+  if (url.includes('/erp-360/') || url.includes('/api/')) {
     event.respondWith(fetch(event.request));
     return;
   }

@@ -24,6 +24,7 @@ import Sales from './pages/Sales';
 import AICoach from './pages/AICoach';
 import Profile from './pages/Profile';
 import Auth from './pages/Auth';
+import PilulasApp from './pilulas/PilulasApp';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { getRemoteProfile, saveRemoteProfile } from './services/firestore/profile';
 import { pullData } from './services/firestore/sync';
@@ -160,6 +161,12 @@ function AppContent() {
 }
 
 function App() {
+  // Eleva — app white-label de educação de produto p/ revenda. Árvore isolada,
+  // sem login nem chrome do coaching. (/pilulas mantido p/ redirecionar links antigos.)
+  const p = window.location.pathname;
+  if (p.startsWith('/eleva') || p.startsWith('/pilulas')) {
+    return <PilulasApp />;
+  }
   return (
     <AuthProvider>
       <AppContent />

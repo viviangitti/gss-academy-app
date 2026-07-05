@@ -2,6 +2,15 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "gss",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["-c", "cd /Users/viviangitti/gss && /opt/homebrew/bin/npx vite --port 5175"],
+      "port": 5175,
+      "env": {
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    },
+    {
       "name": "email-preview",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "9877"],

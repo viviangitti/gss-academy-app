@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/eleva", "destination": "/index.html" },
+    { "source": "/eleva/(.*)", "destination": "/index.html" }
+  ]
+}

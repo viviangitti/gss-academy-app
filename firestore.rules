@@ -68,5 +68,32 @@ service cloud.firestore {
       );
       allow delete: if isSignedIn() && resource.data.adminId == request.auth.uid;
     }
+
+    // ===================== ELEVA — educação de produto (multi-marca) =====================
+    // Papel e marcas do usuário ficam em users/{uid}.elevaRole ('gestor' | 'vendedora')
+    // e users/{uid}.elevaBrands (array de brandId). NÃO altera as regras acima.
+    function elevaUser() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    function elevaMember(brandId) {
+      return isSignedIn() && elevaUser().elevaBrands.hasAny([brandId]);
+    }
+    function elevaGestor(brandId) {
+      return isSignedIn() &&
+        elevaUser().elevaRole == 'gestor' &&
+        elevaUser().elevaBrands.hasAny([brandId]);
+    }
+    match /elevaBrands/{brandId} {
+      allow read: if isSignedIn();
+      allow write: if elevaGestor(brandId);
+      // Gestor da marca escreve; vendedora (membro) lê
+      match /elevaProducts/{id} { allow read: if elevaMember(brandId); allow write: if elevaGestor(brandId); }
+      match /elevaOffers/{id}   { allow read: if elevaMember(brandId); allow write: if elevaGestor(brandId); }
+      match /elevaMissions/{id} { allow read: if elevaMember(brandId); allow write: if elevaGestor(brandId); }
+      // Ranking: cada vendedora atualiza os próprios pontos; todas da marca leem
+      match /elevaSellers/{uid} { allow read: if elevaMember(brandId); allow write: if isOwner(uid); }
+      // Eventos (métricas): membro registra; só gestor lê o agregado
+      match /elevaEvents/{id}   { allow read: if elevaGestor(brandId); allow create: if elevaMember(brandId); }
+    }
   }
 }

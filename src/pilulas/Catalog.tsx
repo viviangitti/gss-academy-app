@@ -1,0 +1,57 @@
+import { Link } from 'react-router-dom';
+import { Play } from 'lucide-react';
+import { CATEGORIES, type Category } from './data/products';
+import { allProducts, useStore } from './data/store';
+import { useBrand } from './BrandContext';
+
+const ORDER: Category[] = ['performance', 'capsulas', 'cosmeticos', 'perfumaria'];
+
+export default function Catalog() {
+  useStore(); // re-renderiza quando o gestor cadastra produto
+  const { brandId } = useBrand();
+  const catalog = allProducts().filter((p) => p.brand === brandId);
+  return (
+    <div className="wp-catalog">
+      <div className="wp-hero">
+        <h1 className="wp-hero-title">Cada produto em 30 segundos.</h1>
+        <p className="wp-hero-sub">
+          Aprenda o benefício, responda a objeção e mande o vídeo pra cliente — tudo num lugar só.
+        </p>
+      </div>
+
+      {ORDER.map((cat) => {
+        const items = catalog.filter((p) => p.category === cat);
+        if (!items.length) return null;
+        const CatIcon = CATEGORIES[cat].Icon;
+        return (
+          <section key={cat} className="wp-section">
+            <h2 className="wp-section-title">
+              <CatIcon size={18} className="wp-section-emoji" />
+              {CATEGORIES[cat].label}
+            </h2>
+            <div className="wp-grid">
+              {items.map((p) => {
+                const CardIcon = CATEGORIES[p.category].Icon;
+                return (
+                  <Link key={p.id} to={`/eleva/produto/${p.id}`} className="wp-card">
+                    <div
+                      className="wp-card-thumb"
+                      style={{ background: `linear-gradient(150deg, ${p.gradient[0]}, ${p.gradient[1]})` }}
+                    >
+                      <span className="wp-card-dur"><Play size={10} className="wp-ico" /> {p.durationSec}s</span>
+                      <CardIcon size={44} strokeWidth={1.5} className="wp-card-emoji" />
+                    </div>
+                    <div className="wp-card-body">
+                      <h3 className="wp-card-name">{p.name}</h3>
+                      <p className="wp-card-tag">{p.hook}</p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  );
+}

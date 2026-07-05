@@ -1,0 +1,124 @@
+// Store do Eleva com FIREBASE (Firestore + Storage). Ativa só com
+// VITE_ELEVA_BACKEND=firebase (senão o app usa store.local.ts). NÃO aplicado à
+// produção ainda — precisa deploy das regras (docs/eleva-firebase.md) e teste.
+//
+// Estrutura: elevaBrands/{brandId}/elevaProducts/{id} e .../elevaOffers/{id}
+// Vídeos: Storage em elevaBrands/{brandId}/videos/{productId}.mp4
+import { useSyncExternalStore } from 'react';
+import { collectionGroup, doc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../../services/firebase';
+import { PRODUCTS, type Product } from './products';
+import { SEED_OFFERS, type Offer } from './offers';
+import { CALENDAR, TRENDS, type CalendarDay, type Trend } from './creatorContent';
+import type { BrandId } from './brands';
+
+let productsCache: Product[] = [];
+let offersCache: Offer[] = [];
+let version = 0;
+const listeners = new Set<() => void>();
+function emit() {
+  version += 1;
+  listeners.forEach((l) => l());
+}
+function subscribe(l: () => void) {
+  listeners.add(l);
+  return () => {
+    listeners.delete(l);
+  };
+}
+
+let started = false;
+function start() {
+  if (started || !db) return;
+  started = true;
+  onSnapshot(collectionGroup(db, 'elevaProducts'), (snap) => {
+    productsCache = snap.docs.map((d) => d.data() as Product);
+    emit();
+  });
+  onSnapshot(collectionGroup(db, 'elevaOffers'), (snap) => {
+    offersCache = snap.docs.map((d) => d.data() as Offer);
+    emit();
+  });
+}
+
+// ---- Produtos ----
+export function allProducts(): Product[] {
+  start();
+  return [...productsCache, ...PRODUCTS];
+}
+export function findProduct(id: string): Product | undefined {
+  return allProducts().find((p) => p.id === id);
+}
+export async function setProductIG(id: string, instagramUrl: string) {
+  if (!db) return;
+  await setDoc(doc(db, 'elevaOverrides', id), { instagramUrl: instagramUrl.trim() || null }, { merge: true });
+}
+export async function addProduct(p: Product, video?: File | null) {
+  if (!db) return;
+  let videoUrl = p.videoUrl ?? null;
+  if (video && storage) {
+    const r = ref(storage, `elevaBrands/${p.brand}/videos/${p.id}.mp4`);
+    await uploadBytes(r, video);
+    videoUrl = await getDownloadURL(r);
+  }
+  await setDoc(doc(db, 'elevaBrands', p.brand, 'elevaProducts', p.id), {
+    ...p,
+    videoUrl,
+    createdAt: serverTimestamp(),
+  });
+}
+// No modo Firebase o vídeo vem em product.videoUrl (URL do Storage).
+export function getVideoUrl(_id: string): string | undefined {
+  return undefined;
+}
+
+// ---- Ofertas ----
+export function allOffers(): Offer[] {
+  start();
+  return [...offersCache, ...SEED_OFFERS];
+}
+export async function addOffer(o: Offer) {
+  if (!db) return;
+  const id = 'o-' + Math.random().toString(36).slice(2, 10);
+  await setDoc(doc(db, 'elevaBrands', o.brand, 'elevaOffers', id), {
+    ...o,
+    createdAt: serverTimestamp(),
+  });
+}
+
+// ---- Calendário ----
+export function allCalendar(brandId: BrandId): CalendarDay[] {
+  return CALENDAR.filter((c) => !c.brand || c.brand === brandId);
+}
+export async function addCalendar(item: CalendarDay) {
+  if (!db) return;
+  const id = 'c-' + Math.random().toString(36).slice(2, 10);
+  await setDoc(doc(db, 'elevaBrands', item.brand!, 'elevaCalendar', id), { ...item, createdAt: serverTimestamp() });
+}
+
+// ---- Tendências ----
+export function allTrends(brandId: BrandId): Trend[] {
+  return TRENDS.filter((t) => !t.brand || t.brand === brandId);
+}
+export async function addTrend(item: Trend) {
+  if (!db) return;
+  await setDoc(doc(db, 'elevaBrands', item.brand!, 'elevaTrends', item.id), { ...item, createdAt: serverTimestamp() });
+}
+
+// ---- Recado da marca ----
+const recadoCache: Record<string, string> = {};
+export function getRecado(brandId: BrandId): string {
+  return recadoCache[brandId] || '';
+}
+export async function setRecado(brandId: BrandId, text: string) {
+  recadoCache[brandId] = text;
+  emit();
+  if (!db) return;
+  await setDoc(doc(db, 'elevaBrands', brandId), { recado: text }, { merge: true });
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function useStore(): number {
+  return useSyncExternalStore(subscribe, () => version);
+}

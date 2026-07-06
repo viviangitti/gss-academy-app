@@ -33,6 +33,7 @@ const METRICS: Record<string, {
 const GRADIENT: Record<Category, [string, string]> = {
   performance: ['#12B5A5', '#0B5563'],
   capsulas: ['#6d5dfc', '#2a2356'],
+  respiratorio: ['#0ea5e9', '#075985'],
   cosmeticos: ['#f7b733', '#d96d2b'],
   perfumaria: ['#ff5fa2', '#9b2c63'],
 };

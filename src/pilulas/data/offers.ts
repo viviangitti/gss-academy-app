@@ -45,9 +45,9 @@ export const SEED_OFFERS: Offer[] = [
     brand: 'meraki',
     tag: 'BRINDE',
     tagKind: 'brinde',
-    title: 'Ômega 3 + necessaire exclusiva',
-    desc: 'Brinde fecha a venda de quem tá em cima do muro. "Ganha uma necessaire" costuma ser o empurrão final.',
-    until: 'até acabarem as necessaires',
-    share: 'Comprando o *Ômega 3 Odor Free* (aquele que NÃO repete gosto de peixe 🐟🚫) você ganha uma *necessaire exclusiva* de brinde 🎁. E olha… são as últimas. Quando acabar, acabou de verdade — sem choro depois. Quer que eu separo a sua antes de sumir?',
+    title: 'Moviben + porta-comprimidos de brinde',
+    desc: 'Brinde fecha a venda de quem tá em cima do muro. Pra quem vai tomar todo dia, o porta-comprimidos é o empurrão perfeito.',
+    until: 'até acabarem os brindes',
+    share: 'Comprando o *Moviben* (colágeno tipo 2 + glucosamina + condroitina pra deixar a articulação livre 💪) você ganha um *porta-comprimidos exclusivo* de brinde 🎁 — perfeito pra não esquecer de tomar todo dia. E olha… são os últimos. Quando acabar, acabou de verdade. Quer que eu separo o seu antes de sumir?',
   },
 ];

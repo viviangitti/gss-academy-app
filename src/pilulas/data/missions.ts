@@ -39,16 +39,16 @@ export const MISSIONS: Mission[] = [
     hashtags: '#glp1 #massamagra #emagrecimento #ozempic #proteina #meraki',
   },
   {
-    id: 'm-omega-reels',
+    id: 'm-ativefer-reels',
     brand: 'meraki',
     kind: 'reels',
     points: 50,
-    title: 'Grave um Reels curto sobre o Ômega 3 Odor Free',
-    goal: 'Todo mundo tem aquele ômega encostado na gaveta. O gancho “sem gosto de peixe” é o que faz o dedo parar.',
-    productId: 'omega-3',
+    title: 'Grave um Reels curto sobre o Ative-Fer',
+    goal: 'O gancho “cansaço que não passa nem dormindo” faz o dedo parar — quase toda mulher se identifica.',
+    productId: 'ative-fer',
     caption:
-      'Confessa: você já comprou ômega 3 e ele acabou esquecido na gaveta porque repetia o dia todo, né? 🐟😖 Esse aqui é Odor Free — toque de morango, zero gosto de peixe. É o ômega que você REALMENTE toma todo dia (e seu coração agradece). Bora testar? 💬',
-    hashtags: '#omega3 #saude #suplementos #odorfree #bemestar',
+      'Cansaço que dorme e acorda igual, cabelo caindo, falta de ar subindo a escada? 😴 Muitas vezes é ferro baixo — comum demais na mulher. O Ative-Fer é ferro bisglicinato: repõe o ferro SEM aquela azia e prisão de ventre do ferro comum. Bora trazer a sua energia de volta? Me chama 💬',
+    hashtags: '#ferro #cansaço #anemia #saudedamulher #meraki #disposição',
   },
   {
     id: 'm-kit-glow-status',

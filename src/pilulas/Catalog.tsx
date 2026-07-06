@@ -4,7 +4,7 @@ import { CATEGORIES, type Category } from './data/products';
 import { allProducts, useStore } from './data/store';
 import { useBrand } from './BrandContext';
 
-const ORDER: Category[] = ['performance', 'capsulas', 'cosmeticos', 'perfumaria'];
+const ORDER: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria'];
 
 export default function Catalog() {
   useStore(); // re-renderiza quando o gestor cadastra produto

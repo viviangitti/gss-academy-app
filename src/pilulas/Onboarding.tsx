@@ -35,7 +35,7 @@ export default function Onboarding({ onFinish }: { onFinish: () => void }) {
           {STEPS.map((_, k) => <span key={k} className={k === i ? 'on' : ''} />)}
         </div>
         <button className="wp-ob-next" onClick={() => (last ? onFinish() : setI(i + 1))}>
-          {last ? <>Começar <Check size={16} className="wp-ico" /></> : <>Próximo <ArrowRight size={16} className="wp-ico" /></>}
+          {last ? <>Assistir minha 1ª pílula <Check size={16} className="wp-ico" /></> : <>Próximo <ArrowRight size={16} className="wp-ico" /></>}
         </button>
         <button className="wp-ob-skip" onClick={onFinish}>pular</button>
       </div>

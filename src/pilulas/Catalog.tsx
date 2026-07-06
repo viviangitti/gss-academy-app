@@ -3,6 +3,7 @@ import { Play } from 'lucide-react';
 import { CATEGORIES, type Category } from './data/products';
 import { allProducts, useStore } from './data/store';
 import { useBrand } from './BrandContext';
+import PrimeirosPassos from './PrimeirosPassos';
 
 const ORDER: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria'];
 
@@ -18,6 +19,7 @@ export default function Catalog() {
           Aprenda o benefício, responda a objeção e mande o vídeo pra cliente — tudo num lugar só.
         </p>
       </div>
+      <PrimeirosPassos />
 
       {ORDER.map((cat) => {
         const items = catalog.filter((p) => p.category === cat);

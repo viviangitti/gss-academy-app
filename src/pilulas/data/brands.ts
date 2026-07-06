@@ -14,7 +14,8 @@ export interface Brand {
 
 export const BRANDS: Brand[] = [
   { id: 'meraki', name: 'Meraki', accent: '#c9a84c', accentDeep: '#97741f', light: '#d9c179', onAccent: '#1a1a2e' },
-  { id: 'wepink', name: 'Wepink', accent: '#e6007e', accentDeep: '#b00063', light: '#ff6fb0', onAccent: '#ffffff' },
+  // Wepink desativada por enquanto (a pedido). Para reativar, descomente a linha:
+  // { id: 'wepink', name: 'Wepink', accent: '#e6007e', accentDeep: '#b00063', light: '#ff6fb0', onAccent: '#ffffff' },
 ];
 
 export function getBrand(id: BrandId): Brand {

@@ -137,7 +137,7 @@ export default function Product() {
     return (
       <div className="wp-empty">
         <p>Produto não encontrado.</p>
-        <Link to="/eleva" className="wp-btn wp-btn-outline">Voltar ao catálogo</Link>
+        <Link to="/eleva/catalogo" className="wp-btn wp-btn-outline">Voltar ao catálogo</Link>
       </div>
     );
   }

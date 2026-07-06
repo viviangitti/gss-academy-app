@@ -1,17 +1,28 @@
 import { NavLink } from 'react-router-dom';
-import { BookOpen, Sparkles, Trophy, Tag } from 'lucide-react';
+import { Home, BookOpen, Sparkles, Trophy, Tag, LayoutDashboard, Eye } from 'lucide-react';
+import { useAuth } from './AuthContext';
 
-const TABS = [
-  { to: '/eleva', label: 'Catálogo', icon: BookOpen, end: true },
-  { to: '/eleva/missoes', label: 'Creators', icon: Sparkles, end: false },
+// Abas por papel: a vendedora consome/posta/compartilha; o gestor só coloca conteúdo
+// (Painel) e pode espiar como o time vê (Ver app).
+const VENDEDORA_TABS = [
+  { to: '/eleva', label: 'Hoje', icon: Home, end: true },
+  { to: '/eleva/catalogo', label: 'Catálogo', icon: BookOpen, end: false },
+  { to: '/eleva/missoes', label: 'Postar', icon: Sparkles, end: false },
   { to: '/eleva/ranking', label: 'Ranking', icon: Trophy, end: false },
   { to: '/eleva/ofertas', label: 'Ofertas', icon: Tag, end: false },
 ];
 
+const GESTOR_TABS = [
+  { to: '/eleva/gestor', label: 'Painel', icon: LayoutDashboard, end: false },
+  { to: '/eleva/catalogo', label: 'Ver como o time', icon: Eye, end: false },
+];
+
 export default function BottomNav() {
+  const { user } = useAuth();
+  const tabs = user?.role === 'gestor' ? GESTOR_TABS : VENDEDORA_TABS;
   return (
     <nav className="wp-nav">
-      {TABS.map((t) => (
+      {tabs.map((t) => (
         <NavLink key={t.to} to={t.to} end={t.end} className="wp-nav-item">
           <t.icon size={20} />
           <span>{t.label}</span>

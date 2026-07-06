@@ -107,7 +107,7 @@ export default function Ranking() {
         ))}
       </div>
 
-      <Link to="/eleva" className="wp-rk-cta">
+      <Link to="/eleva/catalogo" className="wp-rk-cta">
         Assistir pílulas e subir no ranking <ArrowRight size={15} className="wp-ico" />
       </Link>
     </div>

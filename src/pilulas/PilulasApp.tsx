@@ -1,6 +1,7 @@
 import { useState, type CSSProperties } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { ArrowUpRight, ArrowLeft, ChevronDown, Check, LayoutDashboard, LogOut, Megaphone, X } from 'lucide-react';
+import Hoje from './Hoje';
 import Catalog from './Catalog';
 import Product from './Product';
 import Ranking from './Ranking';
@@ -89,7 +90,7 @@ function Header() {
     <header className="wp-header">
       <div className="wp-header-inner">
         {onProduct && (
-          <Link to="/eleva" className="wp-back" aria-label="Voltar"><ArrowLeft size={20} className="wp-ico" /></Link>
+          <Link to="/eleva/catalogo" className="wp-back" aria-label="Voltar"><ArrowLeft size={20} className="wp-ico" /></Link>
         )}
         <span className="wp-logo-mark">eleva<ArrowUpRight size={17} strokeWidth={2.5} className="wp-logo-caret" /></span>
         <span className="wp-spacer" />
@@ -146,7 +147,10 @@ function Shell() {
       {!onProduct && <RecadoBanner />}
       <main className="wp-main">
         <Routes>
-          <Route path="/eleva" element={<Catalog />} />
+          {/* Gestor entra direto no painel (o trabalho dele é colocar conteúdo);
+              a vendedora abre no "Hoje" (consumir, postar e compartilhar). */}
+          <Route path="/eleva" element={user.role === 'gestor' ? <Navigate to="/eleva/gestor" replace /> : <Hoje />} />
+          <Route path="/eleva/catalogo" element={<Catalog />} />
           <Route path="/eleva/produto/:id" element={<Product />} />
           <Route path="/eleva/missoes" element={<Missoes />} />
           <Route path="/eleva/ranking" element={<Ranking />} />

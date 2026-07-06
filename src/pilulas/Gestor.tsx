@@ -363,7 +363,7 @@ export default function Gestor() {
         <p className="wp-gz-hero-sub">Cadastre produtos, suba vídeos e crie ofertas. Sai daqui, aparece na hora pro time.</p>
       </div>
 
-      {toast && <div className="wp-gz-toast"><Check size={13} className="wp-ico" /> {toast} <Link to="/eleva">ver no app <ExternalLink size={12} className="wp-ico" /></Link></div>}
+      {toast && <div className="wp-gz-toast"><Check size={13} className="wp-ico" /> {toast} <Link to="/eleva/catalogo">ver no app <ExternalLink size={12} className="wp-ico" /></Link></div>}
 
       {/* Recado pro time */}
       <div className="wp-gz-block">

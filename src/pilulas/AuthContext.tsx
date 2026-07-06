@@ -47,6 +47,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState<boolean>(firebaseEnabled);
 
   useEffect(() => {
+    // Atalho SÓ de desenvolvimento (vite dev): permite simular um usuário via
+    // localStorage 'wp_dev_user' p/ testar papéis sem Firebase. No build de
+    // produção import.meta.env.DEV é false e este bloco nem existe.
+    if (import.meta.env.DEV) {
+      try {
+        const raw = localStorage.getItem('wp_dev_user');
+        if (raw) {
+          setUser(JSON.parse(raw) as User);
+          setLoading(false);
+          return;
+        }
+      } catch { /* ignore */ }
+    }
     if (!firebaseEnabled) {
       setLoading(false);
       return;

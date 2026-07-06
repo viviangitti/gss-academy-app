@@ -5,14 +5,62 @@ import { PRODUCTS, type Product } from './products';
 import { SEED_OFFERS, type Offer } from './offers';
 import { CALENDAR, TRENDS, type CalendarDay, type Trend } from './creatorContent';
 import type { BrandId } from './brands';
+import { putVideo, getVideo, removeVideo } from './videoStore';
 
 const PKEY = 'wp_custom_products';
 const OKEY = 'wp_custom_offers';
 const CALKEY = 'wp_custom_calendar';
 const TRKEY = 'wp_custom_trends';
 
-// Vídeos ficam só em memória na sessão (object URLs não sobrevivem a reload).
-const videoUrls = new Map<string, string>();
+// ---- Vídeos MP4 (persistem no IndexedDB; ver videoStore.ts) ----
+// Índice em localStorage só pra saber, na hora (síncrono), quais produtos têm
+// vídeo. O blob de verdade fica no IndexedDB e é carregado sob demanda.
+const VIDKEY = 'wp_video_ids';
+const loadedVideoUrls = new Map<string, string>(); // cache de object URLs já carregados
+const loadingVideos = new Set<string>();
+
+function videoIds(): string[] {
+  try { return JSON.parse(localStorage.getItem(VIDKEY) || '[]'); } catch { return []; }
+}
+function addVideoId(id: string) {
+  const ids = videoIds();
+  if (!ids.includes(id)) { ids.push(id); try { localStorage.setItem(VIDKEY, JSON.stringify(ids)); } catch { /* ignore */ } }
+}
+function removeVideoId(id: string) {
+  try { localStorage.setItem(VIDKEY, JSON.stringify(videoIds().filter((v) => v !== id))); } catch { /* ignore */ }
+}
+
+export function hasVideo(id: string): boolean {
+  return videoIds().includes(id) || loadedVideoUrls.has(id);
+}
+export function getVideoObjectUrl(id: string): string | undefined {
+  return loadedVideoUrls.get(id);
+}
+// Carrega o blob do IndexedDB e cria um object URL (assíncrono; avisa via emit).
+export function ensureVideoLoaded(id: string) {
+  if (loadedVideoUrls.has(id) || loadingVideos.has(id) || !videoIds().includes(id)) return;
+  loadingVideos.add(id);
+  getVideo(id).then((blob) => {
+    loadingVideos.delete(id);
+    if (blob) { loadedVideoUrls.set(id, URL.createObjectURL(blob)); emit(); }
+  }).catch(() => { loadingVideos.delete(id); });
+}
+export function setProductVideo(id: string, file: File) {
+  // Playback imediato: object URL do próprio arquivo; e persiste no IndexedDB.
+  const prev = loadedVideoUrls.get(id);
+  if (prev) URL.revokeObjectURL(prev);
+  loadedVideoUrls.set(id, URL.createObjectURL(file));
+  addVideoId(id);
+  emit();
+  putVideo(id, file).catch(() => { /* ignore */ });
+}
+export function clearProductVideo(id: string) {
+  const prev = loadedVideoUrls.get(id);
+  if (prev) { URL.revokeObjectURL(prev); loadedVideoUrls.delete(id); }
+  removeVideoId(id);
+  emit();
+  removeVideo(id).catch(() => { /* ignore */ });
+}
 
 let version = 0;
 const listeners = new Set<() => void>();
@@ -76,11 +124,11 @@ export function addProduct(p: Product, video?: File | null) {
   } catch {
     /* ignore */
   }
-  if (video) videoUrls.set(p.id, URL.createObjectURL(video));
+  if (video) setProductVideo(p.id, video);
   emit();
 }
 export function getVideoUrl(id: string): string | undefined {
-  return videoUrls.get(id);
+  return loadedVideoUrls.get(id);
 }
 
 // ---- Ofertas ----

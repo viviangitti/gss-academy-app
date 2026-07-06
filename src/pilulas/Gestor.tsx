@@ -5,7 +5,7 @@ import { useBrand } from './BrandContext';
 import { CATEGORIES, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
 import { CHANNELS, type Channel } from './data/creatorContent';
-import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, setProductIG, getRecado, setRecado, useStore } from './data/store';
+import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, setProductIG, setProductVideo, clearProductVideo, hasVideo, getRecado, setRecado, useStore } from './data/store';
 
 // Métricas da marca (dados de demonstração — em produção vêm do backend/Firestore).
 const METRICS: Record<string, {
@@ -281,27 +281,54 @@ function TrendForm({ brand, onDone }: { brand: string; onDone: (t: string) => vo
 }
 
 function ProductRow({ p }: { p: Product }) {
+  useStore();
   const [open, setOpen] = useState(false);
   const [ig, setIg] = useState(p.instagramUrl || '');
   const [saved, setSaved] = useState(false);
+  const [vidName, setVidName] = useState('');
+  const uploaded = hasVideo(p.id);
+  const meta = uploaded ? (
+    <><Video size={12} className="wp-ico" /> vídeo MP4</>
+  ) : p.instagramUrl ? (
+    <><Video size={12} className="wp-ico" /> vídeo do Instagram</>
+  ) : (
+    CATEGORIES[p.category].label
+  );
+  const flash = () => { setSaved(true); setTimeout(() => setSaved(false), 1600); };
   return (
     <div className="wp-gz-prod">
       <button className="wp-gz-item wp-gz-item-btn" onClick={() => setOpen((o) => !o)}>
         <span className="wp-gz-item-name">{p.name}</span>
-        <span className="wp-gz-item-meta">{p.instagramUrl ? <><Video size={12} className="wp-ico" /> vídeo do Instagram</> : CATEGORIES[p.category].label}</span>
+        <span className="wp-gz-item-meta">{meta}</span>
       </button>
       {open && (
         <div className="wp-gz-prod-edit">
-          <label className="wp-gz-label">Vídeo da pílula — link de um reel do Instagram</label>
-          <input value={ig} onChange={(e) => setIg(e.target.value)} placeholder="https://www.instagram.com/reel/..." />
-          <p className="wp-gz-help">O reel vira o vídeo que a pessoa assiste nesta pílula. Deixe em branco pra usar o vídeo animado padrão.</p>
-          <button
-            className="wp-gz-submit"
-            style={{ marginTop: 8 }}
-            onClick={() => { setProductIG(p.id, ig); setSaved(true); setTimeout(() => setSaved(false), 1600); }}
-          >
-            {saved ? <><Check size={16} className="wp-ico" /> Salvo</> : 'Salvar vídeo'}
+          <label className="wp-gz-label">Vídeo da pílula — escolha UMA opção</label>
+          <label className="wp-gz-upload">
+            <UploadCloud size={18} className="wp-ico" />
+            {vidName || (uploaded ? 'Trocar o vídeo MP4' : '1) Subir um vídeo MP4')}
+            <input
+              type="file"
+              accept="video/*"
+              hidden
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) { setProductVideo(p.id, f); setVidName(f.name); flash(); } }}
+            />
+          </label>
+          <p className="wp-gz-or">ou</p>
+          <input value={ig} onChange={(e) => setIg(e.target.value)} placeholder="2) Colar o link de um reel do Instagram" />
+          <p className="wp-gz-help">O que você colocar aqui vira o vídeo que a pessoa assiste. Sem vídeo, aparece a prévia animada padrão.</p>
+          <button className="wp-gz-submit" style={{ marginTop: 8 }} onClick={() => { setProductIG(p.id, ig); flash(); }}>
+            {saved ? <><Check size={16} className="wp-ico" /> Salvo</> : 'Salvar reel do Instagram'}
           </button>
+          {(uploaded || p.instagramUrl) && (
+            <button
+              className="wp-gz-add"
+              style={{ marginTop: 8, background: 'var(--wp-bg)', color: 'var(--wp-soft)' }}
+              onClick={() => { clearProductVideo(p.id); setProductIG(p.id, ''); setIg(''); setVidName(''); }}
+            >
+              Tirar o vídeo (voltar pro padrão)
+            </button>
+          )}
         </div>
       )}
     </div>

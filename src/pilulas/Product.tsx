@@ -5,7 +5,7 @@ import {
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
 } from 'lucide-react';
 import { buildShareMessage, type Product as ProductT } from './data/products';
-import { findProduct, getVideoUrl } from './data/store';
+import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, useStore } from './data/store';
 import { recordView } from './data/tracking';
 
 // Duração de cada cena a partir da marcação de tempo do roteiro ("0-4s" → 4s).
@@ -16,11 +16,16 @@ function sceneMs(t: string): number {
 }
 
 function Reel({ product }: { product: ProductT }) {
+  useStore(); // re-renderiza quando o vídeo do IndexedDB termina de carregar
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(true);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const videoUrl = getVideoUrl(product.id) || product.videoUrl;
+  useEffect(() => {
+    if (hasVideo(product.id)) ensureVideoLoaded(product.id);
+  }, [product.id]);
+
+  const videoUrl = getVideoObjectUrl(product.id) || product.videoUrl;
   const scene = product.storyboard[i];
   const ms = sceneMs(scene.t);
 
@@ -121,7 +126,7 @@ export default function Product() {
   const [openObj, setOpenObj] = useState<number | null>(0);
   // Se tem MP4, o Instagram vira "prova social" (bônus). Se não tem MP4, o
   // reel do Instagram já é o vídeo principal lá em cima — não repete aqui.
-  const mp4 = product ? getVideoUrl(product.id) || product.videoUrl : undefined;
+  const mp4 = product ? getVideoObjectUrl(product.id) || product.videoUrl : undefined;
 
   // Conta a pílula assistida (alimenta o ranking "quem vê mais")
   useEffect(() => {

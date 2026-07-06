@@ -73,6 +73,25 @@ export async function addProduct(p: Product, video?: File | null) {
 export function getVideoUrl(_id: string): string | undefined {
   return undefined;
 }
+export function hasVideo(_id: string): boolean {
+  return false;
+}
+export function getVideoObjectUrl(_id: string): string | undefined {
+  return undefined;
+}
+export function ensureVideoLoaded(_id: string) {
+  /* No Firebase o vídeo é servido direto da URL do Storage (product.videoUrl). */
+}
+export async function setProductVideo(id: string, file: File) {
+  if (!db || !storage) return;
+  const r = ref(storage, `elevaOverrides/${id}/video.mp4`);
+  await uploadBytes(r, file);
+  const url = await getDownloadURL(r);
+  await setDoc(doc(db, 'elevaOverrides', id), { videoUrl: url }, { merge: true });
+}
+export function clearProductVideo(_id: string) {
+  /* noop no Firebase por enquanto */
+}
 
 // ---- Ofertas ----
 export function allOffers(): Offer[] {

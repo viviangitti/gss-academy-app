@@ -16,8 +16,8 @@ const METRICS: Record<string, {
     vendedoras: 34, assistidas: 512, missoes: 87, uplift: 38,
     top: [
       { name: 'GLPEN Nutri Muscle', views: 210 },
-      { name: 'Ômega 3 Odor Free', views: 120 },
-      { name: 'Melatonina + Triptofano', views: 68 },
+      { name: 'Ative-Fer', views: 120 },
+      { name: 'Moviben', views: 68 },
     ],
   },
   wepink: {

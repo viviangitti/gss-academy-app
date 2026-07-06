@@ -164,6 +164,13 @@ function App() {
   // Eleva — app white-label de educação de produto p/ revenda. Árvore isolada,
   // sem login nem chrome do coaching. (/pilulas mantido p/ redirecionar links antigos.)
   const p = window.location.pathname;
+  // No domínio do Eleva (eleva-*.vercel.app) TUDO é Eleva: se abrir a raiz sem
+  // /eleva, redireciona — evita cair no login (Google) do app de coaching.
+  const elevaHost = window.location.hostname.includes('eleva');
+  if (elevaHost && !p.startsWith('/eleva') && !p.startsWith('/pilulas')) {
+    window.location.replace('/eleva');
+    return null;
+  }
   if (p.startsWith('/eleva') || p.startsWith('/pilulas')) {
     return <PilulasApp />;
   }

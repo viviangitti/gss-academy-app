@@ -853,11 +853,20 @@
   align-items: center;
   justify-content: center;
   padding: 24px 20px;
-  background: linear-gradient(160deg, var(--wp-ink), var(--wp-navy-deep));
+  background: linear-gradient(160deg, #faf8f3 0%, #f0ead9 100%);
 }
-.wp-login-brand { font-size: 40px; font-weight: 800; color: #fff; display: inline-flex; align-items: center; }
+.wp-login-gss {
+  width: 72px; height: 72px; margin-bottom: 14px;
+  background: linear-gradient(135deg, var(--wp-pink) 0%, var(--wp-gold-light) 100%);
+  color: var(--wp-navy-deep);
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', Georgia, serif; font-size: 24px; font-weight: 800; letter-spacing: 0.02em;
+  box-shadow: 0 12px 30px rgba(201, 168, 76, 0.34);
+}
+.wp-login-brand { font-size: 40px; font-weight: 800; color: var(--wp-ink); display: inline-flex; align-items: center; }
 .wp-login-caret { color: var(--wp-pink); font-size: 26px; margin-left: 2px; transform: translateY(-6px); }
-.wp-login-tag { color: #d9d2e0; font-size: 14px; margin: 6px 0 26px; text-align: center; }
+.wp-login-tag { color: #6b6473; font-size: 14px; margin: 6px 0 26px; text-align: center; }
 .wp-login-card {
   width: 100%;
   max-width: 400px;
@@ -889,7 +898,7 @@
   background: var(--wp-pink); color: var(--wp-on-accent); border: none; border-radius: 12px;
   padding: 14px; font-size: 15px; font-weight: 800; cursor: pointer; font-family: inherit;
 }
-.wp-login-note { color: #9a8fb0; font-size: 11px; margin-top: 16px; text-align: center; }
+.wp-login-note { color: #8a8494; font-size: 11px; margin-top: 16px; text-align: center; }
 
 /* menu do usuário no seletor de marca */
 .wp-brandsw-user {

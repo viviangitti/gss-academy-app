@@ -23,6 +23,7 @@ export default function Login() {
 
   return (
     <div className="wp-login">
+      <div className="wp-login-gss">GSS</div>
       <div className="wp-login-brand">
         eleva<ArrowUpRight size={22} strokeWidth={2.5} className="wp-login-caret" />
       </div>

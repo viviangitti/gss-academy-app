@@ -108,7 +108,7 @@ function Shell() {
   const location = useLocation();
   const onProduct = location.pathname.includes('/produto/');
   const { brand } = useBrand();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [onboarded, setOnboarded] = useState<boolean>(() => {
     try { return !!localStorage.getItem('wp_onboarded'); } catch { return true; }
   });
@@ -118,6 +118,14 @@ function Shell() {
     '--wp-gold-light': brand.light,
     '--wp-on-accent': brand.onAccent,
   } as CSSProperties;
+
+  if (loading) {
+    return (
+      <div className="wp-app" style={themeStyle}>
+        <div className="wp-boot"><span className="wp-boot-spinner" /></div>
+      </div>
+    );
+  }
 
   if (!user) {
     return (

@@ -1,24 +1,56 @@
 import { useState } from 'react';
-import { LayoutDashboard, Sparkles, ArrowRight, Check, ArrowUpRight } from 'lucide-react';
-import { useAuth, type Role } from './AuthContext';
-import { BRANDS, type BrandId } from './data/brands';
+import { ArrowRight, ArrowUpRight, Eye, EyeOff } from 'lucide-react';
+import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } from '../services/auth';
+
+type Mode = 'entrar' | 'criar';
 
 export default function Login() {
-  const { login } = useAuth();
+  const [mode, setMode] = useState<Mode>('entrar');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState<Role>('vendedora');
-  const [brands, setBrands] = useState<BrandId[]>([]);
-
-  const toggleBrand = (id: BrandId) =>
-    setBrands((cur) => (cur.includes(id) ? cur.filter((b) => b !== id) : [...cur, id]));
+  const [password, setPassword] = useState('');
+  const [showPass, setShowPass] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
 
   const emailOk = /\S+@\S+\.\S+/.test(email);
-  const valid = name.trim() && emailOk && brands.length > 0;
+  const valid =
+    emailOk && password.length >= 6 && (mode === 'entrar' || name.trim().length > 0);
 
-  const enter = () => {
-    if (!valid) return;
-    login({ name: name.trim(), email: email.trim(), role, brands });
+  const submit = async () => {
+    if (!valid || busy) return;
+    setBusy(true);
+    setError('');
+    setInfo('');
+    try {
+      if (mode === 'criar') {
+        await signUpWithEmail(email.trim(), password, name.trim());
+      } else {
+        await signInWithEmail(email.trim(), password);
+      }
+      // onAuthChange no AuthContext assume daqui: entra no app automaticamente.
+    } catch (e) {
+      const code = (e as { code?: string })?.code || '';
+      setError(translateAuthError(code));
+      setBusy(false);
+    }
+  };
+
+  const forgot = async () => {
+    if (!emailOk) {
+      setError('Digite seu e-mail acima primeiro.');
+      return;
+    }
+    setError('');
+    setInfo('');
+    try {
+      await resetPassword(email.trim());
+      setInfo('Enviamos um link de redefinição pro seu e-mail.');
+    } catch (e) {
+      const code = (e as { code?: string })?.code || '';
+      setError(translateAuthError(code));
+    }
   };
 
   return (
@@ -30,56 +62,72 @@ export default function Login() {
       <p className="wp-login-tag">Educação de produto que vende na ponta.</p>
 
       <div className="wp-login-card">
-        <label className="wp-login-label">Seu nome</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />
+        <div className="wp-login-tabs">
+          <button
+            className={`wp-login-tab ${mode === 'entrar' ? 'on' : ''}`}
+            onClick={() => { setMode('entrar'); setError(''); setInfo(''); }}
+          >
+            Entrar
+          </button>
+          <button
+            className={`wp-login-tab ${mode === 'criar' ? 'on' : ''}`}
+            onClick={() => { setMode('criar'); setError(''); setInfo(''); }}
+          >
+            Criar conta
+          </button>
+        </div>
+
+        {mode === 'criar' && (
+          <>
+            <label className="wp-login-label">Seu nome</label>
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />
+          </>
+        )}
 
         <label className="wp-login-label">Seu e-mail</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" />
+        <input
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="voce@email.com"
+        />
 
-        <label className="wp-login-label">Quais empresas você quer ver?</label>
-        <div className="wp-login-brands">
-          {BRANDS.map((b) => {
-            const on = brands.includes(b.id);
-            return (
-              <button
-                key={b.id}
-                className={`wp-login-brand-chip ${on ? 'on' : ''}`}
-                onClick={() => toggleBrand(b.id)}
-              >
-                <span className="wp-login-brand-dot" style={{ background: b.accent }} />
-                {b.name}
-                {on && <Check size={15} className="wp-ico" />}
-              </button>
-            );
-          })}
-        </div>
-
-        <label className="wp-login-label">Você é</label>
-        <div className="wp-login-roles">
+        <label className="wp-login-label">Sua senha</label>
+        <div className="wp-login-pass">
+          <input
+            type={showPass ? 'text' : 'password'}
+            autoComplete={mode === 'criar' ? 'new-password' : 'current-password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Mínimo 6 caracteres"
+            onKeyDown={(e) => e.key === 'Enter' && submit()}
+          />
           <button
-            className={`wp-login-role ${role === 'vendedora' ? 'on' : ''}`}
-            onClick={() => setRole('vendedora')}
+            type="button"
+            className="wp-login-eye"
+            aria-label={showPass ? 'Ocultar senha' : 'Mostrar senha'}
+            onClick={() => setShowPass((s) => !s)}
           >
-            <Sparkles size={20} className="wp-ico" />
-            <b>Vendedora / Creator</b>
-            <small>Ver pílulas, missões e vender</small>
-          </button>
-          <button
-            className={`wp-login-role ${role === 'gestor' ? 'on' : ''}`}
-            onClick={() => setRole('gestor')}
-          >
-            <LayoutDashboard size={20} className="wp-ico" />
-            <b>Gestor(a) da marca</b>
-            <small>Cadastrar produtos, vídeos e ofertas</small>
+            {showPass ? <EyeOff size={18} className="wp-ico" /> : <Eye size={18} className="wp-ico" />}
           </button>
         </div>
 
-        <button className="wp-login-enter" disabled={!valid} onClick={enter}>
-          Entrar <ArrowRight size={16} className="wp-ico" />
+        {error && <p className="wp-login-error">{error}</p>}
+        {info && <p className="wp-login-info">{info}</p>}
+
+        <button className="wp-login-enter" disabled={!valid || busy} onClick={submit}>
+          {busy ? 'Aguarde…' : mode === 'criar' ? 'Criar conta' : 'Entrar'}
+          {!busy && <ArrowRight size={16} className="wp-ico" />}
         </button>
-        {!valid && <p className="wp-login-hint">Preencha nome, e-mail e ao menos uma empresa.</p>}
+
+        {mode === 'entrar' && (
+          <button type="button" className="wp-login-forgot" onClick={forgot}>
+            Esqueci minha senha
+          </button>
+        )}
       </div>
-      <p className="wp-login-note">Demonstração — em produção, login por e-mail/senha da marca.</p>
+      <p className="wp-login-note">Acesso de Gestor liberado só para e-mails autorizados.</p>
     </div>
   );
 }

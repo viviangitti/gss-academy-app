@@ -1,5 +1,5 @@
 // Service Worker — network first, sem cache de JS/CSS (evita versões travadas)
-const CACHE_NAME = 'gss-academy-v7';
+const CACHE_NAME = 'gss-academy-v8';
 const STATIC_CACHE = ['/', '/manifest.json'];
 
 self.addEventListener('install', (event) => {
@@ -30,10 +30,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Sistema de Gestão (/erp-360/) e APIs internas (/api/): sempre da rede,
-  // nunca do cache. Esses endpoints têm dados dinâmicos do Firebase/Resend
-  // e não podem ser servidos de cache antigo do SW.
-  if (url.includes('/erp-360/') || url.includes('/api/')) {
+  // Sistema de Gestão (/erp-360/), Eleva (/eleva, /pilulas) e APIs internas
+  // (/api/): sempre da rede, nunca do cache. Eleva é um app à parte (SPA
+  // white-label) e não pode ser servido de cache antigo do coaching.
+  if (
+    url.includes('/erp-360/') ||
+    url.includes('/eleva') ||
+    url.includes('/pilulas') ||
+    url.includes('/api/')
+  ) {
     event.respondWith(fetch(event.request));
     return;
   }

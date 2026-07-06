@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Megaphone, Camera } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Megaphone, Video } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { CATEGORIES, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
@@ -77,7 +77,7 @@ function ProductForm({ brand, onDone }: { brand: string; onDone: (name: string) 
       durationSec: 30,
       gradient: GRADIENT[category],
       storyboard,
-      instagramUrl: igUrl.trim() || undefined,
+      instagramUrl: igUrl.trim().split('?')[0].trim() || undefined,
     };
     addProduct(product, video);
     onDone(product.name);
@@ -107,15 +107,15 @@ function ProductForm({ brand, onDone }: { brand: string; onDone: (name: string) 
       <label className="wp-gz-label">Frase de venda / CTA</label>
       <input value={salesLine} onChange={(e) => setSalesLine(e.target.value)} placeholder="Me chama que eu te explico 💬" />
 
-      <label className="wp-gz-label">Vídeo da pílula (30s)</label>
+      <label className="wp-gz-label">Vídeo da pílula — escolha UMA opção</label>
       <label className="wp-gz-upload">
         <UploadCloud size={18} className="wp-ico" />
-        {video ? video.name : 'Subir vídeo (MP4) — o time vê na hora'}
+        {video ? video.name : '1) Subir um vídeo MP4 do produto'}
         <input type="file" accept="video/*" hidden onChange={(e) => setVideo(e.target.files?.[0] || null)} />
       </label>
-
-      <label className="wp-gz-label">Prova social — link de um reel do Instagram (opcional)</label>
-      <input value={igUrl} onChange={(e) => setIgUrl(e.target.value)} placeholder="https://www.instagram.com/reel/..." />
+      <p className="wp-gz-or">ou</p>
+      <input value={igUrl} onChange={(e) => setIgUrl(e.target.value)} placeholder="2) Colar o link de um reel do Instagram" />
+      <p className="wp-gz-help">Se colar o reel do Instagram, ele vira o vídeo que a pessoa assiste. Se subir um MP4, o reel (se houver) aparece como prova social.</p>
 
       <button className="wp-gz-submit" disabled={!valid} onClick={submit}>
         <Check size={16} className="wp-ico" /> Publicar produto
@@ -288,18 +288,19 @@ function ProductRow({ p }: { p: Product }) {
     <div className="wp-gz-prod">
       <button className="wp-gz-item wp-gz-item-btn" onClick={() => setOpen((o) => !o)}>
         <span className="wp-gz-item-name">{p.name}</span>
-        <span className="wp-gz-item-meta">{p.instagramUrl ? <><Camera size={12} className="wp-ico" /> prova social</> : CATEGORIES[p.category].label}</span>
+        <span className="wp-gz-item-meta">{p.instagramUrl ? <><Video size={12} className="wp-ico" /> vídeo do Instagram</> : CATEGORIES[p.category].label}</span>
       </button>
       {open && (
         <div className="wp-gz-prod-edit">
-          <label className="wp-gz-label">Prova social — link do reel do Instagram</label>
+          <label className="wp-gz-label">Vídeo da pílula — link de um reel do Instagram</label>
           <input value={ig} onChange={(e) => setIg(e.target.value)} placeholder="https://www.instagram.com/reel/..." />
+          <p className="wp-gz-help">O reel vira o vídeo que a pessoa assiste nesta pílula. Deixe em branco pra usar o vídeo animado padrão.</p>
           <button
             className="wp-gz-submit"
             style={{ marginTop: 8 }}
             onClick={() => { setProductIG(p.id, ig); setSaved(true); setTimeout(() => setSaved(false), 1600); }}
           >
-            {saved ? <><Check size={16} className="wp-ico" /> Salvo</> : 'Salvar prova social'}
+            {saved ? <><Check size={16} className="wp-ico" /> Salvo</> : 'Salvar vídeo'}
           </button>
         </div>
       )}

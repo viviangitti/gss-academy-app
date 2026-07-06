@@ -52,7 +52,8 @@ export function findProduct(id: string): Product | undefined {
 }
 export async function setProductIG(id: string, instagramUrl: string) {
   if (!db) return;
-  await setDoc(doc(db, 'elevaOverrides', id), { instagramUrl: instagramUrl.trim() || null }, { merge: true });
+  const clean = instagramUrl.trim().split('?')[0].trim();
+  await setDoc(doc(db, 'elevaOverrides', id), { instagramUrl: clean || null }, { merge: true });
 }
 export async function addProduct(p: Product, video?: File | null) {
   if (!db) return;

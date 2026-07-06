@@ -741,6 +741,17 @@
 
 /* ===== Reel com vídeo real ===== */
 .wp-reel--video { padding: 0; align-items: stretch; }
+/* Reel do Instagram como vídeo principal: não força 9/16 (cortaria o embed). */
+.wp-reel--ig {
+  aspect-ratio: auto; max-height: none; height: auto;
+  padding: 0; background: transparent; color: inherit; display: block;
+}
+.wp-reel--ig .instagram-media { margin: 0 auto !important; }
+.wp-gz-or {
+  text-align: center; font-size: 11px; font-weight: 800; color: var(--wp-soft);
+  margin: 8px 0; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.wp-gz-help { font-size: 11.5px; color: var(--wp-soft); margin: 8px 0 4px; line-height: 1.4; }
 .wp-reel-videoel {
   width: 100%;
   height: 100%;

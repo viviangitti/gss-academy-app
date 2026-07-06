@@ -44,10 +44,12 @@ function readOverrides(): Record<string, Partial<Product>> {
     return {};
   }
 }
-// Permite o gestor editar campos (ex.: prova social) até de produtos "de fábrica".
+// Permite o gestor editar o vídeo (reel do Instagram) até de produtos "de fábrica".
 export function setProductIG(id: string, instagramUrl: string) {
   const ov = readOverrides();
-  ov[id] = { ...(ov[id] || {}), instagramUrl: instagramUrl.trim() || undefined };
+  // Tira parâmetros de rastreio (?igsh=...) — o embed do Instagram quer o link limpo.
+  const clean = instagramUrl.trim().split('?')[0].trim();
+  ov[id] = { ...(ov[id] || {}), instagramUrl: clean || undefined };
   try {
     localStorage.setItem(OVKEY, JSON.stringify(ov));
   } catch {

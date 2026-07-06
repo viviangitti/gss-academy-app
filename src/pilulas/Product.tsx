@@ -34,10 +34,19 @@ function Reel({ product }: { product: ProductT }) {
     };
   }, [i, playing, ms, product.storyboard.length]);
 
+  // Prioridade do vídeo da pílula: MP4 enviado > reel do Instagram > storyboard animado.
   if (videoUrl) {
     return (
       <div className="wp-reel wp-reel--video" style={{ background: '#000' }}>
         <video className="wp-reel-videoel" src={videoUrl} autoPlay muted loop playsInline controls />
+      </div>
+    );
+  }
+
+  if (product.instagramUrl) {
+    return (
+      <div className="wp-reel wp-reel--ig">
+        <InstagramEmbed url={product.instagramUrl} />
       </div>
     );
   }
@@ -110,6 +119,9 @@ export default function Product() {
   const { id } = useParams();
   const product = id ? findProduct(id) : undefined;
   const [openObj, setOpenObj] = useState<number | null>(0);
+  // Se tem MP4, o Instagram vira "prova social" (bônus). Se não tem MP4, o
+  // reel do Instagram já é o vídeo principal lá em cima — não repete aqui.
+  const mp4 = product ? getVideoUrl(product.id) || product.videoUrl : undefined;
 
   // Conta a pílula assistida (alimenta o ranking "quem vê mais")
   useEffect(() => {
@@ -181,7 +193,7 @@ export default function Product() {
         </div>
       </div>
 
-      {product.instagramUrl && (
+      {mp4 && product.instagramUrl && (
         <div className="wp-block">
           <span className="wp-block-label"><Camera size={14} className="wp-ico" /> Prova social</span>
           <InstagramEmbed url={product.instagramUrl} />

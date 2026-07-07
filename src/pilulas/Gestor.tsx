@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import QRCode from 'qrcode';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, QrCode as QrIcon, Copy, Search } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { CATEGORIES, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
@@ -360,52 +359,6 @@ function ProductRow({ p }: { p: Product }) {
   );
 }
 
-// Convites por canal: link + QR pra distribuir (caixa, PDV, WhatsApp da rede).
-// O vendedor que entra por aqui já chega etiquetado com o canal.
-function ConvitesBlock() {
-  const [qrs, setQrs] = useState<Record<string, string>>({});
-  const [copied, setCopied] = useState('');
-  const base = `${window.location.origin}/eleva?convite=`;
-  useEffect(() => {
-    let alive = true;
-    (async () => {
-      const out: Record<string, string> = {};
-      for (const s of SEGMENTS) {
-        out[s.id] = await QRCode.toDataURL(base + s.id, { width: 240, margin: 1, color: { dark: '#1a1a2e', light: '#ffffff' } });
-      }
-      if (alive) setQrs(out);
-    })();
-    return () => { alive = false; };
-  }, [base]);
-  const copy = (id: string) => {
-    navigator.clipboard?.writeText(base + id).then(
-      () => { setCopied(id); setTimeout(() => setCopied(''), 1600); },
-      () => {}
-    );
-  };
-  return (
-    <div className="wp-gz-block">
-      <div className="wp-gz-block-head">
-        <span className="wp-gz-block-title"><QrIcon size={17} className="wp-ico" /> Convites por canal</span>
-      </div>
-      <p className="wp-gz-help" style={{ margin: '0 0 10px' }}>
-        Distribua o QR ou o link (na caixa, no PDV, no WhatsApp da rede). Quem entra por ele já chega etiquetado com o canal — sem cadastro manual.
-      </p>
-      <div className="wp-gz-invites">
-        {SEGMENTS.map((s) => (
-          <div key={s.id} className="wp-gz-invite">
-            {qrs[s.id] ? <img src={qrs[s.id]} alt={`QR convite ${s.label}`} className="wp-gz-invite-qr" /> : <div className="wp-gz-invite-qr" />}
-            <b>{s.label}</b>
-            <button className="wp-gz-invite-copy" onClick={() => copy(s.id)}>
-              {copied === s.id ? <><Check size={13} className="wp-ico" /> Copiado</> : <><Copy size={13} className="wp-ico" /> Copiar link</>}
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function Gestor() {
   useStore();
   const { brand, brandId } = useBrand();
@@ -437,8 +390,6 @@ export default function Gestor() {
 
       {toast && <div className="wp-gz-toast"><Check size={13} className="wp-ico" /> {toast} <Link to="/eleva/catalogo">ver no app <ExternalLink size={12} className="wp-ico" /></Link></div>}
 
-      {/* Convites por canal (QR/link) */}
-      <ConvitesBlock />
 
       {/* Métricas */}
       <div className="wp-gz-metrics">

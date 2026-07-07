@@ -5,6 +5,7 @@ import {
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
 } from 'lucide-react';
 import { buildShareMessage, type Product as ProductT } from './data/products';
+import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, useStore } from './data/store';
 import { recordView } from './data/tracking';
 
@@ -197,6 +198,8 @@ export default function Product() {
           ))}
         </div>
       </div>
+
+      <Quiz product={product} />
 
       {mp4 && product.instagramUrl && (
         <div className="wp-block">

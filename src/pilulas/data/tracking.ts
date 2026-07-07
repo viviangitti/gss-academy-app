@@ -4,6 +4,7 @@
 
 const KEY = 'wp_stats_v1';
 export const POINTS_PER_PILL = 10;
+export const POINTS_PER_QUIZ = 30;
 export const WEEKLY_GOAL = 10; // pílulas/semana
 
 export interface Stats {
@@ -17,6 +18,7 @@ export interface Stats {
   lastDay: string | null; // AAAA-MM-DD da última visualização
   perProduct: Record<string, number>;
   perMission: Record<string, number>; // missões já concluídas (não repontuam)
+  perQuiz: Record<string, number>; // produtos "dominados" no quiz (permanente, pontua 1x)
 }
 
 function today(): string {
@@ -40,6 +42,7 @@ function fresh(): Stats {
     lastDay: null,
     perProduct: {},
     perMission: {},
+    perQuiz: {},
   };
 }
 
@@ -118,4 +121,19 @@ export function recordMission(missionId: string, points: number): Stats {
 
 export function isMissionDone(missionId: string): boolean {
   return !!getStats().perMission[missionId];
+}
+
+// Quiz da pílula: acertou tudo = "domina o produto". Pontua 1x por produto (permanente).
+export function recordQuizPass(productId: string): Stats {
+  const s = getStats();
+  if (!s.perQuiz[productId]) {
+    s.perQuiz[productId] = 1;
+    s.weekPoints += POINTS_PER_QUIZ;
+  }
+  save(s);
+  return s;
+}
+
+export function isQuizDone(productId: string): boolean {
+  return !!getStats().perQuiz[productId];
 }

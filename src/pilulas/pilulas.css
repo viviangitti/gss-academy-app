@@ -1307,3 +1307,4 @@
   border-radius: 11px; padding: 10px 14px; font-size: 13px; font-weight: 800;
   font-family: inherit; cursor: pointer;
 }
+.wp-td-search input::placeholder { text-overflow: ellipsis; }

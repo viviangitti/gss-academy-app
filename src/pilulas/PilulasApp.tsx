@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { ArrowUpRight, ArrowLeft, ChevronDown, Check, LayoutDashboard, LogOut } from 'lucide-react';
 import Hoje from './Hoje';
@@ -146,6 +146,11 @@ export default function PilulasApp() {
   // Se a pessoa chegou por um link/QR de convite (?convite=farmacia), guarda a
   // etiqueta de canal ANTES do login — o cadastro já entra segmentado.
   stageSegmentFromUrl();
+  // Identidade própria: a aba do navegador diz "Eleva", não "MAESTR.IA".
+  // Só roda na árvore do Eleva (não toca no app de coaching).
+  useEffect(() => {
+    document.title = 'Eleva — produto que vende na ponta';
+  }, []);
   return (
     <BrowserRouter>
       <AuthProvider>

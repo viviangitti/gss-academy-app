@@ -24,8 +24,11 @@ const BrandCtx = createContext<Ctx | null>(null);
 
 export function BrandProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  // empresas disponíveis = as que a pessoa escolheu (fallback: todas, ex. na tela de login)
-  const available = user?.brands?.length ? BRANDS.filter((b) => user.brands.includes(b.id)) : BRANDS;
+  // empresas disponíveis = as que a pessoa escolheu (fallback: todas, ex. na tela de login).
+  // Guard: se o filtro zerar (ex.: usuário só com marca já desativada), volta pra todas —
+  // senão available[0] seria undefined e a UI crasharia.
+  const filtered = user?.brands?.length ? BRANDS.filter((b) => user.brands.includes(b.id)) : BRANDS;
+  const available = filtered.length ? filtered : BRANDS;
 
   const [brandId, setBrandId] = useState<BrandId>(() => stored() ?? available[0].id);
   // garante que a marca ativa é uma das disponíveis

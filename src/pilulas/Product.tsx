@@ -173,17 +173,24 @@ export default function Product() {
         </ul>
       </div>
 
-      <div className="wp-row">
-        <div className="wp-block wp-half">
-          <span className="wp-block-label"><Clock size={14} className="wp-ico" /> Como usar</span>
-          <p>{product.howToUse}</p>
+      {(product.howToUse.trim() || product.forWho.trim()) && (
+        <div className="wp-row">
+          {product.howToUse.trim() && (
+            <div className="wp-block wp-half">
+              <span className="wp-block-label"><Clock size={14} className="wp-ico" /> Como usar</span>
+              <p>{product.howToUse}</p>
+            </div>
+          )}
+          {product.forWho.trim() && (
+            <div className="wp-block wp-half">
+              <span className="wp-block-label"><Target size={14} className="wp-ico" /> Pra quem é</span>
+              <p>{product.forWho}</p>
+            </div>
+          )}
         </div>
-        <div className="wp-block wp-half">
-          <span className="wp-block-label"><Target size={14} className="wp-ico" /> Pra quem é</span>
-          <p>{product.forWho}</p>
-        </div>
-      </div>
+      )}
 
+      {product.objections.length > 0 && (
       <div className="wp-block">
         <span className="wp-block-label"><ShieldCheck size={14} className="wp-ico" /> Quebra de objeções</span>
         <div className="wp-objections">
@@ -198,6 +205,7 @@ export default function Product() {
           ))}
         </div>
       </div>
+      )}
 
       <Quiz product={product} />
 

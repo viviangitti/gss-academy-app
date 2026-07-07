@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import QRCode from 'qrcode';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Megaphone, Video, QrCode as QrIcon, Copy, Search } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, QrCode as QrIcon, Copy, Search } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { CATEGORIES, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
 import { CHANNELS, type Channel } from './data/creatorContent';
 import { SEGMENTS, segmentLabel } from './data/segments';
 import { topSearches } from './data/insights';
-import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, setProductIG, setProductVideo, clearProductVideo, hasVideo, getRecadoFor, setRecado, useStore } from './data/store';
+import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, setProductIG, setProductVideo, clearProductVideo, hasVideo, useStore } from './data/store';
 
 // Métricas da marca (dados de demonstração — em produção vêm do backend/Firestore).
 const METRICS: Record<string, {
@@ -420,8 +420,6 @@ export default function Gestor() {
   const topMax = Math.max(...m.top.map((t) => t.views));
   const coverage = COVERAGE[brandId] || [];
   const buscas = topSearches(5);
-  const [recTarget, setRecTarget] = useState('todos');
-  const [recadoText, setRecadoText] = useState(getRecadoFor(brandId, 'todos'));
 
   const done = (label: string, what: string) => {
     setOpenForm(null);
@@ -438,39 +436,6 @@ export default function Gestor() {
       </div>
 
       {toast && <div className="wp-gz-toast"><Check size={13} className="wp-ico" /> {toast} <Link to="/eleva/catalogo">ver no app <ExternalLink size={12} className="wp-ico" /></Link></div>}
-
-      {/* Recado pra rede (por canal) */}
-      <div className="wp-gz-block">
-        <div className="wp-gz-block-head">
-          <span className="wp-gz-block-title"><Megaphone size={17} className="wp-ico" /> Recado pra rede</span>
-        </div>
-        <div className="wp-gz-form">
-          <label className="wp-gz-label">Pra quem?</label>
-          <select
-            value={recTarget}
-            onChange={(e) => { const t = e.target.value; setRecTarget(t); setRecadoText(getRecadoFor(brandId, t)); }}
-          >
-            <option value="todos">Toda a rede</option>
-            {SEGMENTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
-          </select>
-          <textarea
-            value={recadoText}
-            onChange={(e) => setRecadoText(e.target.value)}
-            rows={2}
-            placeholder="Ex.: Foco no GLPEN essa semana! Quem bater 5 posts ganha brinde 🎁"
-          />
-          <div className="wp-gz-row" style={{ marginTop: 10 }}>
-            <button className="wp-gz-submit" style={{ marginTop: 0 }} onClick={() => { setRecado(brandId, recadoText.trim(), recTarget); setToast(`Recado publicado (${recTarget === 'todos' ? 'toda a rede' : segmentLabel(recTarget)}).`); setTimeout(() => setToast(''), 4000); }}>
-              <Send size={15} className="wp-ico" /> Publicar recado
-            </button>
-            {getRecadoFor(brandId, recTarget) && (
-              <button className="wp-gz-add" style={{ background: 'var(--wp-bg)', color: 'var(--wp-soft)' }} onClick={() => { setRecado(brandId, '', recTarget); setRecadoText(''); }}>
-                Tirar do ar
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
 
       {/* Convites por canal (QR/link) */}
       <ConvitesBlock />

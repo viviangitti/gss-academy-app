@@ -1,6 +1,6 @@
 import { useState, type CSSProperties } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
-import { ArrowUpRight, ArrowLeft, ChevronDown, Check, LayoutDashboard, LogOut, Megaphone, X } from 'lucide-react';
+import { ArrowUpRight, ArrowLeft, ChevronDown, Check, LayoutDashboard, LogOut } from 'lucide-react';
 import Hoje from './Hoje';
 import Catalog from './Catalog';
 import Product from './Product';
@@ -13,7 +13,6 @@ import Onboarding from './Onboarding';
 import BottomNav from './BottomNav';
 import { BrandProvider, useBrand } from './BrandContext';
 import { AuthProvider, useAuth } from './AuthContext';
-import { getRecado, useStore } from './data/store';
 import { stageSegmentFromUrl } from './data/segments';
 import './pilulas.css';
 
@@ -60,28 +59,6 @@ function BrandSwitcher() {
 function RequireGestor({ children }: { children: React.ReactElement }) {
   const { user } = useAuth();
   return user?.role === 'gestor' ? children : <Navigate to="/eleva" replace />;
-}
-
-function RecadoBanner() {
-  useStore();
-  const { brand, brandId } = useBrand();
-  const { user } = useAuth();
-  const [dismissed, setDismissed] = useState<string>(() => {
-    try { return localStorage.getItem('wp_recado_seen') || ''; } catch { return ''; }
-  });
-  const recado = getRecado(brandId, user?.segment);
-  if (!recado || dismissed === recado) return null;
-  return (
-    <div className="wp-recado">
-      <Megaphone size={16} className="wp-ico wp-recado-ic" />
-      <span className="wp-recado-text"><b>{brand.name}:</b> {recado}</span>
-      <button
-        className="wp-recado-x"
-        aria-label="Fechar recado"
-        onClick={() => { try { localStorage.setItem('wp_recado_seen', recado); } catch { /* ignore */ } setDismissed(recado); }}
-      ><X size={15} /></button>
-    </div>
-  );
 }
 
 function Header() {
@@ -146,7 +123,6 @@ function Shell() {
         <Onboarding onFinish={() => { try { localStorage.setItem('wp_onboarded', '1'); } catch { /* ignore */ } setOnboarded(true); }} />
       )}
       <Header />
-      {!onProduct && <RecadoBanner />}
       <main className="wp-main">
         <Routes>
           {/* Gestor entra direto no painel (o trabalho dele é colocar conteúdo);

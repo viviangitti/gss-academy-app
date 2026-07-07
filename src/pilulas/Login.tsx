@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowRight, ArrowUpRight, Eye, EyeOff } from 'lucide-react';
 import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } from '../services/auth';
+import { SEGMENTS, setMySegment, mySegment } from './data/segments';
 
 type Mode = 'entrar' | 'criar';
 
@@ -13,6 +14,8 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
+  // Canal de venda: vem pré-preenchido se a pessoa chegou por link/QR de convite.
+  const [segment, setSegment] = useState<string>(() => mySegment() || '');
 
   const emailOk = /\S+@\S+\.\S+/.test(email);
   const valid =
@@ -25,6 +28,7 @@ export default function Login() {
     setInfo('');
     try {
       if (mode === 'criar') {
+        if (segment) setMySegment(segment);
         await signUpWithEmail(email.trim(), password, name.trim());
       } else {
         await signInWithEmail(email.trim(), password);
@@ -81,6 +85,12 @@ export default function Login() {
           <>
             <label className="wp-login-label">Seu nome</label>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />
+
+            <label className="wp-login-label">Onde você vende? (opcional)</label>
+            <select className="wp-login-select" value={segment} onChange={(e) => setSegment(e.target.value)}>
+              <option value="">Prefiro não dizer</option>
+              {SEGMENTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+            </select>
           </>
         )}
 

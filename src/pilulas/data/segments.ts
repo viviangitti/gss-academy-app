@@ -30,6 +30,13 @@ export function stageSegmentFromUrl() {
   } catch { /* ignore */ }
 }
 
+// Cadastro simples: a pessoa também pode dizer o canal na mão (sem QR).
+export function setMySegment(id: string) {
+  try {
+    if (SEGMENTS.some((s) => s.id === id)) localStorage.setItem(KEY, id);
+  } catch { /* ignore */ }
+}
+
 export function mySegment(): SegmentId | undefined {
   try {
     const v = localStorage.getItem(KEY);

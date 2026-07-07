@@ -1,5 +1,6 @@
 import { Tag, ArrowUpRight } from 'lucide-react';
 import { useBrand } from './BrandContext';
+import { useAuth } from './AuthContext';
 import { allOffers, useStore } from './data/store';
 
 function shareOffer(text: string) {
@@ -13,7 +14,12 @@ function shareOffer(text: string) {
 export default function Ofertas() {
   useStore(); // re-renderiza quando o gestor cria oferta
   const { brandId } = useBrand();
-  const offers = allOffers().filter((o) => o.brand === brandId);
+  const { user } = useAuth();
+  const seg = user?.segment;
+  // Oferta segmentada só aparece pro canal certo; sem etiqueta, vê tudo.
+  const offers = allOffers().filter(
+    (o) => o.brand === brandId && (!o.segment || o.segment === 'todos' || !seg || o.segment === seg)
+  );
   return (
     <div className="wp-ofertas">
       <div className="wp-of-hero">

@@ -10,6 +10,7 @@ export interface Offer {
   desc: string;
   until: string;
   share: string;
+  segment?: string; // canal alvo ('todos' ou vazio = rede inteira)
 }
 
 // Ofertas "de fábrica" (seed). O gestor cria novas pelo Painel (ficam no store).

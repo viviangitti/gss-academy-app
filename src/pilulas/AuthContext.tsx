@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { BrandId } from './data/brands';
+import { mySegment, type SegmentId } from './data/segments';
 import { onAuthChange, signOut as fbSignOut, type AuthUser } from '../services/auth';
 import { firebaseEnabled } from '../services/firebase';
 
@@ -9,6 +10,7 @@ export interface User {
   email: string;
   role: Role;
   brands: BrandId[]; // empresas que a pessoa pode ver
+  segment?: SegmentId; // canal de onde veio (etiqueta do link/QR de convite)
 }
 
 // GESTORES AUTORIZADOS — controla quem entra no Painel do Gestor. Quem loga com
@@ -30,6 +32,7 @@ function toUser(fb: AuthUser): User {
     email,
     role: roleFor(email),
     brands: DEFAULT_BRANDS,
+    segment: mySegment(),
   };
 }
 

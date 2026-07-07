@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
 import { buildShareMessage, type Product } from './data/products';
 import { CALENDAR, CHANNELS } from './data/creatorContent';
 import { getStats } from './data/tracking';
+import { logSearch } from './data/insights';
 import { useBrand } from './BrandContext';
 import { useAuth } from './AuthContext';
 import PrimeirosPassos from './PrimeirosPassos';
@@ -117,6 +118,11 @@ export default function Hoje() {
 
   const products = useMemo(() => allProducts().filter((p) => p.brand === brandId), [brandId]);
   const hits = useMemo(() => searchPills(q, products), [q, products]);
+
+  // Inteligência de mercado: o que a ponta busca = as objeções reais do cliente.
+  useEffect(() => {
+    if (q.trim().length >= 3) logSearch(q);
+  }, [q]);
 
   const stats = getStats();
   const firstName = (user?.name || '').split(' ')[0] || 'Você';

@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Megaphone, Video } from 'lucide-react';
+import QRCode from 'qrcode';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Megaphone, Video, QrCode as QrIcon, Copy, Search } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { CATEGORIES, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
 import { CHANNELS, type Channel } from './data/creatorContent';
-import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, setProductIG, setProductVideo, clearProductVideo, hasVideo, getRecado, setRecado, useStore } from './data/store';
+import { SEGMENTS, segmentLabel } from './data/segments';
+import { topSearches } from './data/insights';
+import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, setProductIG, setProductVideo, clearProductVideo, hasVideo, getRecadoFor, setRecado, useStore } from './data/store';
 
 // Métricas da marca (dados de demonstração — em produção vêm do backend/Firestore).
 const METRICS: Record<string, {
@@ -28,6 +31,20 @@ const METRICS: Record<string, {
       { name: 'Body Splash Pink', views: 155 },
     ],
   },
+};
+
+// Cobertura por canal (demonstração — com o backend, vem agregada dos convites).
+const COVERAGE: Record<string, { seg: string; total: number; ativos: number }[]> = {
+  meraki: [
+    { seg: 'Farmácia (balcão)', total: 620, ativos: 214 },
+    { seg: 'Revenda autônoma', total: 450, ativos: 198 },
+    { seg: 'Quiosque', total: 180, ativos: 71 },
+    { seg: 'Loja / PDV', total: 120, ativos: 34 },
+  ],
+  wepink: [
+    { seg: 'Revenda autônoma', total: 900, ativos: 512 },
+    { seg: 'Loja / PDV', total: 150, ativos: 66 },
+  ],
 };
 
 const GRADIENT: Record<Category, [string, string]> = {
@@ -139,6 +156,7 @@ function OfferForm({ brand, onDone }: { brand: string; onDone: (t: string) => vo
   const [desc, setDesc] = useState('');
   const [until, setUntil] = useState('');
   const [share, setShare] = useState('');
+  const [segment, setSegment] = useState('todos');
 
   const valid = tag.trim() && title.trim();
 
@@ -152,6 +170,7 @@ function OfferForm({ brand, onDone }: { brand: string; onDone: (t: string) => vo
       desc: desc.trim(),
       until: until.trim() || 'por tempo limitado',
       share: share.trim() || `*${title.trim()}*\n\nMe chama pra garantir 💬`,
+      segment: segment === 'todos' ? undefined : segment,
     });
     onDone(title.trim());
   };
@@ -182,6 +201,12 @@ function OfferForm({ brand, onDone }: { brand: string; onDone: (t: string) => vo
 
       <label className="wp-gz-label">Mensagem pronta de WhatsApp</label>
       <textarea value={share} onChange={(e) => setShare(e.target.value)} rows={3} placeholder="Texto que a vendedora manda pra cliente." />
+
+      <label className="wp-gz-label">Pra qual canal?</label>
+      <select value={segment} onChange={(e) => setSegment(e.target.value)}>
+        <option value="todos">Todos os canais</option>
+        {SEGMENTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+      </select>
 
       <button className="wp-gz-submit" disabled={!valid} onClick={submit}>
         <Check size={16} className="wp-ico" /> Publicar oferta
@@ -335,6 +360,52 @@ function ProductRow({ p }: { p: Product }) {
   );
 }
 
+// Convites por canal: link + QR pra distribuir (caixa, PDV, WhatsApp da rede).
+// O vendedor que entra por aqui já chega etiquetado com o canal.
+function ConvitesBlock() {
+  const [qrs, setQrs] = useState<Record<string, string>>({});
+  const [copied, setCopied] = useState('');
+  const base = `${window.location.origin}/eleva?convite=`;
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const out: Record<string, string> = {};
+      for (const s of SEGMENTS) {
+        out[s.id] = await QRCode.toDataURL(base + s.id, { width: 240, margin: 1, color: { dark: '#1a1a2e', light: '#ffffff' } });
+      }
+      if (alive) setQrs(out);
+    })();
+    return () => { alive = false; };
+  }, [base]);
+  const copy = (id: string) => {
+    navigator.clipboard?.writeText(base + id).then(
+      () => { setCopied(id); setTimeout(() => setCopied(''), 1600); },
+      () => {}
+    );
+  };
+  return (
+    <div className="wp-gz-block">
+      <div className="wp-gz-block-head">
+        <span className="wp-gz-block-title"><QrIcon size={17} className="wp-ico" /> Convites por canal</span>
+      </div>
+      <p className="wp-gz-help" style={{ margin: '0 0 10px' }}>
+        Distribua o QR ou o link (na caixa, no PDV, no WhatsApp da rede). Quem entra por ele já chega etiquetado com o canal — sem cadastro manual.
+      </p>
+      <div className="wp-gz-invites">
+        {SEGMENTS.map((s) => (
+          <div key={s.id} className="wp-gz-invite">
+            {qrs[s.id] ? <img src={qrs[s.id]} alt={`QR convite ${s.label}`} className="wp-gz-invite-qr" /> : <div className="wp-gz-invite-qr" />}
+            <b>{s.label}</b>
+            <button className="wp-gz-invite-copy" onClick={() => copy(s.id)}>
+              {copied === s.id ? <><Check size={13} className="wp-ico" /> Copiado</> : <><Copy size={13} className="wp-ico" /> Copiar link</>}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Gestor() {
   useStore();
   const { brand, brandId } = useBrand();
@@ -347,7 +418,10 @@ export default function Gestor() {
   const trends = allTrends(brandId);
   const m = METRICS[brandId];
   const topMax = Math.max(...m.top.map((t) => t.views));
-  const [recadoText, setRecadoText] = useState(getRecado(brandId));
+  const coverage = COVERAGE[brandId] || [];
+  const buscas = topSearches(5);
+  const [recTarget, setRecTarget] = useState('todos');
+  const [recadoText, setRecadoText] = useState(getRecadoFor(brandId, 'todos'));
 
   const done = (label: string, what: string) => {
     setOpenForm(null);
@@ -365,30 +439,41 @@ export default function Gestor() {
 
       {toast && <div className="wp-gz-toast"><Check size={13} className="wp-ico" /> {toast} <Link to="/eleva/catalogo">ver no app <ExternalLink size={12} className="wp-ico" /></Link></div>}
 
-      {/* Recado pro time */}
+      {/* Recado pra rede (por canal) */}
       <div className="wp-gz-block">
         <div className="wp-gz-block-head">
-          <span className="wp-gz-block-title"><Megaphone size={17} className="wp-ico" /> Recado pro time</span>
+          <span className="wp-gz-block-title"><Megaphone size={17} className="wp-ico" /> Recado pra rede</span>
         </div>
         <div className="wp-gz-form">
+          <label className="wp-gz-label">Pra quem?</label>
+          <select
+            value={recTarget}
+            onChange={(e) => { const t = e.target.value; setRecTarget(t); setRecadoText(getRecadoFor(brandId, t)); }}
+          >
+            <option value="todos">Toda a rede</option>
+            {SEGMENTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+          </select>
           <textarea
             value={recadoText}
             onChange={(e) => setRecadoText(e.target.value)}
             rows={2}
-            placeholder="Ex.: Meninas, foco no GLPEN essa semana! Quem bater 5 posts ganha brinde 🎁"
+            placeholder="Ex.: Foco no GLPEN essa semana! Quem bater 5 posts ganha brinde 🎁"
           />
           <div className="wp-gz-row" style={{ marginTop: 10 }}>
-            <button className="wp-gz-submit" style={{ marginTop: 0 }} onClick={() => { setRecado(brandId, recadoText.trim()); setToast('Recado publicado pro time.'); setTimeout(() => setToast(''), 4000); }}>
+            <button className="wp-gz-submit" style={{ marginTop: 0 }} onClick={() => { setRecado(brandId, recadoText.trim(), recTarget); setToast(`Recado publicado (${recTarget === 'todos' ? 'toda a rede' : segmentLabel(recTarget)}).`); setTimeout(() => setToast(''), 4000); }}>
               <Send size={15} className="wp-ico" /> Publicar recado
             </button>
-            {getRecado(brandId) && (
-              <button className="wp-gz-add" style={{ background: 'var(--wp-bg)', color: 'var(--wp-soft)' }} onClick={() => { setRecado(brandId, ''); setRecadoText(''); }}>
+            {getRecadoFor(brandId, recTarget) && (
+              <button className="wp-gz-add" style={{ background: 'var(--wp-bg)', color: 'var(--wp-soft)' }} onClick={() => { setRecado(brandId, '', recTarget); setRecadoText(''); }}>
                 Tirar do ar
               </button>
             )}
           </div>
         </div>
       </div>
+
+      {/* Convites por canal (QR/link) */}
+      <ConvitesBlock />
 
       {/* Métricas */}
       <div className="wp-gz-metrics">
@@ -422,6 +507,32 @@ export default function Gestor() {
             </div>
           ))}
         </div>
+        <div className="wp-gz-top">
+          <div className="wp-gz-top-head">Cobertura por canal (pontos ativados)</div>
+          {coverage.map((c) => (
+            <div key={c.seg} className="wp-gz-bar-row">
+              <span className="wp-gz-bar-name">{c.seg}</span>
+              <span className="wp-gz-bar-track">
+                <span className="wp-gz-bar-fill" style={{ width: `${Math.round((c.ativos / c.total) * 100)}%` }} />
+              </span>
+              <span className="wp-gz-bar-val">{c.ativos}/{c.total}</span>
+            </div>
+          ))}
+        </div>
+        <div className="wp-gz-top">
+          <div className="wp-gz-top-head"><Search size={12} className="wp-ico" /> O que a ponta busca no “me salva” (objeções reais)</div>
+          {buscas.length ? buscas.map((b) => (
+            <div key={b.term} className="wp-gz-bar-row">
+              <span className="wp-gz-bar-name">“{b.term}”</span>
+              <span className="wp-gz-bar-track">
+                <span className="wp-gz-bar-fill" style={{ width: `${Math.min(100, (b.count / (buscas[0]?.count || 1)) * 100)}%` }} />
+              </span>
+              <span className="wp-gz-bar-val">{b.count}</span>
+            </div>
+          )) : (
+            <p className="wp-gz-help" style={{ margin: 0 }}>Ainda sem buscas registradas neste aparelho — com o time usando, aqui aparecem as objeções mais digitadas.</p>
+          )}
+        </div>
       </div>
 
       {/* Produtos */}
@@ -451,7 +562,7 @@ export default function Gestor() {
           {offers.map((o, i) => (
             <div key={i} className="wp-gz-item">
               <span className="wp-gz-item-name">{o.title}</span>
-              <span className="wp-gz-item-meta">{o.tag}</span>
+              <span className="wp-gz-item-meta">{o.segment ? `${o.tag} · ${segmentLabel(o.segment)}` : o.tag}</span>
             </div>
           ))}
         </div>

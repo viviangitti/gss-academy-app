@@ -171,24 +171,42 @@ export function addTrend(item: Trend) {
   emit();
 }
 
-// ---- Recado da marca (comunicação do gestor pro time) ----
-const RECKEY = 'wp_recado';
-export function getRecado(brandId: BrandId): string {
+// ---- Recado da marca (comunicação do gestor pra rede) ----
+// Por SEGMENTO de canal: 'todos' vale pra rede inteira; 'farmacia' só pro balcão etc.
+const RECKEY = 'wp_recado_v2';
+type RecadoMap = Record<string, Record<string, string>>; // marca -> alvo -> texto
+function readRecados(): RecadoMap {
   try {
-    const m = JSON.parse(localStorage.getItem(RECKEY) || '{}');
-    return m[brandId] || '';
+    const m = JSON.parse(localStorage.getItem(RECKEY) || 'null');
+    if (m) return m as RecadoMap;
+  } catch { /* ignore */ }
+  // migra o formato antigo (um texto por marca = 'todos')
+  try {
+    const old = JSON.parse(localStorage.getItem('wp_recado') || '{}');
+    const out: RecadoMap = {};
+    for (const [b, t] of Object.entries(old)) {
+      if (typeof t === 'string' && t) out[b] = { todos: t };
+    }
+    return out;
   } catch {
-    return '';
+    return {};
   }
 }
-export function setRecado(brandId: BrandId, text: string) {
-  try {
-    const m = JSON.parse(localStorage.getItem(RECKEY) || '{}');
-    m[brandId] = text;
-    localStorage.setItem(RECKEY, JSON.stringify(m));
-  } catch {
-    /* ignore */
-  }
+// O que a vendedora vê: o recado do canal dela, senão o geral.
+export function getRecado(brandId: BrandId, segment?: string): string {
+  const m = readRecados()[brandId] || {};
+  return (segment && m[segment]) || m.todos || '';
+}
+// O que o gestor edita: exatamente o alvo escolhido (sem fallback).
+export function getRecadoFor(brandId: BrandId, target: string): string {
+  return (readRecados()[brandId] || {})[target] || '';
+}
+export function setRecado(brandId: BrandId, text: string, target = 'todos') {
+  const all = readRecados();
+  const m = all[brandId] || (all[brandId] = {});
+  if (text) m[target] = text;
+  else delete m[target];
+  try { localStorage.setItem(RECKEY, JSON.stringify(all)); } catch { /* ignore */ }
   emit();
 }
 

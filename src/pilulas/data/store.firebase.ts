@@ -126,16 +126,22 @@ export async function addTrend(item: Trend) {
   await setDoc(doc(db, 'elevaBrands', item.brand!, 'elevaTrends', item.id), { ...item, createdAt: serverTimestamp() });
 }
 
-// ---- Recado da marca ----
-const recadoCache: Record<string, string> = {};
-export function getRecado(brandId: BrandId): string {
-  return recadoCache[brandId] || '';
+// ---- Recado da marca (por segmento; 'todos' = rede inteira) ----
+const recadoCache: Record<string, Record<string, string>> = {};
+export function getRecado(brandId: BrandId, segment?: string): string {
+  const m = recadoCache[brandId] || {};
+  return (segment && m[segment]) || m.todos || '';
 }
-export async function setRecado(brandId: BrandId, text: string) {
-  recadoCache[brandId] = text;
+export function getRecadoFor(brandId: BrandId, target: string): string {
+  return (recadoCache[brandId] || {})[target] || '';
+}
+export async function setRecado(brandId: BrandId, text: string, target = 'todos') {
+  const m = recadoCache[brandId] || (recadoCache[brandId] = {});
+  if (text) m[target] = text;
+  else delete m[target];
   emit();
   if (!db) return;
-  await setDoc(doc(db, 'elevaBrands', brandId), { recado: text }, { merge: true });
+  await setDoc(doc(db, 'elevaBrands', brandId), { recados: { [target]: text || null } }, { merge: true });
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

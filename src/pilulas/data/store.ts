@@ -24,5 +24,6 @@ export const addCalendar = impl.addCalendar;
 export const allTrends = impl.allTrends;
 export const addTrend = impl.addTrend;
 export const getRecado = impl.getRecado;
+export const getRecadoFor = impl.getRecadoFor;
 export const setRecado = impl.setRecado;
 export const useStore = impl.useStore;

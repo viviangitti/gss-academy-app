@@ -14,6 +14,7 @@ import BottomNav from './BottomNav';
 import { BrandProvider, useBrand } from './BrandContext';
 import { AuthProvider, useAuth } from './AuthContext';
 import { getRecado, useStore } from './data/store';
+import { stageSegmentFromUrl } from './data/segments';
 import './pilulas.css';
 
 function BrandSwitcher() {
@@ -64,10 +65,11 @@ function RequireGestor({ children }: { children: React.ReactElement }) {
 function RecadoBanner() {
   useStore();
   const { brand, brandId } = useBrand();
+  const { user } = useAuth();
   const [dismissed, setDismissed] = useState<string>(() => {
     try { return localStorage.getItem('wp_recado_seen') || ''; } catch { return ''; }
   });
-  const recado = getRecado(brandId);
+  const recado = getRecado(brandId, user?.segment);
   if (!recado || dismissed === recado) return null;
   return (
     <div className="wp-recado">
@@ -165,6 +167,9 @@ function Shell() {
 }
 
 export default function PilulasApp() {
+  // Se a pessoa chegou por um link/QR de convite (?convite=farmacia), guarda a
+  // etiqueta de canal ANTES do login — o cadastro já entra segmentado.
+  stageSegmentFromUrl();
   return (
     <BrowserRouter>
       <AuthProvider>

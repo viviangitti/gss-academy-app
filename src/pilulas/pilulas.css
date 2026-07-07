@@ -1272,3 +1272,18 @@
   color: var(--wp-pink-deep); font-size: 13.5px; font-weight: 800; text-decoration: none;
   padding: 6px 0 18px;
 }
+
+/* ---------- Convites por canal (QR) ---------- */
+.wp-gz-invites { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.wp-gz-invite {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  background: var(--wp-bg); border-radius: 14px; padding: 14px 10px; text-align: center;
+}
+.wp-gz-invite b { font-size: 12.5px; color: var(--wp-ink); }
+.wp-gz-invite-qr { width: 104px; height: 104px; border-radius: 10px; background: #fff; }
+.wp-gz-invite-copy {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--wp-surface); border: 1.5px solid var(--wp-border); border-radius: 9px;
+  padding: 7px 10px; font-size: 11.5px; font-weight: 800; color: var(--wp-ink);
+  font-family: inherit; cursor: pointer;
+}

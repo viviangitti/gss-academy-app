@@ -103,22 +103,23 @@ export default function Quiz({ product }: { product: Product }) {
   const answer = (i: number) => {
     if (picked !== null) return;
     setPicked(i);
-    const ok = i === questions[idx].correct;
-    const newHits = hits + (ok ? 1 : 0);
-    setHits(newHits);
-    setTimeout(() => {
-      if (idx + 1 < questions.length) {
-        setIdx(idx + 1);
-        setPicked(null);
-      } else {
-        if (newHits === questions.length) {
-          const wasNew = !isQuizDone(product.id);
-          recordQuizPass(product.id);
-          setPassedNow(wasNew);
-        }
-        setFinished(true);
-      }
-    }, 1100);
+    if (i === questions[idx].correct) setHits((h) => h + 1);
+  };
+
+  // Só avança quando a pessoa clica em "Próxima" — assim ela lê a resposta
+  // certa com calma, sem sumir sozinho.
+  const advance = () => {
+    if (idx + 1 < questions.length) {
+      setIdx(idx + 1);
+      setPicked(null);
+      return;
+    }
+    if (hits === questions.length) {
+      const wasNew = !isQuizDone(product.id);
+      recordQuizPass(product.id);
+      setPassedNow(wasNew);
+    }
+    setFinished(true);
   };
 
   // Já domina e não está refazendo agora
@@ -182,6 +183,17 @@ export default function Quiz({ product }: { product: Product }) {
           );
         })}
       </div>
+      {picked !== null && (
+        <>
+          <p className="wp-quiz-feedback">
+            {picked === q.correct ? 'Boa, é essa mesmo!' : 'Quase — a resposta certa é a que ficou em verde.'}
+          </p>
+          <button className="wp-quiz-next" onClick={advance}>
+            {idx + 1 < questions.length ? 'Próxima' : 'Ver resultado'}
+            <ChevronRight size={16} className="wp-ico" />
+          </button>
+        </>
+      )}
     </div>
   );
 }

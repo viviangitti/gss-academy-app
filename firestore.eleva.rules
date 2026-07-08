@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Gestores autorizados (espelha GESTOR_EMAILS do app).
+    function isGestor() {
+      return request.auth != null &&
+        request.auth.token.email in ['viviangitti@gmail.com', 'viviangitti23@gmail.com'];
+    }
+    // Conteúdo do Eleva: quem está logado LÊ; só o gestor ESCREVE.
+    match /{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isGestor();
+    }
+  }
+}

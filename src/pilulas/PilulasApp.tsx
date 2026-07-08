@@ -92,6 +92,8 @@ function Shell() {
   const [onboarded, setOnboarded] = useState<boolean>(() => {
     try { return !!localStorage.getItem('wp_onboarded'); } catch { return true; }
   });
+  // Ao trocar de tela, volta pro topo (senão o produto abria no meio/fim da página).
+  useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
   const themeStyle = {
     '--wp-pink': brand.accent,
     '--wp-pink-deep': brand.accentDeep,

@@ -26,11 +26,9 @@ function Reel({ product }: { product: ProductT }) {
 
   useEffect(() => {
     if (hasVideo(product.id)) ensureVideoLoaded(product.id);
-    if (hasImage(product.id)) ensureImageLoaded(product.id);
   }, [product.id]);
 
   const videoUrl = getVideoObjectUrl(product.id) || product.videoUrl;
-  const coverImg = getProductImageUrl(product.id) || product.imageUrl;
   const scene = product.storyboard[i];
   const ms = sceneMs(scene.t);
 
@@ -61,11 +59,7 @@ function Reel({ product }: { product: ProductT }) {
     );
   }
 
-  // Sem vídeo: se tem foto de capa, mostra a foto; senão, o storyboard animado.
-  if (coverImg) {
-    return <div className="wp-reel wp-reel--photo" style={{ backgroundImage: `url("${coverImg}")` }} />;
-  }
-
+  // Sem vídeo: o storyboard animado (a foto NÃO entra aqui — é só capa do catálogo).
   return (
     <div
       className="wp-reel"

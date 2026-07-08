@@ -16,7 +16,8 @@ export interface User {
 // GESTORES AUTORIZADOS — controla quem entra no Painel do Gestor. Quem loga com
 // um e-mail desta lista vira gestor; qualquer outro entra como vendedora.
 // Para adicionar outro gestor, inclua o e-mail aqui (em minúsculo) e publique.
-const GESTOR_EMAILS = ['viviangitti@gmail.com', 'viviangitti23@gmail.com'];
+// viviangitti@gmail.com entra como VENDEDORA (a pedido); gestor fica no 23.
+const GESTOR_EMAILS = ['viviangitti23@gmail.com'];
 
 function roleFor(email: string): Role {
   return GESTOR_EMAILS.includes(email.trim().toLowerCase()) ? 'gestor' : 'vendedora';

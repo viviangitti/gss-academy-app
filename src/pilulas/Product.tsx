@@ -3,11 +3,13 @@ import { useParams, Link } from 'react-router-dom';
 import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
+  Pencil, ChevronDown, UploadCloud, Check,
 } from 'lucide-react';
 import { buildShareMessage, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
-import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, useStore } from './data/store';
+import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, useStore } from './data/store';
 import { recordView } from './data/tracking';
+import { useAuth } from './AuthContext';
 
 // Duração de cada cena a partir da marcação de tempo do roteiro ("0-4s" → 4s).
 function sceneMs(t: string): number {
@@ -121,7 +123,56 @@ function InstagramEmbed({ url }: { url: string }) {
   );
 }
 
+// Editor de vídeo direto na pílula — SÓ o gestor vê. Trocar o vídeo aqui,
+// no próprio produto, sem ir ao painel.
+function GestorVideoEditor({ product }: { product: ProductT }) {
+  const { user } = useAuth();
+  const [open, setOpen] = useState(false);
+  const [ig, setIg] = useState(product.instagramUrl || '');
+  const [saved, setSaved] = useState(false);
+  if (user?.role !== 'gestor') return null;
+  const uploaded = hasVideo(product.id);
+  const videoAgora = uploaded ? 'vídeo MP4' : product.instagramUrl ? 'reel do Instagram' : 'prévia animada (padrão)';
+  const flash = () => { setSaved(true); setTimeout(() => setSaved(false), 1800); };
+  const salvarReel = () => { clearProductVideo(product.id); setProductIG(product.id, ig); flash(); };
+  const subirMp4 = (f: File) => { setProductIG(product.id, ''); setProductVideo(product.id, f); setIg(''); flash(); };
+  const tirar = () => { clearProductVideo(product.id); setProductIG(product.id, ''); setIg(''); };
+  return (
+    <div className="wp-videdit">
+      <button className="wp-videdit-toggle" onClick={() => setOpen((o) => !o)}>
+        <Pencil size={14} className="wp-ico" /> Trocar o vídeo desta pílula
+        <ChevronDown size={16} className={`wp-ico wp-videdit-chev ${open ? 'open' : ''}`} />
+      </button>
+      {open && (
+        <div className="wp-videdit-body">
+          <p className="wp-videdit-now">Vídeo agora: <b>{videoAgora}</b></p>
+          <input
+            className="wp-videdit-input"
+            value={ig}
+            onChange={(e) => setIg(e.target.value)}
+            onFocus={(e) => e.target.select()}
+            placeholder="Cole aqui o link do reel do Instagram"
+          />
+          <p className="wp-videdit-help">Toque no campo que ele já seleciona o link antigo — cole o novo por cima.</p>
+          <button className="wp-videdit-save" disabled={!ig.trim()} onClick={salvarReel}>
+            {saved ? <><Check size={15} className="wp-ico" /> Vídeo trocado!</> : 'Salvar vídeo do Instagram'}
+          </button>
+          <label className="wp-videdit-mp4">
+            <UploadCloud size={16} className="wp-ico" />
+            {uploaded ? 'Trocar por um MP4' : 'Ou subir um vídeo MP4'}
+            <input type="file" accept="video/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) subirMp4(f); }} />
+          </label>
+          {(uploaded || product.instagramUrl) && (
+            <button className="wp-videdit-remove" onClick={tirar}>Tirar o vídeo (voltar pro padrão)</button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Product() {
+  useStore(); // re-renderiza quando o gestor troca o vídeo
   const { id } = useParams();
   const product = id ? findProduct(id) : undefined;
   const [openObj, setOpenObj] = useState<number | null>(0);
@@ -155,6 +206,7 @@ export default function Product() {
   return (
     <div className="wp-product">
       <Reel product={product} />
+      <GestorVideoEditor product={product} />
 
       <h1 className="wp-prod-name">{product.name}</h1>
       <p className="wp-prod-tag">{product.tagline}</p>

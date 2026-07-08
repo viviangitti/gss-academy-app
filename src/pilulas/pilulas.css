@@ -1319,3 +1319,44 @@
 .wp-gz-chev.open { transform: rotate(180deg); }
 .wp-gz-vidnow { font-size: 12.5px; color: var(--wp-soft); margin: 0 0 12px; }
 .wp-gz-vidnow b { color: var(--wp-ink); }
+
+/* ---------- Editor de vídeo do gestor, direto na pílula ---------- */
+.wp-videdit { margin: 10px 0 4px; }
+.wp-videdit-toggle {
+  width: 100%; display: inline-flex; align-items: center; gap: 8px;
+  background: var(--wp-surface); border: 1.5px dashed var(--wp-pink); color: var(--wp-pink-deep);
+  border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 800;
+  font-family: inherit; cursor: pointer;
+}
+.wp-videdit-chev { margin-left: auto; transition: transform 0.2s ease; }
+.wp-videdit-chev.open { transform: rotate(180deg); }
+.wp-videdit-body {
+  background: var(--wp-surface); border: 1.5px solid var(--wp-border); border-top: none;
+  border-radius: 0 0 12px 12px; padding: 14px; margin-top: -6px;
+}
+.wp-videdit-now { font-size: 12.5px; color: var(--wp-soft); margin: 0 0 10px; }
+.wp-videdit-now b { color: var(--wp-ink); }
+.wp-videdit-input {
+  width: 100%; border: 1.5px solid var(--wp-border); border-radius: 11px;
+  padding: 12px 14px; font-size: 14px; font-family: inherit; color: var(--wp-text);
+  outline: none; background: var(--wp-bg);
+}
+.wp-videdit-input:focus { border-color: var(--wp-pink); }
+.wp-videdit-help { font-size: 11.5px; color: var(--wp-soft); margin: 7px 0 0; line-height: 1.4; }
+.wp-videdit-save {
+  width: 100%; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--wp-pink); color: var(--wp-on-accent); border: none; border-radius: 12px;
+  padding: 13px; font-size: 14px; font-weight: 800; font-family: inherit; cursor: pointer;
+}
+.wp-videdit-save:disabled { opacity: 0.5; cursor: not-allowed; }
+.wp-videdit-mp4 {
+  width: 100%; margin-top: 10px; display: inline-flex; align-items: center; gap: 8px;
+  background: var(--wp-bg); border: 1.5px solid var(--wp-border); border-radius: 11px;
+  padding: 11px 14px; font-size: 12.5px; font-weight: 700; color: var(--wp-ink);
+  cursor: pointer;
+}
+.wp-videdit-remove {
+  width: 100%; margin-top: 10px; background: none; border: none;
+  color: var(--wp-soft); font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer;
+  text-decoration: underline;
+}

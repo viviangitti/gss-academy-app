@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronDown } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { CATEGORIES, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
 import { CHANNELS, type Channel } from './data/creatorContent';
 import { SEGMENTS, segmentLabel } from './data/segments';
 import { topSearches } from './data/insights';
-import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, setProductIG, setProductVideo, clearProductVideo, hasVideo, useStore } from './data/store';
+import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, useStore } from './data/store';
 
 // Métricas da marca (dados de demonstração — em produção vêm do backend/Firestore).
 const METRICS: Record<string, {
@@ -306,9 +306,6 @@ function TrendForm({ brand, onDone }: { brand: string; onDone: (t: string) => vo
 
 function ProductRow({ p }: { p: Product }) {
   useStore();
-  const [open, setOpen] = useState(false);
-  const [ig, setIg] = useState(p.instagramUrl || '');
-  const [saved, setSaved] = useState(false);
   const uploaded = hasVideo(p.id);
   const meta = uploaded ? (
     <><Video size={12} className="wp-ico" /> vídeo MP4</>
@@ -317,53 +314,12 @@ function ProductRow({ p }: { p: Product }) {
   ) : (
     CATEGORIES[p.category].label
   );
-  const flash = () => { setSaved(true); setTimeout(() => setSaved(false), 1800); };
-  const videoAgora = uploaded ? 'vídeo MP4' : p.instagramUrl ? 'reel do Instagram' : 'prévia animada (padrão)';
-  // Salvar reel do Instagram = esse vira O vídeo (tira o MP4 se houver).
-  const salvarReel = () => { clearProductVideo(p.id); setProductIG(p.id, ig); flash(); };
-  const subirMp4 = (f: File) => { setProductIG(p.id, ''); setProductVideo(p.id, f); setIg(''); flash(); };
-  const tirar = () => { clearProductVideo(p.id); setProductIG(p.id, ''); setIg(''); };
+  // Abrir o produto = ir pra pílula, onde o gestor troca o vídeo direto na tela.
   return (
-    <div className="wp-gz-prod">
-      <button className="wp-gz-item wp-gz-item-btn" onClick={() => setOpen((o) => !o)}>
-        <span className="wp-gz-item-name">{p.name}</span>
-        <span className="wp-gz-item-meta">{meta} <ChevronDown size={14} className={`wp-ico wp-gz-chev ${open ? 'open' : ''}`} /></span>
-      </button>
-      {open && (
-        <div className="wp-gz-prod-edit">
-          <p className="wp-gz-vidnow">Vídeo agora: <b>{videoAgora}</b></p>
-
-          <label className="wp-gz-label">Trocar por um reel do Instagram</label>
-          <input
-            value={ig}
-            onChange={(e) => setIg(e.target.value)}
-            onFocus={(e) => e.target.select()}
-            placeholder="Cole aqui o link do reel"
-          />
-          <p className="wp-gz-help">Dica: toque no campo que ele já seleciona o link antigo — aí é só colar o novo por cima.</p>
-          <button className="wp-gz-submit" style={{ marginTop: 8 }} disabled={!ig.trim()} onClick={salvarReel}>
-            {saved ? <><Check size={16} className="wp-ico" /> Vídeo trocado!</> : 'Salvar vídeo do Instagram'}
-          </button>
-
-          <label className="wp-gz-label" style={{ marginTop: 14 }}>Ou subir um vídeo MP4</label>
-          <label className="wp-gz-upload">
-            <UploadCloud size={18} className="wp-ico" />
-            {uploaded ? 'Trocar o MP4' : 'Escolher arquivo MP4'}
-            <input type="file" accept="video/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) subirMp4(f); }} />
-          </label>
-
-          {(uploaded || p.instagramUrl) && (
-            <button
-              className="wp-gz-add"
-              style={{ marginTop: 10, background: 'var(--wp-bg)', color: 'var(--wp-soft)' }}
-              onClick={tirar}
-            >
-              Tirar o vídeo (voltar pro padrão)
-            </button>
-          )}
-        </div>
-      )}
-    </div>
+    <Link to={`/eleva/produto/${p.id}`} className="wp-gz-item wp-gz-item-btn">
+      <span className="wp-gz-item-name">{p.name}</span>
+      <span className="wp-gz-item-meta">{meta} <ChevronRight size={14} className="wp-ico" /></span>
+    </Link>
   );
 }
 

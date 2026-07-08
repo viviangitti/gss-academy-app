@@ -42,6 +42,7 @@ export interface Product {
   storyboard: Scene[]; // roteiro do vídeo de 30s
   videoUrl?: string; // MP4 real da pílula (quando o gestor sobe um vídeo)
   instagramUrl?: string; // link de um reel/post público do IG — prova social (só o gestor cadastra)
+  imageUrl?: string; // foto de capa (URL hospedada; upload local fica no IndexedDB)
 }
 
 export const CATEGORIES: Record<Category, { label: string; Icon: LucideIcon }> = {

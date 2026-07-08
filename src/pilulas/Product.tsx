@@ -3,11 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
-  Pencil, ChevronDown, UploadCloud, Check,
+  Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
 } from 'lucide-react';
 import { buildShareMessage, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
-import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, useStore } from './data/store';
+import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
 import { recordView } from './data/tracking';
 import { useAuth } from './AuthContext';
 
@@ -26,9 +26,11 @@ function Reel({ product }: { product: ProductT }) {
 
   useEffect(() => {
     if (hasVideo(product.id)) ensureVideoLoaded(product.id);
+    if (hasImage(product.id)) ensureImageLoaded(product.id);
   }, [product.id]);
 
   const videoUrl = getVideoObjectUrl(product.id) || product.videoUrl;
+  const coverImg = getProductImageUrl(product.id) || product.imageUrl;
   const scene = product.storyboard[i];
   const ms = sceneMs(scene.t);
 
@@ -57,6 +59,11 @@ function Reel({ product }: { product: ProductT }) {
         <InstagramEmbed url={product.instagramUrl} />
       </div>
     );
+  }
+
+  // Sem vídeo: se tem foto de capa, mostra a foto; senão, o storyboard animado.
+  if (coverImg) {
+    return <div className="wp-reel wp-reel--photo" style={{ backgroundImage: `url("${coverImg}")` }} />;
   }
 
   return (
@@ -130,9 +137,12 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
   const [open, setOpen] = useState(false);
   const [ig, setIg] = useState(product.instagramUrl || '');
   const [saved, setSaved] = useState(false);
+  useEffect(() => { if (hasImage(product.id)) ensureImageLoaded(product.id); }, [product.id]);
   if (user?.role !== 'gestor') return null;
   const uploaded = hasVideo(product.id);
   const videoAgora = uploaded ? 'vídeo MP4' : product.instagramUrl ? 'reel do Instagram' : 'prévia animada (padrão)';
+  const capaUrl = getProductImageUrl(product.id) || product.imageUrl;
+  const temCapa = !!capaUrl;
   const flash = () => { setSaved(true); setTimeout(() => setSaved(false), 1800); };
   const salvarReel = () => { clearProductVideo(product.id); setProductIG(product.id, ig); flash(); };
   const subirMp4 = (f: File) => { setProductIG(product.id, ''); setProductVideo(product.id, f); setIg(''); flash(); };
@@ -164,6 +174,18 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
           </label>
           {(uploaded || product.instagramUrl) && (
             <button className="wp-videdit-remove" onClick={tirar}>Tirar o vídeo (voltar pro padrão)</button>
+          )}
+
+          <div className="wp-videdit-divider" />
+          <p className="wp-videdit-now">Foto de capa <span className="wp-videdit-cap">— aparece no card do catálogo</span></p>
+          {temCapa && <img src={capaUrl} alt="capa do produto" className="wp-videdit-preview" />}
+          <label className="wp-videdit-mp4">
+            <ImageIcon size={16} className="wp-ico" />
+            {temCapa ? 'Trocar a foto de capa' : 'Subir uma foto de capa'}
+            <input type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) { setProductImage(product.id, f); flash(); } }} />
+          </label>
+          {temCapa && (
+            <button className="wp-videdit-remove" onClick={() => clearProductImage(product.id)}>Tirar a foto de capa</button>
           )}
         </div>
       )}

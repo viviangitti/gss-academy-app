@@ -92,6 +92,26 @@ export async function setProductVideo(id: string, file: File) {
 export function clearProductVideo(_id: string) {
   /* noop no Firebase por enquanto */
 }
+// Foto de capa — paridade (por enquanto stub; com Storage ligado vira upload).
+export function hasImage(_id: string): boolean {
+  return false;
+}
+export function getProductImageUrl(_id: string): string | undefined {
+  return undefined;
+}
+export function ensureImageLoaded(_id: string) {
+  /* no Firebase a capa vem de product.imageUrl */
+}
+export async function setProductImage(id: string, file: File) {
+  if (!db || !storage) return;
+  const r = ref(storage, `elevaOverrides/${id}/capa`);
+  await uploadBytes(r, file);
+  const url = await getDownloadURL(r);
+  await setDoc(doc(db, 'elevaOverrides', id), { imageUrl: url }, { merge: true });
+}
+export function clearProductImage(_id: string) {
+  /* noop no Firebase por enquanto */
+}
 
 // ---- Ofertas ----
 export function allOffers(): Offer[] {

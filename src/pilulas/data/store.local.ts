@@ -62,6 +62,50 @@ export function clearProductVideo(id: string) {
   removeVideo(id).catch(() => { /* ignore */ });
 }
 
+// ---- Foto de capa do produto (mesma ideia do vídeo: blob no IndexedDB, chave "img:") ----
+const IMGKEY = 'wp_image_ids';
+const loadedImgUrls = new Map<string, string>();
+const loadingImgs = new Set<string>();
+function imageIds(): string[] {
+  try { return JSON.parse(localStorage.getItem(IMGKEY) || '[]'); } catch { return []; }
+}
+function addImageId(id: string) {
+  const ids = imageIds();
+  if (!ids.includes(id)) { ids.push(id); try { localStorage.setItem(IMGKEY, JSON.stringify(ids)); } catch { /* ignore */ } }
+}
+function removeImageId(id: string) {
+  try { localStorage.setItem(IMGKEY, JSON.stringify(imageIds().filter((v) => v !== id))); } catch { /* ignore */ }
+}
+export function hasImage(id: string): boolean {
+  return imageIds().includes(id) || loadedImgUrls.has(id);
+}
+export function getProductImageUrl(id: string): string | undefined {
+  return loadedImgUrls.get(id);
+}
+export function ensureImageLoaded(id: string) {
+  if (loadedImgUrls.has(id) || loadingImgs.has(id) || !imageIds().includes(id)) return;
+  loadingImgs.add(id);
+  getVideo('img:' + id).then((blob) => {
+    loadingImgs.delete(id);
+    if (blob) { loadedImgUrls.set(id, URL.createObjectURL(blob)); emit(); }
+  }).catch(() => { loadingImgs.delete(id); });
+}
+export function setProductImage(id: string, file: File) {
+  const prev = loadedImgUrls.get(id);
+  if (prev) URL.revokeObjectURL(prev);
+  loadedImgUrls.set(id, URL.createObjectURL(file));
+  addImageId(id);
+  emit();
+  putVideo('img:' + id, file).catch(() => { /* ignore */ });
+}
+export function clearProductImage(id: string) {
+  const prev = loadedImgUrls.get(id);
+  if (prev) { URL.revokeObjectURL(prev); loadedImgUrls.delete(id); }
+  removeImageId(id);
+  emit();
+  removeVideo('img:' + id).catch(() => { /* ignore */ });
+}
+
 let version = 0;
 const listeners = new Set<() => void>();
 function emit() {

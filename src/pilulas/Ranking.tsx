@@ -2,12 +2,14 @@ import { Link } from 'react-router-dom';
 import { Trophy, Flame, Target, Check, Medal, User, Rocket, ArrowRight } from 'lucide-react';
 import { getStats, WEEKLY_GOAL } from './data/tracking';
 import { RIVALS } from './data/leaderboard';
+import { useAuth } from './AuthContext';
+import { segmentLabel } from './data/segments';
 
 const MEDAL_COLOR = ['#c9a84c', '#9ca3af', '#b8763e']; // ouro, prata, bronze
 
 interface Row {
   name: string;
-  city: string;
+  company: string; // empresa / ponto de venda
   points: number;
   streak: number;
   me?: boolean;
@@ -15,10 +17,12 @@ interface Row {
 
 export default function Ranking() {
   const stats = getStats();
+  const { user } = useAuth();
+  const myCompany = user?.segment ? segmentLabel(user.segment) : 'seu ponto de venda';
 
   const rows: Row[] = [
     ...RIVALS.map((r) => ({ ...r })),
-    { name: 'Você', city: 'sua cidade', points: stats.weekPoints, streak: stats.streak, me: true },
+    { name: 'Você', company: myCompany, points: stats.weekPoints, streak: stats.streak, me: true },
   ].sort((a, b) => b.points - a.points);
 
   const myIndex = rows.findIndex((r) => r.me);
@@ -99,7 +103,7 @@ export default function Ranking() {
             <span className="wp-rk-av">{r.me ? <User size={15} /> : r.name[0]}</span>
             <span className="wp-rk-info">
               <b>{r.me ? 'Você' : r.name}</b>
-              <small>{r.city}</small>
+              <small>{r.company}</small>
             </span>
             <span className="wp-rk-streak"><Flame size={12} className="wp-ico" />{r.streak}</span>
             <span className="wp-rk-pts">{r.points}</span>

@@ -22,41 +22,51 @@ interface Hit {
   answer?: string; // resposta pronta
 }
 
-// Casa por PALAVRAS (todas precisam aparecer, em qualquer ordem) — assim
-// "achou caro" encontra "achei caro", "dor joelho" encontra o Moviben etc.
-// Radical simples: corta sufixo comum de verbo/plural pra "achou"≈"achei".
+// Busca AMPLA: não exige todas as palavras — rankeia por quantas batem. Assim
+// "perdendo massa magra" acha o GLPEN pelas palavras "massa/magra", ignorando
+// conectores. Radical simples: "achou"≈"achei", plural etc.
+const STOP = new Set([
+  'que', 'com', 'sem', 'por', 'pra', 'para', 'uma', 'uns', 'umas', 'meu', 'minha', 'meus', 'minhas',
+  'dos', 'das', 'nos', 'nas', 'ele', 'ela', 'eles', 'elas', 'tem', 'ter', 'foi', 'vai', 'sua', 'seu',
+  'isso', 'esse', 'essa', 'este', 'esta', 'aqui', 'ali', 'mais', 'muito', 'muita', 'ser', 'estou',
+  'nao', 'sim', 'the', 'and', 'voce', 'cliente', 'pessoa', 'sobre',
+]);
 function stem(w: string): string {
   return w.length > 4 ? w.replace(/(ou|ei|ar|er|ir|as|es|is|os|s)$/, '') : w;
 }
-function matches(blob: string, words: string[]): boolean {
-  return words.every((w) => blob.includes(w) || (w.length > 3 && blob.includes(stem(w))));
+function hasWord(blob: string, w: string): boolean {
+  return blob.includes(w) || (w.length > 3 && blob.includes(stem(w)));
 }
+function score(blob: string, words: string[]): number {
+  let n = 0;
+  for (const w of words) if (hasWord(blob, w)) n++;
+  return n;
+}
+
+interface ScoredHit extends Hit { score: number; }
 
 function searchPills(query: string, products: Product[]): Hit[] {
   const q = norm(query.trim());
   if (q.length < 2) return [];
-  const words = q.split(/\s+/).filter((w) => w.length >= 2);
+  // palavras significativas: 3+ letras e fora da lista de conectores
+  const words = q.split(/\s+/).filter((w) => w.length >= 3 && !STOP.has(w));
   if (!words.length) return [];
-  const hits: Hit[] = [];
+  const hits: ScoredHit[] = [];
   for (const p of products) {
-    // 1º: objeções — o "me salva" de verdade (resposta pronta na tela)
+    // objeções — o "me salva" de verdade (resposta pronta na tela)
     for (const o of p.objections) {
-      if (matches(norm(o.trigger + ' ' + o.answer), words)) {
-        hits.push({ product: p, kind: 'objecao', trigger: o.trigger, answer: o.answer });
-      }
+      const s = score(norm(o.trigger + ' ' + o.answer), words);
+      if (s > 0) hits.push({ product: p, kind: 'objecao', trigger: o.trigger, answer: o.answer, score: s });
     }
-    // 2º: o produto em si (nome, dor, benefício, pra quem é)
-    const blob = norm(
-      [p.name, p.tagline, p.hook, p.whatItIs, p.forWho, p.howToUse, ...p.benefits].join(' ')
-    );
-    if (matches(blob, words)) {
-      hits.push({ product: p, kind: 'produto' });
-    }
+    // o produto em si (nome, dor, benefício, pra quem é)
+    const blob = norm([p.name, p.tagline, p.hook, p.whatItIs, p.forWho, p.howToUse, ...p.benefits].join(' '));
+    const s = score(blob, words);
+    if (s > 0) hits.push({ product: p, kind: 'produto', score: s });
   }
-  // Objeções primeiro; 1 resultado por produto/tipo; máx. 6
+  // Mais palavras batidas primeiro; no empate, resposta pronta (objeção) na frente.
   const seen = new Set<string>();
   return hits
-    .sort((a, b) => (a.kind === 'objecao' ? -1 : 1) - (b.kind === 'objecao' ? -1 : 1))
+    .sort((a, b) => (b.score - a.score) || ((a.kind === 'objecao' ? 0 : 1) - (b.kind === 'objecao' ? 0 : 1)))
     .filter((h) => {
       const k = `${h.product.id}:${h.kind}:${h.trigger || ''}`;
       if (seen.has(k)) return false;

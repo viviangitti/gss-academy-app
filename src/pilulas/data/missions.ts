@@ -50,27 +50,4 @@ export const MISSIONS: Mission[] = [
       'Cansaço que dorme e acorda igual, cabelo caindo, falta de ar subindo a escada? 😴 Muitas vezes é ferro baixo — comum demais na mulher. O Ative-Fer é ferro bisglicinato: repõe o ferro SEM aquela azia e prisão de ventre do ferro comum. Bora trazer a sua energia de volta? Me chama 💬',
     hashtags: '#ferro #cansaço #anemia #saudedamulher #meraki #disposição',
   },
-  {
-    id: 'm-kit-glow-status',
-    brand: 'wepink',
-    kind: 'status',
-    points: 20,
-    title: 'Compartilhe a oferta do Kit Glow no seu Status',
-    goal: 'Status bate em quem já é seu contato. Poste a sensação (viço + cheiro), não a lista de produtos.',
-    caption:
-      'Pele com aquele viço + um cheiro que faz todo mundo perguntar "amiga, que perfume é esse?" 😍 O Kit Glow junta sérum e body splash com preço de combo. É se sentir gata da cabeça aos pés — e só essa semana. Bora? 💬',
-    hashtags: '#skincare #kitglow #ofertadasemana',
-  },
-  {
-    id: 'm-serum-antes-depois',
-    brand: 'wepink',
-    kind: 'feed',
-    points: 60,
-    title: 'Faça um “antes e depois” usando o Sérum Facial',
-    goal: 'Conteúdo de prova social é o que mais converte. Use você mesma como modelo.',
-    productId: 'serum-facial',
-    caption:
-      'Testei o Sérum Facial Glow por 7 dias e olha esse viço 💧 Textura leve, some rápido e deixa a make lisinha. Quer testar? Te conto como usar 💗',
-    hashtags: '#antesedepois #skincare #glow #peleviçosa #resenha',
-  },
 ];

@@ -183,6 +183,7 @@ export const PRODUCTS: Product[] = [
     brand: 'meraki',
     name: 'ProbiAtiv',
     category: 'capsulas',
+    imageUrl: 'https://farmaciaindiana.vtexassets.com/arquivos/ids/342113-600-600?v=638737771515070000',
     tagline: 'Probiótico em comprimido pra equilibrar a flora intestinal e apoiar a digestão e a imunidade.',
     hook: 'Intestino preso, inchaço depois de comer, aquela sensação de "nada digere"?',
     whatItIs:
@@ -277,57 +278,6 @@ export const PRODUCTS: Product[] = [
     ],
   },
 
-  // ─────────── Suplementos & Vitaminas (WEPINK — marca-exemplo 2) ───────────
-  {
-    id: 'cabelos-e-unhas',
-    brand: 'wepink',
-    name: 'Cabelos & Unhas',
-    category: 'capsulas',
-    tagline: 'Suplemento em cápsula com 18 vitaminas e minerais + L-Cisteína, ácido hialurônico e silício orgânico.',
-    hook: 'Cabelo caindo, sem brilho, unha que descasca e não cresce?',
-    whatItIs:
-      'Deixa eu te falar por que seu cabelo cai mais do que devia: falta nutriente. Essa cápsula pequena junta 18 vitaminas e minerais + L-Cisteína, ácido hialurônico e silício orgânico — o combustível que o fio precisa pra parar de cair e a unha voltar a crescer. É cuidar do cabelo por dentro, não só passar creme por fora.',
-    benefits: [
-      'Auxilia na manutenção de cabelos e unhas saudáveis',
-      'Contribui para a formação normal de colágeno (Vitamina C)',
-      'Ajuda a reduzir o cansaço e a fadiga (Ferro e Vitaminas do complexo B)',
-      'Cápsula pequena, 1x ao dia — fácil de manter na rotina',
-    ],
-    howToUse: '1 cápsula por dia, com água, de preferência junto a uma refeição. Resultado vem com constância: o ciclo do cabelo pede uns 90 dias.',
-    forWho:
-      'Mulheres que sentem o cabelo enfraquecido (pós-parto, troca de estação, química no cabelo) e quem vive quebrando ou descascando a unha.',
-    salesLine: 'Cansada de olhar o cabelo no ralo? Em uns 90 dias essa história muda — e o primeiro pote já é o começo. Me chama que eu te explico como tomar certinho 💛',
-    objections: [
-      {
-        trigger: '"É caro."',
-        answer:
-          'Pensa por dose: dá menos que um cafezinho por dia. E é 1 pote = 1 mês cuidando de cabelo E unha ao mesmo tempo — sai mais em conta que comprar tratamento separado pra cada um.',
-      },
-      {
-        trigger: '"Será que funciona mesmo?"',
-        answer:
-          'O suplemento entrega os nutrientes que o corpo precisa pra manter cabelo e unha fortes. Não é mágica de 3 dias: o cabelo tem ciclo de uns 90 dias. Quem usa certinho por 3 potes sente a diferença na queda e no crescimento da unha.',
-      },
-      {
-        trigger: '"Posso tomar com outros remédios / anticoncepcional?"',
-        answer:
-          'É um suplemento alimentar, não um medicamento. Mas se você usa medicação contínua ou está grávida/amamentando, o ideal é confirmar com seu médico — eu te passo a tabela nutricional pra mostrar pra ele.',
-      },
-    ],
-    compliance:
-      'Suplemento alimentar. Não contém glúten. Não é medicamento e não substitui uma alimentação equilibrada. Gestantes, lactantes e pessoas em uso de medicamentos: consultar profissional de saúde.',
-    durationSec: 30,
-    gradient: ['#e6007e', '#7a1750'],
-    storyboard: [
-      { t: '0-3s', label: 'GANCHO', line: 'Cabelo caindo no ralo e unha que não cresce de jeito nenhum?' },
-      { t: '3-8s', label: 'O PRODUTO', line: 'Conhece a cápsula Cabelos & Unhas: 18 vitaminas num pote só.' },
-      { t: '8-14s', label: 'BENEFÍCIO 1', line: 'Auxilia na manutenção de cabelos e unhas fortes e saudáveis.' },
-      { t: '14-20s', label: 'BENEFÍCIO 2', line: 'Com Vitamina C, Ferro e complexo B pra dar aquele up no visual.' },
-      { t: '20-27s', label: 'COMO USAR', line: 'É 1 cápsula por dia. Pequenininha, fácil de engolir, e pronto.' },
-      { t: '27-30s', label: 'CTA', line: 'Quer começar o seu? Me chama que eu te explico tudo 💬' },
-    ],
-  },
-
   // ───────────────────────── Vias Respiratórias (MERAKI) ─────────────────────────
   // Atenção compliance: são medicamentos isentos de prescrição / fitoterápicos —
   // copy factual, sem promessa de cura, sempre remetendo à bula/rótulo e ao profissional.
@@ -395,66 +345,6 @@ export const PRODUCTS: Product[] = [
       { t: '3-12s', label: 'O PRODUTO', line: 'A Acetilcisteína é mucolítico: ajuda a afinar o catarro pra eliminar mais fácil.' },
       { t: '12-19s', label: 'FORMATOS', line: 'Tem xarope, solúvel e efervescente — do jeito que fica melhor pra você.' },
       { t: '19-24s', label: 'CTA', line: 'Leia a bula e me chama que eu te oriento o formato 💬' },
-    ],
-  },
-
-  // ───────────────────── Cosméticos & Skincare (WEPINK) ─────────────────────
-  {
-    id: 'serum-facial',
-    brand: 'wepink',
-    name: 'Sérum Facial Glow',
-    category: 'cosmeticos',
-    tagline: 'Sérum hidratante com ativos que dão viço e sensação de pele renovada.',
-    hook: 'Pele cansada, sem aquele viço de pele descansada?',
-    whatItIs: 'Sabe aquela pele de quem "dormiu bem" mesmo quando você não dormiu? É isso que esse sérum entrega: hidratação e luminosidade numa textura leve, que absorve na hora e ainda faz a make assentar lisinha. Glow instantâneo, sem parecer oleosa.',
-    benefits: [
-      'Hidrata e dá sensação imediata de pele mais viçosa',
-      'Textura leve, absorve rápido e não deixa a pele oleosa',
-      'Ótima base antes da make — a pele fica lisinha',
-    ],
-    howToUse: 'Pela manhã e à noite, na pele limpa, antes do hidratante. Poucas gotas já espalham bem.',
-    forWho: 'Quem quer um glow natural no dia a dia e uma make que assenta melhor.',
-    salesLine: 'Quer ver sua pele com aquele viço logo depois de aplicar? Te mostro como usar antes da make ✨',
-    objections: [
-      { trigger: '"Tenho pele oleosa, vai brilhar."', answer: 'A textura é leve e absorve rápido — hidratação não é a mesma coisa que oleosidade. Pele bem hidratada até controla melhor o excesso de óleo.' },
-      { trigger: '"Já tenho hidratante."', answer: 'O sérum entra ANTES do hidratante: ele leva o ativo mais fundo e o hidratante sela. Um potencializa o outro.' },
-    ],
-    durationSec: 20,
-    gradient: ['#f7b733', '#d96d2b'],
-    storyboard: [
-      { t: '0-3s', label: 'GANCHO', line: 'Pele apagada? Bora acender esse glow.' },
-      { t: '3-12s', label: 'O PRODUTO', line: 'Sérum leve que hidrata e dá viço na hora, antes da make.' },
-      { t: '12-20s', label: 'CTA', line: 'Quer testar? Me chama que eu te mostro 💬' },
-    ],
-  },
-
-  // ───────────────────────── Perfumaria (WEPINK) ─────────────────────────
-  {
-    id: 'body-splash',
-    brand: 'wepink',
-    name: 'Body Splash Pink',
-    category: 'perfumaria',
-    tagline: 'Body splash com fixação surpreendente e aquele rastro marcante.',
-    hook: 'Body splash que some em 10 minutos? Cansei disso também.',
-    whatItIs: 'Cansada de body splash que evapora antes de você sair de casa? Esse aqui fixa muito acima da média e deixa um rastro que dura o dia — daquele que faz a pessoa virar e perguntar "amiga, que cheiro é esse?". Vira a sua assinatura.',
-    benefits: [
-      'Fixação acima do esperado pra um body splash',
-      'Cheiro marcante que vira a sua assinatura',
-      'Borrifa e pronto — perfeito pra retocar ao longo do dia',
-    ],
-    howToUse: 'Borrife no corpo após o banho e nos pontos de pulso. Carregue na bolsa pra retocar.',
-    forWho: 'Quem ama estar sempre cheirosa e quer um perfume que as pessoas elogiam.',
-    salesLine: 'Quer um cheiro que as pessoas param pra elogiar? Te conto qual combina com você 💐',
-    objections: [
-      { trigger: '"Body splash não fixa."', answer: 'Esse é o pulo do gato: ele tem fixação bem acima da média. Aplica na pele hidratada que o rastro dura ainda mais.' },
-      { trigger: '"Tenho vários perfumes."', answer: 'Esse é pra ser o do dia a dia — leve, gostoso, que você usa sem dó. O caro a gente guarda; esse a gente vive.' },
-    ],
-    durationSec: 18,
-    gradient: ['#ff5fa2', '#9b2c63'],
-    storyboard: [
-      { t: '0-3s', label: 'GANCHO', line: 'Cansada de body splash que evapora?' },
-      { t: '3-12s', label: 'O PRODUTO', line: 'Esse fixa de verdade e deixa rastro o dia inteiro.' },
-      { t: '12-18s', label: 'CTA', line: 'Quer saber qual cheiro é a sua cara? Me chama 💬' },
     ],
   },
 ];

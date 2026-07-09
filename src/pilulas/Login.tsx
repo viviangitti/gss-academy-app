@@ -50,7 +50,7 @@ export default function Login() {
     setInfo('');
     try {
       await resetPassword(email.trim());
-      setInfo('Se existir uma conta com esse e-mail, enviamos o link. Olhe também o SPAM (o remetente pode aparecer como "maestria-vendas" / Firebase). Não achou? Crie sua conta na aba "Criar conta".');
+      setInfo('Se existir uma conta com esse e-mail, enviamos o link. Olhe também o SPAM (o remetente pode aparecer como "eleva-gss" / Firebase). Não achou? Crie sua conta na aba "Criar conta".');
     } catch (e) {
       const code = (e as { code?: string })?.code || '';
       setError(translateAuthError(code));

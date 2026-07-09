@@ -98,29 +98,32 @@ function Reel({ product }: { product: ProductT }) {
   );
 }
 
+// Monta o link de embed do reel: tira query/barra final e acrescenta /embed.
+// Ex.: instagram.com/reel/ABC123  ->  instagram.com/reel/ABC123/embed
+function igEmbedSrc(url: string): string {
+  const clean = url.split('?')[0].replace(/\/+$/, '');
+  if (/\/embed$/.test(clean)) return clean;
+  return `${clean}/embed`;
+}
+
+// Mostra o reel DENTRO do app num iframe — o vídeo aparece e toca ali mesmo,
+// sem mandar a pessoa pro Instagram (o embed.js só mostrava miniatura + link).
 function InstagramEmbed({ url }: { url: string }) {
-  useEffect(() => {
-    const w = window as unknown as { instgrm?: { Embeds?: { process: () => void } } };
-    const run = () => w.instgrm?.Embeds?.process();
-    if (w.instgrm) { run(); return; }
-    const ID = 'instagram-embed-js';
-    const existing = document.getElementById(ID) as HTMLScriptElement | null;
-    if (existing) { run(); return; }
-    const s = document.createElement('script');
-    s.id = ID;
-    s.async = true;
-    s.src = 'https://www.instagram.com/embed.js';
-    s.addEventListener('load', run);
-    document.body.appendChild(s);
-  }, [url]);
   return (
-    <blockquote
-      className="instagram-media wp-ig"
-      data-instgrm-permalink={url}
-      data-instgrm-version="14"
-    >
-      <a href={url} target="_blank" rel="noreferrer" className="wp-ig-fallback">Ver no Instagram <ArrowUpRight size={13} className="wp-ico" /></a>
-    </blockquote>
+    <div className="wp-ig-frame">
+      <iframe
+        src={igEmbedSrc(url)}
+        title="Reel do Instagram"
+        className="wp-ig-iframe"
+        loading="lazy"
+        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+        allowFullScreen
+        scrolling="no"
+      />
+      <a href={url} target="_blank" rel="noreferrer" className="wp-ig-open">
+        abrir no Instagram <ArrowUpRight size={12} className="wp-ico" />
+      </a>
+    </div>
   );
 }
 

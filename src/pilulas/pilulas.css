@@ -760,12 +760,25 @@
 
 /* ===== Reel com vídeo real ===== */
 .wp-reel--video { padding: 0; align-items: stretch; }
-/* Reel do Instagram como vídeo principal: não força 9/16 (cortaria o embed). */
+/* Reel do Instagram como vídeo principal: iframe que toca dentro do app. */
 .wp-reel--ig {
   aspect-ratio: auto; max-height: none; height: auto;
   padding: 0; background: transparent; color: inherit; display: block;
 }
-.wp-reel--ig .instagram-media { margin: 0 auto !important; }
+.wp-ig-frame { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.wp-ig-iframe {
+  width: 100%;
+  max-width: 400px;
+  height: min(80vh, 680px);
+  border: none;
+  border-radius: 16px;
+  background: #000;
+  overflow: hidden;
+}
+.wp-ig-open {
+  font-size: 12px; color: var(--wp-soft); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 4px;
+}
 .wp-gz-or {
   text-align: center; font-size: 11px; font-weight: 800; color: var(--wp-soft);
   margin: 8px 0; text-transform: uppercase; letter-spacing: 0.06em;

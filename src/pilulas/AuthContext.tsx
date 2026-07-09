@@ -3,6 +3,7 @@ import type { BrandId } from './data/brands';
 import { mySegment, type SegmentId } from './data/segments';
 import { onAuthChange, signOut as fbSignOut, type AuthUser } from '../services/auth';
 import { firebaseEnabled } from '../services/firebase';
+import { storedRole } from './data/roles';
 
 export type Role = 'gestor' | 'vendedora';
 export interface User {
@@ -20,7 +21,11 @@ export interface User {
 const GESTOR_EMAILS = ['viviangitti23@gmail.com'];
 
 function roleFor(email: string): Role {
-  return GESTOR_EMAILS.includes(email.trim().toLowerCase()) ? 'gestor' : 'vendedora';
+  const e = email.trim().toLowerCase();
+  // E-mail na lista de autorizados = sempre gestor. Senão, o perfil escolhido no
+  // cadastro (com código de gestor); na falta, vendedora.
+  if (GESTOR_EMAILS.includes(e)) return 'gestor';
+  return storedRole(e) ?? 'vendedora';
 }
 
 // Por enquanto só a Meraki está ativa — todo mundo vê a Meraki.

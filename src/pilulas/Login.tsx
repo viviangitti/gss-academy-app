@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { ArrowRight, ArrowUpRight, Eye, EyeOff } from 'lucide-react';
 import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } from '../services/auth';
 import { SEGMENTS, setMySegment, mySegment } from './data/segments';
+import { setStoredRole, GESTOR_CODE } from './data/roles';
+import type { Role } from './AuthContext';
 
 type Mode = 'entrar' | 'criar';
 
@@ -16,6 +18,9 @@ export default function Login() {
   const [info, setInfo] = useState('');
   // Canal de venda: vem pré-preenchido se a pessoa chegou por link/QR de convite.
   const [segment, setSegment] = useState<string>(() => mySegment() || '');
+  // Perfil escolhido no cadastro. Gestor(a) precisa do código da marca.
+  const [role, setRole] = useState<Role>('vendedora');
+  const [code, setCode] = useState('');
 
   const emailOk = /\S+@\S+\.\S+/.test(email);
   const valid =
@@ -28,7 +33,15 @@ export default function Login() {
     setInfo('');
     try {
       if (mode === 'criar') {
-        if (segment) setMySegment(segment);
+        // Gestor(a) da marca só com o código certo; senão, avisa (não vira gestor mudo).
+        if (role === 'gestor' && code.trim() !== GESTOR_CODE) {
+          setError('Código de gestor inválido. Se você vende na ponta, escolha "Vendedor(a)".');
+          setBusy(false);
+          return;
+        }
+        if (role !== 'gestor' && segment) setMySegment(segment);
+        // Grava o perfil ANTES: o AuthContext lê ele assim que a conta é criada.
+        setStoredRole(email.trim(), role === 'gestor' ? 'gestor' : 'vendedora');
         await signUpWithEmail(email.trim(), password, name.trim());
       } else {
         await signInWithEmail(email.trim(), password);
@@ -83,14 +96,42 @@ export default function Login() {
 
         {mode === 'criar' && (
           <>
+            <label className="wp-login-label">Você é...</label>
+            <div className="wp-login-roles">
+              <button
+                type="button"
+                className={`wp-login-role ${role === 'vendedora' ? 'on' : ''}`}
+                onClick={() => { setRole('vendedora'); setError(''); }}
+              >
+                Vendedor(a)
+              </button>
+              <button
+                type="button"
+                className={`wp-login-role ${role === 'gestor' ? 'on' : ''}`}
+                onClick={() => { setRole('gestor'); setError(''); }}
+              >
+                Gestor(a) da marca
+              </button>
+            </div>
+
             <label className="wp-login-label">Seu nome</label>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />
 
-            <label className="wp-login-label">Onde você vende? (opcional)</label>
-            <select className="wp-login-select" value={segment} onChange={(e) => setSegment(e.target.value)}>
-              <option value="">Prefiro não dizer</option>
-              {SEGMENTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
-            </select>
+            {role === 'gestor' ? (
+              <>
+                <label className="wp-login-label">Código de gestor</label>
+                <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="O código que a marca te passou" />
+                <p className="wp-login-hint">A marca passa esse código só pra quem é do time dela.</p>
+              </>
+            ) : (
+              <>
+                <label className="wp-login-label">Onde você vende? (opcional)</label>
+                <select className="wp-login-select" value={segment} onChange={(e) => setSegment(e.target.value)}>
+                  <option value="">Prefiro não dizer</option>
+                  {SEGMENTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+                </select>
+              </>
+            )}
           </>
         )}
 
@@ -137,7 +178,7 @@ export default function Login() {
           </button>
         )}
       </div>
-      <p className="wp-login-note">Acesso de Gestor liberado só para e-mails autorizados.</p>
+      <p className="wp-login-note">Vendedor(a) entra direto. Gestor(a) da marca precisa do código de acesso.</p>
     </div>
   );
 }

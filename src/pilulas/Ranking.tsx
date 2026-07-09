@@ -86,7 +86,7 @@ export default function Ranking() {
         </div>
         <p className="wp-desafio-foot">
           {desafio.faltam > 0
-            ? <>Faltam <b>{desafio.faltam}</b> · {desafio.premio}. Sua parte: <b>{desafio.minhaParte}</b>.</>
+            ? <>Faltam <b>{desafio.faltam}</b> · sua parte: <b>{desafio.minhaParte}</b>. {desafio.premio}.</>
             : <><Check size={12} className="wp-ico" /> Meta batida! {desafio.premio}.</>}
         </p>
       </div>

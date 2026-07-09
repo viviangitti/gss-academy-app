@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck } from 'lucide-react';
+import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
 import { buildShareMessage, type Product } from './data/products';
 import { CALENDAR, CHANNELS } from './data/creatorContent';
 import { getStats } from './data/tracking';
+import { getTrilha } from './data/trilha';
+import { watchedToday, notifState, enableNotif, maybeNotify } from './data/lembrete';
 import { logSearch } from './data/insights';
 import { useBrand } from './BrandContext';
 import { useAuth } from './AuthContext';
@@ -122,9 +124,10 @@ function dayOfYear(): number {
 export default function Hoje() {
   useStore();
   const navigate = useNavigate();
-  const { brandId } = useBrand();
+  const { brandId, brand } = useBrand();
   const { user } = useAuth();
   const [q, setQ] = useState('');
+  const [notif, setNotif] = useState(notifState());
 
   const products = useMemo(() => allProducts().filter((p) => p.brand === brandId), [brandId]);
   const hits = useMemo(() => searchPills(q, products), [q, products]);
@@ -134,7 +137,13 @@ export default function Hoje() {
     if (q.trim().length >= 3) logSearch(q);
   }, [q]);
 
+  // Lembrete diário: se ligou notificação e não assistiu hoje, avisa (1x/dia).
+  useEffect(() => { maybeNotify(); }, []);
+  const ligarLembrete = async () => setNotif(await enableNotif());
+
   const stats = getStats();
+  const trilha = getTrilha(brandId);
+  const didToday = watchedToday();
   const firstName = (user?.name || '').split(' ')[0] || 'Você';
 
   // Pílula do dia: gira todo dia, determinística (mesmo produto o dia todo)
@@ -187,7 +196,39 @@ export default function Hoje() {
 
       {!q.trim() && (
         <>
+          {/* Lembrete diário — mantém a ofensiva viva */}
+          <div className="wp-td-lembrete">
+            <span className="wp-td-lb-flame"><Flame size={18} className="wp-ico" /> {stats.streak}</span>
+            <div className="wp-td-lb-txt">
+              <b>{didToday ? 'Dia garantido!' : 'Mantenha sua ofensiva'}</b>
+              <span>{didToday ? 'Volte amanhã pra somar +1 dia.' : 'Assista 1 pílula hoje pra não zerar.'}</span>
+            </div>
+            {notif !== 'granted' && notif !== 'unsupported' && (
+              <button className="wp-td-lb-bell" onClick={ligarLembrete}>
+                <Bell size={14} className="wp-ico" /> Lembrar
+              </button>
+            )}
+            {notif === 'granted' && <span className="wp-td-lb-on"><Check size={14} className="wp-ico" /> Ativo</span>}
+          </div>
+
           <PrimeirosPassos />
+
+          {/* Trilha de formação — progresso + continuar */}
+          {trilha.total > 0 && (
+            <Link to="/eleva/trilha" className="wp-td-card wp-td-trilha">
+              <span className="wp-td-card-label"><GraduationCap size={13} className="wp-ico" /> Sua trilha de formação</span>
+              <div className="wp-td-trilha-row">
+                <div className="wp-td-trilha-bar"><span style={{ width: `${trilha.pct}%`, background: brand.accent }} /></div>
+                <b className="wp-td-trilha-num">{trilha.mastered}/{trilha.total}</b>
+              </div>
+              <span className="wp-td-trilha-cta">
+                {trilha.complete
+                  ? 'Trilha completa — pegue seu certificado'
+                  : `Continuar: ${trilha.next?.name ?? ''}`}
+                <ChevronRight size={14} className="wp-ico" />
+              </span>
+            </Link>
+          )}
 
           {/* Pílula do dia */}
           {pill && (

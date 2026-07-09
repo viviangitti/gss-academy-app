@@ -31,7 +31,8 @@
 .wp-hero-title,
 .wp-td-hi,
 .wp-rk-title,
-.wp-gz-hero-title {
+.wp-gz-hero-title,
+.wp-tr-title {
   font-family: 'Cinzel', Georgia, serif;
 }
 
@@ -1397,3 +1398,124 @@
 
 /* Rótulo discreto "exemplo" nas métricas de demonstração do painel. */
 .wp-gz-demo { font-size: 11px; font-weight: 600; color: var(--wp-muted, #9a9aa8); text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* ===================== Lembrete diário (Hoje) ===================== */
+.wp-td-lembrete {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--wp-surface); border: 1px solid var(--wp-border);
+  border-radius: 16px; padding: 11px 13px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+.wp-td-lb-flame {
+  display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;
+  font-weight: 800; font-size: 17px; color: #e8730a;
+  background: #fff4e6; border-radius: 12px; padding: 8px 11px;
+}
+.wp-td-lb-txt { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.wp-td-lb-txt b { font-size: 14px; color: var(--wp-ink); }
+.wp-td-lb-txt span { font-size: 12.5px; color: var(--wp-soft); }
+.wp-td-lb-bell {
+  display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0;
+  background: var(--wp-ink); color: #fff; border: none; border-radius: 99px;
+  font-size: 12.5px; font-weight: 700; padding: 8px 13px; cursor: pointer;
+}
+.wp-td-lb-on {
+  display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;
+  font-size: 12px; font-weight: 700; color: var(--wp-pink-deep);
+}
+
+/* ===================== Card de trilha (Hoje) ===================== */
+.wp-td-trilha { display: block; text-decoration: none; }
+.wp-td-trilha-row { display: flex; align-items: center; gap: 10px; }
+.wp-td-trilha-bar { flex: 1; height: 9px; background: #ece9f0; border-radius: 99px; overflow: hidden; }
+.wp-td-trilha-bar span { display: block; height: 100%; border-radius: 99px; transition: width 0.5s ease; }
+.wp-td-trilha-num { font-size: 14px; font-weight: 800; color: var(--wp-ink); flex-shrink: 0; }
+.wp-td-trilha-cta {
+  display: flex; align-items: center; justify-content: space-between; gap: 4px;
+  margin-top: 9px; font-size: 13px; font-weight: 700; color: var(--wp-pink-deep);
+}
+
+/* ===================== Desafio coletivo (Ranking) ===================== */
+.wp-desafio {
+  background: linear-gradient(140deg, var(--wp-ink), var(--wp-navy-deep));
+  color: #fff; border-radius: 18px; padding: 14px; margin-bottom: 14px;
+}
+.wp-desafio-top { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.wp-desafio-title {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--wp-gold-light);
+}
+.wp-desafio-demo { font-size: 10.5px; font-weight: 700; color: rgba(255, 255, 255, 0.5); text-transform: uppercase; letter-spacing: 0.04em; }
+.wp-desafio-goal { font-size: 14px; margin-bottom: 9px; color: rgba(255, 255, 255, 0.9); }
+.wp-desafio-goal b { color: #fff; font-weight: 800; }
+.wp-desafio-bar { height: 10px; background: rgba(255, 255, 255, 0.15); border-radius: 99px; overflow: hidden; }
+.wp-desafio-fill { height: 100%; background: linear-gradient(90deg, var(--wp-pink), var(--wp-gold-light)); border-radius: 99px; transition: width 0.5s ease; }
+.wp-desafio-foot { font-size: 12.5px; margin-top: 9px; color: rgba(255, 255, 255, 0.75); display: flex; align-items: center; gap: 4px; }
+.wp-desafio-foot b { color: var(--wp-gold-light); font-weight: 800; }
+
+/* ===================== Tela Trilha ===================== */
+.wp-trilha { display: flex; flex-direction: column; gap: 14px; }
+.wp-tr-title { display: inline-flex; align-items: center; gap: 8px; font-size: 24px; font-weight: 800; color: var(--wp-ink); }
+.wp-tr-sub { font-size: 13.5px; color: var(--wp-soft); margin-top: 4px; }
+.wp-tr-prog { background: var(--wp-surface); border-radius: 18px; padding: 16px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06); }
+.wp-tr-prog-top { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.wp-tr-prog-num { font-size: 30px; font-weight: 800; color: var(--wp-ink); }
+.wp-tr-prog-num span { font-size: 18px; color: var(--wp-soft); font-weight: 700; }
+.wp-tr-prog-lbl { font-size: 13px; color: var(--wp-soft); font-weight: 600; }
+.wp-tr-bar { height: 10px; background: #ece9f0; border-radius: 99px; overflow: hidden; }
+.wp-tr-bar span { display: block; height: 100%; border-radius: 99px; transition: width 0.5s ease; }
+.wp-tr-prog-pct { display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--wp-pink-deep); }
+
+.wp-tr-cert-lock {
+  display: flex; align-items: center; gap: 9px;
+  background: #fbf7ec; border: 1px dashed var(--wp-pink); border-radius: 14px;
+  padding: 12px 14px; font-size: 13px; color: var(--wp-ink); line-height: 1.4;
+}
+.wp-tr-cert-lock b { color: var(--wp-pink-deep); }
+.wp-tr-cert-lock .wp-ico { flex-shrink: 0; color: var(--wp-pink-deep); }
+
+.wp-tr-cert-done { background: var(--wp-surface); border-radius: 18px; padding: 16px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06); }
+.wp-tr-cert-hd { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; font-size: 15px; color: var(--wp-pink-deep); }
+.wp-tr-cert-msg { font-size: 13px; color: var(--wp-soft); margin: 6px 0 12px; }
+
+.wp-tr-continue {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: linear-gradient(140deg, var(--wp-ink), var(--wp-navy-deep));
+  color: #fff; border-radius: 16px; padding: 14px 16px; text-decoration: none;
+}
+.wp-tr-continue-lbl { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--wp-gold-light); font-weight: 700; margin-bottom: 2px; }
+.wp-tr-continue b { font-size: 16px; }
+.wp-tr-continue .wp-ico { flex-shrink: 0; }
+
+.wp-tr-steps { display: flex; flex-direction: column; gap: 8px; }
+.wp-tr-step {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--wp-surface); border-radius: 14px; padding: 12px 14px;
+  text-decoration: none; border: 1px solid var(--wp-border);
+}
+.wp-tr-step-ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  background: #ece9f0; color: var(--wp-soft);
+}
+.wp-tr-dominada .wp-tr-step-ic { background: var(--wp-pink); color: var(--wp-on-accent); }
+.wp-tr-assistida .wp-tr-step-ic { background: #e7eefb; color: #3b6bd6; }
+.wp-tr-step-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.wp-tr-step-name { font-size: 14.5px; font-weight: 700; color: var(--wp-ink); }
+.wp-tr-step-tag { font-size: 12px; color: var(--wp-soft); }
+.wp-tr-dominada .wp-tr-step-tag { color: var(--wp-pink-deep); font-weight: 600; }
+.wp-tr-step-go { color: var(--wp-soft); flex-shrink: 0; }
+.wp-tr-next { border-color: var(--wp-pink); box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.18); }
+.wp-tr-next .wp-tr-step-tag { color: var(--wp-pink-deep); font-weight: 700; }
+
+/* ===================== Certificado ===================== */
+.wp-cert { display: flex; flex-direction: column; gap: 12px; }
+.wp-cert-canvas { width: 100%; height: auto; border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); display: block; }
+.wp-cert-actions { display: flex; gap: 10px; }
+.wp-cert-btn {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer;
+  background: var(--wp-bg); color: var(--wp-ink); border: 1px solid var(--wp-border);
+}
+.wp-cert-btn-main { background: var(--wp-pink); color: var(--wp-on-accent); border-color: transparent; }

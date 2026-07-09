@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Trophy, Flame, Target, Check, Medal, User, Rocket, ArrowRight } from 'lucide-react';
+import { Trophy, Flame, Target, Check, Medal, User, Rocket, ArrowRight, Users } from 'lucide-react';
 import { getStats, WEEKLY_GOAL } from './data/tracking';
+import { getDesafio } from './data/desafio';
 import { RIVALS } from './data/leaderboard';
 import { useAuth } from './AuthContext';
 import { segmentLabel } from './data/segments';
@@ -33,6 +34,7 @@ export default function Ranking() {
   const podium = rows.slice(0, 3);
   const rest = rows.slice(3);
   const goalPct = Math.min(100, Math.round((stats.weekViews / WEEKLY_GOAL) * 100));
+  const desafio = getDesafio();
 
   return (
     <div className="wp-ranking">
@@ -67,6 +69,25 @@ export default function Ranking() {
           {goalPct >= 100
             ? <><Check size={12} className="wp-ico" /> Missão batida! Você concorre ao brinde do mês.</>
             : 'Complete e ganhe um selo + brinde no fim do mês.'}
+        </p>
+      </div>
+
+      {/* Desafio coletivo — a rede toda soma junto */}
+      <div className="wp-desafio">
+        <div className="wp-desafio-top">
+          <span className="wp-desafio-title"><Users size={15} className="wp-ico" /> Desafio da rede</span>
+          {desafio.demo && <span className="wp-desafio-demo">· exemplo</span>}
+        </div>
+        <p className="wp-desafio-goal">
+          <b>{desafio.atual}</b> de {desafio.meta} pílulas assistidas por toda a rede este mês
+        </p>
+        <div className="wp-desafio-bar">
+          <div className="wp-desafio-fill" style={{ width: `${desafio.pct}%` }} />
+        </div>
+        <p className="wp-desafio-foot">
+          {desafio.faltam > 0
+            ? <>Faltam <b>{desafio.faltam}</b> · {desafio.premio}. Sua parte: <b>{desafio.minhaParte}</b>.</>
+            : <><Check size={12} className="wp-ico" /> Meta batida! {desafio.premio}.</>}
         </p>
       </div>
 

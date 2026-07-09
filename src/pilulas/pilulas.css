@@ -1402,7 +1402,14 @@
 .wp-videdit-preview { width: 100%; max-height: 170px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; display: block; }
 
 /* Botão fixo "Compartilhar" não cobre mais o texto: espaço extra + degradê suave. */
-.wp-product { padding-bottom: 44px; }
+.wp-product { padding-bottom: 96px; }
+.wp-share-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--wp-soft);
+  padding: 0 16px 6px;
+  line-height: 1.4;
+}
 .wp-product::after {
   content: ''; position: fixed; left: 0; right: 0; bottom: 0; height: 92px;
   background: linear-gradient(to top, var(--wp-bg) 42%, rgba(246, 246, 249, 0));

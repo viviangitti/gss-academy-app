@@ -5,7 +5,7 @@ import {
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
 } from 'lucide-react';
-import { buildShareMessage, type Product as ProductT } from './data/products';
+import { buildShareVariants, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
 import { recordView } from './data/tracking';
@@ -195,6 +195,7 @@ export default function Product() {
   const { id } = useParams();
   const product = id ? findProduct(id) : undefined;
   const [openObj, setOpenObj] = useState<number | null>(0);
+  const [shareIdx, setShareIdx] = useState(0);
   // Se tem MP4, o Instagram vira "prova social" (bônus). Se não tem MP4, o
   // reel do Instagram já é o vídeo principal lá em cima — não repete aqui.
   const mp4 = product ? getVideoObjectUrl(product.id) || product.videoUrl : undefined;
@@ -214,7 +215,9 @@ export default function Product() {
   }
 
   const share = () => {
-    const text = buildShareMessage(product);
+    const variants = buildShareVariants(product);
+    const text = variants[shareIdx % variants.length];
+    setShareIdx((n) => n + 1); // próximo toque = próxima versão
     if (navigator.share) {
       navigator.share({ text, title: product.name }).catch(() => {});
       return;
@@ -294,6 +297,7 @@ export default function Product() {
       )}
 
       <div className="wp-salesline">“{product.salesLine}”</div>
+      <p className="wp-share-hint">A cada toque, o botão manda uma mensagem diferente ✨ (nunca repete o mesmo texto com a cliente).</p>
 
       <button className="wp-share" onClick={share}>
         <ArrowUpRight size={18} className="wp-ico" /> Compartilhar com a cliente

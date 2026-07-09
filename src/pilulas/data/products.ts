@@ -365,3 +365,82 @@ export function buildShareMessage(p: Product): string {
     p.salesLine,
   ].join('\n');
 }
+
+// Várias versões da mensagem pronta — todas puxam os BENEFÍCIOS, em ângulos
+// diferentes. O botão "Compartilhar" gira entre elas: cada clique manda uma
+// diferente, pra vendedora não repetir o mesmo texto com toda cliente.
+export function buildShareVariants(p: Product): string[] {
+  const bens = p.benefits.filter(Boolean);
+  const b = (i: number) => bens[bens.length ? i % bens.length : 0] || p.tagline;
+  const variants: string[] = [];
+
+  // 1) Benefícios em lista (o clássico)
+  variants.push([
+    `✨ *${p.name}* ✨`,
+    '',
+    bens.slice(0, 3).map((x) => `✅ ${x}`).join('\n'),
+    '',
+    p.salesLine,
+  ].join('\n'));
+
+  // 2) Dor → solução (usa o gancho)
+  if (p.hook) {
+    variants.push([
+      p.hook,
+      '',
+      `O *${p.name}* te ajuda nisso:`,
+      `✅ ${b(0)}`,
+      `✅ ${b(1)}`,
+      '',
+      'Me chama aqui que eu te explico 💬',
+    ].join('\n'));
+  }
+
+  // 3) Curto e pessoal — um benefício forte
+  variants.push([
+    'Oi! Lembrei de você 💬',
+    '',
+    `*${p.name}* — ${b(0).toLowerCase()}.`,
+    '',
+    p.salesLine,
+  ].join('\n'));
+
+  // 4) Pra quem é
+  if (p.forWho) {
+    variants.push([
+      'Isso aqui é pra você 👇',
+      '',
+      `*${p.name}*: ${p.tagline}`,
+      `✅ ${b(1)}`,
+      '',
+      'Quer que eu te conte como usa? 💬',
+    ].join('\n'));
+  }
+
+  // 5) Objeção já respondida
+  if (p.objections && p.objections.length) {
+    const o = p.objections[0];
+    variants.push([
+      `Muita cliente me pergunta: ${o.trigger}`,
+      '',
+      o.answer,
+      '',
+      `*${p.name}* — me chama que te ajudo a escolher 💬`,
+    ].join('\n'));
+  }
+
+  // 6) Só benefícios, direto ao ponto
+  if (bens.length >= 2) {
+    variants.push([
+      `*${p.name}* na real 👀`,
+      '',
+      `✅ ${b(0)}`,
+      `✅ ${b(1)}`,
+      bens[2] ? `✅ ${bens[2]}` : '',
+      '',
+      'Quer o seu? Me chama 💛',
+    ].filter(Boolean).join('\n'));
+  }
+
+  return variants;
+}

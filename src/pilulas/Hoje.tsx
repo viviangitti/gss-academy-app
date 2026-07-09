@@ -173,7 +173,7 @@ export default function Hoje() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Cliente perguntou? Digite: joelho, cansaço, caro…"
+          placeholder="O que a cliente falou? Ex.: joelho, caro"
           aria-label="Buscar resposta pronta"
         />
       </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react';
-import { BrowserRouter, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowUpRight, ArrowLeft, ChevronDown, Check, LayoutDashboard, LogOut } from 'lucide-react';
 import Hoje from './Hoje';
 import Catalog from './Catalog';
@@ -63,13 +63,20 @@ function RequireGestor({ children }: { children: React.ReactElement }) {
 
 function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
   const onProduct = location.pathname.includes('/produto/');
   const { user } = useAuth();
+  // Voltar = volta pra tela de onde a pessoa veio (Hoje, busca, catálogo, painel).
+  // Se caiu direto no produto (link/QR, sem histórico), cai no catálogo.
+  const goBack = () => {
+    if (window.history.length > 1) navigate(-1);
+    else navigate('/eleva/catalogo');
+  };
   return (
     <header className="wp-header">
       <div className="wp-header-inner">
         {onProduct && (
-          <Link to="/eleva/catalogo" className="wp-back" aria-label="Voltar"><ArrowLeft size={20} className="wp-ico" /></Link>
+          <button type="button" onClick={goBack} className="wp-back" aria-label="Voltar"><ArrowLeft size={20} className="wp-ico" /></button>
         )}
         <span className="wp-logo-mark">eleva<ArrowUpRight size={17} strokeWidth={2.5} className="wp-logo-caret" /></span>
         <span className="wp-spacer" />

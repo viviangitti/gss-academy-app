@@ -357,7 +357,7 @@ export default function Gestor() {
 
       {/* Métricas */}
       <div className="wp-gz-metrics">
-        <div className="wp-gz-metrics-head"><TrendingUp size={16} className="wp-ico" /> Métricas da semana</div>
+        <div className="wp-gz-metrics-head"><TrendingUp size={16} className="wp-ico" /> Métricas da semana <span className="wp-gz-demo">· exemplo</span></div>
         <div className="wp-gz-kpis">
           <div className="wp-gz-kpi">
             <Users size={16} className="wp-ico wp-gz-kpi-ic" />

@@ -212,7 +212,7 @@ export default function Missoes() {
       </div>
 
       <div className="wp-ms-link">
-        <span className="wp-ms-link-label">SEU LINK DE CREATOR</span>
+        <span className="wp-ms-link-label">SEU LINK DE CREATOR · EM BREVE</span>
         <div className="wp-ms-link-row">
           <code>eleva.link/vc-maria</code>
           <button
@@ -220,7 +220,7 @@ export default function Missoes() {
             onClick={() => navigator.clipboard?.writeText('https://eleva.link/vc-maria')}
           ><Copy size={15} className="wp-ico" /></button>
         </div>
-        <p className="wp-ms-link-note">Toda venda pelo seu link é rastreada e conta pra sua comissão.</p>
+        <p className="wp-ms-link-note">Em breve: um link só seu pra acompanhar as vendas que você indica.</p>
       </div>
 
       {/* Filtro de canal */}

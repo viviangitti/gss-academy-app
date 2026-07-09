@@ -3,7 +3,8 @@ import type { BrandId } from './data/brands';
 import { mySegment, type SegmentId } from './data/segments';
 import { onAuthChange, signOut as fbSignOut, type AuthUser } from '../services/auth';
 import { firebaseEnabled } from '../services/firebase';
-import { storedRole } from './data/roles';
+import { storedRole, setStoredRole } from './data/roles';
+import { getElevaProfile, type ElevaProfile } from './data/profile';
 
 export type Role = 'gestor' | 'vendedora';
 export interface User {
@@ -20,25 +21,25 @@ export interface User {
 // viviangitti@gmail.com entra como VENDEDORA (a pedido); gestor fica no 23.
 const GESTOR_EMAILS = ['viviangitti23@gmail.com'];
 
-function roleFor(email: string): Role {
+function roleFor(email: string, profile: ElevaProfile | null): Role {
   const e = email.trim().toLowerCase();
-  // E-mail na lista de autorizados = sempre gestor. Senão, o perfil escolhido no
-  // cadastro (com código de gestor); na falta, vendedora.
+  // Prioridade: e-mail na lista de autorizados > perfil salvo NA CONTA (Firestore,
+  // vale em qualquer aparelho) > perfil salvo neste aparelho (cache) > vendedora.
   if (GESTOR_EMAILS.includes(e)) return 'gestor';
-  return storedRole(e) ?? 'vendedora';
+  return profile?.role ?? storedRole(e) ?? 'vendedora';
 }
 
 // Por enquanto só a Meraki está ativa — todo mundo vê a Meraki.
 const DEFAULT_BRANDS: BrandId[] = ['meraki'];
 
-function toUser(fb: AuthUser): User {
+function toUser(fb: AuthUser, profile: ElevaProfile | null): User {
   const email = fb.email || '';
   return {
-    name: fb.displayName || (email ? email.split('@')[0] : 'Você'),
+    name: profile?.name || fb.displayName || (email ? email.split('@')[0] : 'Você'),
     email,
-    role: roleFor(email),
+    role: roleFor(email, profile),
     brands: DEFAULT_BRANDS,
-    segment: mySegment(),
+    segment: profile?.segment || mySegment(),
   };
 }
 
@@ -73,8 +74,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       return;
     }
-    const unsub = onAuthChange((fb) => {
-      setUser(fb ? toUser(fb) : null);
+    const unsub = onAuthChange(async (fb) => {
+      if (!fb) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+      // Busca o perfil NA CONTA (Firestore). Espera até 3.5s; se demorar (rede ruim),
+      // cai pro cache local pra não travar no carregando.
+      let profile: ElevaProfile | null = null;
+      try {
+        profile = await Promise.race([
+          getElevaProfile(fb.uid),
+          new Promise<null>((r) => setTimeout(() => r(null), 3500)),
+        ]);
+      } catch { /* ignore */ }
+      // Espelha o papel da conta neste aparelho (cache pra próxima abertura).
+      if (profile && fb.email) setStoredRole(fb.email, profile.role);
+      setUser(toUser(fb, profile));
       setLoading(false);
     });
     return unsub;

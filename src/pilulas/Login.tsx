@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { ArrowRight, ArrowUpRight, Eye, EyeOff } from 'lucide-react';
 import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } from '../services/auth';
-import { SEGMENTS, setMySegment, mySegment } from './data/segments';
+import { SEGMENTS, setMySegment, mySegment, type SegmentId } from './data/segments';
 import { setStoredRole, GESTOR_CODE } from './data/roles';
+import { setElevaProfile } from './data/profile';
 import type { Role } from './AuthContext';
 
 type Mode = 'entrar' | 'criar';
@@ -39,10 +40,14 @@ export default function Login() {
           setBusy(false);
           return;
         }
-        if (role !== 'gestor' && segment) setMySegment(segment);
-        // Grava o perfil ANTES: o AuthContext lê ele assim que a conta é criada.
-        setStoredRole(email.trim(), role === 'gestor' ? 'gestor' : 'vendedora');
-        await signUpWithEmail(email.trim(), password, name.trim());
+        const finalRole: Role = role === 'gestor' ? 'gestor' : 'vendedora';
+        const seg = finalRole === 'vendedora' ? segment : '';
+        if (seg) setMySegment(seg);
+        // Cache local (rápido) + conta cria.
+        setStoredRole(email.trim(), finalRole);
+        const fb = await signUpWithEmail(email.trim(), password, name.trim());
+        // Perfil NA CONTA (Firestore) — vale em qualquer aparelho onde logar.
+        await setElevaProfile(fb.uid, { role: finalRole, name: name.trim(), segment: seg as SegmentId | '' });
       } else {
         await signInWithEmail(email.trim(), password);
       }

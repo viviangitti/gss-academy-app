@@ -23,5 +23,5 @@
     <text x="0" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="130" font-weight="900" fill="url(#gold)" text-anchor="middle" letter-spacing="-4" filter="url(#glow)">GSS</text>
     <circle cx="0" cy="100" r="10" fill="url(#gold)" />
   </g>
-  <text x="256" y="430" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="34" font-weight="700" fill="#c9a84c" text-anchor="middle" letter-spacing="2">MAESTR.IA</text>
+  <text x="256" y="430" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="36" font-weight="700" fill="#c9a84c" text-anchor="middle" letter-spacing="4">ACADEMY</text>
 </svg>

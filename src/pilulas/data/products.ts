@@ -60,6 +60,7 @@ export const PRODUCTS: Product[] = [
     brand: 'meraki',
     name: 'GLPEN Nutri Muscle',
     imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/279281-600-600?v=639141832073530000',
+    instagramUrl: 'https://www.instagram.com/reel/DZiG3EQOXzi',
     category: 'performance',
     tagline: 'O guarda-costas do seu músculo enquanto a caneta faz o resto: proteína de alto valor + leucina, creatina, eletrólitos e vitaminas numa dose só.',
     hook: 'A caneta te emagrece — e derrete seu músculo junto. Ninguém te avisou, né?',

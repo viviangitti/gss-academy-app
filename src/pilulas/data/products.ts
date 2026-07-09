@@ -353,9 +353,15 @@ export function getProduct(id: string) {
   return PRODUCTS.find((p) => p.id === id);
 }
 
+// Se o produto tem um reel do Instagram, o link do VÍDEO vai junto na mensagem —
+// a cliente assiste sem sair do WhatsApp. (Só entra quando existe vídeo de verdade.)
+export function withVideoLink(text: string, p: Product): string {
+  return p.instagramUrl ? `${text}\n\n🎥 Vê o vídeo: ${p.instagramUrl}` : text;
+}
+
 export function buildShareMessage(p: Product): string {
   const benefits = p.benefits.slice(0, 3).map((b) => `✅ ${b}`).join('\n');
-  return [
+  return withVideoLink([
     `✨ *${p.name}* ✨`,
     '',
     p.hook,
@@ -363,7 +369,7 @@ export function buildShareMessage(p: Product): string {
     benefits,
     '',
     p.salesLine,
-  ].join('\n');
+  ].join('\n'), p);
 }
 
 // Várias versões da mensagem pronta — todas puxam os BENEFÍCIOS, em ângulos
@@ -442,5 +448,6 @@ export function buildShareVariants(p: Product): string[] {
     ].filter(Boolean).join('\n'));
   }
 
-  return variants;
+  // O link do vídeo (reel) vai em toda versão — a cliente recebe a mensagem E o vídeo.
+  return variants.map((v) => withVideoLink(v, p));
 }

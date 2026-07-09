@@ -20,7 +20,7 @@ export default function Catalog() {
       <div className="wp-hero">
         <h1 className="wp-hero-title">Cada produto em 30 segundos.</h1>
         <p className="wp-hero-sub">
-          Aprenda o benefício, responda a objeção e mande o vídeo pra cliente — tudo num lugar só.
+          Aprenda o benefício, quebre a objeção e já manda a resposta pronta pra cliente — tudo num lugar só.
         </p>
       </div>
 

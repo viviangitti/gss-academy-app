@@ -5,7 +5,7 @@ const STEPS = [
   {
     Icon: BookOpen,
     title: 'Cada produto em 30 segundos',
-    text: 'No Catálogo, toca num produto e assiste a pílula. Você aprende o benefício e a resposta pra objeção — e manda o mesmo vídeo pra cliente com um toque.',
+    text: 'No Catálogo, toca num produto e assiste a pílula de 30s. Você aprende o benefício e a resposta pra objeção — e manda tudo pronto pra cliente no WhatsApp (com o vídeo, quando o produto tem).',
   },
   {
     Icon: Sparkles,

@@ -110,6 +110,43 @@ export const PRODUCTS: Product[] = [
 
   // ───────────────────── Suplementos & Vitaminas (MERAKI) ─────────────────────
   {
+    id: 'hyaluvita-shot',
+    brand: 'meraki',
+    name: 'Hyaluvita Shot',
+    imageUrl: 'https://hyaluvita.com.br/cdn/shop/files/Design_sem_nome_29_1.png?v=1727861365',
+    instagramUrl: 'https://www.instagram.com/reel/C7ZU0uDMz0N',
+    category: 'cosmeticos',
+    tagline: 'Ácido hialurônico + colágeno Verisol + vitaminas A, C e E num sachê — beleza de dentro pra fora, 1x por dia.',
+    hook: 'Gasta uma fortuna em creme, mas por dentro não cuida de nada? A pele também se alimenta.',
+    whatItIs:
+      'Sabe aquela pele que parece "iluminada de dentro"? Ela não vem só do creme — vem também do que você põe pra dentro. O Hyaluvita Shot junta ácido hialurônico + colágeno Verisol + vitaminas A, C e E num sachê que você dissolve na água e toma 1x por dia. É a dermatologia nutritiva: cuidar da pele, do cabelo e das unhas de dentro pra fora, na dose certa e com sabor gostoso.',
+    benefits: [
+      'Ácido hialurônico + colágeno Verisol: contribuem para a hidratação e a firmeza da pele',
+      'Vitaminas A, C e E — antioxidantes que auxiliam a saúde da pele',
+      'Também favorece cabelo e unhas: beleza de dentro pra fora',
+      'Sachê prático, 1x ao dia, sem glúten, lactose ou açúcar — sabor que dá vontade de manter',
+    ],
+    howToUse:
+      'Dissolva 1 sachê em água, 1 vez ao dia, conforme o rótulo. O sabor é gostoso e a rotina é fácil de manter — e é a constância do dia a dia que traz o resultado.',
+    forWho:
+      'Quem quer cuidar de pele, cabelo e unhas de dentro pra fora e cansou de gastar só em creme.',
+    salesLine: 'Beleza começa de dentro — pele, cabelo e unha agradecem. Quer que eu te conte como encaixar 1 sachê na sua rotina? ✨',
+    objections: [
+      { trigger: '"Colágeno tomado funciona mesmo?"', answer: 'O Verisol é um colágeno com estudos de biodisponibilidade, e aqui ele vem junto com ácido hialurônico e vitaminas A, C e E. O segredo é a constância: tomando todo dia, você contribui para a firmeza e a hidratação da pele de dentro pra fora.' },
+      { trigger: '"Já tomo colágeno."', answer: 'Que ótimo! O diferencial daqui é a combinação num sachê só: colágeno Verisol + ácido hialurônico + vitaminas antioxidantes, na dose certa. Menos potinho, menos conta na cabeça — um sachê e pronto.' },
+      { trigger: '"Achei caro."', answer: 'Pensa que é 1 sachê por dia cuidando de pele, cabelo e unha ao mesmo tempo, de dentro pra fora. Costuma sair bem menos que um bom sérum ou uma sessão de procedimento — e você mantém todo dia.' },
+    ],
+    compliance: 'Suplemento alimentar. Não é medicamento e não substitui uma alimentação equilibrada nem acompanhamento profissional. Resultados variam de pessoa para pessoa.',
+    durationSec: 30,
+    gradient: ['#7a3f9e', '#4a2270'],
+    storyboard: [
+      { t: '0-3s', label: 'GANCHO', line: 'Gasta uma fortuna em creme, mas por dentro não cuida?' },
+      { t: '3-10s', label: 'O PORQUÊ', line: 'A pele também se alimenta: ácido hialurônico, colágeno e vitaminas fazem falta de dentro.' },
+      { t: '10-20s', label: 'O PRODUTO', line: 'Hyaluvita Shot: hialurônico + colágeno Verisol + vitaminas num sachê, 1x ao dia.' },
+      { t: '20-30s', label: 'CTA', line: 'Quer beleza de dentro pra fora? Me chama ✨' },
+    ],
+  },
+  {
     id: 're-hidraben',
     brand: 'meraki',
     name: 'Re-Hidraben',

@@ -126,7 +126,7 @@ export default function Login() {
               <>
                 <label className="wp-login-label">Código de gestor</label>
                 <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="O código que a marca te passou" />
-                <p className="wp-login-hint">A marca passa esse código só pra quem é do time dela.</p>
+                <p className="wp-login-hint">A marca fornece esse código apenas a quem faz parte do time dela.</p>
               </>
             ) : (
               <>

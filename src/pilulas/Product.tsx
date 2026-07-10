@@ -239,7 +239,7 @@ export default function Product() {
       </div>
 
       <div className="wp-block">
-        <span className="wp-block-label"><BadgeCheck size={14} className="wp-ico" /> Benefícios pra destacar</span>
+        <span className="wp-block-label"><BadgeCheck size={14} className="wp-ico" /> Benefícios para destacar</span>
         <ul className="wp-benefits">
           {product.benefits.map((b, idx) => (
             <li key={idx}>{b}</li>
@@ -297,7 +297,7 @@ export default function Product() {
       )}
 
       <div className="wp-salesline">“{product.salesLine}”</div>
-      <p className="wp-share-hint">A cada toque, o botão manda uma mensagem diferente ✨ (nunca repete o mesmo texto com a cliente).</p>
+      <p className="wp-share-hint">A cada toque, o botão envia uma mensagem diferente — assim você não repete o mesmo texto com clientes diferentes.</p>
 
       <button className="wp-share" onClick={share}>
         <ArrowUpRight size={18} className="wp-ico" /> Compartilhar com a cliente

@@ -23,59 +23,59 @@ export interface CalendarDay {
 // Calendário sugerido da semana (1 conteúdo por dia).
 export const CALENDAR: CalendarDay[] = [
   {
-    day: 'Seg', channel: 'instagram', format: 'Reels', tema: 'Antes e depois: o resultado do produto',
+    day: 'Seg', channel: 'instagram', format: 'Reels', tema: 'Mostre a sua rotina com o produto',
     roteiro: [
-      'Comece MOSTRANDO a dor (cabelo no ralo, pele apagada) — a cliente precisa se ver ali.',
-      'Corta seco pro resultado com o produto. O contraste é o que prende o dedo.',
-      'Fecha reto: "quer esse resultado? me chama que eu te explico".',
+      'Comece pela situação que a cliente reconhece (cansaço, pele ressecada) — ela precisa se identificar.',
+      'Mostre como o produto entrou na sua rotina. O contraste é o que prende a atenção.',
+      'Feche de forma direta: "quer entender se serve para você? me chama".',
     ],
   },
   {
     day: 'Ter', channel: 'whatsapp', format: 'Status', tema: 'Oferta da semana no seu status',
     roteiro: [
-      'Foto do produto + o selo da oferta BEM grande (tem que ler de longe).',
-      'Uma frase só: o benefício + o prazo ("só até domingo, hein").',
-      'Chama pra ação: "responde aqui que eu já te explico".',
+      'Foto do produto e o selo da oferta em destaque (precisa ser legível de longe).',
+      'Uma frase só: o benefício e o prazo ("válido até domingo").',
+      'Chamada para ação: "responde aqui que eu te explico".',
     ],
   },
   {
     day: 'Qua', channel: 'instagram', format: 'Caixinha', tema: 'Caixinha: "Me pergunta sobre o produto"',
     roteiro: [
-      'Abre a caixinha: "me pergunta qualquer coisa sobre [produto]".',
-      'Responde 1 por Story, em VÍDEO — seu rosto e sua voz vendem mais que texto.',
-      'No fim de cada resposta: "quer o seu? clica no link/me chama".',
+      'Abra a caixinha: "me pergunta o que quiser sobre [produto]".',
+      'Responda uma por Story, em vídeo — seu rosto e sua voz comunicam mais do que texto.',
+      'Ao final de cada resposta: "quer saber mais? me chama".',
     ],
   },
   {
     day: 'Qui', channel: 'tiktok', format: 'Trend', tema: 'Áudio em alta + dica rápida',
     roteiro: [
-      'Pega um áudio que tá bombando (olha os que aparecem repetido no seu feed).',
-      'Encaixa uma dica rápida do produto em 7-10s. Sem enrolar.',
-      'Texto GRANDE na tela com o benefício principal.',
+      'Escolha um áudio em alta (os que aparecem repetidamente no seu feed).',
+      'Encaixe uma dica rápida sobre o produto em 7 a 10 segundos.',
+      'Texto em destaque na tela com o benefício principal.',
     ],
   },
   {
-    day: 'Sex', channel: 'instagram', format: 'Reels', tema: '3 motivos pra usar o produto',
+    day: 'Sex', channel: 'instagram', format: 'Reels', tema: '3 motivos para conhecer o produto',
     roteiro: [
-      'Gancho direto: "3 motivos pra você usar [produto] AGORA".',
-      'Um motivo por corte, rapidinho, com texto na tela.',
-      'Fecha com a chamada mais forte que você tiver.',
+      'Gancho direto: "3 motivos para conhecer o [produto]".',
+      'Um motivo por corte, com texto na tela.',
+      'Feche com a sua chamada mais clara.',
     ],
   },
   {
     day: 'Sáb', channel: 'whatsapp', format: 'Direct', tema: 'Depoimento de cliente (prova social)',
     roteiro: [
-      'Pega um print ou áudio de uma cliente satisfeita (prova social vale ouro).',
-      'Manda no status ou no direct de quem tá em cima do muro.',
-      'Legenda simples: "olha o que a fulana me mandou 👇".',
+      'Peça autorização à cliente e use o print ou o áudio do relato dela — prova social tem muito peso.',
+      'Envie no status ou no direct de quem está em dúvida.',
+      'Legenda simples: "olha o que a [nome] me contou".',
     ],
   },
   {
     day: 'Dom', channel: 'instagram', format: 'Stories', tema: 'Bastidores da sua rotina com o produto',
     roteiro: [
-      'Mostra você USANDO o produto na rotina real — nada posado.',
-      'Conta por que virou parte do seu dia. Verdade vende.',
-      'Sem CTA pesado hoje: gera proximidade, a venda vem depois.',
+      'Mostre você usando o produto na rotina real, sem pose.',
+      'Conte por que ele virou parte do seu dia. Autenticidade comunica.',
+      'Sem chamada pesada hoje: gere proximidade, a venda vem depois.',
     ],
   },
 ];
@@ -95,31 +95,31 @@ export const TRENDS: Trend[] = [
   {
     id: 't-transicao', channel: 'instagram', tag: 'Reels',
     title: 'Transição "antes / depois"',
-    desc: 'Mostra o problema, corta no beat do áudio e revela o resultado com o produto.',
-    dica: 'Filma o "antes" com cara de problema e o "depois" já resolvida. O corte na batida é o que viraliza.',
+    desc: 'Mostre a situação, corte no beat do áudio e revele a sua rotina com o produto.',
+    dica: 'Filme a situação inicial e, na sequência, a sua rotina com o produto. O corte na batida dá ritmo.',
   },
   {
     id: 't-caixinha', channel: 'instagram', tag: 'Caixinha',
     title: '"Me pergunta sobre..."',
     desc: 'Caixinha de perguntas nos Stories sobre o produto/dor da cliente.',
-    dica: 'Responda em vídeo, 1 pergunta por Story. Rosto converte mais.',
+    dica: 'Responda em vídeo, uma pergunta por Story. O rosto comunica mais.',
   },
   {
     id: 't-enquete', channel: 'instagram', tag: 'Stories',
     title: 'Enquete "A ou B"',
-    desc: 'Ex.: "Cabelo caindo? Sim / Não" e puxe pro produto na sequência.',
-    dica: 'Resposta fácil = mais gente toca = o Insta entrega pra mais gente. Depois puxa quem votou "sim" pro direct.',
+    desc: 'Ex.: "Cabelo caindo? Sim / Não" e conduza para o produto na sequência.',
+    dica: 'Resposta fácil significa mais interações, e o Instagram entrega para mais gente. Depois, chame no direct quem votou "sim".',
   },
   {
     id: 't-pov', channel: 'tiktok', tag: 'Reels',
     title: 'POV: você descobre o benefício',
-    desc: 'Formato POV curtinho mostrando a "virada" que o produto traz.',
-    dica: 'Texto na tela + expressão. 7-10 segundos, sem enrolar.',
+    desc: 'Formato POV curto mostrando a diferença que o produto faz na rotina.',
+    dica: 'Texto na tela e expressão. De 7 a 10 segundos, direto ao ponto.',
   },
   {
     id: 't-audio', channel: 'tiktok', tag: 'Trend',
     title: 'Áudio em alta da semana',
-    desc: 'Pegue um áudio bombando e encaixe seu produto no formato do trend.',
-    dica: 'Posta enquanto o áudio ainda tá subindo. Áudio velho não entrega — timing é tudo.',
+    desc: 'Escolha um áudio em alta e encaixe o seu produto no formato do trend.',
+    dica: 'Poste enquanto o áudio ainda está subindo. O timing faz diferença.',
   },
 ];

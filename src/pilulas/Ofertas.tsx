@@ -24,7 +24,7 @@ export default function Ofertas() {
     <div className="wp-ofertas">
       <div className="wp-of-hero">
         <h1 className="wp-of-title"><Tag size={19} className="wp-ico" /> Ofertas da semana</h1>
-        <p className="wp-of-sub">As condições de agora, prontas pra você mandar pra cliente.</p>
+        <p className="wp-of-sub">As condições vigentes, prontas para você enviar à cliente.</p>
       </div>
 
       <div className="wp-of-list">

@@ -177,7 +177,7 @@ export default function Missoes() {
       <div className="wp-ms-hero">
         <h1 className="wp-ms-hero-title"><Clapperboard size={20} className="wp-ico" /> Vire creator da marca</h1>
         <p className="wp-ms-hero-sub">
-          Calendário, roteiros e tendências prontos — pra WhatsApp, Instagram e TikTok. Postou, pontuou.
+          Calendário, roteiros e tendências prontos — para WhatsApp, Instagram e TikTok. Publicou, pontuou.
         </p>
         <div className="wp-ms-hero-stats">
           <span><b>{doneCount}/{missions.length}</b> missões</span>
@@ -220,7 +220,7 @@ export default function Missoes() {
             onClick={() => navigator.clipboard?.writeText('https://eleva.link/vc-maria')}
           ><Copy size={15} className="wp-ico" /></button>
         </div>
-        <p className="wp-ms-link-note">Em breve: um link só seu pra acompanhar as vendas que você indica.</p>
+        <p className="wp-ms-link-note">Em breve: um link exclusivo para acompanhar as vendas que você indica.</p>
       </div>
 
       {/* Filtro de canal */}

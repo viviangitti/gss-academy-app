@@ -32,11 +32,11 @@ export const MISSIONS: Mission[] = [
     kind: 'stories',
     points: 30,
     title: 'Poste a pílula do GLPEN Nutri Muscle no seu Stories',
-    goal: 'O vídeo de 30s já está pronto. Mire em quem está na “caneta” — é o público que mais compra.',
+    goal: 'O vídeo de 30s já está pronto. Fale com quem está em tratamento com a medicação — é o público mais interessado.',
     productId: 'glpen-nutri-muscle',
     caption:
-      'A caneta te emagrece e derrete seu músculo junto — ninguém te avisa. 💉 O GLPEN Nutri Muscle segura sua massa magra pra você emagrecer FIRME: sem flacidez e sem efeito sanfona. Suou pra emagrecer? Não deixa o músculo ir junto. Me chama 👊',
-    hashtags: '#glp1 #massamagra #emagrecimento #ozempic #proteina #meraki',
+      'Emagrecer com a medicação pode custar massa magra no caminho. O GLPEN Nutri Muscle traz proteína de alto valor biológico, leucina e creatina para apoiar a manutenção da massa muscular durante o processo — sempre junto do treino de força e da orientação do seu profissional de saúde. Quer saber se faz sentido para você? Me chama.',
+    hashtags: '#glp1 #massamagra #emagrecimento #proteina #massamuscular #meraki',
   },
   {
     id: 'm-ativefer-reels',
@@ -44,10 +44,10 @@ export const MISSIONS: Mission[] = [
     kind: 'reels',
     points: 50,
     title: 'Grave um Reels curto sobre o Ative-Fer',
-    goal: 'O gancho “cansaço que não passa nem dormindo” faz o dedo parar — quase toda mulher se identifica.',
+    goal: 'O gancho “cansaço que não passa nem dormindo” gera identificação — muitas mulheres se reconhecem.',
     productId: 'ative-fer',
     caption:
-      'Cansaço que dorme e acorda igual, cabelo caindo, falta de ar subindo a escada? 😴 Muitas vezes é ferro baixo — comum demais na mulher. O Ative-Fer é ferro bisglicinato: repõe o ferro SEM aquela azia e prisão de ventre do ferro comum. Bora trazer a sua energia de volta? Me chama 💬',
+      'Cansaço persistente, queda de cabelo, falta de ar ao subir escadas? Pode estar associado ao ferro baixo, algo frequente entre mulheres. O Ative-Fer é ferro bisglicinato: reposição com melhor tolerância ao estômago. O diagnóstico é sempre do seu médico — me chama que eu te explico.',
     hashtags: '#ferro #cansaço #anemia #saudedamulher #meraki #disposição',
   },
 ];

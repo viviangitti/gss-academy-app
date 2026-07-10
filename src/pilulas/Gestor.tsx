@@ -70,7 +70,7 @@ function ProductForm({ brand, onDone }: { brand: string; onDone: (name: string) 
     if (!valid) return;
     const id = 'p-' + Date.now();
     const bens = benefits.split('\n').map((s) => s.trim()).filter(Boolean);
-    const cta = salesLine.trim() || 'Me chama que eu te explico 💬';
+    const cta = salesLine.trim() || 'Me chama que eu te explico.';
     const storyboard = [
       { t: '0-5s', label: 'GANCHO', line: hook.trim() },
       ...(bens[0] ? [{ t: '5-15s', label: 'BENEFÍCIO', line: bens[0] }] : []),
@@ -121,7 +121,7 @@ function ProductForm({ brand, onDone }: { brand: string; onDone: (name: string) 
       <textarea value={benefits} onChange={(e) => setBenefits(e.target.value)} rows={3} placeholder={'Auxilia na...\nContribui para...'} />
 
       <label className="wp-gz-label">Frase de venda / CTA</label>
-      <input value={salesLine} onChange={(e) => setSalesLine(e.target.value)} placeholder="Me chama que eu te explico 💬" />
+      <input value={salesLine} onChange={(e) => setSalesLine(e.target.value)} placeholder="Me chama que eu te explico." />
 
       <label className="wp-gz-label">Vídeo da pílula — escolha UMA opção</label>
       <label className="wp-gz-upload">
@@ -168,7 +168,7 @@ function OfferForm({ brand, onDone }: { brand: string; onDone: (t: string) => vo
       title: title.trim(),
       desc: desc.trim(),
       until: until.trim() || 'por tempo limitado',
-      share: share.trim() || `*${title.trim()}*\n\nMe chama pra garantir 💬`,
+      share: share.trim() || `*${title.trim()}*\n\nMe chama para garantir.`,
       segment: segment === 'todos' ? undefined : segment,
     });
     onDone(title.trim());
@@ -199,7 +199,7 @@ function OfferForm({ brand, onDone }: { brand: string; onDone: (t: string) => vo
       <input value={until} onChange={(e) => setUntil(e.target.value)} placeholder="até domingo" />
 
       <label className="wp-gz-label">Mensagem pronta de WhatsApp</label>
-      <textarea value={share} onChange={(e) => setShare(e.target.value)} rows={3} placeholder="Texto que a vendedora manda pra cliente." />
+      <textarea value={share} onChange={(e) => setShare(e.target.value)} rows={3} placeholder="Texto que a vendedora envia à cliente." />
 
       <label className="wp-gz-label">Pra qual canal?</label>
       <select value={segment} onChange={(e) => setSegment(e.target.value)}>
@@ -251,7 +251,7 @@ function CalendarForm({ brand, onDone }: { brand: string; onDone: (t: string) =>
       <label className="wp-gz-label">Formato</label>
       <input value={format} onChange={(e) => setFormat(e.target.value)} placeholder="Reels, Stories, Caixinha..." />
       <label className="wp-gz-label">Tema do conteúdo</label>
-      <input value={tema} onChange={(e) => setTema(e.target.value)} placeholder="Ex.: Antes e depois do produto" />
+      <input value={tema} onChange={(e) => setTema(e.target.value)} placeholder="Ex.: Rotina com o produto" />
       <label className="wp-gz-label">Roteiro (um passo por linha)</label>
       <textarea value={roteiro} onChange={(e) => setRoteiro(e.target.value)} rows={3} placeholder={'Gancho...\nVirada...\nCTA...'} />
       <button className="wp-gz-submit" disabled={!valid} onClick={submit}><Check size={16} className="wp-ico" /> Publicar no calendário</button>
@@ -349,7 +349,7 @@ export default function Gestor() {
       <div className="wp-gz-hero">
         <span className="wp-gz-hero-tag">PAINEL DO GESTOR</span>
         <h1 className="wp-gz-hero-title">Gestão da marca {brand.name}</h1>
-        <p className="wp-gz-hero-sub">Cadastre produtos, suba vídeos e crie ofertas. Sai daqui, aparece na hora pro time.</p>
+        <p className="wp-gz-hero-sub">Cadastre produtos, envie vídeos e crie ofertas. O que você publica aqui aparece na hora para o time.</p>
       </div>
 
       {toast && <div className="wp-gz-toast"><Check size={13} className="wp-ico" /> {toast} <Link to="/eleva/catalogo">ver no app <ExternalLink size={12} className="wp-ico" /></Link></div>}

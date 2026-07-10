@@ -67,8 +67,8 @@ export default function PrimeirosPassos() {
       <div className="wp-pp wp-pp-done">
         <PartyPopper size={20} className="wp-ico" />
         <div className="wp-pp-done-text">
-          <b>Você ativou o modo creator! 🎉</b>
-          <span>Agora é ritmo: pílulas, posts e pontos toda semana.</span>
+          <b>Você concluiu os primeiros passos!</b>
+          <span>Agora é manter o ritmo: pílulas, publicações e pontos toda semana.</span>
         </div>
         <button className="wp-pp-x" aria-label="Fechar" onClick={dismiss}><X size={15} /></button>
       </div>

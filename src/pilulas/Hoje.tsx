@@ -189,7 +189,7 @@ export default function Hoje() {
       {q.trim().length >= 2 && (
         <div className="wp-td-hits">
           {hits.length ? hits.map((h, i) => <HitCard key={i} hit={h} />) : (
-            <p className="wp-td-nohit">Nada por aqui… tenta outra palavra (ex.: "sono", "ferro", "caro").</p>
+            <p className="wp-td-nohit">Nada encontrado. Tente outra palavra (ex.: "sono", "ferro", "caro").</p>
           )}
         </div>
       )}
@@ -200,8 +200,8 @@ export default function Hoje() {
           <div className="wp-td-lembrete">
             <span className="wp-td-lb-flame"><Flame size={18} className="wp-ico" /> {stats.streak}</span>
             <div className="wp-td-lb-txt">
-              <b>{didToday ? 'Dia garantido!' : 'Mantenha sua ofensiva'}</b>
-              <span>{didToday ? 'Volte amanhã pra somar +1 dia.' : 'Assista 1 pílula hoje pra não zerar.'}</span>
+              <b>{didToday ? 'Dia garantido!' : 'Mantenha sua sequência'}</b>
+              <span>{didToday ? 'Volte amanhã para somar mais um dia.' : 'Assista a uma pílula hoje para manter a sequência.'}</span>
             </div>
             {notif !== 'granted' && notif !== 'unsupported' && (
               <button className="wp-td-lb-bell" onClick={ligarLembrete}>
@@ -250,7 +250,7 @@ export default function Hoje() {
                   <Play size={15} className="wp-ico" /> Assistir agora
                 </Link>
                 <button className="wp-td-btn" onClick={sharePill}>
-                  <Send size={15} className="wp-ico" /> Mandar pra cliente
+                  <Send size={15} className="wp-ico" /> Enviar à cliente
                 </button>
               </div>
             </div>

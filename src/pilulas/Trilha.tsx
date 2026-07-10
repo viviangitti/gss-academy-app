@@ -42,7 +42,7 @@ export default function Trilha() {
     <div className="wp-trilha">
       <div className="wp-tr-hero">
         <h1 className="wp-tr-title"><GraduationCap size={20} className="wp-ico" /> Sua trilha</h1>
-        <p className="wp-tr-sub">Domine os produtos da {brand.name}, um de cada vez. Passou no quiz = dominou.</p>
+        <p className="wp-tr-sub">Aprenda os produtos da {brand.name}, um de cada vez. Acertar o quiz marca o produto como dominado.</p>
       </div>
 
       {/* Progresso geral */}
@@ -59,7 +59,7 @@ export default function Trilha() {
       {complete && certDate ? (
         <div className="wp-tr-cert-done">
           <div className="wp-tr-cert-hd"><Trophy size={18} className="wp-ico" /> Certificado liberado!</div>
-          <p className="wp-tr-cert-msg">Você dominou todos os produtos da {brand.name}. Baixe e poste o seu:</p>
+          <p className="wp-tr-cert-msg">Você concluiu a trilha da {brand.name}. Baixe e compartilhe o seu certificado:</p>
           <Certificado name={nome} brandName={brand.name} date={formatCertDate(certDate)} accent={brand.accent} />
         </div>
       ) : (

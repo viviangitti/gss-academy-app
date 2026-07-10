@@ -62,36 +62,36 @@ export const PRODUCTS: Product[] = [
     imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/279281-600-600?v=639141832073530000',
     instagramUrl: 'https://www.instagram.com/reel/DZiG3EQOXzi',
     category: 'performance',
-    tagline: 'O guarda-costas do seu músculo enquanto a caneta faz o resto: proteína de alto valor + leucina, creatina, eletrólitos e vitaminas numa dose só.',
-    hook: 'A caneta te emagrece — e derrete seu músculo junto. Ninguém te avisou, né?',
+    tagline: 'Proteína de alto valor biológico com leucina, creatina, eletrólitos e vitaminas em uma dose — apoio à massa magra durante o emagrecimento.',
+    hook: 'Quem emagrece com a medicação da caneta também pode perder massa magra no caminho. Dá para cuidar disso.',
     whatItIs:
-      'Deixa eu te contar um perigo que quase ninguém comenta: quando você emagrece na caneta, boa parte do que some não é gordura — é MÚSCULO. E músculo perdido é flacidez, cansaço e efeito sanfona batendo na porta. O GLPEN Nutri Muscle é o guarda-costas que segura esse músculo: proteína de alto valor, leucina, creatina, eletrólitos e vitaminas numa dose só, pra você perder gordura sem perder o corpo que tanto suou.',
+      'Num emagrecimento acelerado, o corpo pode perder não apenas gordura, mas também massa magra — e é a massa magra que sustenta a força, a firmeza e a disposição do dia a dia. O GLPEN Nutri Muscle foi pensado para acompanhar essa fase: proteína de alto valor biológico, leucina, creatina, eletrólitos e vitaminas em uma única dose, para apoiar quem está emagrecendo com orientação profissional.',
     benefits: [
-      'Segura a massa magra que a caneta tende a levar embora (proteína de alto valor biológico)',
-      'Leucina + creatina: os guarda-costas do músculo no treino de força',
-      'Eletrólitos e vitaminas pra você não apagar de cansaço comendo pouco',
-      '1 dose por dia — funciona até quando a fome some por causa da caneta',
+      'Proteína de alto valor biológico, que contribui para a manutenção da massa muscular',
+      'Leucina e creatina, aliadas do treino de força',
+      'Eletrólitos e vitaminas que auxiliam a disposição quando a alimentação está reduzida',
+      'Uma dose por dia — prático mesmo quando o apetite está baixo',
     ],
     howToUse:
-      '1 dose por dia, de preferência depois do treino de força. A conta é simples: a caneta tira a gordura, o GLPEN + musculação seguram o músculo. Um sem o outro é meio caminho — e meio caminho é flacidez.',
+      'Uma dose por dia, de preferência após o treino de força. O suplemento é um apoio: quem preserva a massa magra é a combinação de proteína adequada, treino de força e acompanhamento profissional.',
     forWho:
-      'Toda mulher que está na caneta (semaglutida, tirzepatida) e NÃO quer o combo "magra e flácida": quer emagrecer firme, com energia e sem efeito sanfona.',
-    salesLine: 'Você suou pra emagrecer — não deixa seu músculo ir embora de graça. Me chama aqui que em 2 minutos eu monto o seu 👊',
+      'Pessoas em processo de emagrecimento com medicação (como semaglutida ou tirzepatida), sob orientação profissional, que querem cuidar da massa magra e da disposição.',
+    salesLine: 'Emagrecer cuidando da massa magra faz diferença no resultado. Quer que eu te explique como ele entra na sua rotina?',
     objections: [
       {
         trigger: '"A caneta já emagrece, pra que tomar isso?"',
         answer:
-          'A caneta emagrece — mas ela não escolhe o que sai. Até 40% do peso que você perde pode ser MÚSCULO, não gordura. O GLPEN é justamente o que faz a balança descer sem o seu corpo murchar junto. Você quer magra, não murcha.',
+          'A medicação auxilia na perda de peso, mas essa perda pode incluir massa magra, e não só gordura. O GLPEN oferece proteína, leucina e creatina para apoiar a manutenção da massa muscular ao longo do processo — sempre junto do treino de força e da orientação do seu profissional de saúde.',
       },
       {
         trigger: '"Achei caro."',
         answer:
-          'Caro é emagrecer e ficar flácida — aí vem preenchimento, bioestimulador, roupa nova. O GLPEN sai por menos que um lanche por dia pra proteger o corpo que você está construindo. Isso não é gasto, é seguro de músculo.',
+          'Entendo. Vale pensar nele como parte do cuidado com o resultado: preservar a massa magra ajuda na força, na firmeza e na manutenção do peso ao longo do tempo. Se quiser, eu te mostro o custo por dose e a gente vê se cabe na sua rotina.',
       },
       {
-        trigger: '"Já tomo whey, tá de bom tamanho."',
+        trigger: '"Já tomo whey, está de bom tamanho."',
         answer:
-          'Whey é UM pedaço da história. Aqui você tem proteína + leucina + creatina + eletrólitos numa dose só, pensado pra quem come pouco na caneta. É o whey com propósito — não mais um pote encostado na prateleira.',
+          'O whey é uma ótima fonte de proteína. A diferença aqui é que, além da proteína, a dose traz leucina, creatina, eletrólitos e vitaminas — pensado para quem está comendo menos por causa da medicação. É uma opção mais completa para essa fase específica.',
       },
     ],
     compliance:
@@ -99,12 +99,12 @@ export const PRODUCTS: Product[] = [
     durationSec: 34,
     gradient: ['#12B5A5', '#0B5563'],
     storyboard: [
-      { t: '0-4s', label: 'GANCHO', line: 'Cuidado: a caneta pode te deixar magra E flácida ao mesmo tempo.' },
-      { t: '4-10s', label: 'O INIMIGO', line: 'Até 40% do peso que você perde na caneta pode ser músculo — não gordura.' },
-      { t: '10-16s', label: 'A VIRADA', line: 'O GLPEN Nutri Muscle segura esse músculo: proteína, leucina e creatina numa dose.' },
-      { t: '16-23s', label: 'A PROMESSA', line: 'Aí você emagrece FIRME: com energia, sem flacidez e sem efeito sanfona.' },
-      { t: '23-29s', label: 'É SIMPLES', line: 'É 1 por dia. Fácil até quando a caneta tira a sua fome.' },
-      { t: '29-34s', label: 'CTA', line: 'Suou pra emagrecer? Não deixa o músculo ir junto. Me chama 👊' },
+      { t: '0-4s', label: 'GANCHO', line: 'Emagrecer rápido pode custar massa magra. Dá para cuidar disso.' },
+      { t: '4-10s', label: 'O PORQUÊ', line: 'A perda de peso nem sempre é só de gordura — a massa magra também pode ir junto.' },
+      { t: '10-16s', label: 'O PRODUTO', line: 'GLPEN Nutri Muscle: proteína de alto valor, leucina e creatina em uma dose.' },
+      { t: '16-23s', label: 'O APOIO', line: 'Apoia a manutenção da massa muscular, junto do treino e da orientação profissional.' },
+      { t: '23-29s', label: 'NA PRÁTICA', line: 'Uma dose por dia — prático mesmo com o apetite reduzido.' },
+      { t: '29-34s', label: 'CTA', line: 'Quer saber se faz sentido para você? Me chama.' },
     ],
   },
 
@@ -117,7 +117,7 @@ export const PRODUCTS: Product[] = [
     instagramUrl: 'https://www.instagram.com/reel/C7ZU0uDMz0N',
     category: 'cosmeticos',
     tagline: 'Ácido hialurônico + colágeno Verisol + vitaminas A, C e E num sachê — beleza de dentro pra fora, 1x por dia.',
-    hook: 'Gasta uma fortuna em creme, mas por dentro não cuida de nada? A pele também se alimenta.',
+    hook: 'Você cuida da pele por fora. E por dentro?',
     whatItIs:
       'Sabe aquela pele que parece "iluminada de dentro"? Ela não vem só do creme — vem também do que você põe pra dentro. O Hyaluvita Shot junta ácido hialurônico + colágeno Verisol + vitaminas A, C e E num sachê que você dissolve na água e toma 1x por dia. É a dermatologia nutritiva: cuidar da pele, do cabelo e das unhas de dentro pra fora, na dose certa e com sabor gostoso.',
     benefits: [
@@ -130,7 +130,7 @@ export const PRODUCTS: Product[] = [
       'Dissolva 1 sachê em água, 1 vez ao dia, conforme o rótulo. O sabor é gostoso e a rotina é fácil de manter — e é a constância do dia a dia que traz o resultado.',
     forWho:
       'Quem quer cuidar de pele, cabelo e unhas de dentro pra fora e cansou de gastar só em creme.',
-    salesLine: 'Beleza começa de dentro — pele, cabelo e unha agradecem. Quer que eu te conte como encaixar 1 sachê na sua rotina? ✨',
+    salesLine: 'Beleza começa de dentro — pele, cabelo e unha agradecem. Quer que eu te conte como encaixar 1 sachê na sua rotina?',
     objections: [
       { trigger: '"Colágeno tomado funciona mesmo?"', answer: 'O Verisol é um colágeno com estudos de biodisponibilidade, e aqui ele vem junto com ácido hialurônico e vitaminas A, C e E. O segredo é a constância: tomando todo dia, você contribui para a firmeza e a hidratação da pele de dentro pra fora.' },
       { trigger: '"Já tomo colágeno."', answer: 'Que ótimo! O diferencial daqui é a combinação num sachê só: colágeno Verisol + ácido hialurônico + vitaminas antioxidantes, na dose certa. Menos potinho, menos conta na cabeça — um sachê e pronto.' },
@@ -140,10 +140,10 @@ export const PRODUCTS: Product[] = [
     durationSec: 30,
     gradient: ['#7a3f9e', '#4a2270'],
     storyboard: [
-      { t: '0-3s', label: 'GANCHO', line: 'Gasta uma fortuna em creme, mas por dentro não cuida?' },
+      { t: '0-3s', label: 'GANCHO', line: 'Você cuida da pele por fora. E por dentro?' },
       { t: '3-10s', label: 'O PORQUÊ', line: 'A pele também se alimenta: ácido hialurônico, colágeno e vitaminas fazem falta de dentro.' },
       { t: '10-20s', label: 'O PRODUTO', line: 'Hyaluvita Shot: hialurônico + colágeno Verisol + vitaminas num sachê, 1x ao dia.' },
-      { t: '20-30s', label: 'CTA', line: 'Quer beleza de dentro pra fora? Me chama ✨' },
+      { t: '20-30s', label: 'CTA', line: 'Quer cuidar da pele de dentro para fora? Me chama.' },
     ],
   },
   {
@@ -166,7 +166,7 @@ export const PRODUCTS: Product[] = [
       'Dissolva 2 medidas (15g) em 200ml de água, 1x ao dia — de preferência em jejum ou com bom intervalo das refeições. Costuma ser orientado por pelo menos 3 meses após o procedimento.',
     forWho:
       'Quem fez (ou vai fazer) procedimento estético que estimula colágeno e quer dar ao corpo a matéria-prima pra construir o resultado.',
-    salesLine: 'O procedimento é o estímulo — quem constrói o colágeno é você. Quer que eu te explique como tomar? 💧',
+    salesLine: 'O procedimento é o estímulo — quem constrói o colágeno é você. Quer que eu te explique como tomar?',
     objections: [
       { trigger: '"Colágeno em pó funciona mesmo?"', answer: 'O Verisol é um peptídeo de colágeno com estudos, e aqui ele vem junto da vitamina C, que contribui para a formação normal do colágeno. Não é mágica: é matéria-prima + constância. Por isso a orientação costuma ser de 3 meses pra cima.' },
       { trigger: '"Já fiz o procedimento, não preciso disso."', answer: 'O procedimento estimula; quem constrói o colágeno é o seu corpo. Sem matéria-prima (colágeno, silício, vitamina C, zinco), o resultado tende a render menos. É o complemento do que você já investiu.' },
@@ -179,7 +179,7 @@ export const PRODUCTS: Product[] = [
       { t: '0-3s', label: 'GANCHO', line: 'Fez o procedimento e não alimentou o colágeno por dentro?' },
       { t: '3-10s', label: 'O PORQUÊ', line: 'O procedimento só estimula. Quem constrói o colágeno é o seu corpo — com matéria-prima.' },
       { t: '10-20s', label: 'O PRODUTO', line: 'Duo Collagen: Verisol + colágeno hidrolisado + silício e vitamina C, 1 dose por dia.' },
-      { t: '20-28s', label: 'CTA', line: 'Quer proteger o que você já investiu? Me chama 💧' },
+      { t: '20-28s', label: 'CTA', line: 'Quer proteger o que você já investiu? Me chama.' },
     ],
   },
   {
@@ -202,7 +202,7 @@ export const PRODUCTS: Product[] = [
       '1 cápsula ao dia, de preferência em jejum (o silício costuma absorver melhor assim). Consulte médico ou nutricionista para orientação individual.',
     forWho:
       'Quem reclama de queda de cabelo, unha fraca que quebra e descasca, e quer pele mais firme — cuidando de dentro pra fora.',
-    salesLine: 'Cabelo e unha se constroem de dentro. Quer que eu te conte a rotina de 1 cápsula por dia? 💜',
+    salesLine: 'Cabelo e unha se constroem de dentro. Quer que eu te conte a rotina de 1 cápsula por dia?',
     objections: [
       { trigger: '"Biotina eu já tomo."', answer: 'Ótimo! Aqui a biotina vem acompanhada de silício orgânico, ferro, zinco e complexo B — porque cabelo e unha não se constroem com um nutriente só. É a formação completa numa cápsula.' },
       { trigger: '"Queda de cabelo não é caso de médico?"', answer: 'É sim, e a gente sempre orienta procurar. Queda tem várias causas. O que o suplemento faz é oferecer a matéria-prima (ferro, zinco, biotina, silício): ele auxilia, não substitui a investigação com um profissional.' },
@@ -215,7 +215,7 @@ export const PRODUCTS: Product[] = [
       { t: '0-3s', label: 'GANCHO', line: 'Cabelo no ralo e unha que quebra à toa?' },
       { t: '3-10s', label: 'O PORQUÊ', line: 'Fio e unha se constroem de dentro: silício, biotina, ferro e zinco.' },
       { t: '10-20s', label: 'O PRODUTO', line: 'Hyaluvita Silício: Nutricolin + biotina em dose alta, 1 cápsula por dia.' },
-      { t: '20-28s', label: 'CTA', line: 'Quer fio forte e unha firme? Me chama 💜' },
+      { t: '20-28s', label: 'CTA', line: 'Quer cuidar de cabelo e unhas? Me chama.' },
     ],
   },
   {
@@ -238,7 +238,7 @@ export const PRODUCTS: Product[] = [
       '1 cápsula ao dia junto de uma refeição (melhora a absorção), ou conforme orientação do seu profissional de saúde. Mantenha sempre o protetor solar.',
     forWho:
       'Quem convive com manchas e melasma, já usa protetor solar e quer somar um cuidado antioxidante de dentro pra fora.',
-    salesLine: 'Mancha pede constância — por dentro e por fora. Quer que eu te explique como ele entra na sua rotina? ☀️',
+    salesLine: 'Mancha pede constância — por dentro e por fora. Quer que eu te explique como ele entra na sua rotina?',
     objections: [
       { trigger: '"Isso acaba com o melasma?"', answer: 'Não — e desconfie de quem promete isso. Melasma é crônico e pede acompanhamento com dermatologista e protetor solar todo dia. O Melan é um suplemento antioxidante que AUXILIA esse cuidado por dentro. Ele soma, não substitui.' },
       { trigger: '"Então posso maneirar no protetor?"', answer: 'De jeito nenhum! A fotoproteção oral é complemento. O protetor solar continua sendo o principal — o Melan trabalha junto com ele, nunca no lugar dele.' },
@@ -251,7 +251,7 @@ export const PRODUCTS: Product[] = [
       { t: '0-3s', label: 'GANCHO', line: 'Passa protetor todo dia e a mancha continua teimando?' },
       { t: '3-10s', label: 'O PORQUÊ', line: 'Cuidar só por fora é metade: antioxidantes agem por dentro.' },
       { t: '10-20s', label: 'O PRODUTO', line: 'Hyaluvita Melan: picnogenol, astaxantina, luteína e licopeno — 1 cápsula ao dia.' },
-      { t: '20-28s', label: 'CTA', line: 'Some ao seu protetor e à sua dermato. Me chama ☀️' },
+      { t: '20-28s', label: 'CTA', line: 'Some ao seu protetor solar e à orientação da sua dermatologista. Me chama.' },
     ],
   },
   {
@@ -261,32 +261,32 @@ export const PRODUCTS: Product[] = [
     imageUrl: 'https://merakifarma.com.br/wp-content/uploads/2024/10/Re-Hiudraben-Sabor-AguadeCoco.jpg',
     category: 'capsulas',
     tagline: 'Repositor de água e eletrólitos (sódio, potássio, zinco) em sachê — água de coco, laranja, uva ou natural.',
-    hook: 'Bebeu água mas continua com dor de cabeça, moleza e boca seca? Água pura não repõe sal.',
+    hook: 'Bebe água e continua com dor de cabeça, moleza e boca seca? Água pura não repõe os sais que o corpo perde.',
     whatItIs:
-      'Sabe quando você bebe água e mesmo assim fica mole, com dor de cabeça e aquela sensação de "não hidrata"? É que junto com o líquido o corpo perde SAIS — sódio, potássio, zinco — e água pura não repõe isso. O Re-Hidraben devolve água E eletrólitos na medida certa, em 4 sabores que descem fácil. É a hidratação que realmente chega na célula.',
+      'Quando o corpo perde líquido — no calor, no treino ou num episódio de mal-estar — não sai apenas água: saem também sais minerais como sódio, potássio e zinco. Beber água pura mata a sede, mas não repõe esses eletrólitos. O Re-Hidraben devolve água e eletrólitos na proporção adequada, em quatro sabores, para uma hidratação mais completa.',
     benefits: [
-      'Repõe água e eletrólitos (sódio, potássio e zinco) perdidos no calor, no treino e no mal-estar',
-      'Ajuda o corpo a recuperar a disposição mais rápido do que água pura',
-      'Com zinco, que contribui para o funcionamento normal do sistema imune',
-      '4 sabores (água de coco, laranja, uva e natural) — a família toda toma sem reclamar',
+      'Repõe água e eletrólitos (sódio, potássio e zinco) perdidos no calor, no treino e em episódios de mal-estar',
+      'Auxilia a recuperação da disposição de forma mais completa do que a água pura',
+      'Contém zinco, que contribui para o funcionamento normal do sistema imunológico',
+      'Quatro sabores: água de coco, laranja, uva e natural',
     ],
     howToUse:
-      'Dissolva 1 sachê em água conforme o rótulo. Ótimo depois do treino, em dia de calor forte ou quando bate mal-estar com o corpo desidratado.',
+      'Dissolva 1 sachê em água conforme o rótulo. Indicado após o treino, em dias de calor intenso ou em situações de maior perda de líquidos.',
     forWho:
-      'Quem treina e sua muito, quem passa o dia no calor e a família em dias de mal-estar com muita perda de líquido.',
-    salesLine: 'Água sozinha não dá conta — hidratação de verdade tem sal na medida certa. Te falo qual sabor é o queridinho? 💧',
+      'Quem treina e transpira bastante, quem passa o dia exposto ao calor e famílias em dias de mal-estar com perda de líquidos.',
+    salesLine: 'Hidratação completa envolve água e eletrólitos. Quer que eu te indique o sabor mais pedido?',
     objections: [
-      { trigger: '"Água pura não resolve?"', answer: 'Resolve a sede, não a hidratação completa. Quando você sua ou passa mal, perde sódio e potássio junto — e é isso que dá a moleza e a dor de cabeça. O Re-Hidraben repõe os dois.' },
-      { trigger: '"É tipo isotônico de mercado?"', answer: 'A ideia é parecida, mas a fórmula é focada em repor eletrólitos com menos açúcar e ainda leva zinco. E você escolhe o sabor que todo mundo toma numa boa.' },
+      { trigger: '"Água pura não resolve?"', answer: 'A água mata a sede, mas não repõe os sais minerais. Quando você transpira muito ou passa mal, perde também sódio e potássio — e é isso que costuma causar a moleza e a dor de cabeça. O Re-Hidraben repõe os dois.' },
+      { trigger: '"É como um isotônico de mercado?"', answer: 'A proposta é parecida, mas a fórmula prioriza a reposição de eletrólitos com menos açúcar e ainda traz zinco. E você escolhe entre quatro sabores.' },
     ],
     compliance: 'Suplemento alimentar. Não é medicamento. Em caso de diarreia persistente ou desidratação intensa, procure um médico.',
     durationSec: 24,
     gradient: ['#12b5a5', '#0b7285'],
     storyboard: [
       { t: '0-3s', label: 'GANCHO', line: 'Bebe água e continua com dor de cabeça e moleza?' },
-      { t: '3-9s', label: 'O PORQUÊ', line: 'Água pura não repõe o sal que o corpo perde — sódio, potássio, zinco.' },
-      { t: '9-17s', label: 'O PRODUTO', line: 'O Re-Hidraben devolve água E eletrólitos, em 4 sabores que descem fácil.' },
-      { t: '17-24s', label: 'CTA', line: 'Quer testar qual sabor é a sua cara? Me chama 💧' },
+      { t: '3-9s', label: 'O PORQUÊ', line: 'Água pura não repõe os sais que o corpo perde: sódio, potássio e zinco.' },
+      { t: '9-17s', label: 'O PRODUTO', line: 'Re-Hidraben devolve água e eletrólitos, em quatro sabores.' },
+      { t: '17-24s', label: 'CTA', line: 'Quer saber qual sabor combina com você? Me chama.' },
     ],
   },
   {
@@ -295,33 +295,33 @@ export const PRODUCTS: Product[] = [
     name: 'Moviben',
     imageUrl: 'https://merakifarma.com.br/wp-content/uploads/2024/10/Moviben.jpg',
     category: 'capsulas',
-    tagline: 'Suporte completo pras articulações: colágeno tipo 2, glucosamina, condroitina, curcumina, MSM, cálcio, magnésio e vitamina D3.',
-    hook: 'Joelho estalando, dificuldade de levantar da cadeira, medo de "travar" com a idade?',
+    tagline: 'Suporte para as articulações: colágeno tipo 2, glucosamina, condroitina, curcumina, MSM, cálcio, magnésio e vitamina D3.',
+    hook: 'Joelho estalando, dificuldade para levantar da cadeira, receio de perder mobilidade com o tempo?',
     whatItIs:
-      'Articulação boa é liberdade: subir escada, brincar com o neto, treinar sem medo. O Moviben junta num comprimido só o time completo que a articulação pede — colágeno tipo 2, glucosamina, condroitina, curcumina, MSM, cálcio, magnésio e vitamina D3 — pra apoiar a mobilidade de quem não quer parar.',
+      'Mobilidade é autonomia: subir escada, brincar com os netos, treinar com segurança. O Moviben reúne em um único comprimido os nutrientes associados à saúde articular — colágeno tipo 2, glucosamina, condroitina, curcumina, MSM, cálcio, magnésio e vitamina D3 — para apoiar quem quer continuar em movimento.',
     benefits: [
-      'Reúne colágeno tipo 2, glucosamina e condroitina — nutrientes ligados à saúde articular',
+      'Reúne colágeno tipo 2, glucosamina e condroitina — nutrientes associados à saúde articular',
       'Com curcumina e MSM, que complementam o cuidado com músculos e articulações',
       'Cálcio, magnésio e vitamina D3, que contribuem para a manutenção de ossos normais',
-      'Um comprimido concentrado — praticidade pra manter todo dia',
+      'Um comprimido concentrado, prático para manter todos os dias',
     ],
-    howToUse: 'Conforme o rótulo, todo dia, junto a uma refeição. Resultado de articulação é constância: pensa em meses, não em dias.',
+    howToUse: 'Conforme o rótulo, diariamente, junto a uma refeição. O cuidado com as articulações depende de constância — pense em meses, não em dias.',
     forWho:
-      'Pessoas 40+ que sentem as articulações pesando, quem treina forte e quer proteger joelho e ombro, e quem quer se mexer sem medo de travar.',
-    salesLine: 'Articulação boa é liberdade pra viver sem pedir licença pro corpo. Bora cuidar disso todo dia? Me chama 💪',
+      'Pessoas a partir dos 40 que sentem desconforto nas articulações, quem treina com intensidade e quer proteger joelhos e ombros, e quem deseja manter a mobilidade.',
+    salesLine: 'Articulações saudáveis são liberdade de movimento. Quer que eu te explique como incluir na rotina?',
     objections: [
-      { trigger: '"Já tomo colágeno."', answer: 'Colágeno sozinho é um pedaço. O Moviben junta colágeno tipo 2 + glucosamina + condroitina + curcumina + minerais num comprimido — o pacote completo da articulação, não só uma parte.' },
-      { trigger: '"Isso é coisa de idoso?"', answer: 'É coisa de quem quer se mexer bem — atleta usa pra proteger o joelho, quem vive na correria usa pra não travar. Cuidar antes é melhor que remediar depois.' },
+      { trigger: '"Já tomo colágeno."', answer: 'O colágeno é uma parte do cuidado. O Moviben reúne colágeno tipo 2, glucosamina, condroitina, curcumina e minerais em um comprimido — um suporte mais completo para a articulação.' },
+      { trigger: '"Isso é para pessoas mais velhas?"', answer: 'É para quem quer se manter em movimento, em qualquer idade. Atletas usam para proteger os joelhos; quem tem rotina intensa usa para manter a mobilidade. Cuidar antes costuma ser mais simples do que remediar depois.' },
     ],
     compliance: 'Suplemento alimentar. Não é medicamento e não trata doenças articulares. Dor persistente: procure seu médico.',
     durationSec: 30,
     gradient: ['#f59e0b', '#b45309'],
     storyboard: [
-      { t: '0-3s', label: 'GANCHO', line: 'Joelho estalando e aquele medo de travar com a idade?' },
-      { t: '3-10s', label: 'O PRODUTO', line: 'Moviben: colágeno tipo 2, glucosamina, condroitina e minerais num comprimido.' },
-      { t: '10-18s', label: 'BENEFÍCIO', line: 'O time completo pra apoiar a mobilidade e a qualidade de vida.' },
-      { t: '18-24s', label: 'É SIMPLES', line: 'Um por dia, todo dia. Articulação gosta é de constância.' },
-      { t: '24-30s', label: 'CTA', line: 'Bora deixar o corpo livre pra se mexer? Me chama 💪' },
+      { t: '0-3s', label: 'GANCHO', line: 'Joelho estalando e receio de perder mobilidade com o tempo?' },
+      { t: '3-10s', label: 'O PRODUTO', line: 'Moviben: colágeno tipo 2, glucosamina, condroitina e minerais em um comprimido.' },
+      { t: '10-18s', label: 'BENEFÍCIO', line: 'Um suporte completo para apoiar a mobilidade e a qualidade de vida.' },
+      { t: '18-24s', label: 'NA PRÁTICA', line: 'Um por dia, todos os dias. A articulação responde à constância.' },
+      { t: '24-30s', label: 'CTA', line: 'Quer cuidar da sua mobilidade? Me chama.' },
     ],
   },
   {
@@ -330,31 +330,31 @@ export const PRODUCTS: Product[] = [
     name: 'ProbiAtiv',
     category: 'capsulas',
     imageUrl: 'https://farmaciaindiana.vtexassets.com/arquivos/ids/342113-600-600?v=638737771515070000',
-    tagline: 'Probiótico em comprimido pra equilibrar a flora intestinal e apoiar a digestão e a imunidade.',
-    hook: 'Intestino preso, inchaço depois de comer, aquela sensação de "nada digere"?',
+    tagline: 'Probiótico em comprimido para equilibrar a flora intestinal e apoiar a digestão e a imunidade.',
+    hook: 'Intestino preso, inchaço depois das refeições, sensação de digestão lenta?',
     whatItIs:
-      'Seu intestino é o seu segundo cérebro — quando ele desregula, vem inchaço, preguiça digestiva e até a imunidade cai. O ProbiAtiv repõe as bactérias do bem que equilibram a flora intestinal, pra digestão funcionar redonda e o corpo absorver melhor o que você come.',
+      'O equilíbrio da flora intestinal influencia a digestão, a absorção de nutrientes e a imunidade. O ProbiAtiv é um probiótico em comprimido que ajuda a repor as bactérias benéficas da flora, apoiando uma digestão mais regular e o bom funcionamento do intestino.',
     benefits: [
-      'Ajuda a equilibrar a flora intestinal (as bactérias do bem)',
+      'Ajuda a equilibrar a flora intestinal (as bactérias benéficas)',
       'Apoia uma digestão mais leve e regular',
-      'Intestino equilibrado contribui para a absorção de nutrientes e para a imunidade',
-      'Comprimido prático — 1 na rotina e pronto',
+      'Um intestino equilibrado contribui para a absorção de nutrientes e para a imunidade',
+      'Comprimido prático, um por dia na rotina',
     ],
-    howToUse: 'Conforme o rótulo, de preferência no mesmo horário todo dia. Combine com mais água e fibras.',
-    forWho: 'Quem vive com intestino preso ou solto, quem sente inchaço após as refeições e quem usou antibiótico e quer reequilibrar a flora.',
-    salesLine: 'Intestino em dia muda o seu dia inteiro — menos inchaço, mais leveza. Te explico como começar? 💚',
+    howToUse: 'Conforme o rótulo, de preferência no mesmo horário todos os dias. Combine com boa ingestão de água e fibras.',
+    forWho: 'Quem convive com intestino irregular, sente inchaço após as refeições ou usou antibiótico e quer reequilibrar a flora.',
+    salesLine: 'Um intestino em equilíbrio muda o dia inteiro. Quer que eu te explique como começar?',
     objections: [
-      { trigger: '"Iogurte não faz o mesmo?"', answer: 'Iogurte ajuda, mas a quantidade de bactérias vivas é imprevisível e vem com açúcar. O probiótico entrega as cepas certas na dose certa, todo dia igual.' },
-      { trigger: '"Preciso tomar pra sempre?"', answer: 'Depende do seu intestino. Muita gente usa por um período pra reequilibrar (ex.: depois de antibiótico) e mantém conforme sente a diferença.' },
+      { trigger: '"Iogurte não faz o mesmo?"', answer: 'O iogurte ajuda, mas a quantidade de bactérias vivas varia e costuma vir acompanhada de açúcar. O probiótico entrega as cepas selecionadas na dose adequada, de forma constante.' },
+      { trigger: '"Preciso tomar para sempre?"', answer: 'Depende de cada caso. Muitas pessoas usam por um período para reequilibrar a flora — após um antibiótico, por exemplo — e seguem conforme a orientação profissional e a resposta do próprio corpo.' },
     ],
     compliance: 'Suplemento alimentar. Não é medicamento. Sintomas persistentes: procure orientação profissional.',
     durationSec: 26,
     gradient: ['#22c55e', '#15803d'],
     storyboard: [
-      { t: '0-3s', label: 'GANCHO', line: 'Inchaço depois de comer e intestino que não colabora?' },
-      { t: '3-12s', label: 'O PRODUTO', line: 'ProbiAtiv repõe as bactérias do bem que equilibram a flora intestinal.' },
-      { t: '12-20s', label: 'BENEFÍCIO', line: 'Digestão mais leve, corpo absorvendo melhor e imunidade em dia.' },
-      { t: '20-26s', label: 'CTA', line: 'Quer o intestino trabalhando a seu favor? Me chama 💚' },
+      { t: '0-3s', label: 'GANCHO', line: 'Inchaço depois das refeições e intestino irregular?' },
+      { t: '3-12s', label: 'O PRODUTO', line: 'ProbiAtiv repõe as bactérias benéficas que equilibram a flora intestinal.' },
+      { t: '12-20s', label: 'BENEFÍCIO', line: 'Digestão mais leve, melhor absorção de nutrientes e apoio à imunidade.' },
+      { t: '20-26s', label: 'CTA', line: 'Quer cuidar do seu intestino? Me chama.' },
     ],
   },
   {
@@ -363,31 +363,31 @@ export const PRODUCTS: Product[] = [
     name: 'Ative-Fer',
     imageUrl: 'https://merakifarma.com.br/wp-content/uploads/2024/10/AtivFer.jpg',
     category: 'capsulas',
-    tagline: 'Ferro bisglicinato em cápsula — a forma de ferro mais suave pro estômago — contra o cansaço da falta de ferro.',
-    hook: 'Cansaço que não passa nem dormindo, palidez, cabelo caindo e falta de ar em coisa simples?',
+    tagline: 'Ferro bisglicinato em cápsula — forma de ferro mais suave para o estômago — no cuidado com o cansaço associado ao ferro baixo.',
+    hook: 'Cansaço que não passa nem dormindo, palidez, queda de cabelo e falta de ar em esforços simples?',
     whatItIs:
-      'Aquele cansaço que dorme e acorda igual, a palidez, o cabelo caindo, a falta de ar subindo uma escada — muitas vezes é ferro baixo, super comum na mulher. O Ative-Fer usa ferro bisglicinato, a forma mais suave pro estômago (sem a azia e a prisão de ventre do ferro comum), pra repor o ferro e trazer a energia de volta.',
+      'O cansaço persistente, a palidez, a queda de cabelo e a falta de ar em esforços leves podem estar associados ao ferro baixo — uma situação frequente entre mulheres. O Ative-Fer utiliza ferro bisglicinato, uma forma de melhor absorção e mais suave para o estômago, sem o desconforto comum do ferro tradicional. O diagnóstico, porém, é sempre do seu médico.',
     benefits: [
-      'Ferro na forma bisglicinato — melhor absorção e mais suave pro estômago',
-      'O ferro contribui para reduzir o cansaço e a fadiga',
-      'Apoia o transporte normal de oxigênio no corpo — mais disposição',
-      'Sem o desconforto (azia e prisão de ventre) típico do ferro tradicional',
+      'Ferro na forma bisglicinato — melhor absorção e mais suave para o estômago',
+      'O ferro contribui para a redução do cansaço e da fadiga',
+      'Apoia o transporte normal de oxigênio no organismo',
+      'Sem o desconforto (azia e prisão de ventre) comum ao ferro tradicional',
     ],
-    howToUse: 'Conforme o rótulo. Ferro absorve melhor junto de vitamina C e longe de café e leite.',
-    forWho: 'Mulheres com menstruação intensa, gestantes (com acompanhamento), vegetarianos e quem vive cansado mesmo dormindo bem.',
-    salesLine: 'Se o cansaço não passa nem dormindo, o problema pode ser ferro — e isso tem solução. Me chama que eu te explico ✨',
+    howToUse: 'Conforme o rótulo. O ferro é melhor absorvido junto de vitamina C e longe de café e leite.',
+    forWho: 'Mulheres com menstruação intensa, gestantes (com acompanhamento), vegetarianos e quem sente cansaço persistente mesmo dormindo bem.',
+    salesLine: 'Se o cansaço não passa nem dormindo, vale investigar o ferro. Quer que eu te explique?',
     objections: [
-      { trigger: '"Ferro me dá enjoo e prende o intestino."', answer: 'Esse é o problema do ferro comum. O Ative-Fer é ferro bisglicinato, justamente a forma mais suave — feita pra quem não tolera o ferro tradicional.' },
-      { trigger: '"Como sei se preciso?"', answer: 'Cansaço que não passa, palidez, unha fraca e falta de ar são sinais. O ideal é um exame de sangue — mas repor ferro de forma suave já é um cuidado que faz diferença pra muita mulher.' },
+      { trigger: '"Ferro me dá enjoo e prende o intestino."', answer: 'Esse é um desconforto comum do ferro tradicional. O Ative-Fer usa ferro bisglicinato, uma forma reconhecida por ser mais suave — pensada justamente para quem não tolera bem o ferro comum.' },
+      { trigger: '"Como sei se preciso?"', answer: 'Cansaço persistente, palidez, unhas fracas e falta de ar são sinais que merecem atenção. O caminho é um exame de sangue e a avaliação do seu médico — o suplemento entra como apoio, com orientação profissional.' },
     ],
     compliance: 'Suplemento alimentar. Não é medicamento. Anemia deve ser diagnosticada e acompanhada por um médico.',
     durationSec: 28,
     gradient: ['#ef4444', '#991b1b'],
     storyboard: [
       { t: '0-3s', label: 'GANCHO', line: 'Cansaço que não passa nem dormindo bem?' },
-      { t: '3-10s', label: 'A CAUSA', line: 'Muitas vezes é ferro baixo — super comum na mulher.' },
-      { t: '10-20s', label: 'O PRODUTO', line: 'Ative-Fer é ferro bisglicinato: repõe o ferro sem azia nem prender o intestino.' },
-      { t: '20-28s', label: 'CTA', line: 'Bora trazer a energia de volta? Me chama ✨' },
+      { t: '3-10s', label: 'A CAUSA', line: 'Pode estar associado ao ferro baixo — frequente entre mulheres.' },
+      { t: '10-20s', label: 'O PRODUTO', line: 'Ative-Fer é ferro bisglicinato: reposição com melhor tolerância ao estômago.' },
+      { t: '20-28s', label: 'CTA', line: 'Quer entender se é o seu caso? Me chama.' },
     ],
   },
   {
@@ -396,31 +396,31 @@ export const PRODUCTS: Product[] = [
     name: 'Flenoben',
     imageUrl: 'https://merakifarma.com.br/wp-content/uploads/2024/12/Flenoben.jpg',
     category: 'capsulas',
-    tagline: 'Suporte pra circulação das pernas, com riboflavina — pra aquela sensação de pernas pesadas e inchadas no fim do dia.',
-    hook: 'Fim do dia com as pernas pesadas, inchadas, marca da meia e vontade de erguer o pé?',
+    tagline: 'Suporte para a circulação das pernas, com riboflavina — para a sensação de pernas pesadas e inchadas no fim do dia.',
+    hook: 'Fim do dia com as pernas pesadas, inchadas e a marca da meia?',
     whatItIs:
-      'Sabe aquele fim de dia com a perna pesada, inchada e a marquinha da meia? É a circulação pedindo ajuda. O Flenoben apoia a microcirculação das pernas pra aliviar essa sensação de peso e inchaço — pra você chegar em casa com a perna leve, não implorando pra sentar.',
+      'A sensação de pernas pesadas e inchadas no fim do dia costuma estar ligada à circulação. O Flenoben apoia a microcirculação das pernas, ajudando a amenizar essa sensação de peso e inchaço em quem passa muitas horas em pé ou sentado.',
     benefits: [
       'Apoia a circulação e a sensação de leveza nas pernas',
       'Ajuda a amenizar a sensação de peso e inchaço no fim do dia',
       'Com riboflavina (vitamina B2), que contribui para o metabolismo normal de energia',
-      'Cápsula prática pra quem fica muito tempo em pé ou sentado',
+      'Cápsula prática para quem fica muito tempo em pé ou sentado',
     ],
-    howToUse: 'Conforme o rótulo, todo dia. Combine com pausas pra mexer as pernas e boa hidratação.',
-    forWho: 'Quem passa o dia em pé (balcão, salão, cozinha) ou muito tempo sentado, e sente as pernas pesarem e incharem no fim do dia.',
-    salesLine: 'Chega em casa com a perna implorando pra sentar? Bora deixar ela mais leve. Te explico como usar 🦵',
+    howToUse: 'Conforme o rótulo, diariamente. Combine com pausas para movimentar as pernas e boa hidratação.',
+    forWho: 'Quem passa o dia em pé (balcão, salão, cozinha) ou muito tempo sentado e sente as pernas pesarem e incharem no fim do dia.',
+    salesLine: 'Pernas mais leves no fim do dia fazem diferença. Quer que eu te explique como usar?',
     objections: [
-      { trigger: '"Isso é pra varizes?"', answer: 'O Flenoben é um suplemento que apoia a circulação e a leveza das pernas no dia a dia. Quadro de varizes é avaliação médica — o cuidado diário caminha junto, não substitui o médico.' },
-      { trigger: '"Só levantar a perna não resolve?"', answer: 'Ajuda na hora, mas volta. O cuidado por dentro apoia a circulação todo dia — junto com pausinhas pra mexer as pernas, o combo funciona bem melhor.' },
+      { trigger: '"Isso é para varizes?"', answer: 'O Flenoben é um suplemento que apoia a circulação e a sensação de leveza nas pernas no dia a dia. Varizes exigem avaliação médica — o cuidado diário caminha junto, nunca no lugar do médico.' },
+      { trigger: '"Só levantar a perna não resolve?"', answer: 'Levantar as pernas alivia no momento. O cuidado por dentro apoia a circulação de forma contínua e, junto com pausas para movimentar as pernas, o resultado costuma ser melhor.' },
     ],
     compliance: 'Suplemento alimentar. Não é medicamento e não trata doenças venosas. Dor, varizes ou inchaço persistente: procure um médico.',
     durationSec: 26,
     gradient: ['#6366f1', '#3730a3'],
     storyboard: [
       { t: '0-3s', label: 'GANCHO', line: 'Fim do dia com as pernas pesadas e inchadas?' },
-      { t: '3-12s', label: 'O PRODUTO', line: 'Flenoben apoia a microcirculação pra aliviar o peso e o inchaço das pernas.' },
-      { t: '12-20s', label: 'PRA QUEM', line: 'Perfeito pra quem passa o dia em pé ou sentado demais.' },
-      { t: '20-26s', label: 'CTA', line: 'Quer chegar em casa com a perna leve? Me chama 🦵' },
+      { t: '3-12s', label: 'O PRODUTO', line: 'Flenoben apoia a microcirculação para amenizar o peso e o inchaço nas pernas.' },
+      { t: '12-20s', label: 'PRA QUEM', line: 'Indicado para quem passa o dia em pé ou muito tempo sentado.' },
+      { t: '20-26s', label: 'CTA', line: 'Quer chegar em casa com as pernas mais leves? Me chama.' },
     ],
   },
 
@@ -433,31 +433,31 @@ export const PRODUCTS: Product[] = [
     name: 'Resfben',
     imageUrl: 'https://merakifarma.com.br/wp-content/uploads/2024/12/Resfben-0-Acucar.jpg',
     category: 'respiratorio',
-    tagline: 'Linha de alívio pra garganta e vias respiratórias: pastilhas com mel, vitamina C, zinco e romã; e xarope com guaco.',
-    hook: 'Garganta arranhando, aquele pigarro chato e a tosse que não larga do seu pé?',
+    tagline: 'Linha de alívio para a garganta e as vias respiratórias: pastilhas com mel, vitamina C, zinco e romã; e xarope com guaco.',
+    hook: 'Garganta arranhando, pigarro persistente e tosse que não passa?',
     whatItIs:
-      'Aquele começo de garganta arranhando e o pigarro que não larga? A linha Resfben dá o alívio: pastilhas com mel, vitamina C, zinco e concentrado de romã pra confortar a garganta, e o xarope com guaco pra ajudar a soltar o catarro. Cuidado pras vias respiratórias no capricho.',
+      'No início de um desconforto na garganta, o alívio ajuda a atravessar o dia. A linha Resfben traz pastilhas com mel, vitamina C, zinco e concentrado de romã, que confortam a garganta, e o xarope com guaco, tradicional aliado das vias respiratórias. Siga sempre as orientações do rótulo e da bula.',
     benefits: [
-      'Pastilhas com mel, vitamina C, zinco e romã — alívio e conforto pra garganta',
+      'Pastilhas com mel, vitamina C, zinco e romã — alívio e conforto para a garganta',
       'Xarope com guaco, tradicional aliado das vias respiratórias',
-      'Zinco e vitamina C contribuem para o funcionamento normal do sistema imune',
-      'Formatos práticos pra ter na bolsa e em casa na estação da tosse',
+      'Zinco e vitamina C contribuem para o funcionamento normal do sistema imunológico',
+      'Formatos práticos para levar na bolsa e ter em casa na estação da tosse',
     ],
-    howToUse: 'Pastilhas: dissolva na boca conforme o rótulo. Xarope: siga a indicação da embalagem. Leia sempre o rótulo/bula.',
-    forWho: 'Quem sente a garganta no limite em dia de ar seco ou ar-condicionado, e a família na época de resfriado e tosse.',
-    salesLine: 'Começou a garganta arranhando? Melhor agir cedo. Te falo qual da linha combina com o seu caso 🍯',
+    howToUse: 'Pastilhas: dissolva na boca conforme o rótulo. Xarope: siga a indicação da embalagem. Leia sempre o rótulo e a bula.',
+    forWho: 'Quem sente desconforto na garganta em dias de ar seco ou ar-condicionado, e a família na época de resfriados e tosse.',
+    salesLine: 'Ao primeiro desconforto na garganta, agir cedo ajuda. Quer que eu indique qual item da linha se encaixa no seu caso?',
     objections: [
-      { trigger: '"Pastilha resolve mesmo?"', answer: 'A pastilha traz alívio e conforto pra garganta com mel, zinco e vitamina C — ótima pro dia a dia. Se a tosse é com catarro, o xarope com guaco entra pra ajudar a soltar.' },
-      { trigger: '"Posso dar pros meus filhos?"', answer: 'Tem versão infantil (xarope sabor morango). Confira sempre a indicação de idade no rótulo — e criança pequena e gestante, melhor confirmar com o profissional.' },
+      { trigger: '"Pastilha resolve mesmo?"', answer: 'A pastilha traz alívio e conforto para a garganta, com mel, zinco e vitamina C — uma boa opção para o dia a dia. Quando a tosse vem com catarro, o xarope com guaco entra para ajudar a soltar a secreção.' },
+      { trigger: '"Posso dar para os meus filhos?"', answer: 'Há versão infantil (xarope sabor morango). Confira sempre a indicação de idade no rótulo. Para crianças pequenas e gestantes, confirme com o profissional de saúde.' },
     ],
     compliance: 'Siga sempre as orientações do rótulo/bula. Em caso de sintomas persistentes ou febre, procure um médico. Respeite as indicações de idade.',
     durationSec: 26,
     gradient: ['#f97316', '#9a3412'],
     storyboard: [
-      { t: '0-3s', label: 'GANCHO', line: 'Garganta arranhando e o pigarro que não larga?' },
+      { t: '0-3s', label: 'GANCHO', line: 'Garganta arranhando e pigarro persistente?' },
       { t: '3-12s', label: 'O PRODUTO', line: 'Linha Resfben: pastilha com mel, vitamina C e zinco, e xarope com guaco.' },
-      { t: '12-20s', label: 'BENEFÍCIO', line: 'Alívio e conforto pra garganta e uma mãozinha nas vias respiratórias.' },
-      { t: '20-26s', label: 'CTA', line: 'Melhor agir cedo. Te falo qual encaixa no seu caso 🍯' },
+      { t: '12-20s', label: 'BENEFÍCIO', line: 'Alívio e conforto para a garganta e apoio às vias respiratórias.' },
+      { t: '20-26s', label: 'CTA', line: 'Leia o rótulo e me chama que eu te oriento.' },
     ],
   },
   {
@@ -467,9 +467,9 @@ export const PRODUCTS: Product[] = [
     imageUrl: 'https://merakifarma.com.br/wp-content/uploads/2024/10/ACETILCISTEINA-soluvel.jpg',
     category: 'respiratorio',
     tagline: 'Mucolítico (xarope, solúvel ou efervescente 600mg) que ajuda a fluidificar o catarro e facilitar a respiração.',
-    hook: 'Tosse carregada, aquele catarro preso que não sobe nem desce?',
+    hook: 'Tosse com catarro preso, que não sobe nem desce?',
     whatItIs:
-      'Aquela tosse "cheia", com o catarro preso que não sobe nem desce, irrita qualquer um. A Acetilcisteína é um mucolítico: ajuda a deixar a secreção mais fininha e mais fácil de eliminar — pra respiração dar aquela aliviada. Tem em xarope, solúvel e efervescente, do jeito que fica melhor pra você. É medicamento: use conforme a bula.',
+      'A tosse com secreção presa incomoda e atrapalha a respiração. A Acetilcisteína é um mucolítico: ajuda a tornar a secreção mais fluida e mais fácil de eliminar. Está disponível em xarope, solúvel e efervescente. É um medicamento — use conforme a bula.',
     benefits: [
       'Ajuda a fluidificar o catarro, facilitando a eliminação',
       'Diferentes formatos: xarope (20 e 40mg/ml), solúvel e efervescente 600mg',
@@ -477,20 +477,20 @@ export const PRODUCTS: Product[] = [
       'Aliado nas fases de tosse com secreção (tosse produtiva)',
     ],
     howToUse: 'Uso conforme a bula e a orientação do farmacêutico ou médico. Respeite a dose e a idade indicadas.',
-    forWho: 'Quem está com tosse produtiva (com catarro) e quer ajudar o corpo a eliminar a secreção — sempre lendo a bula.',
-    salesLine: 'Catarro preso deixando a tosse pior? Te explico qual formato encaixa melhor no seu caso 💬',
+    forWho: 'Quem está com tosse produtiva (com catarro) e quer ajudar o organismo a eliminar a secreção — sempre seguindo a bula.',
+    salesLine: 'Catarro preso pode piorar a tosse. Quer que eu te explique qual formato se encaixa melhor no seu caso?',
     objections: [
-      { trigger: '"É remédio? Posso tomar por conta?"', answer: 'É um medicamento isento de prescrição, mas é medicamento. Leia a bula, respeite a dose e a idade — em dúvida, fale com o farmacêutico. Sintoma que não melhora ou febre: procure o médico.' },
-      { trigger: '"Serve pra qualquer tosse?"', answer: 'É indicado pra tosse COM catarro (produtiva), pra ajudar a soltar a secreção. Tosse seca é outra história — por isso vale confirmar o tipo antes.' },
+      { trigger: '"É remédio? Posso tomar por conta?"', answer: 'É um medicamento isento de prescrição, mas ainda assim é medicamento. Leia a bula, respeite a dose e a indicação de idade. Em caso de dúvida, fale com o farmacêutico. Se o sintoma não melhorar ou houver febre, procure o médico.' },
+      { trigger: '"Serve para qualquer tosse?"', answer: 'É indicado para a tosse com catarro (produtiva), ajudando a soltar a secreção. A tosse seca tem outra abordagem — por isso vale confirmar o tipo antes.' },
     ],
     compliance: 'Medicamento. Ao persistirem os sintomas, um médico deverá ser consultado. Leia a bula. Não exceda a dose recomendada. Respeite a indicação de idade.',
     durationSec: 24,
     gradient: ['#0ea5e9', '#075985'],
     storyboard: [
-      { t: '0-3s', label: 'GANCHO', line: 'Tosse carregada e catarro preso que não sobe nem desce?' },
-      { t: '3-12s', label: 'O PRODUTO', line: 'A Acetilcisteína é mucolítico: ajuda a afinar o catarro pra eliminar mais fácil.' },
-      { t: '12-19s', label: 'FORMATOS', line: 'Tem xarope, solúvel e efervescente — do jeito que fica melhor pra você.' },
-      { t: '19-24s', label: 'CTA', line: 'Leia a bula e me chama que eu te oriento o formato 💬' },
+      { t: '0-3s', label: 'GANCHO', line: 'Tosse com catarro preso, que não sobe nem desce?' },
+      { t: '3-12s', label: 'O PRODUTO', line: 'A Acetilcisteína é um mucolítico: ajuda a fluidificar o catarro para facilitar a eliminação.' },
+      { t: '12-19s', label: 'FORMATOS', line: 'Disponível em xarope, solúvel e efervescente.' },
+      { t: '19-24s', label: 'CTA', line: 'Leia a bula e me chama que eu te oriento sobre o formato.' },
     ],
   },
 ];
@@ -502,13 +502,13 @@ export function getProduct(id: string) {
 // Se o produto tem um reel do Instagram, o link do VÍDEO vai junto na mensagem —
 // a cliente assiste sem sair do WhatsApp. (Só entra quando existe vídeo de verdade.)
 export function withVideoLink(text: string, p: Product): string {
-  return p.instagramUrl ? `${text}\n\n🎥 Vê o vídeo: ${p.instagramUrl}` : text;
+  return p.instagramUrl ? `${text}\n\nVeja o vídeo do produto: ${p.instagramUrl}` : text;
 }
 
 export function buildShareMessage(p: Product): string {
   const benefits = p.benefits.slice(0, 3).map((b) => `✅ ${b}`).join('\n');
   return withVideoLink([
-    `✨ *${p.name}* ✨`,
+    `*${p.name}*`,
     '',
     p.hook,
     '',
@@ -528,7 +528,7 @@ export function buildShareVariants(p: Product): string[] {
 
   // 1) Benefícios em lista (o clássico)
   variants.push([
-    `✨ *${p.name}* ✨`,
+    `*${p.name}*`,
     '',
     bens.slice(0, 3).map((x) => `✅ ${x}`).join('\n'),
     '',
@@ -544,13 +544,13 @@ export function buildShareVariants(p: Product): string[] {
       `✅ ${b(0)}`,
       `✅ ${b(1)}`,
       '',
-      'Me chama aqui que eu te explico 💬',
+      'Me chama que eu te explico.',
     ].join('\n'));
   }
 
   // 3) Curto e pessoal — um benefício forte
   variants.push([
-    'Oi! Lembrei de você 💬',
+    'Oi! Lembrei de você.',
     '',
     `*${p.name}* — ${b(0).toLowerCase()}.`,
     '',
@@ -560,12 +560,12 @@ export function buildShareVariants(p: Product): string[] {
   // 4) Pra quem é
   if (p.forWho) {
     variants.push([
-      'Isso aqui é pra você 👇',
+      'Isso aqui pode ser para você:',
       '',
       `*${p.name}*: ${p.tagline}`,
       `✅ ${b(1)}`,
       '',
-      'Quer que eu te conte como usa? 💬',
+      'Quer que eu te conte como usa?',
     ].join('\n'));
   }
 
@@ -577,20 +577,20 @@ export function buildShareVariants(p: Product): string[] {
       '',
       o.answer,
       '',
-      `*${p.name}* — me chama que te ajudo a escolher 💬`,
+      `*${p.name}* — me chama que eu te ajudo a escolher.`,
     ].join('\n'));
   }
 
   // 6) Só benefícios, direto ao ponto
   if (bens.length >= 2) {
     variants.push([
-      `*${p.name}* na real 👀`,
+      `Sobre o *${p.name}*:`,
       '',
       `✅ ${b(0)}`,
       `✅ ${b(1)}`,
       bens[2] ? `✅ ${bens[2]}` : '',
       '',
-      'Quer o seu? Me chama 💛',
+      'Quer saber mais? Me chama.',
     ].filter(Boolean).join('\n'));
   }
 

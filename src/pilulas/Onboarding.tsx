@@ -5,17 +5,17 @@ const STEPS = [
   {
     Icon: BookOpen,
     title: 'Cada produto em 30 segundos',
-    text: 'No Catálogo, toca num produto e assiste a pílula de 30s. Você aprende o benefício e a resposta pra objeção — e manda tudo pronto pra cliente no WhatsApp (com o vídeo, quando o produto tem).',
+    text: 'No Catálogo, toque em um produto e assista à pílula de 30 segundos. Você aprende o benefício e a resposta para a objeção — e envia tudo pronto para a cliente no WhatsApp (com o vídeo, quando o produto tem).',
   },
   {
     Icon: Sparkles,
     title: 'Vire creator da marca',
-    text: 'Na aba Creators tem calendário, roteiros e tendências prontos — pra WhatsApp, Instagram e TikTok. Você nunca mais fica sem saber o que postar.',
+    text: 'Na aba Creators você encontra calendário, roteiros e tendências prontos — para WhatsApp, Instagram e TikTok. Você nunca mais fica sem saber o que publicar.',
   },
   {
     Icon: Trophy,
-    title: 'Postou, pontuou',
-    text: 'Cada pílula assistida e cada post marcado dá pontos. Suba no ranking do mês, desbloqueie selos e vire Creator Ouro.',
+    title: 'Aprenda e pontue',
+    text: 'Cada pílula assistida e cada publicação registrada somam pontos. Suba no ranking do mês, desbloqueie selos e alcance o nível Creator Ouro.',
   },
 ];
 

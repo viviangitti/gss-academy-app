@@ -137,7 +137,7 @@ export default function Quiz({ product }: { product: Product }) {
     const perfect = hits === questions.length;
     return (
       <div className="wp-block wp-quiz">
-        <span className="wp-block-label"><Award size={14} className="wp-ico" /> Você pegou?</span>
+        <span className="wp-block-label"><Award size={14} className="wp-ico" /> Teste o que você aprendeu</span>
         {perfect ? (
           <>
             <p className="wp-quiz-result-big">{hits}/{questions.length} — mandou bem!</p>
@@ -161,7 +161,7 @@ export default function Quiz({ product }: { product: Product }) {
   const q = questions[idx];
   return (
     <div className="wp-block wp-quiz">
-      <span className="wp-block-label"><Award size={14} className="wp-ico" /> Você pegou? · {idx + 1}/{questions.length} · vale +{POINTS_PER_QUIZ} pts</span>
+      <span className="wp-block-label"><Award size={14} className="wp-ico" /> Teste o que você aprendeu · {idx + 1}/{questions.length} · vale +{POINTS_PER_QUIZ} pts</span>
       <p className="wp-quiz-q">{q.q}</p>
       <div className="wp-quiz-opts">
         {q.options.map((opt, i) => {

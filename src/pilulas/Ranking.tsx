@@ -40,14 +40,14 @@ export default function Ranking() {
     <div className="wp-ranking">
       <div className="wp-rk-hero">
         <h1 className="wp-rk-title"><Trophy size={20} className="wp-ico" color="#c9a84c" /> Ranking do Mês</h1>
-        <p className="wp-rk-sub">Quem mais estuda e posta, mais vende. Zera todo dia 1º.</p>
+        <p className="wp-rk-sub">Quem estuda e publica mais, vende mais. O placar reinicia todo dia 1º.</p>
       </div>
 
       {/* Missão + ofensiva */}
       <div className="wp-rk-cards">
         <div className="wp-rk-mini">
           <span className="wp-rk-mini-num"><Flame size={19} className="wp-ico" color="#e8730a" /> {stats.streak}</span>
-          <span className="wp-rk-mini-lbl">dias de ofensiva</span>
+          <span className="wp-rk-mini-lbl">dias seguidos</span>
         </div>
         <div className="wp-rk-mini">
           <span className="wp-rk-mini-num">{stats.weekPoints}</span>

@@ -111,7 +111,7 @@ export const PRODUCTS: Product[] = [
   // ───────────────────── Suplementos & Vitaminas (MERAKI) ─────────────────────
   {
     id: 'hyaluvita-shot',
-    brand: 'meraki',
+    brand: 'hyaluvita',
     name: 'Hyaluvita Shot',
     imageUrl: 'https://hyaluvita.com.br/cdn/shop/files/Design_sem_nome_29_1.png?v=1727861365',
     instagramUrl: 'https://www.instagram.com/reel/C7ZU0uDMz0N',

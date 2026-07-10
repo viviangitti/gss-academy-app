@@ -1,7 +1,7 @@
 // Marcas do vendedor. Cada marca re-tematiza o app (cor, texto sobre cor) e
 // filtra catálogo/missões/ofertas. Um vendedor pode ter várias marcas no mesmo app.
 
-export type BrandId = 'meraki' | 'wepink';
+export type BrandId = 'meraki' | 'wepink' | 'hyaluvita';
 
 export interface Brand {
   id: BrandId;
@@ -14,6 +14,7 @@ export interface Brand {
 
 export const BRANDS: Brand[] = [
   { id: 'meraki', name: 'Meraki', accent: '#c9a84c', accentDeep: '#97741f', light: '#d9c179', onAccent: '#1a1a2e' },
+  { id: 'hyaluvita', name: 'HyaluVita', accent: '#7a3f9e', accentDeep: '#5a2a80', light: '#b98fd6', onAccent: '#ffffff' },
   // Wepink desativada por enquanto (a pedido). Para reativar, descomente a linha:
   // { id: 'wepink', name: 'Wepink', accent: '#e6007e', accentDeep: '#b00063', light: '#ff6fb0', onAccent: '#ffffff' },
 ];

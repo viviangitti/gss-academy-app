@@ -298,7 +298,7 @@ function TrendForm({ brand, onDone }: { brand: string; onDone: (t: string) => vo
       <label className="wp-gz-label">Descrição</label>
       <textarea value={desc} onChange={(e) => setDesc(e.target.value)} rows={2} placeholder="Como fazer o conteúdo." />
       <label className="wp-gz-label">Dica</label>
-      <input value={dica} onChange={(e) => setDica(e.target.value)} placeholder="O pulo do gato pra viralizar." />
+      <input value={dica} onChange={(e) => setDica(e.target.value)} placeholder="A dica que faz a diferença." />
       <button className="wp-gz-submit" disabled={!valid} onClick={submit}><Check size={16} className="wp-ico" /> Publicar tendência</button>
     </div>
   );

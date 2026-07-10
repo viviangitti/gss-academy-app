@@ -257,7 +257,7 @@ export default function Product() {
           )}
           {product.forWho.trim() && (
             <div className="wp-block wp-half">
-              <span className="wp-block-label"><Target size={14} className="wp-ico" /> Pra quem é</span>
+              <span className="wp-block-label"><Target size={14} className="wp-ico" /> Para quem é</span>
               <p>{product.forWho}</p>
             </div>
           )}
@@ -292,7 +292,7 @@ export default function Product() {
 
       {product.compliance && (
         <div className="wp-compliance">
-          <strong>Atenção (fale certo):</strong> {product.compliance}
+          <strong>Atenção (como comunicar):</strong> {product.compliance}
         </div>
       )}
 

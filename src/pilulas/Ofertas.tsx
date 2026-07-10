@@ -37,7 +37,7 @@ export default function Ofertas() {
             <h3 className="wp-of-name">{o.title}</h3>
             <p className="wp-of-desc">{o.desc}</p>
             <button className="wp-of-share" onClick={() => shareOffer(o.share)}>
-              <ArrowUpRight size={15} className="wp-ico" /> Mandar oferta pra cliente
+              <ArrowUpRight size={15} className="wp-ico" /> Mandar oferta à cliente
             </button>
           </div>
         ))}

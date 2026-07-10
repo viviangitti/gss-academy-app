@@ -116,25 +116,25 @@ export const PRODUCTS: Product[] = [
     imageUrl: 'https://hyaluvita.com.br/cdn/shop/files/Design_sem_nome_29_1.png?v=1727861365',
     instagramUrl: 'https://www.instagram.com/reel/C7ZU0uDMz0N',
     category: 'cosmeticos',
-    tagline: 'Ácido hialurônico + colágeno Verisol + vitaminas A, C e E num sachê — beleza de dentro pra fora, 1x por dia.',
+    tagline: 'Ácido hialurônico + colágeno Verisol + vitaminas A, C e E num sachê — beleza de dentro para fora, 1x por dia.',
     hook: 'Você cuida da pele por fora. E por dentro?',
     whatItIs:
-      'Sabe aquela pele que parece "iluminada de dentro"? Ela não vem só do creme — vem também do que você põe pra dentro. O Hyaluvita Shot junta ácido hialurônico + colágeno Verisol + vitaminas A, C e E num sachê que você dissolve na água e toma 1x por dia. É a dermatologia nutritiva: cuidar da pele, do cabelo e das unhas de dentro pra fora, na dose certa e com sabor gostoso.',
+      'Sabe aquela pele que parece "iluminada de dentro"? Ela não vem só do creme — vem também do que você consome. O Hyaluvita Shot junta ácido hialurônico + colágeno Verisol + vitaminas A, C e E num sachê que você dissolve na água e toma 1x por dia. É a dermatologia nutritiva: cuidar da pele, do cabelo e das unhas de dentro para fora, na dose certa e com sabor gostoso.',
     benefits: [
       'Ácido hialurônico + colágeno Verisol: contribuem para a hidratação e a firmeza da pele',
       'Vitaminas A, C e E — antioxidantes que auxiliam a saúde da pele',
-      'Também favorece cabelo e unhas: beleza de dentro pra fora',
+      'Também favorece cabelo e unhas: beleza de dentro para fora',
       'Sachê prático, 1x ao dia, sem glúten, lactose ou açúcar — sabor que dá vontade de manter',
     ],
     howToUse:
       'Dissolva 1 sachê em água, 1 vez ao dia, conforme o rótulo. O sabor é gostoso e a rotina é fácil de manter — e é a constância do dia a dia que traz o resultado.',
     forWho:
-      'Quem quer cuidar de pele, cabelo e unhas de dentro pra fora e cansou de gastar só em creme.',
+      'Quem quer cuidar de pele, cabelo e unhas de dentro para fora e cansou de gastar só em creme.',
     salesLine: 'Beleza começa de dentro — pele, cabelo e unha agradecem. Quer que eu te conte como encaixar 1 sachê na sua rotina?',
     objections: [
-      { trigger: '"Colágeno tomado funciona mesmo?"', answer: 'O Verisol é um colágeno com estudos de biodisponibilidade, e aqui ele vem junto com ácido hialurônico e vitaminas A, C e E. O segredo é a constância: tomando todo dia, você contribui para a firmeza e a hidratação da pele de dentro pra fora.' },
+      { trigger: '"Colágeno tomado funciona mesmo?"', answer: 'O Verisol é um colágeno com estudos de biodisponibilidade, e aqui ele vem junto com ácido hialurônico e vitaminas A, C e E. O segredo é a constância: tomando todo dia, você contribui para a firmeza e a hidratação da pele de dentro para fora.' },
       { trigger: '"Já tomo colágeno."', answer: 'Que ótimo! O diferencial daqui é a combinação num sachê só: colágeno Verisol + ácido hialurônico + vitaminas antioxidantes, na dose certa. Menos potinho, menos conta na cabeça — um sachê e pronto.' },
-      { trigger: '"Achei caro."', answer: 'Pensa que é 1 sachê por dia cuidando de pele, cabelo e unha ao mesmo tempo, de dentro pra fora. Costuma sair bem menos que um bom sérum ou uma sessão de procedimento — e você mantém todo dia.' },
+      { trigger: '"Achei caro."', answer: 'Pensa que é 1 sachê por dia cuidando de pele, cabelo e unha ao mesmo tempo, de dentro para fora. Costuma sair bem menos que um bom sérum ou uma sessão de procedimento — e você mantém todo dia.' },
     ],
     compliance: 'Suplemento alimentar. Não é medicamento e não substitui uma alimentação equilibrada nem acompanhamento profissional. Resultados variam de pessoa para pessoa.',
     durationSec: 30,
@@ -153,9 +153,9 @@ export const PRODUCTS: Product[] = [
     imageUrl: 'https://hyaluvita.com.br/cdn/shop/files/1Duocollagen_7b46bf2a-8dbb-474f-b508-694212937066.jpg',
     category: 'cosmeticos',
     tagline: 'Dois colágenos (Verisol 2,5g + hidrolisado 10g) com silício orgânico, vitamina C, E, zinco e cromo — pó sabor limão.',
-    hook: 'Fez o procedimento, gastou uma nota — e não deu ao corpo a matéria-prima pra construir o colágeno?',
+    hook: 'Fez o procedimento e investiu nele — mas deu ao corpo a matéria-prima para construir o colágeno?',
     whatItIs:
-      'Procedimento estético que estimula colágeno (bioestimulador, laser, microagulhamento) é só o ESTÍMULO — quem constrói o colágeno depois é o seu corpo. E pra construir, ele precisa de matéria-prima. O Duo Collagen junta 2,5g de colágeno Verisol + 10g de colágeno hidrolisado + 500mg de silício orgânico (Nutricolin), com vitamina C, vitamina E, zinco e cromo. É o "material de obra" que acompanha o que você já investiu — sabor limão, 1 dose por dia.',
+      'Procedimento estético que estimula colágeno (bioestimulador, laser, microagulhamento) é só o ESTÍMULO — quem constrói o colágeno depois é o seu corpo. E, para construir, ele precisa de matéria-prima. O Duo Collagen junta 2,5g de colágeno Verisol + 10g de colágeno hidrolisado + 500mg de silício orgânico (Nutricolin), com vitamina C, vitamina E, zinco e cromo. É o "material de obra" que acompanha o que você já investiu — sabor limão, 1 dose por dia.',
     benefits: [
       'Dois colágenos numa dose só: Verisol (2,5g) + colágeno hidrolisado (10g)',
       'Silício orgânico Nutricolin (500mg) + vitamina C, que contribui para a formação normal de colágeno',
@@ -165,10 +165,10 @@ export const PRODUCTS: Product[] = [
     howToUse:
       'Dissolva 2 medidas (15g) em 200ml de água, 1x ao dia — de preferência em jejum ou com bom intervalo das refeições. Costuma ser orientado por pelo menos 3 meses após o procedimento.',
     forWho:
-      'Quem fez (ou vai fazer) procedimento estético que estimula colágeno e quer dar ao corpo a matéria-prima pra construir o resultado.',
+      'Quem fez (ou vai fazer) procedimento estético que estimula colágeno e quer dar ao corpo a matéria-prima para construir o resultado.',
     salesLine: 'O procedimento é o estímulo — quem constrói o colágeno é você. Quer que eu te explique como tomar?',
     objections: [
-      { trigger: '"Colágeno em pó funciona mesmo?"', answer: 'O Verisol é um peptídeo de colágeno com estudos, e aqui ele vem junto da vitamina C, que contribui para a formação normal do colágeno. Não é mágica: é matéria-prima + constância. Por isso a orientação costuma ser de 3 meses pra cima.' },
+      { trigger: '"Colágeno em pó funciona mesmo?"', answer: 'O Verisol é um peptídeo de colágeno com estudos, e aqui ele vem junto da vitamina C, que contribui para a formação normal do colágeno. Não é mágica: é matéria-prima + constância. Por isso a orientação costuma ser de 3 meses ou mais.' },
       { trigger: '"Já fiz o procedimento, não preciso disso."', answer: 'O procedimento estimula; quem constrói o colágeno é o seu corpo. Sem matéria-prima (colágeno, silício, vitamina C, zinco), o resultado tende a render menos. É o complemento do que você já investiu.' },
       { trigger: '"Achei caro."', answer: 'Compara com o valor do procedimento que você já fez: o pote acompanha justamente os meses em que o corpo está construindo o resultado. É proteger o investimento, não gastar de novo.' },
     ],
@@ -191,7 +191,7 @@ export const PRODUCTS: Product[] = [
     tagline: 'Silício orgânico (Nutricolin) + biotina em dose alta, vitamina D, ferro, zinco e complexo B — pele, cabelos e unhas.',
     hook: 'Cabelo ficando no ralo e unha que descasca à toa? Isso se constrói de dentro, não com creme.',
     whatItIs:
-      'Cabelo, unha e pele são construídos de dentro pra fora — e pra construir, o corpo precisa de nutriente. O Hyaluvita Silício traz silício orgânico Nutricolin (uma das formas mais biodisponíveis), biotina em dose alta, vitamina D, ferro, zinco e vitaminas do complexo B (B6, B9 e B12). É 1 cápsula por dia pra dar ao corpo o que ele usa pra fazer fio forte, unha firme e pele com mais densidade.',
+      'Cabelo, unhas e pele são construídos de dentro para fora — e, para isso, o corpo precisa de nutrientes. O Hyaluvita Silício traz silício orgânico Nutricolin (uma das formas mais biodisponíveis), biotina em dose alta, vitamina D, ferro, zinco e vitaminas do complexo B (B6, B9 e B12). É 1 cápsula por dia para oferecer ao corpo o que ele usa na formação de cabelos, unhas e pele.',
     benefits: [
       'Silício orgânico Nutricolin — contribui para a firmeza e a densidade da pele',
       'Biotina em dose alta: auxilia na manutenção de cabelos e unhas normais',
@@ -201,7 +201,7 @@ export const PRODUCTS: Product[] = [
     howToUse:
       '1 cápsula ao dia, de preferência em jejum (o silício costuma absorver melhor assim). Consulte médico ou nutricionista para orientação individual.',
     forWho:
-      'Quem reclama de queda de cabelo, unha fraca que quebra e descasca, e quer pele mais firme — cuidando de dentro pra fora.',
+      'Quem reclama de queda de cabelo, unha fraca que quebra e descasca, e quer pele mais firme — cuidando de dentro para fora.',
     salesLine: 'Cabelo e unha se constroem de dentro. Quer que eu te conte a rotina de 1 cápsula por dia?',
     objections: [
       { trigger: '"Biotina eu já tomo."', answer: 'Ótimo! Aqui a biotina vem acompanhada de silício orgânico, ferro, zinco e complexo B — porque cabelo e unha não se constroem com um nutriente só. É a formação completa numa cápsula.' },
@@ -237,7 +237,7 @@ export const PRODUCTS: Product[] = [
     howToUse:
       '1 cápsula ao dia junto de uma refeição (melhora a absorção), ou conforme orientação do seu profissional de saúde. Mantenha sempre o protetor solar.',
     forWho:
-      'Quem convive com manchas e melasma, já usa protetor solar e quer somar um cuidado antioxidante de dentro pra fora.',
+      'Quem convive com manchas e melasma, já usa protetor solar e quer somar um cuidado antioxidante de dentro para fora.',
     salesLine: 'Mancha pede constância — por dentro e por fora. Quer que eu te explique como ele entra na sua rotina?',
     objections: [
       { trigger: '"Isso acaba com o melasma?"', answer: 'Não — e desconfie de quem promete isso. Melasma é crônico e pede acompanhamento com dermatologista e protetor solar todo dia. O Melan é um suplemento antioxidante que AUXILIA esse cuidado por dentro. Ele soma, não substitui.' },

@@ -65,7 +65,7 @@ export default function Trilha() {
       ) : (
         <div className="wp-tr-cert-lock">
           <Lock size={16} className="wp-ico" />
-          <span>Domine os {total} produtos pra liberar seu <b>certificado da {brand.name}</b> — faltam {total - mastered}.</span>
+          <span>Domine os {total} produtos para liberar seu <b>certificado da {brand.name}</b> — faltam {total - mastered}.</span>
         </div>
       )}
 

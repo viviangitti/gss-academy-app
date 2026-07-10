@@ -112,7 +112,7 @@ export default function Ranking() {
       {/* Linha de motivação */}
       {above && (
         <div className="wp-gap">
-          Faltam <b>{gap} pts</b> ({Math.ceil(gap / 10)} pílulas) pra ultrapassar <b>{above.me ? 'Você' : above.name}</b> <Rocket size={14} className="wp-ico" />
+          Faltam <b>{gap} pts</b> ({Math.ceil(gap / 10)} pílulas) para ultrapassar <b>{above.me ? 'Você' : above.name}</b> <Rocket size={14} className="wp-ico" />
         </div>
       )}
 

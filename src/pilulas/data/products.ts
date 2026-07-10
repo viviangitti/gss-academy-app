@@ -147,6 +147,114 @@ export const PRODUCTS: Product[] = [
     ],
   },
   {
+    id: 'hyaluvita-duo-collagen',
+    brand: 'meraki',
+    name: 'Hyaluvita Duo Collagen',
+    imageUrl: 'https://hyaluvita.com.br/cdn/shop/files/1Duocollagen_7b46bf2a-8dbb-474f-b508-694212937066.jpg',
+    category: 'cosmeticos',
+    tagline: 'Dois colágenos (Verisol 2,5g + hidrolisado 10g) com silício orgânico, vitamina C, E, zinco e cromo — pó sabor limão.',
+    hook: 'Fez o procedimento, gastou uma nota — e não deu ao corpo a matéria-prima pra construir o colágeno?',
+    whatItIs:
+      'Procedimento estético que estimula colágeno (bioestimulador, laser, microagulhamento) é só o ESTÍMULO — quem constrói o colágeno depois é o seu corpo. E pra construir, ele precisa de matéria-prima. O Duo Collagen junta 2,5g de colágeno Verisol + 10g de colágeno hidrolisado + 500mg de silício orgânico (Nutricolin), com vitamina C, vitamina E, zinco e cromo. É o "material de obra" que acompanha o que você já investiu — sabor limão, 1 dose por dia.',
+    benefits: [
+      'Dois colágenos numa dose só: Verisol (2,5g) + colágeno hidrolisado (10g)',
+      'Silício orgânico Nutricolin (500mg) + vitamina C, que contribui para a formação normal de colágeno',
+      'Vitamina E, zinco e cromo — antioxidantes que auxiliam pele, cabelos e unhas',
+      'Pó sabor limão que dissolve na água: fácil de manter todo dia',
+    ],
+    howToUse:
+      'Dissolva 2 medidas (15g) em 200ml de água, 1x ao dia — de preferência em jejum ou com bom intervalo das refeições. Costuma ser orientado por pelo menos 3 meses após o procedimento.',
+    forWho:
+      'Quem fez (ou vai fazer) procedimento estético que estimula colágeno e quer dar ao corpo a matéria-prima pra construir o resultado.',
+    salesLine: 'O procedimento é o estímulo — quem constrói o colágeno é você. Quer que eu te explique como tomar? 💧',
+    objections: [
+      { trigger: '"Colágeno em pó funciona mesmo?"', answer: 'O Verisol é um peptídeo de colágeno com estudos, e aqui ele vem junto da vitamina C, que contribui para a formação normal do colágeno. Não é mágica: é matéria-prima + constância. Por isso a orientação costuma ser de 3 meses pra cima.' },
+      { trigger: '"Já fiz o procedimento, não preciso disso."', answer: 'O procedimento estimula; quem constrói o colágeno é o seu corpo. Sem matéria-prima (colágeno, silício, vitamina C, zinco), o resultado tende a render menos. É o complemento do que você já investiu.' },
+      { trigger: '"Achei caro."', answer: 'Compara com o valor do procedimento que você já fez: o pote acompanha justamente os meses em que o corpo está construindo o resultado. É proteger o investimento, não gastar de novo.' },
+    ],
+    compliance: 'Suplemento alimentar. Não é medicamento e não substitui uma alimentação equilibrada nem acompanhamento profissional. Não realiza procedimento nem garante resultado estético — resultados variam de pessoa para pessoa.',
+    durationSec: 28,
+    gradient: ['#c3d34e', '#7d8f22'],
+    storyboard: [
+      { t: '0-3s', label: 'GANCHO', line: 'Fez o procedimento e não alimentou o colágeno por dentro?' },
+      { t: '3-10s', label: 'O PORQUÊ', line: 'O procedimento só estimula. Quem constrói o colágeno é o seu corpo — com matéria-prima.' },
+      { t: '10-20s', label: 'O PRODUTO', line: 'Duo Collagen: Verisol + colágeno hidrolisado + silício e vitamina C, 1 dose por dia.' },
+      { t: '20-28s', label: 'CTA', line: 'Quer proteger o que você já investiu? Me chama 💧' },
+    ],
+  },
+  {
+    id: 'hyaluvita-silicio',
+    brand: 'meraki',
+    name: 'Hyaluvita Silício',
+    imageUrl: 'https://hyaluvita.com.br/cdn/shop/files/Hyaluvita_Silicio1.jpg?width=800',
+    category: 'cosmeticos',
+    tagline: 'Silício orgânico (Nutricolin) + biotina em dose alta, vitamina D, ferro, zinco e complexo B — pele, cabelos e unhas.',
+    hook: 'Cabelo ficando no ralo e unha que descasca à toa? Isso se constrói de dentro, não com creme.',
+    whatItIs:
+      'Cabelo, unha e pele são construídos de dentro pra fora — e pra construir, o corpo precisa de nutriente. O Hyaluvita Silício traz silício orgânico Nutricolin (uma das formas mais biodisponíveis), biotina em dose alta, vitamina D, ferro, zinco e vitaminas do complexo B (B6, B9 e B12). É 1 cápsula por dia pra dar ao corpo o que ele usa pra fazer fio forte, unha firme e pele com mais densidade.',
+    benefits: [
+      'Silício orgânico Nutricolin — contribui para a firmeza e a densidade da pele',
+      'Biotina em dose alta: auxilia na manutenção de cabelos e unhas normais',
+      'Ferro e zinco, que contribuem para cabelos e unhas normais',
+      '1 cápsula ao dia, uso adulto — 90 cápsulas por pote',
+    ],
+    howToUse:
+      '1 cápsula ao dia, de preferência em jejum (o silício costuma absorver melhor assim). Consulte médico ou nutricionista para orientação individual.',
+    forWho:
+      'Quem reclama de queda de cabelo, unha fraca que quebra e descasca, e quer pele mais firme — cuidando de dentro pra fora.',
+    salesLine: 'Cabelo e unha se constroem de dentro. Quer que eu te conte a rotina de 1 cápsula por dia? 💜',
+    objections: [
+      { trigger: '"Biotina eu já tomo."', answer: 'Ótimo! Aqui a biotina vem acompanhada de silício orgânico, ferro, zinco e complexo B — porque cabelo e unha não se constroem com um nutriente só. É a formação completa numa cápsula.' },
+      { trigger: '"Queda de cabelo não é caso de médico?"', answer: 'É sim, e a gente sempre orienta procurar. Queda tem várias causas. O que o suplemento faz é oferecer a matéria-prima (ferro, zinco, biotina, silício): ele auxilia, não substitui a investigação com um profissional.' },
+      { trigger: '"Demora pra ver resultado?"', answer: 'Cabelo e unha crescem devagar — quem faz a diferença é a constância. Por isso a orientação é de uso contínuo por alguns meses, e por isso o pote vem com 90 cápsulas.' },
+    ],
+    compliance: 'Suplemento alimentar em cápsulas. Não é medicamento e não substitui uma alimentação equilibrada. Queda de cabelo pode ter várias causas — procure um profissional de saúde. Uso adulto.',
+    durationSec: 28,
+    gradient: ['#2ec4d6', '#0d7c8c'],
+    storyboard: [
+      { t: '0-3s', label: 'GANCHO', line: 'Cabelo no ralo e unha que quebra à toa?' },
+      { t: '3-10s', label: 'O PORQUÊ', line: 'Fio e unha se constroem de dentro: silício, biotina, ferro e zinco.' },
+      { t: '10-20s', label: 'O PRODUTO', line: 'Hyaluvita Silício: Nutricolin + biotina em dose alta, 1 cápsula por dia.' },
+      { t: '20-28s', label: 'CTA', line: 'Quer fio forte e unha firme? Me chama 💜' },
+    ],
+  },
+  {
+    id: 'hyaluvita-melan',
+    brand: 'meraki',
+    name: 'Hyaluvita Melan',
+    imageUrl: 'https://hyaluvita.com.br/cdn/shop/files/Melan_0000.png?width=800',
+    category: 'cosmeticos',
+    tagline: 'Picnogenol (Pinus pinaster), Olea europaea, astaxantina, luteína e licopeno — antioxidantes que auxiliam a pele.',
+    hook: 'Passa protetor todo dia e a mancha continua teimando? Cuidar só por fora deixa metade do trabalho.',
+    whatItIs:
+      'Mancha é assunto de constância — e de cuidar por dentro E por fora. O Hyaluvita Melan é um suplemento com Pinus pinaster (picnogenol), extrato de Olea europaea, astaxantina, luteína e licopeno: antioxidantes conhecidos pela ação de fotoproteção oral. Ele trabalha JUNTO do protetor solar e do que a sua dermatologista indicar — nunca no lugar deles. É 1 cápsula ao dia.',
+    benefits: [
+      'Antioxidantes (astaxantina, luteína e licopeno) que auxiliam a defesa da pele contra o estresse oxidativo',
+      'Picnogenol e Olea europaea — contribuem para a uniformidade do tom da pele',
+      'Fotoproteção oral: complementa o protetor solar (e nunca o substitui)',
+      '1 cápsula ao dia junto da refeição — 90 cápsulas por pote',
+    ],
+    howToUse:
+      '1 cápsula ao dia junto de uma refeição (melhora a absorção), ou conforme orientação do seu profissional de saúde. Mantenha sempre o protetor solar.',
+    forWho:
+      'Quem convive com manchas e melasma, já usa protetor solar e quer somar um cuidado antioxidante de dentro pra fora.',
+    salesLine: 'Mancha pede constância — por dentro e por fora. Quer que eu te explique como ele entra na sua rotina? ☀️',
+    objections: [
+      { trigger: '"Isso acaba com o melasma?"', answer: 'Não — e desconfie de quem promete isso. Melasma é crônico e pede acompanhamento com dermatologista e protetor solar todo dia. O Melan é um suplemento antioxidante que AUXILIA esse cuidado por dentro. Ele soma, não substitui.' },
+      { trigger: '"Então posso maneirar no protetor?"', answer: 'De jeito nenhum! A fotoproteção oral é complemento. O protetor solar continua sendo o principal — o Melan trabalha junto com ele, nunca no lugar dele.' },
+      { trigger: '"Já uso creme clareador."', answer: 'Perfeito, continue com o que sua dermato indicou. O creme age por fora; o Melan traz antioxidantes que agem por dentro. É o cuidado nos dois caminhos.' },
+    ],
+    compliance: 'Suplemento alimentar em cápsulas. Não é medicamento, não trata nem cura melasma e não substitui o protetor solar nem o acompanhamento com dermatologista. Uso adulto. Resultados variam de pessoa para pessoa.',
+    durationSec: 28,
+    gradient: ['#7fc9e8', '#2a6f9e'],
+    storyboard: [
+      { t: '0-3s', label: 'GANCHO', line: 'Passa protetor todo dia e a mancha continua teimando?' },
+      { t: '3-10s', label: 'O PORQUÊ', line: 'Cuidar só por fora é metade: antioxidantes agem por dentro.' },
+      { t: '10-20s', label: 'O PRODUTO', line: 'Hyaluvita Melan: picnogenol, astaxantina, luteína e licopeno — 1 cápsula ao dia.' },
+      { t: '20-28s', label: 'CTA', line: 'Some ao seu protetor e à sua dermato. Me chama ☀️' },
+    ],
+  },
+  {
     id: 're-hidraben',
     brand: 'meraki',
     name: 'Re-Hidraben',

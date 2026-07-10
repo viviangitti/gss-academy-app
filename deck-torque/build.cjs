@@ -119,15 +119,15 @@ function footer(slide, n) {
       [I.box, "Peça que some", "Sem estoque real, compra-se duas vezes ou o carro fica parado na baia."],
       [I.money, "Não sabe a margem", "Fatura R$ 80 mil, tira R$ 4 mil. Ninguém sabe qual serviço dá prejuízo."],
     ];
-    let y = 1.42;
+    let y = 1.36;
     for (const [ic, t, d] of dores) {
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, {
-        x: 6.0, y, w: 3.4, h: 0.86, fill: { color: MIST }, rectRadius: 0.08, shadow: sh(),
+        x: 6.0, y, w: 3.4, h: 0.84, fill: { color: MIST }, rectRadius: 0.08, shadow: sh(),
       });
-      iconBadge(s, ic, 6.18, y + 0.17, 0.42);
-      s.addText(t, { x: 6.72, y: y + 0.13, w: 2.55, h: 0.26, fontSize: 11.5, bold: true, color: INK, fontFace: BODY, margin: 0 });
-      s.addText(d, { x: 6.72, y: y + 0.38, w: 2.55, h: 0.42, fontSize: 8.5, color: STEEL, fontFace: BODY, margin: 0, lineSpacing: 11 });
-      y += 0.98;
+      iconBadge(s, ic, 6.18, y + 0.16, 0.42);
+      s.addText(t, { x: 6.72, y: y + 0.12, w: 2.55, h: 0.26, fontSize: 11.5, bold: true, color: INK, fontFace: BODY, margin: 0 });
+      s.addText(d, { x: 6.72, y: y + 0.37, w: 2.55, h: 0.42, fontSize: 8.5, color: STEEL, fontFace: BODY, margin: 0, lineSpacing: 11 });
+      y += 0.9;
     }
 
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y: 2.82, w: 5.15, h: 1.62, fill: { color: INK }, rectRadius: 0.1 });
@@ -306,7 +306,7 @@ function footer(slide, n) {
     for (const [ic, t, d] of mods) {
       const col = i % 3, row = Math.floor(i / 3);
       const x = 0.6 + col * 3.0;
-      const y = 1.6 + row * 1.72;
+      const y = 1.5 + row * 1.66;
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w: 2.8, h: 1.52, fill: { color: MIST }, rectRadius: 0.09, shadow: sh() });
       iconBadge(s, ic, x + 0.22, y + 0.22, 0.46);
       s.addText(t, { x: x + 0.8, y: y + 0.24, w: 1.85, h: 0.42, fontSize: 12.5, bold: true, color: INK, fontFace: HEAD, valign: "middle", margin: 0 });
@@ -314,7 +314,7 @@ function footer(slide, n) {
       i++;
     }
     s.addText("Sem venda casada de módulo. Sem taxa de implantação. Sem fidelidade.", {
-      x: 0.6, y: 5.06, w: 7.5, h: 0.3, fontSize: 10.5, italic: true, color: ORANGE, fontFace: BODY, margin: 0,
+      x: 0.6, y: 4.78, w: 7.5, h: 0.28, fontSize: 10.5, italic: true, color: ORANGE, fontFace: BODY, margin: 0,
     });
     footer(s, 7);
   }
@@ -387,7 +387,7 @@ function footer(slide, n) {
       showValue: false, valAxisMaxVal: 190,
     });
     s.addText("Índice, base 100 = melhor cenário. Projeção com base em benchmarks do setor.", {
-      x: 0.5, y: 4.88, w: 5.4, h: 0.26, fontSize: 8, color: "9AA4AE", fontFace: BODY, italic: true, margin: 0,
+      x: 0.5, y: 4.8, w: 5.4, h: 0.24, fontSize: 8, color: "9AA4AE", fontFace: BODY, italic: true, margin: 0,
     });
 
     const gains = [
@@ -423,11 +423,11 @@ function footer(slide, n) {
       const bg = destaque ? ORANGE : INK_SOFT;
       const t1 = destaque ? PAPER : PAPER;
       const t2 = destaque ? "FFE3D2" : "9AA4AE";
-      const h = destaque ? 3.4 : 3.15;
-      const y0 = destaque ? 1.5 : 1.62;
+      const h = destaque ? 3.28 : 3.04;
+      const y0 = destaque ? 1.42 : 1.54;
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: y0, w: 2.8, h, fill: { color: bg }, rectRadius: 0.12, shadow: sh() });
       if (destaque) {
-        s.addText("MAIS VENDIDO", { x: x + 1.55, y: y0 + 0.2, w: 1.05, h: 0.24, fontSize: 7, bold: true, color: ORANGE, fontFace: BODY, align: "center", valign: "middle", charSpacing: 1, margin: 0, fill: { color: PAPER } });
+        s.addText("MAIS VENDIDO", { x: x + 1.5, y: y0 + 0.2, w: 1.1, h: 0.24, fontSize: 7, bold: true, color: ORANGE, fontFace: BODY, align: "center", valign: "middle", charSpacing: 1, margin: 0, fill: { color: PAPER } });
       }
       s.addText(nome, { x: x + 0.25, y: y0 + 0.18, w: 1.4, h: 0.3, fontSize: 14, bold: true, color: t1, fontFace: HEAD, margin: 0 });
       s.addText([
@@ -443,7 +443,7 @@ function footer(slide, n) {
       x += 2.98;
     }
     s.addText("14 dias grátis, sem cartão.  ·  Migração da planilha feita por nós.  ·  Cancelamento a qualquer momento.", {
-      x: 0.6, y: 5.08, w: 8.8, h: 0.3, fontSize: 10, color: STEEL, fontFace: BODY, margin: 0,
+      x: 0.6, y: 4.82, w: 8.8, h: 0.28, fontSize: 10, color: STEEL, fontFace: BODY, margin: 0,
     });
     footer(s, 10);
   }
@@ -481,9 +481,8 @@ function footer(slide, n) {
       s.addText(lab, { x: 7.95, y, w: 1.28, h: 0.68, fontSize: 9.5, color: STEEL, fontFace: BODY, align: "right", valign: "middle", margin: 0 });
       y += 0.8;
     }
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 6.2, y: 4.88, w: 3.2, h: 0 + 0.0, fill: { color: PAPER } });
     s.addText("ERP gruda: uma vez que a OS e o histórico do carro moram no Torque, sair custa mais que ficar.", {
-      x: 0.6, y: 4.86, w: 8.8, h: 0.42, fontSize: 11, italic: true, color: ORANGE, fontFace: BODY, margin: 0,
+      x: 0.6, y: 4.78, w: 8.8, h: 0.28, fontSize: 11, italic: true, color: ORANGE, fontFace: BODY, margin: 0,
     });
     footer(s, 11);
   }
@@ -505,16 +504,16 @@ function footer(slide, n) {
     for (const [ic, t, d] of canais) {
       const col = i % 2, row = Math.floor(i / 2);
       const x = 0.6 + col * 4.5;
-      const y = 1.62 + row * 1.62;
+      const y = 1.54 + row * 1.56;
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w: 4.3, h: 1.42, fill: { color: PAPER }, rectRadius: 0.09, shadow: sh() });
       iconBadge(s, ic, x + 0.24, y + 0.22, 0.5);
       s.addText(t, { x: x + 0.9, y: y + 0.24, w: 3.2, h: 0.3, fontSize: 12.5, bold: true, color: INK, fontFace: HEAD, margin: 0 });
       s.addText(d, { x: x + 0.9, y: y + 0.58, w: 3.2, h: 0.7, fontSize: 9.5, color: STEEL, fontFace: BODY, margin: 0, lineSpacing: 12.5 });
       i++;
     }
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y: 4.92, w: 8.8, h: 0.5, fill: { color: INK }, rectRadius: 0.07 });
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y: 4.62, w: 8.8, h: 0.46, fill: { color: INK }, rectRadius: 0.07 });
     s.addText("Meta ano 1: 3 distribuidores parceiros, 1 acordo Sindirepa regional, 420 oficinas pagantes.", {
-      x: 0.9, y: 4.92, w: 8.2, h: 0.5, fontSize: 10.5, bold: true, color: PAPER, fontFace: BODY, valign: "middle", margin: 0,
+      x: 0.9, y: 4.62, w: 8.2, h: 0.46, fontSize: 10.5, bold: true, color: PAPER, fontFace: BODY, valign: "middle", margin: 0,
     });
     footer(s, 12);
   }

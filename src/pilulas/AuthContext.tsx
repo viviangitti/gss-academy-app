@@ -29,8 +29,8 @@ function roleFor(email: string, profile: ElevaProfile | null): Role {
   return profile?.role ?? storedRole(e) ?? 'vendedora';
 }
 
-// Marcas que todo mundo vê no app (seletor de marca). Meraki + HyaluVita.
-const DEFAULT_BRANDS: BrandId[] = ['meraki', 'hyaluvita'];
+// Por enquanto só a Meraki está ativa — todo mundo vê a Meraki.
+const DEFAULT_BRANDS: BrandId[] = ['meraki'];
 
 function toUser(fb: AuthUser, profile: ElevaProfile | null): User {
   const email = fb.email || '';

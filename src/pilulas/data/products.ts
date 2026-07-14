@@ -62,26 +62,26 @@ export const PRODUCTS: Product[] = [
     imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/279281-600-600?v=639141832073530000',
     instagramUrl: 'https://www.instagram.com/reel/DZiG3EQOXzi',
     category: 'performance',
-    tagline: 'Proteína de alto valor biológico com leucina, creatina, eletrólitos e vitaminas em uma dose — apoio à massa magra durante o emagrecimento.',
+    tagline: 'Associação exclusiva de HMB, arginina e glutamina em sachê — apoio à massa muscular de quem emagrece com análogos de GLP-1.',
     hook: 'Quem emagrece com a medicação da caneta também pode perder massa magra no caminho. Dá para cuidar disso.',
     whatItIs:
-      'Num emagrecimento acelerado, o corpo pode perder não apenas gordura, mas também massa magra — e é a massa magra que sustenta a força, a firmeza e a disposição do dia a dia. O GLPEN Nutri Muscle foi pensado para acompanhar essa fase: proteína de alto valor biológico, leucina, creatina, eletrólitos e vitaminas em uma única dose, para apoiar quem está emagrecendo com orientação profissional.',
+      'Num emagrecimento acelerado, o corpo pode perder não apenas gordura, mas também massa magra — cerca de 30% do peso perdido com análogos de GLP-1 pode ser de músculos. O GLPEN Nutri Muscle foi desenvolvido para essa fase: uma associação exclusiva de HMB, arginina e glutamina em sachê, para apoiar a preservação muscular de quem está emagrecendo com orientação profissional.',
     benefits: [
-      'Proteína de alto valor biológico, que contribui para a manutenção da massa muscular',
-      'Leucina e creatina, aliadas do treino de força',
-      'Eletrólitos e vitaminas que auxiliam a disposição quando a alimentação está reduzida',
-      'Uma dose por dia — prático mesmo quando o apetite está baixo',
+      'HMB, que ajuda a reduzir a degradação proteica muscular',
+      'Arginina — aminoácido que favorece a circulação sanguínea',
+      'Glutamina — aminoácido essencial para a recuperação do tecido muscular',
+      'Sachê prático (30 sachês de 10g) — fácil de manter mesmo com o apetite reduzido',
     ],
     howToUse:
-      'Uma dose por dia, de preferência após o treino de força. O suplemento é um apoio: quem preserva a massa magra é a combinação de proteína adequada, treino de força e acompanhamento profissional.',
+      'Um sachê (10g) ao dia, dissolvido conforme o rótulo — de preferência junto da rotina de treino de força. O suplemento é um apoio: quem preserva a massa muscular é a combinação de proteína adequada, treino e acompanhamento profissional.',
     forWho:
-      'Pessoas em processo de emagrecimento com medicação (como semaglutida ou tirzepatida), sob orientação profissional, que querem cuidar da massa magra e da disposição.',
+      'Pessoas em uso de análogos de GLP-1 (como semaglutida ou tirzepatida), sob orientação profissional, que querem cuidar da massa muscular e da recuperação.',
     salesLine: 'Emagrecer cuidando da massa magra faz diferença no resultado. Quer que eu te explique como ele entra na sua rotina?',
     objections: [
       {
         trigger: '"A caneta já emagrece, pra que tomar isso?"',
         answer:
-          'A medicação auxilia na perda de peso, mas essa perda pode incluir massa magra, e não só gordura. O GLPEN oferece proteína, leucina e creatina para apoiar a manutenção da massa muscular ao longo do processo — sempre junto do treino de força e da orientação do seu profissional de saúde.',
+          'A medicação atua no peso, mas não escolhe o que sai: cerca de 30% do peso perdido pode ser de músculos. O Muscle traz HMB, arginina e glutamina para apoiar a preservação muscular — sempre junto do treino de força e da orientação do seu profissional de saúde.',
       },
       {
         trigger: '"Achei caro."',
@@ -91,20 +91,91 @@ export const PRODUCTS: Product[] = [
       {
         trigger: '"Já tomo whey, está de bom tamanho."',
         answer:
-          'O whey é uma ótima fonte de proteína. A diferença aqui é que, além da proteína, a dose traz leucina, creatina, eletrólitos e vitaminas — pensado para quem está comendo menos por causa da medicação. É uma opção mais completa para essa fase específica.',
+          'O whey é uma ótima fonte de proteína. O Muscle soma o que o whey não traz: HMB, que ajuda a reduzir a degradação muscular, com arginina e glutamina para a recuperação — pensado para quem está comendo menos. Um complementa o outro.',
       },
     ],
     compliance:
       'Suplemento alimentar. Não é medicamento e não substitui acompanhamento médico ou nutricional nem uma alimentação equilibrada. Uso de medicação: consulte seu profissional de saúde.',
-    durationSec: 34,
+    durationSec: 30,
     gradient: ['#12B5A5', '#0B5563'],
     storyboard: [
-      { t: '0-4s', label: 'GANCHO', line: 'Emagrecer rápido pode custar massa magra. Dá para cuidar disso.' },
-      { t: '4-10s', label: 'O PORQUÊ', line: 'A perda de peso nem sempre é só de gordura — a massa magra também pode ir junto.' },
-      { t: '10-16s', label: 'O PRODUTO', line: 'GLPEN Nutri Muscle: proteína de alto valor, leucina e creatina em uma dose.' },
-      { t: '16-23s', label: 'O APOIO', line: 'Apoia a manutenção da massa muscular, junto do treino e da orientação profissional.' },
-      { t: '23-29s', label: 'NA PRÁTICA', line: 'Uma dose por dia — prático mesmo com o apetite reduzido.' },
-      { t: '29-34s', label: 'CTA', line: 'Quer saber se faz sentido para você? Me chama.' },
+      { t: '0-4s', label: 'GANCHO', line: 'Quem emagrece com a caneta também pode perder massa muscular. E dá para cuidar disso.' },
+      { t: '4-12s', label: 'O PORQUÊ', line: 'Numa perda de peso rápida, nem tudo que sai é gordura — parte pode ser músculo, que sustenta força e firmeza.' },
+      { t: '12-24s', label: 'O PRODUTO', line: 'GLPEN Nutri Muscle: HMB, arginina e glutamina em um sachê ao dia, junto de proteína e treino.' },
+      { t: '24-30s', label: 'CTA', line: 'Quer saber se faz sentido para você? Me chama.' },
+    ],
+  },
+
+  {
+    id: 'glpen-nutri-energy',
+    brand: 'meraki',
+    name: 'GLPEN Nutri Energy',
+    imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/271436-600-600?v=638978647328370000',
+    category: 'performance',
+    tagline: 'Cafeína, arginina e colina verde com vitaminas e minerais — energia, foco e disposição para quem emagrece com a caneta e treina.',
+    hook: 'Comendo bem menos por causa da medicação, é comum a energia cair. Há como apoiar essa fase.',
+    whatItIs:
+      'Menos comida significa menos combustível: vem o cansaço, a falta de foco e o treino arrastado. O GLPEN Nutri Energy combina cafeína, arginina e colina verde com vitaminas e minerais, para apoiar a disposição e o desempenho físico e mental de quem está em restrição — especialmente quem treina.',
+    benefits: [
+      'Cafeína, que contribui para o estado de alerta e a disposição',
+      'Arginina e colina verde — combinação pensada para foco e desempenho',
+      'Vitaminas e minerais que auxiliam na redução do cansaço',
+      'Cápsulas softgel, práticas para a rotina e o pré-treino',
+    ],
+    howToUse:
+      'Conforme o rótulo, de preferência antes da atividade física. Contém cafeína: evite o uso próximo ao horário de dormir.',
+    forWho:
+      'Usuários de canetas emagrecedoras que fazem atividade física e sentem queda de disposição, foco e concentração.',
+    salesLine: 'Energia e foco também merecem cuidado nessa fase. Quer que eu te explique como ele entra na sua rotina?',
+    objections: [
+      { trigger: '"Café não resolve?"', answer: 'O café oferece apenas a cafeína. O Energy soma arginina, colina verde, vitaminas e minerais em dose medida — um suporte pensado para a fase de restrição, não um cafezinho.' },
+      { trigger: '"Tenho medo de ficar acelerada."', answer: 'A dose de cafeína é controlada por cápsula — diferente de empilhar xícaras de café. Se você é sensível à cafeína, converse antes com seu profissional de saúde.' },
+      { trigger: '"Energia é só dormir bem."', answer: 'O sono é a base. Mas, comendo bem menos, falta combustível — e é aí que vitaminas, minerais e cafeína em dose adequada fazem diferença.' },
+    ],
+    compliance:
+      'Suplemento alimentar. Contém cafeína — gestantes, lactantes e pessoas sensíveis à cafeína devem consultar um profissional de saúde. Não é medicamento e não substitui uma alimentação equilibrada.',
+    durationSec: 30,
+    gradient: ['#8bc53f', '#457a12'],
+    storyboard: [
+      { t: '0-4s', label: 'GANCHO', line: 'Comendo bem menos por causa da caneta, é comum a energia cair.' },
+      { t: '4-12s', label: 'O PORQUÊ', line: 'Menos comida é menos combustível: cansaço, falta de foco e treino arrastado.' },
+      { t: '12-24s', label: 'O PRODUTO', line: 'GLPEN Nutri Energy: cafeína, arginina e colina verde com vitaminas e minerais.' },
+      { t: '24-30s', label: 'CTA', line: 'Contém cafeína — quer saber se encaixa na sua rotina? Me chama.' },
+    ],
+  },
+  {
+    id: 'glpen-nutri-ultra-az',
+    brand: 'meraki',
+    name: 'GLPEN Nutri Ultra AZ',
+    imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/271438-600-600?v=638978508656770000',
+    category: 'capsulas',
+    tagline: 'Multivitamínico específico para quem usa caneta emagrecedora — doses até 10x maiores, minerais quelatos, com aronia e quercetina.',
+    hook: 'Comendo até 70% menos, faltam vitaminas e minerais — e o corpo avisa.',
+    whatItIs:
+      'Quem emagrece com análogos de GLP-1 pode passar a comer até 70% menos — e a ingestão de vitaminas e minerais cai junto. O multivitamínico comum foi pensado para quem come normalmente. O GLPEN Nutri Ultra AZ traz doses adaptadas a essa realidade, até 10x maiores, em minerais quelatos (de melhor absorção), com aronia e quercetina.',
+    benefits: [
+      'Doses até 10x maiores que as de um multivitamínico comum — adaptadas a quem come bem menos',
+      'Minerais quelatos, forma de melhor absorção',
+      'Contribui para a imunidade e auxilia no cuidado com cabelos e unhas',
+      'Ajuda a prevenir deficiências nutricionais durante o emagrecimento acelerado',
+    ],
+    howToUse: 'Conforme o rótulo, todos os dias, junto a uma refeição. A constância é o que garante a reposição.',
+    forWho:
+      'Todos os usuários de canetas emagrecedoras — especialmente quem nota queda de cabelo, unhas frágeis, imunidade baixa ou falta de disposição.',
+    salesLine: 'Quem come 70% menos precisa repor com dose adequada. Quer que eu te explique como ele funciona?',
+    objections: [
+      { trigger: '"Já tomo multivitamínico."', answer: 'O multivitamínico comum foi feito para quem come normalmente. Na caneta, a alimentação cai até 70% — o Ultra AZ traz doses até 10x maiores e minerais quelatos, pensados para essa realidade.' },
+      { trigger: '"Prefiro repor pela comida."', answer: 'Seria o ideal. Mas, com o apetite reduzido pela medicação, o prato não dá conta do volume necessário — é exatamente para isso que o Ultra AZ existe.' },
+      { trigger: '"Todo multivitamínico é igual."', answer: 'Compare os rótulos: a dose e a forma do mineral fazem toda a diferença. Minerais quelatos absorvem melhor, e doses de quem come 100% não servem para quem come 30%.' },
+    ],
+    compliance: 'Suplemento alimentar. Não é medicamento e não substitui uma alimentação equilibrada nem acompanhamento profissional. Sintomas persistentes: procure um médico.',
+    durationSec: 30,
+    gradient: ['#5b4fe0', '#2c2480'],
+    storyboard: [
+      { t: '0-4s', label: 'GANCHO', line: 'Comendo até 70% menos, faltam vitaminas e minerais — e o corpo avisa.' },
+      { t: '4-12s', label: 'O PORQUÊ', line: 'Cabelo, unhas, imunidade e disposição sentem primeiro.' },
+      { t: '12-24s', label: 'O PRODUTO', line: 'Ultra AZ: doses até 10x maiores, minerais quelatos de melhor absorção.' },
+      { t: '24-30s', label: 'CTA', line: 'Quer entender como ele entra na sua rotina? Me chama.' },
     ],
   },
 

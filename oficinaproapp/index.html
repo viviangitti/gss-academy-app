@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Oficina Pro — sua oficina em ordem, sua nota em dia</title>
+<meta name="description" content="Sistema para oficinas mecânicas independentes: ordem de serviço no celular, orçamento no WhatsApp, estoque, financeiro e a nota fiscal em dia." />
+<style>
+  :root{
+    --ink:#15181C; --ink-2:#1E232A; --ink-3:#272D35;
+    --paper:#FFFFFF; --mist:#F3F5F7;
+    --orange:#F26522; --orange-2:#FF7A38;
+    --steel:#8A95A0; --steel-2:#AEB8C2;
+    --line:rgba(255,255,255,.09);
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);background:var(--ink);color:#EAEDF0;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:30;background:rgba(21,24,28,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  nav .row{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:-.01em}
+  .brand .mk{width:32px;height:32px;border-radius:9px;background:var(--orange);display:grid;place-items:center}
+  .brand .mk svg{width:18px;height:18px;fill:#fff}
+  .nav-links{display:flex;align-items:center;gap:28px;font-size:14.5px;color:var(--steel-2)}
+  .nav-links a:hover{color:#fff}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-weight:600;font-size:14.5px;border:none;border-radius:11px;padding:11px 18px;cursor:pointer;transition:transform .08s ease,background .15s}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--orange);color:#fff}
+  .btn-primary:hover{background:var(--orange-2)}
+  .btn-ghost{background:transparent;color:#EAEDF0;border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:rgba(255,255,255,.28)}
+  .nav-links .btn{padding:9px 15px}
+
+  /* hero */
+  .hero{position:relative;padding:76px 0 48px}
+  .hero .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+  .kick{font-size:12.5px;font-weight:700;letter-spacing:2.5px;color:var(--orange);text-transform:uppercase}
+  h1{font-size:clamp(38px,5.2vw,60px);line-height:1.02;letter-spacing:-.025em;margin:18px 0 20px;font-weight:800}
+  h1 em{font-style:normal;color:var(--orange)}
+  .lead{font-size:18px;line-height:1.55;color:var(--steel-2);max-width:520px}
+  .cta-row{display:flex;align-items:center;gap:12px;margin-top:30px;flex-wrap:wrap}
+  .btn-lg{padding:15px 24px;font-size:15.5px;border-radius:13px}
+  .demo-note{font-size:12.5px;color:var(--steel);margin-top:14px}
+  #stage{width:100%;height:440px;display:block}
+  .stage-wrap{position:relative}
+  .stage-wrap::after{content:"";position:absolute;left:50%;bottom:6%;transform:translateX(-50%);width:64%;height:34px;background:radial-gradient(ellipse,rgba(0,0,0,.55),transparent 70%);filter:blur(6px)}
+
+  /* trust strip */
+  .strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--ink-2)}
+  .strip .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}
+  .strip .cell{background:var(--ink-2);padding:30px 26px}
+  .strip .cell h3{font-size:16px;font-weight:700;margin-bottom:7px;letter-spacing:-.01em}
+  .strip .cell p{font-size:14px;color:var(--steel-2);line-height:1.55}
+  .strip .cell .n{font-family:var(--sans);font-size:13px;font-weight:800;color:var(--orange);letter-spacing:1px;margin-bottom:12px;display:block}
+
+  /* section */
+  section.pad{padding:88px 0}
+  .sec-head{max-width:640px;margin-bottom:44px}
+  .sec-head .kick{display:block;margin-bottom:14px}
+  .sec-head h2{font-size:clamp(28px,3.4vw,38px);line-height:1.1;letter-spacing:-.02em;font-weight:800}
+  .sec-head p{margin-top:14px;font-size:16.5px;color:var(--steel-2);line-height:1.55}
+
+  /* features */
+  .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:26px 24px;transition:border-color .15s,transform .15s}
+  .card:hover{border-color:rgba(242,101,34,.4);transform:translateY(-3px)}
+  .card .ic{width:44px;height:44px;border-radius:11px;background:rgba(242,101,34,.14);display:grid;place-items:center;margin-bottom:16px}
+  .card .ic svg{width:22px;height:22px;fill:var(--orange)}
+  .card h3{font-size:16.5px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+  .card p{font-size:14px;color:var(--steel-2);line-height:1.55}
+
+  /* fiscal wedge */
+  .wedge{background:linear-gradient(180deg,var(--ink-2),var(--ink));border:1px solid var(--line);border-radius:22px;padding:56px 48px;position:relative;overflow:hidden}
+  .wedge::before{content:"";position:absolute;right:-120px;top:-120px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(242,101,34,.16),transparent 68%)}
+  .wedge .kick{margin-bottom:18px;display:block}
+  .wedge h2{font-size:clamp(28px,3.6vw,42px);line-height:1.08;letter-spacing:-.02em;font-weight:800;max-width:680px}
+  .wedge p{margin-top:18px;font-size:16.5px;color:var(--steel-2);line-height:1.6;max-width:600px}
+
+  /* pricing */
+  .price{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch}
+  .plan{background:var(--ink-2);border:1px solid var(--line);border-radius:18px;padding:30px 26px;display:flex;flex-direction:column}
+  .plan.hot{border-color:var(--orange);background:linear-gradient(180deg,rgba(242,101,34,.08),var(--ink-2))}
+  .plan .tag{font-size:11px;font-weight:800;letter-spacing:1px;color:var(--orange);text-transform:uppercase;margin-bottom:6px;min-height:14px}
+  .plan .nm{font-size:19px;font-weight:800;letter-spacing:-.01em}
+  .plan .pr{font-size:38px;font-weight:800;letter-spacing:-.03em;margin:12px 0 2px}
+  .plan .pr span{font-size:15px;font-weight:600;color:var(--steel)}
+  .plan .who{font-size:13.5px;color:var(--steel);margin-bottom:18px}
+  .plan ul{list-style:none;display:flex;flex-direction:column;gap:10px;flex:1}
+  .plan li{font-size:14px;color:var(--steel-2);display:flex;gap:9px;align-items:flex-start}
+  .plan li svg{width:16px;height:16px;fill:var(--orange);flex-shrink:0;margin-top:2px}
+  .plan .btn{margin-top:22px;justify-content:center}
+
+  /* final cta */
+  .final{text-align:center;padding:96px 0}
+  .final h2{font-size:clamp(30px,4vw,46px);line-height:1.08;letter-spacing:-.02em;font-weight:800}
+  .final p{margin:16px auto 30px;font-size:17px;color:var(--steel-2);max-width:540px}
+
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--steel);font-size:13.5px}
+  footer .row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+  .disc{background:var(--ink-2);border:1px solid var(--line);border-radius:12px;padding:14px 18px;font-size:13px;color:var(--steel);margin-top:26px;line-height:1.5}
+  .disc b{color:var(--steel-2)}
+
+  @media(max-width:880px){
+    .hero .grid{grid-template-columns:1fr;gap:8px}
+    .stage-wrap{order:-1}
+    #stage{height:300px}
+    .strip .grid{grid-template-columns:1fr}
+    .feat{grid-template-columns:1fr}
+    .price{grid-template-columns:1fr}
+    .nav-links a:not(.btn){display:none}
+    .wedge{padding:40px 26px}
+    section.pad{padding:64px 0}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap row">
+    <div class="brand"><span class="mk"><svg viewBox="0 0 512 512"><path d="M507 210a12 12 0 00-20-5l-74 73-59-10-10-59 74-74a12 12 0 00-5-20c-64-17-131 1-171 55a139 139 0 00-20 122L18 425a45 45 0 000 64 45 45 0 0064 0l133-133a139 139 0 00122-20c54-40 72-107 55-171z"/></svg></span>Oficina Pro</div>
+    <div class="nav-links">
+      <a href="#recursos">Recursos</a>
+      <a href="#precos">Preços</a>
+      <a class="btn btn-primary" href="/app/">Ver demonstração</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap grid">
+    <div>
+      <span class="kick">Sistema para oficinas mecânicas</span>
+      <h1>Sua oficina em ordem.<br><em>Sua nota em dia.</em></h1>
+      <p class="lead">Ordem de serviço no celular, orçamento aprovado no WhatsApp e a nota fiscal em dia. Feito para a oficina independente — não para o escritório do contador.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary btn-lg" href="/app/">Ver demonstração</a>
+        <a class="btn btn-ghost btn-lg" href="#recursos">Como funciona</a>
+      </div>
+      <div class="demo-note">Demonstração completa e funcional, sem cadastro. Roda no seu navegador.</div>
+    </div>
+    <div class="stage-wrap"><canvas id="stage"></canvas></div>
+  </div>
+</header>
+
+<div class="strip">
+  <div class="wrap"><div class="grid">
+    <div class="cell"><span class="n">01</span><h3>O caderno acabou</h3><p>A partir de setembro, emitir NFS-e vira obrigação para as ME e EPP do Simples. Quem anota no bloquinho vai parar.</p></div>
+    <div class="cell"><span class="n">02</span><h3>Zero digitação</h3><p>A placa puxa marca, modelo e ano. A peça sai do estoque sozinha. O orçamento vira um PDF com a sua marca.</p></div>
+    <div class="cell"><span class="n">03</span><h3>O histórico é do carro</h3><p>Cada serviço fica gravado na placa. O cliente volta, o carro vale mais na revenda, a garantia é sua aliada.</p></div>
+  </div></div>
+</div>
+
+<section class="pad" id="recursos">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kick">Recursos</span>
+      <h2>A oficina inteira em uma tela.</h2>
+      <p>O que o mecânico usa com a mão suja e o dono acompanha do sofá. Sem manual, sem consultor, sem treinamento.</p>
+    </div>
+    <div class="feat">
+      <div class="card"><div class="ic"><svg viewBox="0 0 512 512"><path d="M64 0a64 64 0 00-64 64v384a64 64 0 0064 64h256a64 64 0 0064-64V160H256a32 32 0 01-32-32V0H64zm192 0v128h128L256 0zM120 240h144a16 16 0 010 32H120a16 16 0 010-32zm0 64h144a16 16 0 010 32H120a16 16 0 010-32z"/></svg></div><h3>Ordem de serviço no celular</h3><p>OS digital com foto do defeito, checklist de vistoria e histórico por placa. Tudo na baia.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 448 512"><path d="M380 97A221 221 0 0057 365L26 480l118-31a222 222 0 00106 27h1c122 0 224-100 224-222a220 220 0 00-95-157zM224 442a184 184 0 01-94-26l-7-4-70 18 19-68-4-7a184 184 0 01285-228 183 183 0 01-129 315z"/></svg></div><h3>Orçamento no WhatsApp</h3><p>Envie o orçamento e registre o aceite do cliente com data e hora. Acaba a discussão no balcão.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 512 512"><path d="M50 129l190 68V456L58 388a32 32 0 01-20-30V163a55 55 0 0112-34zm412 0a55 55 0 0112 34v195a32 32 0 01-20 30l-182 68V197l190-68zM256 32a55 55 0 0119 3l161 58-84 30-183-66 68-25a55 55 0 0119 0z"/></svg></div><h3>Estoque com baixa automática</h3><p>A peça sai da OS e baixa do estoque sozinha. Alerta de mínimo. Acabou a peça comprada duas vezes.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 512 512"><path d="M32 32a16 16 0 0116 16v368h432a16 16 0 010 32H48a48 48 0 01-48-48V48a16 16 0 0116-16zm120 224a24 24 0 0148 0v96a24 24 0 01-48 0v-96zm96-96a24 24 0 0148 0v192a24 24 0 01-48 0V160zm96-64a24 24 0 0148 0v256a24 24 0 01-48 0V96z"/></svg></div><h3>Financeiro de verdade</h3><p>Faturamento do mês, lucro depois das despesas, ticket médio e margem — calculados das suas OS.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 512 512"><path d="M128 0h256v96H128V0zM96 128h320a96 96 0 0196 96v112a32 32 0 01-32 32h-64v112a32 32 0 01-32 32H128a32 32 0 01-32-32V368H32a32 32 0 01-32-32V224a96 96 0 0196-96zm320 80a24 24 0 100 48 24 24 0 000-48zM144 336v112h224V336H144z"/></svg></div><h3>Orçamento em PDF com sua marca</h3><p>Um documento profissional com o seu logo, CNPJ e endereço para o cliente levar na mão.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 640 512"><path d="M224 256a128 128 0 100-256 128 128 0 000 256zm-45 48A179 179 0 000 483a29 29 0 0029 29h390a29 29 0 0029-29 179 179 0 00-179-179h-90zm275-48a112 112 0 100-224 112 112 0 000 224zm-30 48c-9 0-18 1-26 4a205 205 0 0164 147 60 60 0 01-3 19h146a29 29 0 0029-29 141 141 0 00-141-141h-69z"/></svg></div><h3>Cliente com vários carros</h3><p>Cadastro com CPF/CNPJ e endereço pelo CEP. Um cliente, todos os veículos dele, todo o histórico.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="pad" style="padding-top:0">
+  <div class="wrap">
+    <div class="wedge">
+      <span class="kick">A promessa</span>
+      <h2>Se a nota não sair, a multa é nossa.</h2>
+      <p>Não vendemos um botão de emitir nota. Assumimos o risco de ele funcionar. Nenhum concorrente repete essa frase: os baratos não emitem nota fiscal, e os caros não confiam no próprio fiscal.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="precos" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kick">Preços</span>
+      <h2>Preço de oficina, não de software.</h2>
+      <p>Sem taxa de implantação, sem fidelidade, 14 dias grátis. O único nessa faixa que emite nota fiscal.</p>
+    </div>
+    <div class="price">
+      <div class="plan">
+        <div class="tag"></div>
+        <div class="nm">Baia</div>
+        <div class="pr">R$ 99<span>/mês</span></div>
+        <div class="who">MEI e oficina solo</div>
+        <ul>
+          <li><svg viewBox="0 0 512 512"><path d="M470 75a32 32 0 010 46L204 387a32 32 0 01-45 0L41 269a32 32 0 0146-45l95 95L425 75a32 32 0 0145 0z"/></svg>1 usuário</li>
+          <li><svg viewBox="0 0 512 512"><path d="M470 75a32 32 0 010 46L204 387a32 32 0 01-45 0L41 269a32 32 0 0146-45l95 95L425 75a32 32 0 0145 0z"/></svg>OS ilimitada</li>
+          <li><svg viewBox="0 0 512 512"><path d="M470 75a32 32 0 010 46L204 387a32 32 0 01-45 0L41 269a32 32 0 0146-45l95 95L425 75a32 32 0 0145 0z"/></svg>NFS-e nacional</li>
+          <li><svg viewBox="0 0 512 512"><path d="M470 75a32 32 0 010 46L204 387a32 32 0 01-45 0L41 269a32 32 0 0146-45l95 95L425 75a32 32 0 0145 0z"/></svg>Estoque e caixa</li>
+        </ul>
+        <a class="btn btn-ghost" href="/app/">Testar grátis</a>
+      </div>
+      <div class="plan hot">
+        <div class="tag">Mais vendido</div>
+        <div class="nm">Oficina</div>
+        <div class="pr">R$ 189<span>/mês</span></div>
+        <div class="who">2 a 6 mecânicos</div>
+        <ul>
+          <li><svg viewBox="0 0 512 512"><path d="M470 75a32 32 0 010 46L204 387a32 32 0 01-45 0L41 269a32 32 0 0146-45l95 95L425 75a32 32 0 0145 0z"/></svg>Usuários ilimitados</li>
+          <li><svg viewBox="0 0 512 512"><path d="M470 75a32 32 0 010 46L204 387a32 32 0 01-45 0L41 269a32 32 0 0146-45l95 95L425 75a32 32 0 0145 0z"/></svg>NFC-e e catálogo de peças</li>
+          <li><svg viewBox="0 0 512 512"><path d="M470 75a32 32 0 010 46L204 387a32 32 0 01-45 0L41 269a32 32 0 0146-45l95 95L425 75a32 32 0 0145 0z"/></svg>Garantia de multa</li>
+          <li><svg viewBox="0 0 512 512"><path d="M470 75a32 32 0 010 46L204 387a32 32 0 01-45 0L41 269a32 32 0 0146-45l95 95L425 75a32 32 0 0145 0z"/></svg>Retorno automático de clientes</li>
+        </ul>
+        <a class="btn btn-primary" href="/app/">Testar grátis</a>
+      </div>
+      <div class="plan">
+        <div class="tag"></div>
+        <div class="nm">Rede</div>
+        <div class="pr">R$ 389<span>/mês</span></div>
+        <div class="who">Múltiplas unidades</div>
+        <ul>
+          <li><svg viewBox="0 0 512 512"><path d="M470 75a32 32 0 010 46L204 387a32 32 0 01-45 0L41 269a32 32 0 0146-45l95 95L425 75a32 32 0 0145 0z"/></svg>Tudo do Oficina</li>
+          <li><svg viewBox="0 0 512 512"><path d="M470 75a32 32 0 010 46L204 387a32 32 0 01-45 0L41 269a32 32 0 0146-45l95 95L425 75a32 32 0 0145 0z"/></svg>Consolidado por unidade</li>
+          <li><svg viewBox="0 0 512 512"><path d="M470 75a32 32 0 010 46L204 387a32 32 0 01-45 0L41 269a32 32 0 0146-45l95 95L425 75a32 32 0 0145 0z"/></svg>Metas por mecânico</li>
+          <li><svg viewBox="0 0 512 512"><path d="M470 75a32 32 0 010 46L204 387a32 32 0 01-45 0L41 269a32 32 0 0146-45l95 95L425 75a32 32 0 0145 0z"/></svg>Integrações</li>
+        </ul>
+        <a class="btn btn-ghost" href="/app/">Testar grátis</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>Coloque sua oficina no Oficina Pro.</h2>
+    <p>Abra a demonstração e crie uma ordem de serviço em menos de um minuto. Sem cadastro, sem cartão.</p>
+    <a class="btn btn-primary btn-lg" href="/app/">Abrir demonstração</a>
+    <div class="wrap" style="max-width:720px;padding:0"><div class="disc"><b>Sobre a demonstração:</b> é um protótipo funcional que roda no seu navegador. A emissão fiscal está simulada e os dados ficam só neste aparelho — a versão com nota fiscal real e sincronização na nuvem está em desenvolvimento.</div></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap row">
+    <div class="brand" style="font-size:15px"><span class="mk"><svg viewBox="0 0 512 512"><path d="M507 210a12 12 0 00-20-5l-74 73-59-10-10-59 74-74a12 12 0 00-5-20c-64-17-131 1-171 55a139 139 0 00-20 122L18 425a45 45 0 000 64 45 45 0 0064 0l133-133a139 139 0 00122-20c54-40 72-107 55-171z"/></svg></span>Oficina Pro</div>
+    <div>© 2026 · Sistema para oficinas mecânicas · Versão de demonstração</div>
+  </div>
+</footer>
+
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+const canvas = document.getElementById('stage');
+let W = canvas.clientWidth, H = canvas.clientHeight;
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(W, H, false);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, W/H, 0.1, 100);
+camera.position.set(0, 0.3, 7.2);
+
+// ---- disco de freio (brake rotor) ----
+const group = new THREE.Group();
+scene.add(group);
+
+const R = 2.05, hub = 0.62, thick = 0.28;
+const shape = new THREE.Shape();
+shape.absarc(0, 0, R, 0, Math.PI*2, false);
+// furo central
+const center = new THREE.Path(); center.absarc(0,0,hub,0,Math.PI*2,true); shape.holes.push(center);
+// coroa de furos de ventilação
+const HN = 9, hr = 0.19, ringR = 1.42;
+for(let i=0;i<HN;i++){ const a=(i/HN)*Math.PI*2; const p=new THREE.Path(); p.absarc(Math.cos(a)*ringR, Math.sin(a)*ringR, hr, 0, Math.PI*2, true); shape.holes.push(p); }
+
+const disc = new THREE.Mesh(
+  new THREE.ExtrudeGeometry(shape, { depth:thick, bevelEnabled:true, bevelThickness:0.05, bevelSize:0.05, bevelSegments:2, curveSegments:64 }),
+  new THREE.MeshStandardMaterial({ color:0x3a4048, metalness:0.95, roughness:0.36 })
+);
+disc.position.z = -thick/2;
+group.add(disc);
+
+// sulcos concêntricos (anel fino)
+const groove = new THREE.Mesh(
+  new THREE.TorusGeometry(1.05, 0.015, 12, 90),
+  new THREE.MeshStandardMaterial({ color:0x2a2f35, metalness:0.9, roughness:0.5 })
+);
+group.add(groove);
+const groove2 = groove.clone(); groove2.geometry = new THREE.TorusGeometry(1.75, 0.015, 12, 90); group.add(groove2);
+
+// chapéu central (hub hat)
+const hat = new THREE.Mesh(
+  new THREE.CylinderGeometry(hub*0.9, hub*0.9, 0.5, 40),
+  new THREE.MeshStandardMaterial({ color:0x22262b, metalness:0.9, roughness:0.45 })
+);
+hat.rotation.x = Math.PI/2; hat.position.z = 0.18; group.add(hat);
+
+// inclinação do disco (visto de leve ângulo)
+group.rotation.x = -0.62;
+group.rotation.z = 0.15;
+
+// ---- luz ----
+scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+const key = new THREE.DirectionalLight(0xffffff, 2.1); key.position.set(4, 6, 6); scene.add(key);
+const rim = new THREE.PointLight(0xF26522, 60, 30); rim.position.set(-5, -2, 3); scene.add(rim);
+const fill = new THREE.PointLight(0x88aaff, 12, 30); fill.position.set(5, -3, -2); scene.add(fill);
+
+// ---- interação suave ----
+let tx = 0, ty = 0, cx = 0, cy = 0;
+window.addEventListener('pointermove', e => {
+  tx = (e.clientX / window.innerWidth - 0.5);
+  ty = (e.clientY / window.innerHeight - 0.5);
+});
+
+function resize(){
+  W = canvas.clientWidth; H = canvas.clientHeight;
+  renderer.setSize(W, H, false); camera.aspect = W/H; camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize); resize();
+
+let spin = 0;
+function loop(){
+  spin += 0.0045;
+  cx += (tx - cx) * 0.05; cy += (ty - cy) * 0.05;
+  group.rotation.z = 0.15 + spin;
+  group.rotation.x = -0.62 + cy * 0.35;
+  group.position.x = cx * 0.5;
+  renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>

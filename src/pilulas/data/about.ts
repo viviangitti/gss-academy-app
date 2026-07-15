@@ -5,6 +5,7 @@ import type { BrandId } from './brands';
 export interface AboutValue {
   title: string;
   desc: string;
+  example?: string; // "na prática" — exemplo concreto (usado nos diferenciais)
 }
 
 export interface AboutContent {
@@ -29,15 +30,21 @@ const MERAKI: AboutContent = {
   differentials: [
     {
       title: 'Inovação, não cópia',
-      desc: 'Cria produtos para necessidades reais e específicas — a linha GLPEN é a primeira feita para quem usa canetas emagrecedoras —, em vez de repetir o que o mercado já tem.',
+      desc: 'Cria produtos para necessidades reais e específicas, em vez de repetir o que o mercado já tem.',
+      example:
+        'A GLPEN é a primeira linha feita para quem usa canetas emagrecedoras. E a Moviben Creatina 5g é a primeira creatina em sachê individual.',
     },
     {
       title: 'Ativos diferenciados',
       desc: 'Fórmulas com blends pensados terapeuticamente e com poucos concorrentes diretos — não é "mais do mesmo".',
+      example:
+        'O Ultra AZ tem doses até 10x maiores que um multivitamínico comum. A Moviben junta colágeno tipo II, cúrcuma, glucosamina e condroitina num só produto.',
     },
     {
       title: 'Qualidade e regulação',
       desc: 'Produção adequada à nova RDC de suplementos, com P&D e estrutura fabril por trás.',
+      example:
+        'Produtos dentro da nova RDC de suplementos da Anvisa e presentes nas maiores redes de farmácia do país.',
     },
   ],
   values: [

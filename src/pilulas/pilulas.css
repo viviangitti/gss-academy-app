@@ -1594,3 +1594,11 @@
 .wp-about-diff { border: 1.5px solid var(--wp-pink); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05); }
 .wp-about-diff .wp-about-label { color: var(--wp-pink-deep); }
 .wp-about-diff .wp-about-values b { color: var(--wp-pink-deep); }
+
+/* "Na prática" — exemplo concreto do diferencial */
+.wp-about-ex {
+  margin-top: 7px; font-size: 12.5px; line-height: 1.5;
+  color: var(--wp-text); background: var(--wp-bg);
+  border-radius: 9px; padding: 8px 11px;
+}
+.wp-about-ex b { color: var(--wp-pink-deep); font-weight: 800; }

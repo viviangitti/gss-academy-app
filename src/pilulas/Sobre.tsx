@@ -36,6 +36,7 @@ export default function Sobre() {
             <li key={d.title}>
               <b>{d.title}</b>
               <span>{d.desc}</span>
+              {d.example && <span className="wp-about-ex"><b>Na prática:</b> {d.example}</span>}
             </li>
           ))}
         </ul>

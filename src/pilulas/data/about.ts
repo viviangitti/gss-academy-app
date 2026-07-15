@@ -46,7 +46,7 @@ const MERAKI: AboutContent = {
     'FarmaLIDER',
   ],
   leadership:
-    'Fundada por profissionais com mais de 25 anos de mercado farmacêutico e de saúde, com passagens por Medley, Cimed, Hypera e Myralis. Gerson de Souza (fundador da GSS) lidera ao lado dos sócios Hélio Melo e Rubem Mello.',
+    'Fundada por profissionais com mais de 25 anos de mercado farmacêutico e de saúde, com passagens por Medley, Cimed, Hypera e Myralis.',
 };
 
 const ABOUT: Partial<Record<BrandId, AboutContent>> = {

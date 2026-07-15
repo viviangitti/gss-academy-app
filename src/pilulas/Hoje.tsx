@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell } from 'lucide-react';
+import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
 import { buildShareMessage, type Product } from './data/products';
 import { CALENDAR, CHANNELS } from './data/creatorContent';
 import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
+import { getAbout } from './data/about';
 import { watchedToday, notifState, enableNotif, maybeNotify } from './data/lembrete';
 import { logSearch } from './data/insights';
 import { useBrand } from './BrandContext';
@@ -270,6 +271,17 @@ export default function Hoje() {
               Ver o roteiro completo <ChevronRight size={15} className="wp-ico" />
             </Link>
           </div>
+
+          {/* Quem é a marca — contexto institucional pra vender com segurança */}
+          {getAbout(brandId) && (
+            <Link to="/eleva/sobre" className="wp-td-card wp-td-sobre">
+              <span className="wp-td-card-label"><InfinityIcon size={13} className="wp-ico" /> Sobre a {brand.name}</span>
+              <b className="wp-td-sobre-tit">Quem é a {brand.name}?</b>
+              <span className="wp-td-sobre-sub">
+                Propósito, valores e por que indicar. <ChevronRight size={14} className="wp-ico" />
+              </span>
+            </Link>
+          )}
 
           <Link to="/eleva/catalogo" className="wp-td-all">
             Ver todos os produtos <ChevronRight size={14} className="wp-ico" />

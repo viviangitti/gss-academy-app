@@ -1536,3 +1536,56 @@
   background: var(--wp-bg); color: var(--wp-ink); border: 1px solid var(--wp-border);
 }
 .wp-cert-btn-main { background: var(--wp-pink); color: var(--wp-on-accent); border-color: transparent; }
+
+/* ---------- Sobre a marca (institucional) ---------- */
+.wp-about { display: flex; flex-direction: column; gap: 12px; padding-bottom: 8px; }
+.wp-about-back {
+  display: inline-flex; align-items: center; gap: 3px; align-self: flex-start;
+  color: var(--wp-soft); font-size: 13px; font-weight: 700; text-decoration: none; margin-bottom: 2px;
+}
+.wp-about-hero {
+  background: linear-gradient(150deg, var(--wp-ink), var(--wp-navy-deep));
+  border-radius: 20px; padding: 26px 20px; text-align: center; color: #fff;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.16);
+}
+.wp-about-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 58px; height: 58px; border-radius: 16px; margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.08); color: var(--wp-pink);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.wp-about-hero h1 { font-size: 30px; font-weight: 800; margin: 0 0 8px; letter-spacing: 0.02em; }
+.wp-about-meaning { font-size: 13.5px; line-height: 1.55; color: rgba(255, 255, 255, 0.78); margin: 0 auto; max-width: 30ch; }
+.wp-about-tagline { font-size: 15px; font-style: italic; color: var(--wp-gold-light); margin: 12px 0 0; font-weight: 600; }
+.wp-about-card {
+  background: var(--wp-surface); border: 1px solid var(--wp-border);
+  border-radius: 16px; padding: 15px 16px;
+}
+.wp-about-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11.5px; font-weight: 800; color: var(--wp-soft);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 9px;
+}
+.wp-about-p { font-size: 14px; line-height: 1.55; color: var(--wp-text); margin: 0; }
+.wp-about-values { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.wp-about-values li { display: flex; flex-direction: column; gap: 1px; }
+.wp-about-values b { font-size: 14px; font-weight: 800; color: var(--wp-ink); }
+.wp-about-values span { font-size: 13px; line-height: 1.45; color: var(--wp-soft); }
+.wp-about-stat { text-align: center; }
+.wp-about-stat-num { display: block; font-size: 40px; font-weight: 800; line-height: 1; letter-spacing: -0.01em; }
+.wp-about-stat-lb {
+  display: inline-flex; align-items: center; gap: 5px; margin-top: 6px;
+  font-size: 12.5px; font-weight: 700; color: var(--wp-soft);
+}
+.wp-about-clients { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 14px; }
+.wp-about-client {
+  font-size: 11.5px; font-weight: 700; color: var(--wp-text);
+  background: var(--wp-bg); border: 1px solid var(--wp-border);
+  border-radius: 999px; padding: 5px 11px;
+}
+.wp-about-foot { font-size: 12.5px; line-height: 1.5; color: var(--wp-soft); text-align: center; padding: 4px 10px 0; }
+
+/* Card de acesso na Home */
+.wp-td-sobre { display: block; text-decoration: none; border: 1px solid var(--wp-border); }
+.wp-td-sobre-tit { display: block; font-size: 16px; font-weight: 800; color: var(--wp-ink); margin-bottom: 2px; }
+.wp-td-sobre-sub { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; color: var(--wp-pink-deep); font-weight: 700; }

@@ -8,6 +8,7 @@ import Ranking from './Ranking';
 import Ofertas from './Ofertas';
 import Missoes from './Missoes';
 import Trilha from './Trilha';
+import Sobre from './Sobre';
 import Gestor from './Gestor';
 import Login from './Login';
 import Onboarding from './Onboarding';
@@ -142,6 +143,7 @@ function Shell() {
           <Route path="/eleva/produto/:id" element={<Product />} />
           <Route path="/eleva/missoes" element={<Missoes />} />
           <Route path="/eleva/trilha" element={<Trilha />} />
+          <Route path="/eleva/sobre" element={<Sobre />} />
           <Route path="/eleva/ranking" element={<Ranking />} />
           <Route path="/eleva/ofertas" element={<Ofertas />} />
           <Route path="/eleva/gestor" element={<RequireGestor><Gestor /></RequireGestor>} />

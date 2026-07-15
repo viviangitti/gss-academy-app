@@ -4,7 +4,7 @@ import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } f
 import { SEGMENTS, setMySegment, mySegment, type SegmentId } from './data/segments';
 import { setStoredRole, GESTOR_CODE } from './data/roles';
 import { setElevaProfile } from './data/profile';
-import type { Role } from './AuthContext';
+import type { Role, AffiliateType } from './AuthContext';
 
 type Mode = 'entrar' | 'criar';
 
@@ -21,6 +21,7 @@ export default function Login() {
   const [segment, setSegment] = useState<string>(() => mySegment() || '');
   // Perfil escolhido no cadastro. Gestor(a) precisa do código da marca.
   const [role, setRole] = useState<Role>('vendedora');
+  const [affType, setAffType] = useState<AffiliateType>('geral');
   const [code, setCode] = useState('');
 
   const emailOk = /\S+@\S+\.\S+/.test(email);
@@ -40,14 +41,15 @@ export default function Login() {
           setBusy(false);
           return;
         }
-        const finalRole: Role = role === 'gestor' ? 'gestor' : 'vendedora';
+        const finalRole: Role = role === 'gestor' ? 'gestor' : role === 'afiliado' ? 'afiliado' : 'vendedora';
         const seg = finalRole === 'vendedora' ? segment : '';
+        const at: AffiliateType | '' = finalRole === 'afiliado' ? affType : '';
         if (seg) setMySegment(seg);
         // Cache local (rápido) + conta cria.
-        setStoredRole(email.trim(), finalRole);
+        setStoredRole(email.trim(), finalRole, at);
         const fb = await signUpWithEmail(email.trim(), password, name.trim());
         // Perfil NA CONTA (Firestore) — vale em qualquer aparelho onde logar.
-        await setElevaProfile(fb.uid, { role: finalRole, name: name.trim(), segment: seg as SegmentId | '' });
+        await setElevaProfile(fb.uid, { role: finalRole, name: name.trim(), segment: seg as SegmentId | '', affiliateType: at });
       } else {
         await signInWithEmail(email.trim(), password);
       }
@@ -102,7 +104,7 @@ export default function Login() {
         {mode === 'criar' && (
           <>
             <label className="wp-login-label">Você é...</label>
-            <div className="wp-login-roles">
+            <div className="wp-login-roles wp-login-roles--3">
               <button
                 type="button"
                 className={`wp-login-role ${role === 'vendedora' ? 'on' : ''}`}
@@ -112,23 +114,53 @@ export default function Login() {
               </button>
               <button
                 type="button"
+                className={`wp-login-role ${role === 'afiliado' ? 'on' : ''}`}
+                onClick={() => { setRole('afiliado'); setError(''); }}
+              >
+                Afiliado(a)
+              </button>
+              <button
+                type="button"
                 className={`wp-login-role ${role === 'gestor' ? 'on' : ''}`}
                 onClick={() => { setRole('gestor'); setError(''); }}
               >
-                Gestor(a) da marca
+                Gestor(a)
               </button>
             </div>
+
+            {role === 'afiliado' && (
+              <>
+                <label className="wp-login-label">Que tipo de afiliado?</label>
+                <div className="wp-login-roles">
+                  <button
+                    type="button"
+                    className={`wp-login-role ${affType === 'geral' ? 'on' : ''}`}
+                    onClick={() => setAffType('geral')}
+                  >
+                    Afiliado
+                  </button>
+                  <button
+                    type="button"
+                    className={`wp-login-role ${affType === 'saude' ? 'on' : ''}`}
+                    onClick={() => setAffType('saude')}
+                  >
+                    Profissional da saúde
+                  </button>
+                </div>
+              </>
+            )}
 
             <label className="wp-login-label">Seu nome</label>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />
 
-            {role === 'gestor' ? (
+            {role === 'gestor' && (
               <>
                 <label className="wp-login-label">Código de gestor</label>
                 <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="O código que a marca te passou" />
                 <p className="wp-login-hint">A marca fornece esse código apenas a quem faz parte do time dela.</p>
               </>
-            ) : (
+            )}
+            {role === 'vendedora' && (
               <>
                 <label className="wp-login-label">Onde você vende? (opcional)</label>
                 <select className="wp-login-select" value={segment} onChange={(e) => setSegment(e.target.value)}>

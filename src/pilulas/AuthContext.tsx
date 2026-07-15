@@ -3,16 +3,20 @@ import type { BrandId } from './data/brands';
 import { mySegment, type SegmentId } from './data/segments';
 import { onAuthChange, signOut as fbSignOut, type AuthUser } from '../services/auth';
 import { firebaseEnabled } from '../services/firebase';
-import { storedRole, setStoredRole } from './data/roles';
+import { storedRole, setStoredRole, storedAffiliateType } from './data/roles';
 import { getElevaProfile, type ElevaProfile } from './data/profile';
 
-export type Role = 'gestor' | 'vendedora';
+export type Role = 'gestor' | 'vendedora' | 'afiliado';
+// Subtipo do afiliado: geral (comum) x profissional da saúde. Muda o conteúdo
+// (vídeo) que ele vê em cada produto.
+export type AffiliateType = 'geral' | 'saude';
 export interface User {
   name: string;
   email: string;
   role: Role;
   brands: BrandId[]; // empresas que a pessoa pode ver
   segment?: SegmentId; // canal de onde veio (etiqueta do link/QR de convite)
+  affiliateType?: AffiliateType; // só para role === 'afiliado'
 }
 
 // GESTORES AUTORIZADOS — controla quem entra no Painel do Gestor. Quem loga com
@@ -29,17 +33,25 @@ function roleFor(email: string, profile: ElevaProfile | null): Role {
   return profile?.role ?? storedRole(e) ?? 'vendedora';
 }
 
+function affiliateTypeFor(email: string, profile: ElevaProfile | null): AffiliateType | undefined {
+  const fromProfile = profile?.affiliateType;
+  if (fromProfile === 'geral' || fromProfile === 'saude') return fromProfile;
+  return storedAffiliateType(email) ?? undefined;
+}
+
 // Por enquanto só a Meraki está ativa — todo mundo vê a Meraki.
 const DEFAULT_BRANDS: BrandId[] = ['meraki'];
 
 function toUser(fb: AuthUser, profile: ElevaProfile | null): User {
   const email = fb.email || '';
+  const role = roleFor(email, profile);
   return {
     name: profile?.name || fb.displayName || (email ? email.split('@')[0] : 'Você'),
     email,
-    role: roleFor(email, profile),
+    role,
     brands: DEFAULT_BRANDS,
     segment: profile?.segment || mySegment(),
+    affiliateType: role === 'afiliado' ? (affiliateTypeFor(email, profile) ?? 'geral') : undefined,
   };
 }
 
@@ -90,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         ]);
       } catch { /* ignore */ }
       // Espelha o papel da conta neste aparelho (cache pra próxima abertura).
-      if (profile && fb.email) setStoredRole(fb.email, profile.role);
+      if (profile && fb.email) setStoredRole(fb.email, profile.role, profile.affiliateType);
       setUser(toUser(fb, profile));
       setLoading(false);
     });

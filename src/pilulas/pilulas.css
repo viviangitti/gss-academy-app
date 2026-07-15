@@ -1602,3 +1602,15 @@
   border-radius: 9px; padding: 8px 11px;
 }
 .wp-about-ex b { color: var(--wp-pink-deep); font-weight: 800; }
+
+/* Cadastro: 3 opções de papel (Vendedor / Afiliado / Gestor) */
+.wp-login-roles--3 .wp-login-role { padding: 11px 4px; font-size: 12px; }
+
+/* Editor do gestor: linha de vídeo por tipo de afiliado */
+.wp-avrow {
+  border: 1px solid var(--wp-border); border-radius: 12px;
+  padding: 11px; margin-bottom: 10px; background: var(--wp-bg);
+}
+.wp-avrow-lb { font-size: 13px; font-weight: 800; color: var(--wp-ink); margin: 0 0 8px; }
+.wp-avrow .wp-videdit-input { margin-bottom: 8px; }
+.wp-avrow .wp-videdit-save { margin-bottom: 8px; }

@@ -257,7 +257,8 @@ export default function Hoje() {
             </div>
           )}
 
-          {/* O que postar hoje */}
+          {/* O que postar hoje — afiliado não posta (só assiste + quiz) */}
+          {user?.role !== 'afiliado' && (
           <div className="wp-td-card">
             <span className="wp-td-card-label"><CalendarDays size={13} className="wp-ico" /> O que postar hoje ({post.day})</span>
             <div className="wp-td-post">
@@ -271,6 +272,7 @@ export default function Hoje() {
               Ver o roteiro completo <ChevronRight size={15} className="wp-ico" />
             </Link>
           </div>
+          )}
 
           {/* Quem é a marca — contexto institucional pra vender com segurança */}
           {getAbout(brandId) && (

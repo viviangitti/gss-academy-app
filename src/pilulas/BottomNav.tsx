@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, BookOpen, Sparkles, Trophy, Tag, LayoutDashboard, Eye } from 'lucide-react';
+import { Home, BookOpen, Sparkles, Trophy, Tag, LayoutDashboard, Eye, GraduationCap } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 // Abas por papel: a vendedora consome/posta/compartilha; o gestor só coloca conteúdo
@@ -17,9 +17,19 @@ const GESTOR_TABS = [
   { to: '/eleva/catalogo', label: 'Ver como o time', icon: Eye, end: false },
 ];
 
+// Afiliado: só aprende (assiste as pílulas + faz o quiz). Sem postar/ranking/ofertas.
+const AFILIADO_TABS = [
+  { to: '/eleva', label: 'Hoje', icon: Home, end: true },
+  { to: '/eleva/catalogo', label: 'Conteúdos', icon: BookOpen, end: false },
+  { to: '/eleva/trilha', label: 'Formação', icon: GraduationCap, end: false },
+];
+
 export default function BottomNav() {
   const { user } = useAuth();
-  const tabs = user?.role === 'gestor' ? GESTOR_TABS : VENDEDORA_TABS;
+  const tabs =
+    user?.role === 'gestor' ? GESTOR_TABS :
+    user?.role === 'afiliado' ? AFILIADO_TABS :
+    VENDEDORA_TABS;
   return (
     <nav className="wp-nav">
       {tabs.map((t) => (

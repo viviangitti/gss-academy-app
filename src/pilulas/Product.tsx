@@ -8,8 +8,9 @@ import {
 import { buildShareVariants, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
+import { affiliateVideoKey, getAffiliateReel, setAffiliateReel, AFFILIATE_TYPES } from './data/affiliateVideos';
 import { recordView } from './data/tracking';
-import { useAuth } from './AuthContext';
+import { useAuth, type AffiliateType } from './AuthContext';
 
 // Duração de cada cena a partir da marcação de tempo do roteiro ("0-4s" → 4s).
 function sceneMs(t: string): number {
@@ -18,17 +19,35 @@ function sceneMs(t: string): number {
   return 2600;
 }
 
+function VideoMp4({ url }: { url: string }) {
+  return (
+    <div className="wp-reel wp-reel--video" style={{ background: '#000' }}>
+      <video className="wp-reel-videoel" src={url} autoPlay muted loop playsInline controls />
+    </div>
+  );
+}
+
 function Reel({ product }: { product: ProductT }) {
   useStore(); // re-renderiza quando o vídeo do IndexedDB termina de carregar
+  const { user } = useAuth();
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(true);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    if (hasVideo(product.id)) ensureVideoLoaded(product.id);
-  }, [product.id]);
+  // Afiliado vê o vídeo do SEU tipo (geral x profissional da saúde); vendedora
+  // e gestor veem o vídeo padrão do produto.
+  const variant = user?.role === 'afiliado' ? (user.affiliateType || 'geral') : null;
+  const avKey = variant ? affiliateVideoKey(product.id, variant) : null;
 
-  const videoUrl = getVideoObjectUrl(product.id) || product.videoUrl;
+  useEffect(() => {
+    if (avKey && hasVideo(avKey)) ensureVideoLoaded(avKey);
+    if (hasVideo(product.id)) ensureVideoLoaded(product.id);
+  }, [product.id, avKey]);
+
+  const variantMp4 = avKey ? getVideoObjectUrl(avKey) : undefined;
+  const variantReel = variant ? getAffiliateReel(product.id, variant) : undefined;
+  const baseMp4 = getVideoObjectUrl(product.id) || product.videoUrl;
+
   const scene = product.storyboard[i];
   const ms = sceneMs(scene.t);
 
@@ -42,14 +61,12 @@ function Reel({ product }: { product: ProductT }) {
     };
   }, [i, playing, ms, product.storyboard.length]);
 
-  // Prioridade do vídeo da pílula: MP4 enviado > reel do Instagram > storyboard animado.
-  if (videoUrl) {
-    return (
-      <div className="wp-reel wp-reel--video" style={{ background: '#000' }}>
-        <video className="wp-reel-videoel" src={videoUrl} autoPlay muted loop playsInline controls />
-      </div>
-    );
+  // Prioridade: [afiliado] vídeo do tipo (MP4 > reel) > [base] MP4 > reel > storyboard animado.
+  if (variantMp4) return <VideoMp4 url={variantMp4} />;
+  if (variantReel) {
+    return <div className="wp-reel wp-reel--ig"><InstagramEmbed url={variantReel} /></div>;
   }
+  if (baseMp4) return <VideoMp4 url={baseMp4} />;
 
   if (product.instagramUrl) {
     return (
@@ -127,6 +144,43 @@ function InstagramEmbed({ url }: { url: string }) {
   );
 }
 
+// Uma linha de upload por tipo de afiliado (reel do IG ou MP4).
+function AffiliateVideoRow({ productId, type, label }: { productId: string; type: AffiliateType; label: string }) {
+  const key = affiliateVideoKey(productId, type);
+  const [ig, setIg] = useState(getAffiliateReel(productId, type) || '');
+  const [saved, setSaved] = useState(false);
+  const flash = () => { setSaved(true); setTimeout(() => setSaved(false), 1600); };
+  const hasMp4 = hasVideo(key);
+  const reel = getAffiliateReel(productId, type);
+  const status = hasMp4 ? 'vídeo MP4' : reel ? 'reel do Instagram' : 'nenhum (usa o vídeo padrão)';
+  const salvarReel = () => { clearProductVideo(key); setAffiliateReel(productId, type, ig); flash(); };
+  const subirMp4 = (f: File) => { setAffiliateReel(productId, type, ''); setIg(''); setProductVideo(key, f); flash(); };
+  const tirar = () => { clearProductVideo(key); setAffiliateReel(productId, type, ''); setIg(''); flash(); };
+  return (
+    <div className="wp-avrow">
+      <p className="wp-avrow-lb">{label} <span className="wp-videdit-cap">— {status}</span></p>
+      <input
+        className="wp-videdit-input"
+        value={ig}
+        onChange={(e) => setIg(e.target.value)}
+        onFocus={(e) => e.target.select()}
+        placeholder="Link do reel do Instagram"
+      />
+      <button className="wp-videdit-save" disabled={!ig.trim()} onClick={salvarReel}>
+        {saved ? <><Check size={15} className="wp-ico" /> Salvo!</> : 'Salvar reel'}
+      </button>
+      <label className="wp-videdit-mp4">
+        <UploadCloud size={16} className="wp-ico" />
+        {hasMp4 ? 'Trocar por um MP4' : 'Ou subir um vídeo MP4'}
+        <input type="file" accept="video/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) subirMp4(f); }} />
+      </label>
+      {(hasMp4 || reel) && (
+        <button className="wp-videdit-remove" onClick={tirar}>Tirar (usar o vídeo padrão)</button>
+      )}
+    </div>
+  );
+}
+
 // Editor de vídeo direto na pílula — SÓ o gestor vê. Trocar o vídeo aqui,
 // no próprio produto, sem ir ao painel.
 function GestorVideoEditor({ product }: { product: ProductT }) {
@@ -172,6 +226,13 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
           {(uploaded || product.instagramUrl) && (
             <button className="wp-videdit-remove" onClick={tirar}>Tirar o vídeo (voltar pro padrão)</button>
           )}
+          <p className="wp-videdit-help">Esse é o vídeo padrão — quem vê é a <b>vendedora</b>.</p>
+
+          <div className="wp-videdit-divider" />
+          <p className="wp-videdit-now">Vídeos por tipo de afiliado <span className="wp-videdit-cap">— cada afiliado vê o do seu tipo</span></p>
+          {AFFILIATE_TYPES.map((t) => (
+            <AffiliateVideoRow key={t.id} productId={product.id} type={t.id} label={t.label} />
+          ))}
 
           <div className="wp-videdit-divider" />
           <p className="wp-videdit-now">Foto de capa <span className="wp-videdit-cap">— aparece no card do catálogo</span></p>

@@ -2,13 +2,14 @@
 // (gestor/vendedora), o nome e o canal valem em qualquer celular onde a pessoa logar.
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../services/firebase';
-import type { Role } from '../AuthContext';
+import type { Role, AffiliateType } from '../AuthContext';
 import type { SegmentId } from './segments';
 
 export interface ElevaProfile {
   role: Role;
   name?: string;
   segment?: SegmentId | '';
+  affiliateType?: AffiliateType | ''; // só quando role === 'afiliado'
 }
 
 export async function getElevaProfile(uid: string): Promise<ElevaProfile | null> {
@@ -17,10 +18,13 @@ export async function getElevaProfile(uid: string): Promise<ElevaProfile | null>
     const snap = await getDoc(doc(db, 'elevaUsers', uid));
     if (!snap.exists()) return null;
     const d = snap.data();
+    const role: Role = d.role === 'gestor' ? 'gestor' : d.role === 'afiliado' ? 'afiliado' : 'vendedora';
+    const at = d.affiliateType;
     return {
-      role: d.role === 'gestor' ? 'gestor' : 'vendedora',
+      role,
       name: typeof d.name === 'string' ? d.name : undefined,
       segment: typeof d.segment === 'string' ? (d.segment as SegmentId | '') : undefined,
+      affiliateType: at === 'geral' || at === 'saude' ? at : undefined,
     };
   } catch {
     return null;
@@ -32,7 +36,13 @@ export async function setElevaProfile(uid: string, p: ElevaProfile): Promise<voi
   try {
     await setDoc(
       doc(db, 'elevaUsers', uid),
-      { role: p.role, name: p.name || '', segment: p.segment || '', updatedAt: serverTimestamp() },
+      {
+        role: p.role,
+        name: p.name || '',
+        segment: p.segment || '',
+        affiliateType: p.affiliateType || '',
+        updatedAt: serverTimestamp(),
+      },
       { merge: true }
     );
   } catch {

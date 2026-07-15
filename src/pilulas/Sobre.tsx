@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Infinity as InfinityIcon, Heart, Sparkles, Target, Store, Users, ChevronLeft } from 'lucide-react';
+import { Infinity as InfinityIcon, Award, Heart, Sparkles, Target, Store, Users, ChevronLeft } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { getAbout } from './data/about';
 
@@ -27,6 +27,18 @@ export default function Sobre() {
         <h1>{brand.name}</h1>
         <p className="wp-about-meaning">{about.meaning}</p>
         <p className="wp-about-tagline">“{about.tagline}”</p>
+      </section>
+
+      <section className="wp-about-card wp-about-diff">
+        <span className="wp-about-label"><Award size={13} className="wp-ico" /> O que diferencia a {brand.name}</span>
+        <ul className="wp-about-values">
+          {about.differentials.map((d) => (
+            <li key={d.title}>
+              <b>{d.title}</b>
+              <span>{d.desc}</span>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="wp-about-card">

@@ -1589,3 +1589,8 @@
 .wp-td-sobre { display: block; text-decoration: none; border: 1px solid var(--wp-border); }
 .wp-td-sobre-tit { display: block; font-size: 16px; font-weight: 800; color: var(--wp-ink); margin-bottom: 2px; }
 .wp-td-sobre-sub { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; color: var(--wp-pink-deep); font-weight: 700; }
+
+/* Card de destaque: o diferencial da marca */
+.wp-about-diff { border: 1.5px solid var(--wp-pink); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05); }
+.wp-about-diff .wp-about-label { color: var(--wp-pink-deep); }
+.wp-about-diff .wp-about-values b { color: var(--wp-pink-deep); }

@@ -12,6 +12,7 @@ export interface AboutContent {
   tagline: string; // assinatura
   symbol: string; // o símbolo da marca, em 1 frase
   purpose: string;
+  differentials: AboutValue[]; // o que diferencia a marca no mercado
   values: AboutValue[];
   focus: string;
   stat: { number: string; label: string };
@@ -25,6 +26,20 @@ const MERAKI: AboutContent = {
   symbol: 'O símbolo é o infinito na forma do "M" — a ideia de fazer as coisas com alma e transcender.',
   purpose:
     'Promover saúde e bem-estar por meio de produtos, serviços e soluções que agreguem valor para todos os elos da cadeia, construindo relações sustentáveis.',
+  differentials: [
+    {
+      title: 'Inovação, não cópia',
+      desc: 'Cria produtos para necessidades reais e específicas — a linha GLPEN é a primeira feita para quem usa canetas emagrecedoras —, em vez de repetir o que o mercado já tem.',
+    },
+    {
+      title: 'Ativos diferenciados',
+      desc: 'Fórmulas com blends pensados terapeuticamente e com poucos concorrentes diretos — não é "mais do mesmo".',
+    },
+    {
+      title: 'Qualidade e regulação',
+      desc: 'Produção adequada à nova RDC de suplementos, com P&D e estrutura fabril por trás.',
+    },
+  ],
   values: [
     { title: 'Empreendedorismo', desc: 'Gerar resultado de forma sistêmica e sustentável.' },
     { title: 'Simplicidade', desc: 'Agir de forma autêntica, elegante e inteligente.' },

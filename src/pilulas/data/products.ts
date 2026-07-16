@@ -82,13 +82,13 @@ export const PRODUCTS: Product[] = [
     whatItIs:
       'Num emagrecimento acelerado, o corpo pode perder não apenas gordura, mas também massa magra — cerca de 30% do peso perdido com análogos de GLP-1 pode ser de músculos. O GLPEN Nutri Muscle foi desenvolvido para essa fase: uma associação exclusiva de HMB, arginina e glutamina em sachê, para apoiar a preservação muscular de quem está emagrecendo com orientação profissional.',
     benefits: [
-      'HMB, que ajuda a reduzir a degradação proteica muscular',
+      'HMB em dose cheia — 3 g por sachê —, que ajuda a reduzir a degradação proteica muscular',
       'Arginina — aminoácido que favorece a circulação sanguínea',
       'Glutamina — aminoácido essencial para a recuperação do tecido muscular',
       'Sachê prático (30 sachês de 10g) — fácil de manter mesmo com o apetite reduzido',
     ],
     howToUse:
-      'Um sachê (10g) ao dia, dissolvido conforme o rótulo — de preferência junto da rotina de treino de força. O suplemento é um apoio: quem preserva a massa muscular é a combinação de proteína adequada, treino e acompanhamento profissional.',
+      'Um sachê (10g) ao dia, dissolvido em cerca de 200 ml de água — de preferência junto da rotina de treino de força. O suplemento é um apoio: quem preserva a massa muscular é a combinação de proteína adequada, treino e acompanhamento profissional.',
     forWho:
       'Pessoas em uso de análogos de GLP-1 (como semaglutida ou tirzepatida), sob orientação profissional, que querem cuidar da massa muscular e da recuperação.',
     salesLine: 'Emagrecer cuidando da massa magra faz diferença no resultado. Quer que eu te explique como ele entra na sua rotina?',
@@ -107,6 +107,21 @@ export const PRODUCTS: Product[] = [
         trigger: '"Já tomo whey, está de bom tamanho."',
         answer:
           'O whey é uma ótima fonte de proteína. O Muscle soma o que o whey não traz: HMB, que ajuda a reduzir a degradação muscular, com arginina e glutamina para a recuperação — pensado para quem está comendo menos. Um complementa o outro.',
+      },
+      {
+        trigger: '"E quando eu parar a caneta? Não volta tudo?"',
+        answer:
+          'Esse é um risco real: segundo dados citados pela marca, até dois terços do peso perdido podem voltar no primeiro ano depois de parar a medicação. O músculo é o que sustenta o metabolismo nessa transição — por isso preservá-lo durante o tratamento é investir na manutenção do resultado.',
+      },
+      {
+        trigger: '"Não faço musculação. Faz sentido pra mim?"',
+        answer:
+          'Faz. O HMB foi estudado até em pessoas em repouso absoluto, sem nenhuma atividade física, e mostrou apoio à preservação muscular. Com treino o resultado é melhor — mas o suporte vale mesmo pra quem ainda não começou.',
+      },
+      {
+        trigger: '"Em quanto tempo vejo resultado?"',
+        answer:
+          'A maioria relata diferença a partir de 30 dias de uso constante, e a recomendação da marca é um ciclo de pelo menos 3 meses. No site oficial há garantia de 30 dias.',
       },
     ],
     compliance:
@@ -140,14 +155,15 @@ export const PRODUCTS: Product[] = [
       'Cápsulas softgel, práticas para a rotina e o pré-treino',
     ],
     howToUse:
-      'Conforme o rótulo, de preferência antes da atividade física. Contém cafeína: evite o uso próximo ao horário de dormir.',
+      'Uma cápsula ao dia — quem treina costuma usar antes da atividade. Contém cafeína: evite depois das 16h se você for sensível, para não atrapalhar o sono.',
     forWho:
       'Usuários de canetas emagrecedoras que fazem atividade física e sentem queda de disposição, foco e concentração.',
     salesLine: 'Energia e foco também merecem cuidado nessa fase. Quer que eu te explique como ele entra na sua rotina?',
     objections: [
       { trigger: '"Café não resolve?"', answer: 'O café oferece apenas a cafeína. O Energy soma arginina, colina verde, vitaminas e minerais em dose medida — um suporte pensado para a fase de restrição, não um cafezinho.' },
-      { trigger: '"Tenho medo de ficar acelerada."', answer: 'A dose de cafeína é controlada por cápsula — diferente de empilhar xícaras de café. Se você é sensível à cafeína, converse antes com seu profissional de saúde.' },
+      { trigger: '"Tenho medo de ficar acelerada."', answer: 'A proposta é energia sustentável, sem nervosismo nem tremedeira: a dose de cafeína é medida por cápsula, diferente de empilhar xícaras de café. Se você é sensível, use antes das 16h e converse com seu profissional de saúde.' },
       { trigger: '"Energia é só dormir bem."', answer: 'O sono é a base. Mas, comendo bem menos, falta combustível — e é aí que vitaminas, minerais e cafeína em dose adequada fazem diferença.' },
+      { trigger: '"Em quanto tempo vejo resultado?"', answer: 'A maioria relata diferença a partir de 30 dias de uso constante; a recomendação da marca é um ciclo de pelo menos 3 meses. No site oficial há garantia de 30 dias.' },
     ],
     compliance:
       'Suplemento alimentar. Contém cafeína — gestantes, lactantes e pessoas sensíveis à cafeína devem consultar um profissional de saúde. Não é medicamento e não substitui uma alimentação equilibrada.',
@@ -178,7 +194,7 @@ export const PRODUCTS: Product[] = [
       'Contribui para a imunidade e auxilia no cuidado com cabelos e unhas',
       'Ajuda a prevenir deficiências nutricionais durante o emagrecimento acelerado',
     ],
-    howToUse: 'Conforme o rótulo, todos os dias, junto a uma refeição. A constância é o que garante a reposição.',
+    howToUse: 'Duas cápsulas ao dia, junto a uma refeição. A constância é o que garante a reposição.',
     forWho:
       'Todos os usuários de canetas emagrecedoras — especialmente quem nota queda de cabelo, unhas frágeis, imunidade baixa ou falta de disposição.',
     salesLine: 'Quem come 70% menos precisa repor com dose adequada. Quer que eu te explique como ele funciona?',
@@ -186,6 +202,7 @@ export const PRODUCTS: Product[] = [
       { trigger: '"Já tomo multivitamínico."', answer: 'O multivitamínico comum foi feito para quem come normalmente. Na caneta, a alimentação cai até 70% — o Ultra AZ traz doses até 10x maiores e minerais quelatos, pensados para essa realidade.' },
       { trigger: '"Prefiro repor pela comida."', answer: 'Seria o ideal. Mas, com o apetite reduzido pela medicação, o prato não dá conta do volume necessário — é exatamente para isso que o Ultra AZ existe.' },
       { trigger: '"Todo multivitamínico é igual."', answer: 'Compare os rótulos: a dose e a forma do mineral fazem toda a diferença. Minerais quelatos absorvem melhor, e doses de quem come 100% não servem para quem come 30%.' },
+      { trigger: '"Em quanto tempo vejo resultado?"', answer: 'Cabelo e unha respondem devagar por natureza: a maioria nota diferença a partir de 30 dias, e a recomendação da marca é um ciclo de pelo menos 3 meses. No site oficial há garantia de 30 dias.' },
     ],
     compliance: 'Suplemento alimentar. Não é medicamento e não substitui uma alimentação equilibrada nem acompanhamento profissional. Sintomas persistentes: procure um médico.',
     durationSec: 30,

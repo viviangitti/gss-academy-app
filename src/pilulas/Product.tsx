@@ -5,10 +5,11 @@ import {
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
 } from 'lucide-react';
-import { buildShareVariants, buildFichaMessage, type Product as ProductT } from './data/products';
+import { buildShareVariants, buildFichaMessage, buyLinkFor, type BuyContext, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, AUDIENCES } from './data/audienceVideos';
+import { getAfiliadoCode } from './data/afiliadoCode';
 import { recordView } from './data/tracking';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
 
@@ -256,6 +257,11 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
 export default function Product() {
   useStore(); // re-renderiza quando o gestor troca o vídeo
   const { user } = useAuth();
+  // Quem está mandando — vira o rastreio na URL de compra (Shopify lê UTM).
+  const buyCtx: BuyContext = {
+    medium: audienceOf(user) ?? user?.role,
+    code: getAfiliadoCode(user?.email),
+  };
   const { id } = useParams();
   const product = id ? findProduct(id) : undefined;
   const [openObj, setOpenObj] = useState<number | null>(0);
@@ -284,7 +290,7 @@ export default function Product() {
   // quantos vem, quanto dura. Mesmo caminho do compartilhar: share nativo no
   // celular, WhatsApp web no computador.
   const sendFicha = () => {
-    const text = buildFichaMessage(product, user?.role);
+    const text = buildFichaMessage(product, buyCtx);
     if (!text) return;
     if (navigator.share) {
       navigator.share({ text, title: `${product.name} — ficha` }).catch(() => {});
@@ -296,7 +302,7 @@ export default function Product() {
   };
 
   const share = () => {
-    const variants = buildShareVariants(product, user?.role);
+    const variants = buildShareVariants(product, buyCtx);
     const text = variants[shareIdx % variants.length];
     setShareIdx((n) => n + 1); // próximo toque = próxima versão
     if (navigator.share) {
@@ -405,10 +411,9 @@ export default function Product() {
 
       <div className="wp-salesline">“{product.salesLine}”</div>
 
-      {/* Link de compra: só o afiliado, que não tem balcão. Pro balconista isso
-          mandaria a cliente comprar online — tirando a venda dele. */}
-      {product.buyUrl && user?.role === 'afiliado' && (
-        <a className="wp-buy" href={product.buyUrl} target="_blank" rel="noreferrer">
+      {/* Link de compra, com rastreio de quem mandou. */}
+      {product.buyUrl && (
+        <a className="wp-buy" href={buyLinkFor(product, buyCtx)} target="_blank" rel="noreferrer">
           <ShoppingBag size={17} className="wp-ico" /> Comprar no site oficial
         </a>
       )}

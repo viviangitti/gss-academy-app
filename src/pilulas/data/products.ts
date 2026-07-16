@@ -611,17 +611,38 @@ export function withVideoLink(text: string, p: Product): string {
   return p.instagramUrl ? `${text}\n\nVeja o vídeo do produto: ${p.instagramUrl}` : text;
 }
 
-// Link de compra no e-commerce oficial. Vai só pra quem NÃO vende no balcão:
-// se o balconista mandar isso, a cliente compra online e ele perde a venda dele.
-export function withBuyLink(text: string, p: Product, role?: string): string {
-  if (!p.buyUrl || role !== 'afiliado') return text;
-  return `${text}\n\nPra comprar: ${p.buyUrl}`;
+// De quem partiu o link — vira o rastreio (UTM) na URL de compra.
+export interface BuyContext {
+  medium?: string; // balconista | promotor | afiliado-geral | afiliado-saude
+  code?: string; // código do afiliado, quando ele tiver
+}
+
+// Link de compra COM RASTREIO. O e-commerce é Shopify, que lê UTM nativamente:
+// a Meraki abre o painel e vê que a venda veio do Eleva, de qual público e —
+// quando houver programa de afiliados — de qual pessoa.
+export function buyLinkFor(p: Product, ctx: BuyContext = {}): string | undefined {
+  if (!p.buyUrl) return undefined;
+  try {
+    const u = new URL(p.buyUrl);
+    u.searchParams.set('utm_source', 'eleva'); // veio do app
+    if (ctx.medium) u.searchParams.set('utm_medium', ctx.medium); // qual público
+    u.searchParams.set('utm_campaign', p.id); // qual produto
+    if (ctx.code) u.searchParams.set('utm_content', ctx.code); // qual pessoa
+    return u.toString();
+  } catch {
+    return p.buyUrl;
+  }
+}
+
+export function withBuyLink(text: string, p: Product, ctx: BuyContext = {}): string {
+  const link = buyLinkFor(p, ctx);
+  return link ? `${text}\n\nPra comprar: ${link}` : text;
 }
 
 // A ficha técnica virada em mensagem — pra mandar no WhatsApp da cliente quando
 // ela pergunta o que tem, quantos vem e quanto dura. Vai com o aviso de
 // suplemento junto (é informação de produto indo pra consumidora).
-export function buildFichaMessage(p: Product, role?: string): string {
+export function buildFichaMessage(p: Product, ctx: BuyContext = {}): string {
   if (!p.ficha || !p.ficha.length) return '';
   const parts = [
     `*${p.name}*`,
@@ -630,10 +651,10 @@ export function buildFichaMessage(p: Product, role?: string): string {
     p.ficha.map((r) => `*${r.label}:* ${r.value}`).join('\n'),
   ];
   if (p.compliance) parts.push('', p.compliance);
-  return withBuyLink(parts.join('\n'), p, role);
+  return withBuyLink(parts.join('\n'), p, ctx);
 }
 
-export function buildShareMessage(p: Product, role?: string): string {
+export function buildShareMessage(p: Product, ctx: BuyContext = {}): string {
   const benefits = p.benefits.slice(0, 3).map((b) => `✅ ${b}`).join('\n');
   return withBuyLink(withVideoLink([
     `*${p.name}*`,
@@ -643,13 +664,13 @@ export function buildShareMessage(p: Product, role?: string): string {
     benefits,
     '',
     p.salesLine,
-  ].join('\n'), p), p, role);
+  ].join('\n'), p), p, ctx);
 }
 
 // Várias versões da mensagem pronta — todas puxam os BENEFÍCIOS, em ângulos
 // diferentes. O botão "Compartilhar" gira entre elas: cada clique manda uma
 // diferente, pra vendedora não repetir o mesmo texto com toda cliente.
-export function buildShareVariants(p: Product, role?: string): string[] {
+export function buildShareVariants(p: Product, ctx: BuyContext = {}): string[] {
   const bens = p.benefits.filter(Boolean);
   const b = (i: number) => bens[bens.length ? i % bens.length : 0] || p.tagline;
   const variants: string[] = [];
@@ -722,7 +743,7 @@ export function buildShareVariants(p: Product, role?: string): string[] {
     ].filter(Boolean).join('\n'));
   }
 
-  // O link do vídeo (reel) vai em toda versão — a cliente recebe a mensagem E o vídeo.
-  // O link de compra entra só pro afiliado (ver withBuyLink).
-  return variants.map((v) => withBuyLink(withVideoLink(v, p), p, role));
+  // Toda versão leva o vídeo E o link de compra rastreado — a cliente recebe a
+  // mensagem, vê o vídeo e compra sem sair da conversa.
+  return variants.map((v) => withBuyLink(withVideoLink(v, p), p, ctx));
 }

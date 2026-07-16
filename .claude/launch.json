@@ -4,7 +4,10 @@
     {
       "name": "gss",
       "runtimeExecutable": "/bin/bash",
-      "runtimeArgs": ["-c", "cd /Users/viviangitti/gss && /opt/homebrew/bin/npx vite --port 5175"],
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/viviangitti/gss && /opt/homebrew/bin/npx vite --port 5175"
+      ],
       "port": 5175,
       "env": {
         "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
@@ -13,13 +16,20 @@
     {
       "name": "email-preview",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "9877"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "9877"
+      ],
       "port": 9877
     },
     {
       "name": "maestria",
       "runtimeExecutable": "/bin/bash",
-      "runtimeArgs": ["-c", "cd /Users/viviangitti/maestria-empresas && /opt/homebrew/bin/npx vite --port 5174"],
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/viviangitti/maestria-empresas && /opt/homebrew/bin/npx vite --port 5174"
+      ],
       "port": 5174,
       "env": {
         "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
@@ -28,7 +38,10 @@
     {
       "name": "mockup",
       "runtimeExecutable": "/bin/bash",
-      "runtimeArgs": ["-c", "cd /Users/viviangitti/maestria-empresas/mockup && python3 -m http.server 5180"],
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/viviangitti/maestria-empresas/mockup && python3 -m http.server 5180"
+      ],
       "port": 5180,
       "env": {
         "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
@@ -37,11 +50,29 @@
     {
       "name": "oficina-pro",
       "runtimeExecutable": "/bin/bash",
-      "runtimeArgs": ["-c", "cd /Users/viviangitti/gss/oficina-pro-app && python3 -m http.server 5181"],
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/viviangitti/gss/oficina-pro-app && python3 -m http.server 5181"
+      ],
       "port": 5181,
       "env": {
         "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
       }
+    },
+    {
+      "name": "landing-gss",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/viviangitti/gssacademy/landing-page",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5183",
+        "--strictPort"
+      ],
+      "port": 5183
     }
   ]
 }

@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
 import { buildShareMessage, visibleProducts, type Product } from './data/products';
+import { getAfiliadoCode } from './data/afiliadoCode';
+import { audienceOf } from './AuthContext';
 import { CALENDAR, CHANNELS } from './data/creatorContent';
 import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
@@ -161,7 +163,7 @@ export default function Hoje() {
 
   const sharePill = () => {
     if (!pill) return;
-    const text = buildShareMessage(pill, user?.role);
+    const text = buildShareMessage(pill, { medium: audienceOf(user) ?? user?.role, code: getAfiliadoCode(user?.email) });
     if (navigator.share) {
       navigator.share({ text, title: pill.name }).catch(() => {});
       return;

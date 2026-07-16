@@ -32,7 +32,7 @@ export default function Trilha() {
   useStore();
   const { brandId, brand } = useBrand();
   const { user } = useAuth();
-  const trilha = useMemo(() => getTrilha(brandId), [brandId]);
+  const trilha = useMemo(() => getTrilha(brandId, user?.role), [brandId, user?.role]);
   const { steps, total, mastered, pct, complete, next } = trilha;
 
   const certDate = complete ? ensureCertDate(brandId) : null;

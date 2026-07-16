@@ -1,16 +1,19 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Play } from 'lucide-react';
-import { CATEGORIES, type Category } from './data/products';
+import { CATEGORIES, visibleProducts, type Category } from './data/products';
 import { allProducts, hasImage, getProductImageUrl, ensureImageLoaded, useStore } from './data/store';
 import { useBrand } from './BrandContext';
+import { useAuth } from './AuthContext';
 
 const ORDER: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria'];
 
 export default function Catalog() {
   useStore(); // re-renderiza quando o gestor cadastra produto
   const { brandId } = useBrand();
-  const catalog = allProducts().filter((p) => p.brand === brandId);
+  const { user } = useAuth();
+  // Afiliado só vê a linha GLPEN.
+  const catalog = visibleProducts(allProducts().filter((p) => p.brand === brandId), user?.role);
   // carrega as fotos de capa (IndexedDB) pra usar no card
   useEffect(() => {
     catalog.forEach((p) => { if (hasImage(p.id)) ensureImageLoaded(p.id); });

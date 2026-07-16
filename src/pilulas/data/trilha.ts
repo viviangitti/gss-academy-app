@@ -3,7 +3,7 @@
 // Quando domina TODOS, ganha o certificado da marca.
 import { allProducts } from './store';
 import { getStats } from './tracking';
-import type { Product } from './products';
+import { visibleProducts, type Product } from './products';
 
 export type StepStatus = 'dominada' | 'assistida' | 'nova';
 
@@ -30,9 +30,11 @@ function wasWatched(perProduct: Record<string, number>, productId: string): bool
   return Object.keys(perProduct).some((k) => k.startsWith(productId + '@'));
 }
 
-export function getTrilha(brandId: string): TrilhaProgress {
+// `role` filtra a trilha pelo que a pessoa pode ver — o afiliado só faz a linha
+// GLPEN, então o certificado dele exige só esses produtos (e não o portfólio todo).
+export function getTrilha(brandId: string, role?: string): TrilhaProgress {
   const stats = getStats();
-  const products = allProducts().filter((p) => p.brand === brandId);
+  const products = visibleProducts(allProducts().filter((p) => p.brand === brandId), role);
   const steps: TrilhaStep[] = products.map((p, index) => {
     const mastered = !!stats.perQuiz[p.id];
     const watched = mastered || wasWatched(stats.perProduct, p.id);

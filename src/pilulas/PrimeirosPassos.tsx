@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlayCircle, Megaphone, Trophy, Check, ChevronRight, X, PartyPopper } from 'lucide-react';
 import { getStats } from './data/tracking';
+import { visibleProducts } from './data/products';
 import { allProducts, useStore } from './data/store';
 import { useBrand } from './BrandContext';
 import { useAuth } from './AuthContext';
@@ -26,7 +27,7 @@ export default function PrimeirosPassos() {
   if (dismissed || !user || user.role === 'gestor') return null;
 
   const stats = getStats();
-  const first = allProducts().filter(p => p.brand === brandId)[0];
+  const first = visibleProducts(allProducts().filter(p => p.brand === brandId), user.role)[0];
 
   const steps = [
     {

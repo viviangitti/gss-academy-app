@@ -27,6 +27,7 @@ export interface Product {
   id: string;
   brand: BrandId;
   name: string;
+  line?: string; // linha do produto (ex.: 'glpen') — usado p/ liberar catálogo por papel
   category: Category;
   tagline: string; // 1 linha do que é
   hook: string; // gancho — a dor/desejo da cliente
@@ -45,6 +46,17 @@ export interface Product {
   imageUrl?: string; // foto de capa (URL hospedada; upload local fica no IndexedDB)
 }
 
+// Linha que o AFILIADO enxerga. Hoje ele só trabalha a GLPEN — o resto do
+// portfólio (Hyaluvita, Moviben, Resfben...) é assunto de balconista/promotor.
+export const AFILIADO_LINE = 'glpen';
+
+// Filtra o catálogo pelo que o papel pode ver. Afiliado só vê a linha GLPEN;
+// balconista, promotor e gestor veem tudo.
+export function visibleProducts(products: Product[], role?: string): Product[] {
+  if (role === 'afiliado') return products.filter((p) => p.line === AFILIADO_LINE);
+  return products;
+}
+
 export const CATEGORIES: Record<Category, { label: string; Icon: LucideIcon }> = {
   performance: { label: 'Performance & Massa Magra', Icon: Dumbbell },
   capsulas: { label: 'Suplementos & Vitaminas', Icon: Pill },
@@ -58,6 +70,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'glpen-nutri-muscle',
     brand: 'meraki',
+    line: 'glpen',
     name: 'GLPEN Nutri Muscle',
     imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/279281-600-600?v=639141832073530000',
     instagramUrl: 'https://www.instagram.com/reel/DZiG3EQOXzi',
@@ -109,6 +122,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'glpen-nutri-energy',
     brand: 'meraki',
+    line: 'glpen',
     name: 'GLPEN Nutri Energy',
     imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/271436-600-600?v=638978647328370000',
     category: 'performance',
@@ -146,6 +160,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'glpen-nutri-ultra-az',
     brand: 'meraki',
+    line: 'glpen',
     name: 'GLPEN Nutri Ultra AZ',
     imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/271438-600-600?v=638978508656770000',
     category: 'capsulas',

@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Award, Check, X, RotateCcw, ChevronRight } from 'lucide-react';
-import type { Product } from './data/products';
+import { visibleProducts, type Product } from './data/products';
 import { allProducts } from './data/store';
+import { useAuth } from './AuthContext';
 import { recordQuizPass, isQuizDone, POINTS_PER_QUIZ } from './data/tracking';
 
 // Quiz "Você pegou?" — 3 perguntas geradas do PRÓPRIO conteúdo da pílula
@@ -32,8 +33,13 @@ function pick<T>(arr: T[], n: number): T[] {
   return shuffle(arr).slice(0, n);
 }
 
-function buildQuestions(product: Product): Question[] {
-  const others = allProducts().filter((p) => p.brand === product.brand && p.id !== product.id);
+// `role` limita de onde vêm as alternativas erradas — o afiliado só conhece a
+// linha GLPEN, então não faz sentido oferecer resposta de outro produto.
+function buildQuestions(product: Product, role?: string): Question[] {
+  const others = visibleProducts(
+    allProducts().filter((p) => p.brand === product.brand && p.id !== product.id),
+    role
+  );
   const qs: Question[] = [];
 
   const make = (q: string, correct: string, wrong: string[]): Question | null => {
@@ -78,10 +84,11 @@ function buildQuestions(product: Product): Question[] {
 }
 
 export default function Quiz({ product }: { product: Product }) {
+  const { user } = useAuth();
   const [round, setRound] = useState(0); // muda pra re-sortear as perguntas
   // Depende do ID (estável), não do objeto: findProduct cria objeto novo a cada
   // render e re-sortearia as perguntas no meio do quiz.
-  const questions = useMemo(() => buildQuestions(product), [product.id, round]); // eslint-disable-line react-hooks/exhaustive-deps
+  const questions = useMemo(() => buildQuestions(product, user?.role), [product.id, round, user?.role]); // eslint-disable-line react-hooks/exhaustive-deps
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [hits, setHits] = useState(0);

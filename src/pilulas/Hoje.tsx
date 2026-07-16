@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
-import { buildShareMessage, type Product } from './data/products';
+import { buildShareMessage, visibleProducts, type Product } from './data/products';
 import { CALENDAR, CHANNELS } from './data/creatorContent';
 import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
@@ -130,7 +130,11 @@ export default function Hoje() {
   const [q, setQ] = useState('');
   const [notif, setNotif] = useState(notifState());
 
-  const products = useMemo(() => allProducts().filter((p) => p.brand === brandId), [brandId]);
+  // Afiliado só vê a linha GLPEN (pílula do dia e busca saem só dela).
+  const products = useMemo(
+    () => visibleProducts(allProducts().filter((p) => p.brand === brandId), user?.role),
+    [brandId, user?.role]
+  );
   const hits = useMemo(() => searchPills(q, products), [q, products]);
 
   // Inteligência de mercado: o que a ponta busca = as objeções reais do cliente.
@@ -143,7 +147,7 @@ export default function Hoje() {
   const ligarLembrete = async () => setNotif(await enableNotif());
 
   const stats = getStats();
-  const trilha = getTrilha(brandId);
+  const trilha = getTrilha(brandId, user?.role);
   const didToday = watchedToday();
   const firstName = (user?.name || '').split(' ')[0] || 'Você';
 

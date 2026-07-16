@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowUpRight, ArrowLeft, ChevronDown, Check, LayoutDashboard, LogOut } from 'lucide-react';
+import { ArrowUpRight, ArrowLeft, ChevronDown, Check, LayoutDashboard } from 'lucide-react';
 import Hoje from './Hoje';
 import Catalog from './Catalog';
 import Product from './Product';
@@ -15,13 +15,20 @@ import Onboarding from './Onboarding';
 import BottomNav from './BottomNav';
 import { BrandProvider, useBrand } from './BrandContext';
 import { AuthProvider, useAuth } from './AuthContext';
+import Perfil from './Perfil';
 import { stageSegmentFromUrl } from './data/segments';
 import { setStatsMeta } from './data/statsSync';
 import './pilulas.css';
 
+// Iniciais pro avatar do cabeçalho.
+function inits(name?: string): string {
+  const p = (name || '').trim().split(/\s+/).filter(Boolean);
+  if (!p.length) return '?';
+  return (p[0][0] + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase();
+}
+
 function BrandSwitcher() {
   const { brand, brandId, setBrand, brands } = useBrand();
-  const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
   return (
     <div className="wp-brandsw">
@@ -45,13 +52,6 @@ function BrandSwitcher() {
                 {b.id === brandId && <Check size={15} className="wp-ico" />}
               </button>
             ))}
-            <div className="wp-brandsw-user">
-              {user?.name} · {user?.role === 'gestor' ? 'Gestor(a)' : 'Vendedora'}
-            </div>
-            <button className="wp-brandsw-item" onClick={logout}>
-              <LogOut size={15} className="wp-ico" />
-              <span className="wp-brandsw-name">Sair</span>
-            </button>
           </div>
         </>
       )}
@@ -94,6 +94,9 @@ function Header() {
             <LayoutDashboard size={18} />
           </Link>
         )}
+        <Link to="/eleva/perfil" className="wp-avatar" aria-label="Seu perfil" title="Seu perfil">
+          {inits(user?.name)}
+        </Link>
         <BrandSwitcher />
       </div>
     </header>
@@ -155,6 +158,7 @@ function Shell() {
           <Route path="/eleva/missoes" element={<Missoes />} />
           <Route path="/eleva/trilha" element={<Trilha />} />
           <Route path="/eleva/sobre" element={<Sobre />} />
+          <Route path="/eleva/perfil" element={<Perfil />} />
           <Route path="/eleva/ranking" element={<Ranking />} />
           <Route path="/eleva/ofertas" element={<BlockAfiliado><Ofertas /></BlockAfiliado>} />
           <Route path="/eleva/gestor" element={<RequireGestor><Gestor /></RequireGestor>} />

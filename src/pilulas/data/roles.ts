@@ -13,6 +13,22 @@ function key(email: string): string {
   return 'wp_role_' + email.trim().toLowerCase();
 }
 
+// Como cada papel se chama na tela.
+const ROLE_LABEL: Record<Role, string> = {
+  gestor: 'Gestor(a) da marca',
+  balconista: 'Balconista',
+  promotor: 'Promotor(a)',
+  afiliado: 'Afiliado(a)',
+};
+
+export function roleLabel(role?: Role, affiliateType?: AffiliateType): string {
+  if (!role) return '';
+  if (role === 'afiliado') {
+    return affiliateType === 'saude' ? 'Afiliado(a) — profissional da saúde' : 'Afiliado(a)';
+  }
+  return ROLE_LABEL[role];
+}
+
 // Converte o que está salvo num papel válido. 'vendedora' é o nome ANTIGO do
 // balconista — quem se cadastrou antes continua entrando, já como balconista.
 export function normalizeRole(raw: unknown): Role | null {

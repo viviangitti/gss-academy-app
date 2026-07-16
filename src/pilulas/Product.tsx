@@ -8,7 +8,7 @@ import {
 import { buildShareVariants, buildFichaMessage, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
-import { audienceVideoKey, getAudienceReel, setAudienceReel, AUDIENCES } from './data/audienceVideos';
+import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, AUDIENCES } from './data/audienceVideos';
 import { recordView } from './data/tracking';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
 
@@ -29,6 +29,7 @@ function VideoMp4({ url }: { url: string }) {
 
 function Reel({ product }: { product: ProductT }) {
   useStore(); // re-renderiza quando o vídeo do IndexedDB termina de carregar
+  useAudienceReels(); // ...e quando os links do gestor chegam da nuvem
   const { user } = useAuth();
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(true);
@@ -146,6 +147,7 @@ function InstagramEmbed({ url }: { url: string }) {
 
 // Uma linha de upload por público (reel do IG ou MP4).
 function AudienceVideoRow({ productId, audience, label }: { productId: string; audience: Audience; label: string }) {
+  useAudienceReels();
   const key = audienceVideoKey(productId, audience);
   const [ig, setIg] = useState(getAudienceReel(productId, audience) || '');
   const [saved, setSaved] = useState(false);

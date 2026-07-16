@@ -18,6 +18,7 @@ import { AuthProvider, useAuth } from './AuthContext';
 import Perfil from './Perfil';
 import { stageSegmentFromUrl } from './data/segments';
 import { setStatsMeta } from './data/statsSync';
+import { loadAudienceReels } from './data/audienceVideos';
 import './pilulas.css';
 
 // Iniciais pro avatar do cabeçalho.
@@ -115,6 +116,11 @@ function Shell() {
   useEffect(() => {
     setStatsMeta({ brand: brand.id, role: user?.role, name: user?.name });
   }, [brand.id, user?.role, user?.name]);
+  // Puxa da nuvem os vídeos que o gestor configurou por público — é o que faz o
+  // link chegar no celular do time, e não só no aparelho de quem cadastrou.
+  useEffect(() => {
+    if (user) loadAudienceReels();
+  }, [user]);
   // Ao trocar de tela, volta pro topo (senão o produto abria no meio/fim da página).
   useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
   const themeStyle = {

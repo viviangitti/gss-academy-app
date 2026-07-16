@@ -34,11 +34,12 @@ export function audienceOf(user: Pick<User, 'role' | 'affiliateType'> | null | u
   return null; // gestor vê o vídeo padrão
 }
 
-// GESTORES AUTORIZADOS — controla quem entra no Painel do Gestor. Quem loga com
-// um e-mail desta lista vira gestor; qualquer outro entra como vendedora.
-// Para adicionar outro gestor, inclua o e-mail aqui (em minúsculo) e publique.
-// viviangitti@gmail.com entra como VENDEDORA (a pedido); gestor fica no 23.
-const GESTOR_EMAILS = ['viviangitti23@gmail.com'];
+// GESTORES AUTORIZADOS — controla quem entra no Painel do Gestor e vê os campos
+// de subir vídeo. Quem loga com um e-mail desta lista vira gestor; qualquer
+// outro entra como balconista.
+// Para adicionar outro gestor: inclua o e-mail aqui (minúsculo) E em isGestor()
+// no firestore.eleva.rules — senão a pessoa vê os campos mas não salva na nuvem.
+const GESTOR_EMAILS = ['maria26@gmail.com', 'viviangitti23@gmail.com'];
 
 function roleFor(email: string, profile: ElevaProfile | null): Role {
   const e = email.trim().toLowerCase();

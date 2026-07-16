@@ -2,9 +2,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // Gestores autorizados (espelha GESTOR_EMAILS do app).
+    // Espelha GESTOR_EMAILS do app (src/pilulas/AuthContext.tsx). Mudou lá,
+    // muda aqui — senão a pessoa vê os campos de vídeo mas não salva na nuvem.
     function isGestor() {
       return request.auth != null &&
-        request.auth.token.email in ['viviangitti@gmail.com', 'viviangitti23@gmail.com'];
+        request.auth.token.email in ['maria26@gmail.com', 'viviangitti@gmail.com', 'viviangitti23@gmail.com'];
     }
     // Perfil do usuário: cada pessoa lê e grava SÓ o próprio doc (papel/nome/canal).
     match /elevaUsers/{uid} {

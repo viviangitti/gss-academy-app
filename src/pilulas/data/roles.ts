@@ -13,10 +13,17 @@ function key(email: string): string {
   return 'wp_role_' + email.trim().toLowerCase();
 }
 
+// Converte o que está salvo num papel válido. 'vendedora' é o nome ANTIGO do
+// balconista — quem se cadastrou antes continua entrando, já como balconista.
+export function normalizeRole(raw: unknown): Role | null {
+  if (raw === 'gestor' || raw === 'balconista' || raw === 'promotor' || raw === 'afiliado') return raw;
+  if (raw === 'vendedora') return 'balconista';
+  return null;
+}
+
 export function storedRole(email: string): Role | null {
   try {
-    const r = localStorage.getItem(key(email));
-    return r === 'gestor' || r === 'vendedora' || r === 'afiliado' ? r : null;
+    return normalizeRole(localStorage.getItem(key(email)));
   } catch {
     return null;
   }

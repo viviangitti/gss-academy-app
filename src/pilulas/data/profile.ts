@@ -3,6 +3,7 @@
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import type { Role, AffiliateType } from '../AuthContext';
+import { normalizeRole } from './roles';
 import type { SegmentId } from './segments';
 
 export interface ElevaProfile {
@@ -18,7 +19,7 @@ export async function getElevaProfile(uid: string): Promise<ElevaProfile | null>
     const snap = await getDoc(doc(db, 'elevaUsers', uid));
     if (!snap.exists()) return null;
     const d = snap.data();
-    const role: Role = d.role === 'gestor' ? 'gestor' : d.role === 'afiliado' ? 'afiliado' : 'vendedora';
+    const role: Role = normalizeRole(d.role) ?? 'balconista';
     const at = d.affiliateType;
     return {
       role,

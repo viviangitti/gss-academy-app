@@ -6,10 +6,16 @@ import { firebaseEnabled } from '../services/firebase';
 import { storedRole, setStoredRole, storedAffiliateType } from './data/roles';
 import { getElevaProfile, type ElevaProfile } from './data/profile';
 
-export type Role = 'gestor' | 'vendedora' | 'afiliado';
-// Subtipo do afiliado: geral (comum) x profissional da saúde. Muda o conteúdo
-// (vídeo) que ele vê em cada produto.
+// Papéis de acesso. 'balconista' era chamado de 'vendedora' até 2026-07 — quem
+// tem o papel antigo salvo é migrado na leitura (ver normalizeRole em roles.ts).
+export type Role = 'gestor' | 'balconista' | 'promotor' | 'afiliado';
+// Subtipo do afiliado: geral (comum) x profissional da saúde.
 export type AffiliateType = 'geral' | 'saude';
+
+// PÚBLICO DE CONTEÚDO — define QUAL vídeo a pessoa vê em cada produto.
+// O conteúdo do afiliado é diferente do do promotor, que é diferente do do balconista.
+export type Audience = 'balconista' | 'promotor' | 'afiliado-geral' | 'afiliado-saude';
+
 export interface User {
   name: string;
   email: string;
@@ -17,6 +23,15 @@ export interface User {
   brands: BrandId[]; // empresas que a pessoa pode ver
   segment?: SegmentId; // canal de onde veio (etiqueta do link/QR de convite)
   affiliateType?: AffiliateType; // só para role === 'afiliado'
+}
+
+// De qual público essa pessoa faz parte (pra escolher o vídeo do produto).
+export function audienceOf(user: Pick<User, 'role' | 'affiliateType'> | null | undefined): Audience | null {
+  if (!user) return null;
+  if (user.role === 'afiliado') return user.affiliateType === 'saude' ? 'afiliado-saude' : 'afiliado-geral';
+  if (user.role === 'promotor') return 'promotor';
+  if (user.role === 'balconista') return 'balconista';
+  return null; // gestor vê o vídeo padrão
 }
 
 // GESTORES AUTORIZADOS — controla quem entra no Painel do Gestor. Quem loga com
@@ -30,7 +45,7 @@ function roleFor(email: string, profile: ElevaProfile | null): Role {
   // Prioridade: e-mail na lista de autorizados > perfil salvo NA CONTA (Firestore,
   // vale em qualquer aparelho) > perfil salvo neste aparelho (cache) > vendedora.
   if (GESTOR_EMAILS.includes(e)) return 'gestor';
-  return profile?.role ?? storedRole(e) ?? 'vendedora';
+  return profile?.role ?? storedRole(e) ?? 'balconista';
 }
 
 function affiliateTypeFor(email: string, profile: ElevaProfile | null): AffiliateType | undefined {

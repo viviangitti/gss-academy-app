@@ -8,9 +8,9 @@ import {
 import { buildShareVariants, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
-import { affiliateVideoKey, getAffiliateReel, setAffiliateReel, AFFILIATE_TYPES } from './data/affiliateVideos';
+import { audienceVideoKey, getAudienceReel, setAudienceReel, AUDIENCES } from './data/audienceVideos';
 import { recordView } from './data/tracking';
-import { useAuth, type AffiliateType } from './AuthContext';
+import { useAuth, audienceOf, type Audience } from './AuthContext';
 
 // Duração de cada cena a partir da marcação de tempo do roteiro ("0-4s" → 4s).
 function sceneMs(t: string): number {
@@ -34,10 +34,10 @@ function Reel({ product }: { product: ProductT }) {
   const [playing, setPlaying] = useState(true);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Afiliado vê o vídeo do SEU tipo (geral x profissional da saúde); vendedora
-  // e gestor veem o vídeo padrão do produto.
-  const variant = user?.role === 'afiliado' ? (user.affiliateType || 'geral') : null;
-  const avKey = variant ? affiliateVideoKey(product.id, variant) : null;
+  // Cada público vê o vídeo dele (balconista / promotor / afiliado geral /
+  // afiliado saúde). Sem vídeo do público, cai no vídeo padrão do produto.
+  const audience = audienceOf(user);
+  const avKey = audience ? audienceVideoKey(product.id, audience) : null;
 
   useEffect(() => {
     if (avKey && hasVideo(avKey)) ensureVideoLoaded(avKey);
@@ -45,7 +45,7 @@ function Reel({ product }: { product: ProductT }) {
   }, [product.id, avKey]);
 
   const variantMp4 = avKey ? getVideoObjectUrl(avKey) : undefined;
-  const variantReel = variant ? getAffiliateReel(product.id, variant) : undefined;
+  const variantReel = audience ? getAudienceReel(product.id, audience) : undefined;
   const baseMp4 = getVideoObjectUrl(product.id) || product.videoUrl;
 
   const scene = product.storyboard[i];
@@ -144,18 +144,18 @@ function InstagramEmbed({ url }: { url: string }) {
   );
 }
 
-// Uma linha de upload por tipo de afiliado (reel do IG ou MP4).
-function AffiliateVideoRow({ productId, type, label }: { productId: string; type: AffiliateType; label: string }) {
-  const key = affiliateVideoKey(productId, type);
-  const [ig, setIg] = useState(getAffiliateReel(productId, type) || '');
+// Uma linha de upload por público (reel do IG ou MP4).
+function AudienceVideoRow({ productId, audience, label }: { productId: string; audience: Audience; label: string }) {
+  const key = audienceVideoKey(productId, audience);
+  const [ig, setIg] = useState(getAudienceReel(productId, audience) || '');
   const [saved, setSaved] = useState(false);
   const flash = () => { setSaved(true); setTimeout(() => setSaved(false), 1600); };
   const hasMp4 = hasVideo(key);
-  const reel = getAffiliateReel(productId, type);
+  const reel = getAudienceReel(productId, audience);
   const status = hasMp4 ? 'vídeo MP4' : reel ? 'reel do Instagram' : 'nenhum (usa o vídeo padrão)';
-  const salvarReel = () => { clearProductVideo(key); setAffiliateReel(productId, type, ig); flash(); };
-  const subirMp4 = (f: File) => { setAffiliateReel(productId, type, ''); setIg(''); setProductVideo(key, f); flash(); };
-  const tirar = () => { clearProductVideo(key); setAffiliateReel(productId, type, ''); setIg(''); flash(); };
+  const salvarReel = () => { clearProductVideo(key); setAudienceReel(productId, audience, ig); flash(); };
+  const subirMp4 = (f: File) => { setAudienceReel(productId, audience, ''); setIg(''); setProductVideo(key, f); flash(); };
+  const tirar = () => { clearProductVideo(key); setAudienceReel(productId, audience, ''); setIg(''); flash(); };
   return (
     <div className="wp-avrow">
       <p className="wp-avrow-lb">{label} <span className="wp-videdit-cap">— {status}</span></p>
@@ -226,12 +226,12 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
           {(uploaded || product.instagramUrl) && (
             <button className="wp-videdit-remove" onClick={tirar}>Tirar o vídeo (voltar pro padrão)</button>
           )}
-          <p className="wp-videdit-help">Esse é o vídeo padrão — quem vê é a <b>vendedora</b>.</p>
+          <p className="wp-videdit-help">Esse é o <b>vídeo padrão</b> — vale pra quem não tiver vídeo do público dela.</p>
 
           <div className="wp-videdit-divider" />
-          <p className="wp-videdit-now">Vídeos por tipo de afiliado <span className="wp-videdit-cap">— cada afiliado vê o do seu tipo</span></p>
-          {AFFILIATE_TYPES.map((t) => (
-            <AffiliateVideoRow key={t.id} productId={product.id} type={t.id} label={t.label} />
+          <p className="wp-videdit-now">Vídeo por público <span className="wp-videdit-cap">— cada um vê o conteúdo dele</span></p>
+          {AUDIENCES.map((a) => (
+            <AudienceVideoRow key={a.id} productId={product.id} audience={a.id} label={a.label} />
           ))}
 
           <div className="wp-videdit-divider" />

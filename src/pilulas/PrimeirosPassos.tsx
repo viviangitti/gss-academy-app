@@ -23,7 +23,7 @@ export default function PrimeirosPassos() {
     try { return !!localStorage.getItem(RANK_KEY); } catch { return false; }
   });
 
-  if (dismissed || user?.role !== 'vendedora') return null;
+  if (dismissed || !user || user.role === 'gestor') return null;
 
   const stats = getStats();
   const first = allProducts().filter(p => p.brand === brandId)[0];

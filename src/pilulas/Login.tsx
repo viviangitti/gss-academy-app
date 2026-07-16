@@ -20,7 +20,7 @@ export default function Login() {
   // Canal de venda: vem pré-preenchido se a pessoa chegou por link/QR de convite.
   const [segment, setSegment] = useState<string>(() => mySegment() || '');
   // Perfil escolhido no cadastro. Gestor(a) precisa do código da marca.
-  const [role, setRole] = useState<Role>('vendedora');
+  const [role, setRole] = useState<Role>('balconista');
   const [affType, setAffType] = useState<AffiliateType>('geral');
   const [code, setCode] = useState('');
 
@@ -41,8 +41,8 @@ export default function Login() {
           setBusy(false);
           return;
         }
-        const finalRole: Role = role === 'gestor' ? 'gestor' : role === 'afiliado' ? 'afiliado' : 'vendedora';
-        const seg = finalRole === 'vendedora' ? segment : '';
+        const finalRole: Role = role;
+        const seg = finalRole === 'balconista' ? segment : '';
         const at: AffiliateType | '' = finalRole === 'afiliado' ? affType : '';
         if (seg) setMySegment(seg);
         // Cache local (rápido) + conta cria.
@@ -104,13 +104,20 @@ export default function Login() {
         {mode === 'criar' && (
           <>
             <label className="wp-login-label">Você é...</label>
-            <div className="wp-login-roles wp-login-roles--3">
+            <div className="wp-login-roles wp-login-roles--wrap">
               <button
                 type="button"
-                className={`wp-login-role ${role === 'vendedora' ? 'on' : ''}`}
-                onClick={() => { setRole('vendedora'); setError(''); }}
+                className={`wp-login-role ${role === 'balconista' ? 'on' : ''}`}
+                onClick={() => { setRole('balconista'); setError(''); }}
               >
-                Vendedor(a)
+                Balconista
+              </button>
+              <button
+                type="button"
+                className={`wp-login-role ${role === 'promotor' ? 'on' : ''}`}
+                onClick={() => { setRole('promotor'); setError(''); }}
+              >
+                Promotor(a)
               </button>
               <button
                 type="button"
@@ -160,7 +167,7 @@ export default function Login() {
                 <p className="wp-login-hint">A marca fornece esse código apenas a quem faz parte do time dela.</p>
               </>
             )}
-            {role === 'vendedora' && (
+            {role === 'balconista' && (
               <>
                 <label className="wp-login-label">Onde você vende? (opcional)</label>
                 <select className="wp-login-select" value={segment} onChange={(e) => setSegment(e.target.value)}>
@@ -215,7 +222,7 @@ export default function Login() {
           </button>
         )}
       </div>
-      <p className="wp-login-note">Vendedor(a) entra direto. Gestor(a) da marca precisa do código de acesso.</p>
+      <p className="wp-login-note">Balconista, promotor(a) e afiliado(a) entram direto. Gestor(a) da marca precisa do código de acesso.</p>
     </div>
   );
 }

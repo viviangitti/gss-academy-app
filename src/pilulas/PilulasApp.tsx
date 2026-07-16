@@ -63,7 +63,7 @@ function RequireGestor({ children }: { children: React.ReactElement }) {
   return user?.role === 'gestor' ? children : <Navigate to="/eleva" replace />;
 }
 
-// Afiliado só aprende: não entra em Postar, Ranking nem Ofertas.
+// Afiliado tem tudo, menos Ofertas (preço/promoção é de quem vende na farmácia).
 function BlockAfiliado({ children }: { children: React.ReactElement }) {
   const { user } = useAuth();
   return user?.role === 'afiliado' ? <Navigate to="/eleva" replace /> : children;
@@ -132,7 +132,7 @@ function Shell() {
     );
   }
 
-  const showOnboarding = user.role === 'vendedora' && !onboarded;
+  const showOnboarding = user.role !== 'gestor' && !onboarded;
 
   return (
     <div className={`wp-app ${onProduct ? 'is-product' : ''}`} style={themeStyle}>
@@ -147,10 +147,10 @@ function Shell() {
           <Route path="/eleva" element={user.role === 'gestor' ? <Navigate to="/eleva/gestor" replace /> : <Hoje />} />
           <Route path="/eleva/catalogo" element={<Catalog />} />
           <Route path="/eleva/produto/:id" element={<Product />} />
-          <Route path="/eleva/missoes" element={<BlockAfiliado><Missoes /></BlockAfiliado>} />
+          <Route path="/eleva/missoes" element={<Missoes />} />
           <Route path="/eleva/trilha" element={<Trilha />} />
           <Route path="/eleva/sobre" element={<Sobre />} />
-          <Route path="/eleva/ranking" element={<BlockAfiliado><Ranking /></BlockAfiliado>} />
+          <Route path="/eleva/ranking" element={<Ranking />} />
           <Route path="/eleva/ofertas" element={<BlockAfiliado><Ofertas /></BlockAfiliado>} />
           <Route path="/eleva/gestor" element={<RequireGestor><Gestor /></RequireGestor>} />
           <Route path="/pilulas/*" element={<Navigate to="/eleva" replace />} />

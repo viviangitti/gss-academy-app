@@ -7,6 +7,14 @@ import { creatorLevel, ACHIEVEMENTS } from './data/creator';
 import { CHANNELS, type Channel, type CalendarDay, type Trend } from './data/creatorContent';
 import { allCalendar, allTrends, useStore } from './data/store';
 import { useBrand } from './BrandContext';
+import { useAuth } from './AuthContext';
+
+// Afiliado posta, mas postar NÃO pontua pra ele: no ranking dele só conta a
+// Formação (assistir a pílula + acertar o quiz). Marca como feito, com 0 ponto.
+function usePostPoints(): (p: number) => number {
+  const { user } = useAuth();
+  return (p) => (user?.role === 'afiliado' ? 0 : p);
+}
 
 const chan = (id: Channel) => CHANNELS.find((c) => c.id === id)!;
 const KIND_CHANNEL: Record<Mission['kind'], Channel> = {
@@ -17,6 +25,7 @@ const CAL_POINTS = 15;
 
 function CalendarCard({ d, onDone }: { d: CalendarDay; onDone: () => void }) {
   const [open, setOpen] = useState(false);
+  const pts = usePostPoints();
   const c = chan(d.channel);
   const C = c.Icon;
   const key = `cal|${d.day}|${d.tema}`;
@@ -43,7 +52,7 @@ function CalendarCard({ d, onDone }: { d: CalendarDay; onDone: () => void }) {
         className={`wp-cal-check ${done ? 'on' : ''}`}
         aria-label={done ? 'Feito' : 'Marcar como feito'}
         title={done ? 'Feito!' : `Marcar como feito (+${CAL_POINTS} pts)`}
-        onClick={() => { if (!done) { recordMission(key, CAL_POINTS); onDone(); } }}
+        onClick={() => { if (!done) { recordMission(key, pts(CAL_POINTS)); onDone(); } }}
       >
         <Check size={16} className="wp-ico" />
       </button>
@@ -52,6 +61,7 @@ function CalendarCard({ d, onDone }: { d: CalendarDay; onDone: () => void }) {
 }
 
 function TrendCard({ t, onDone }: { t: Trend; onDone: () => void }) {
+  const pts = usePostPoints();
   const [copied, setCopied] = useState(false);
   const c = chan(t.channel);
   const C = c.Icon;
@@ -78,7 +88,7 @@ function TrendCard({ t, onDone }: { t: Trend; onDone: () => void }) {
             className="wp-trend-check"
             aria-label="Marcar que usei"
             title="Marquei que usei (+15 pts)"
-            onClick={() => { recordMission(key, 15); onDone(); }}
+            onClick={() => { recordMission(key, pts(15)); onDone(); }}
           ><Check size={16} className="wp-ico" /></button>
         )}
       </div>
@@ -87,6 +97,7 @@ function TrendCard({ t, onDone }: { t: Trend; onDone: () => void }) {
 }
 
 function MissionCard({ m, onDone }: { m: Mission; onDone: () => void }) {
+  const pts = usePostPoints();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const done = isMissionDone(m.id);
@@ -148,7 +159,7 @@ function MissionCard({ m, onDone }: { m: Mission; onDone: () => void }) {
         {done ? (
           <span className="wp-ms-doneflag"><Check size={15} className="wp-ico" /> Postado</span>
         ) : (
-          <button className="wp-ms-mark" onClick={() => { recordMission(m.id, m.points); onDone(); }}>
+          <button className="wp-ms-mark" onClick={() => { recordMission(m.id, pts(m.points)); onDone(); }}>
             Já postei <Check size={14} className="wp-ico" />
           </button>
         )}

@@ -17,11 +17,14 @@ const GESTOR_TABS = [
   { to: '/eleva/catalogo', label: 'Ver como o time', icon: Eye, end: false },
 ];
 
-// Afiliado: só aprende (assiste as pílulas + faz o quiz). Sem postar/ranking/ofertas.
+// Afiliado: tem tudo, MENOS Ofertas (preço/promoção é assunto de quem vende na
+// farmácia). Ele posta, mas no Ranking dele só conta a Formação (ver Missoes).
 const AFILIADO_TABS = [
   { to: '/eleva', label: 'Hoje', icon: Home, end: true },
-  { to: '/eleva/catalogo', label: 'Conteúdos', icon: BookOpen, end: false },
+  { to: '/eleva/catalogo', label: 'Catálogo', icon: BookOpen, end: false },
+  { to: '/eleva/missoes', label: 'Postar', icon: Sparkles, end: false },
   { to: '/eleva/trilha', label: 'Formação', icon: GraduationCap, end: false },
+  { to: '/eleva/ranking', label: 'Ranking', icon: Trophy, end: false },
 ];
 
 export default function BottomNav() {
@@ -29,7 +32,7 @@ export default function BottomNav() {
   const tabs =
     user?.role === 'gestor' ? GESTOR_TABS :
     user?.role === 'afiliado' ? AFILIADO_TABS :
-    VENDEDORA_TABS;
+    VENDEDORA_TABS; // balconista e promotor: tudo
   return (
     <nav className="wp-nav">
       {tabs.map((t) => (

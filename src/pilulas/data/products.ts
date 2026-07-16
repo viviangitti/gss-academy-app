@@ -44,6 +44,7 @@ export interface Product {
   videoUrl?: string; // MP4 real da pílula (quando o gestor sobe um vídeo)
   instagramUrl?: string; // link de um reel/post público do IG — prova social (só o gestor cadastra)
   imageUrl?: string; // foto de capa (URL hospedada; upload local fica no IndexedDB)
+  buyUrl?: string; // e-commerce oficial — a cliente compra direto
 }
 
 // Linha que o AFILIADO enxerga. Hoje ele só trabalha a GLPEN — o resto do
@@ -71,6 +72,7 @@ export const PRODUCTS: Product[] = [
     id: 'glpen-nutri-muscle',
     brand: 'meraki',
     line: 'glpen',
+    buyUrl: 'https://glpennutri.com.br/products/muscle',
     name: 'GLPEN Nutri Muscle',
     imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/279281-600-600?v=639141832073530000',
     instagramUrl: 'https://www.instagram.com/reel/DZiG3EQOXzi',
@@ -123,6 +125,7 @@ export const PRODUCTS: Product[] = [
     id: 'glpen-nutri-energy',
     brand: 'meraki',
     line: 'glpen',
+    buyUrl: 'https://glpennutri.com.br/products/energy',
     name: 'GLPEN Nutri Energy',
     imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/271436-600-600?v=638978647328370000',
     category: 'performance',
@@ -161,6 +164,7 @@ export const PRODUCTS: Product[] = [
     id: 'glpen-nutri-ultra-az',
     brand: 'meraki',
     line: 'glpen',
+    buyUrl: 'https://glpennutri.com.br/products/ultra-az',
     name: 'GLPEN Nutri Ultra AZ',
     imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/271438-600-600?v=638978508656770000',
     category: 'capsulas',
@@ -555,9 +559,16 @@ export function withVideoLink(text: string, p: Product): string {
   return p.instagramUrl ? `${text}\n\nVeja o vídeo do produto: ${p.instagramUrl}` : text;
 }
 
-export function buildShareMessage(p: Product): string {
+// Link de compra no e-commerce oficial. Vai só pra quem NÃO vende no balcão:
+// se o balconista mandar isso, a cliente compra online e ele perde a venda dele.
+export function withBuyLink(text: string, p: Product, role?: string): string {
+  if (!p.buyUrl || role !== 'afiliado') return text;
+  return `${text}\n\nPra comprar: ${p.buyUrl}`;
+}
+
+export function buildShareMessage(p: Product, role?: string): string {
   const benefits = p.benefits.slice(0, 3).map((b) => `✅ ${b}`).join('\n');
-  return withVideoLink([
+  return withBuyLink(withVideoLink([
     `*${p.name}*`,
     '',
     p.hook,
@@ -565,13 +576,13 @@ export function buildShareMessage(p: Product): string {
     benefits,
     '',
     p.salesLine,
-  ].join('\n'), p);
+  ].join('\n'), p), p, role);
 }
 
 // Várias versões da mensagem pronta — todas puxam os BENEFÍCIOS, em ângulos
 // diferentes. O botão "Compartilhar" gira entre elas: cada clique manda uma
 // diferente, pra vendedora não repetir o mesmo texto com toda cliente.
-export function buildShareVariants(p: Product): string[] {
+export function buildShareVariants(p: Product, role?: string): string[] {
   const bens = p.benefits.filter(Boolean);
   const b = (i: number) => bens[bens.length ? i % bens.length : 0] || p.tagline;
   const variants: string[] = [];
@@ -645,5 +656,6 @@ export function buildShareVariants(p: Product): string[] {
   }
 
   // O link do vídeo (reel) vai em toda versão — a cliente recebe a mensagem E o vídeo.
-  return variants.map((v) => withVideoLink(v, p));
+  // O link de compra entra só pro afiliado (ver withBuyLink).
+  return variants.map((v) => withBuyLink(withVideoLink(v, p), p, role));
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  MessageCircle, BadgeCheck, Clock, Target, ShieldCheck,
+  MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
 } from 'lucide-react';
@@ -253,6 +253,7 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
 
 export default function Product() {
   useStore(); // re-renderiza quando o gestor troca o vídeo
+  const { user } = useAuth();
   const { id } = useParams();
   const product = id ? findProduct(id) : undefined;
   const [openObj, setOpenObj] = useState<number | null>(0);
@@ -276,7 +277,7 @@ export default function Product() {
   }
 
   const share = () => {
-    const variants = buildShareVariants(product);
+    const variants = buildShareVariants(product, user?.role);
     const text = variants[shareIdx % variants.length];
     setShareIdx((n) => n + 1); // próximo toque = próxima versão
     if (navigator.share) {
@@ -358,6 +359,15 @@ export default function Product() {
       )}
 
       <div className="wp-salesline">“{product.salesLine}”</div>
+
+      {/* Link de compra: só o afiliado, que não tem balcão. Pro balconista isso
+          mandaria a cliente comprar online — tirando a venda dele. */}
+      {product.buyUrl && user?.role === 'afiliado' && (
+        <a className="wp-buy" href={product.buyUrl} target="_blank" rel="noreferrer">
+          <ShoppingBag size={17} className="wp-ico" /> Comprar no site oficial
+        </a>
+      )}
+
       <p className="wp-share-hint">A cada toque, o botão envia uma mensagem diferente — assim você não repete o mesmo texto com clientes diferentes.</p>
 
       <button className="wp-share" onClick={share}>

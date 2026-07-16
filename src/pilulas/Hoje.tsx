@@ -161,7 +161,7 @@ export default function Hoje() {
 
   const sharePill = () => {
     if (!pill) return;
-    const text = buildShareMessage(pill);
+    const text = buildShareMessage(pill, user?.role);
     if (navigator.share) {
       navigator.share({ text, title: pill.name }).catch(() => {});
       return;

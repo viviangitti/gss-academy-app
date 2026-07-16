@@ -1614,3 +1614,13 @@
 .wp-avrow-lb { font-size: 13px; font-weight: 800; color: var(--wp-ink); margin: 0 0 8px; }
 .wp-avrow .wp-videdit-input { margin-bottom: 8px; }
 .wp-avrow .wp-videdit-save { margin-bottom: 8px; }
+
+/* Botão de comprar no e-commerce oficial (só afiliado) */
+.wp-buy {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; margin: 12px 0 4px; padding: 14px 16px;
+  border-radius: 14px; border: 1.5px solid var(--wp-ink);
+  background: var(--wp-surface); color: var(--wp-ink);
+  font-family: inherit; font-size: 15px; font-weight: 800; text-decoration: none;
+}
+.wp-buy:active { transform: scale(0.99); }

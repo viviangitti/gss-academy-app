@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag,
+  MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
 } from 'lucide-react';
@@ -257,6 +257,7 @@ export default function Product() {
   const { id } = useParams();
   const product = id ? findProduct(id) : undefined;
   const [openObj, setOpenObj] = useState<number | null>(0);
+  const [openFicha, setOpenFicha] = useState(false);
   const [shareIdx, setShareIdx] = useState(0);
   // Se tem MP4, o Instagram vira "prova social" (bônus). Se não tem MP4, o
   // reel do Instagram já é o vídeo principal lá em cima — não repete aqui.
@@ -308,6 +309,27 @@ export default function Product() {
           ))}
         </ul>
       </div>
+
+      {/* Ficha técnica — consulta rápida no balcão. Fechada por padrão pra não
+          competir com o conteúdo de venda; abre num toque. */}
+      {product.ficha && product.ficha.length > 0 && (
+        <div className="wp-ficha">
+          <button className="wp-ficha-toggle" onClick={() => setOpenFicha((o) => !o)}>
+            <ClipboardList size={15} className="wp-ico" /> Ficha do produto
+            <ChevronDown size={16} className={`wp-ico wp-ficha-chev ${openFicha ? 'open' : ''}`} />
+          </button>
+          {openFicha && (
+            <dl className="wp-ficha-list">
+              {product.ficha.map((r) => (
+                <div className="wp-ficha-row" key={r.label}>
+                  <dt>{r.label}</dt>
+                  <dd>{r.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </div>
+      )}
 
       {(product.howToUse.trim() || product.forWho.trim()) && (
         <div className="wp-row">

@@ -23,6 +23,13 @@ export interface Scene {
   line: string; // o que falar
 }
 
+// Ficha técnica — consulta rápida no balcão ("o que tem nisso?", "quantos vem?",
+// "dura quanto tempo?"). Fatos secos, sem discurso de venda.
+export interface FichaRow {
+  label: string;
+  value: string;
+}
+
 export interface Product {
   id: string;
   brand: BrandId;
@@ -45,6 +52,7 @@ export interface Product {
   instagramUrl?: string; // link de um reel/post público do IG — prova social (só o gestor cadastra)
   imageUrl?: string; // foto de capa (URL hospedada; upload local fica no IndexedDB)
   buyUrl?: string; // e-commerce oficial — a cliente compra direto
+  ficha?: FichaRow[]; // ficha técnica p/ consulta rápida no balcão
 }
 
 // Linha que o AFILIADO enxerga. Hoje ele só trabalha a GLPEN — o resto do
@@ -73,6 +81,15 @@ export const PRODUCTS: Product[] = [
     brand: 'meraki',
     line: 'glpen',
     buyUrl: 'https://glpennutri.com.br/products/muscle',
+    ficha: [
+      { label: 'Diferencial', value: 'Associação exclusiva de HMB + arginina + glutamina' },
+      { label: 'Ativos', value: 'HMB 3 g (dose cheia), L-arginina, L-glutamina, vitamina C e vitamina D' },
+      { label: 'Formato', value: 'Sachê de 10 g — caixa com 30 (pó para suspensão oral)' },
+      { label: 'Dose', value: '1 sachê ao dia, em cerca de 200 ml de água' },
+      { label: 'Duração', value: '1 caixa = 30 dias de uso' },
+      { label: 'Dado-chave', value: 'Cerca de 30% do peso perdido com GLP-1 pode ser massa magra' },
+      { label: 'Resultado', value: 'A maioria relata diferença a partir de 30 dias; ciclo indicado de 3 meses' },
+    ],
     name: 'GLPEN Nutri Muscle',
     imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/279281-600-600?v=639141832073530000',
     instagramUrl: 'https://www.instagram.com/reel/DZiG3EQOXzi',
@@ -141,6 +158,15 @@ export const PRODUCTS: Product[] = [
     brand: 'meraki',
     line: 'glpen',
     buyUrl: 'https://glpennutri.com.br/products/energy',
+    ficha: [
+      { label: 'Diferencial', value: 'Cafeína em dose medida + L-arginina, com vitaminas e minerais — energia sem nervosismo' },
+      { label: 'Ativos', value: 'Cafeína, L-arginina, ferro bisglicinato, zinco, selênio, cromo e vitaminas A, C, D, E e do complexo B' },
+      { label: 'Formato', value: 'Cápsulas softgel — 30 unidades' },
+      { label: 'Dose', value: '1 cápsula ao dia; quem treina costuma usar antes da atividade' },
+      { label: 'Duração', value: '1 caixa = 30 dias de uso' },
+      { label: 'Atenção', value: 'Contém cafeína — se você é sensível, evite depois das 16h' },
+      { label: 'Resultado', value: 'A maioria relata diferença a partir de 30 dias; ciclo indicado de 3 meses' },
+    ],
     name: 'GLPEN Nutri Energy',
     imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/271436-600-600?v=638978647328370000',
     category: 'performance',
@@ -181,6 +207,15 @@ export const PRODUCTS: Product[] = [
     brand: 'meraki',
     line: 'glpen',
     buyUrl: 'https://glpennutri.com.br/products/ultra-az',
+    ficha: [
+      { label: 'Diferencial', value: 'Multivitamínico específico para quem usa caneta — doses ampliadas e minerais quelatos (melhor absorção)' },
+      { label: 'Ativos', value: 'Ferro, magnésio e zinco bisglicinato, cálcio, selênio, cromo, iodo e vitaminas de A a Z' },
+      { label: 'Formato', value: 'Cápsulas softgel — 60 unidades' },
+      { label: 'Dose', value: '2 cápsulas ao dia, junto a uma refeição' },
+      { label: 'Duração', value: '1 frasco = 30 dias de uso' },
+      { label: 'Dado-chave', value: 'Feito para quem passou a comer muito menos por causa da medicação' },
+      { label: 'Resultado', value: 'Cabelo e unha respondem devagar: a maioria nota a partir de 30 dias; ciclo indicado de 3 meses' },
+    ],
     name: 'GLPEN Nutri Ultra AZ',
     imageUrl: 'https://drogal.vtexassets.com/arquivos/ids/271438-600-600?v=638978508656770000',
     category: 'capsulas',

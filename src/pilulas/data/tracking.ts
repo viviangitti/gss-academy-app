@@ -1,6 +1,7 @@
-// Rastreamento local de "quem vê mais" — base da competição.
-// Sem backend ainda: guarda no localStorage. Quando houver Firebase,
-// é só trocar a fonte (mesma interface) e o ranking vira multi-vendedora real.
+// Rastreamento de "quem vê mais" — base da competição.
+// localStorage é a verdade do app (offline, instantâneo); statsSync manda uma
+// cópia agregada pro Firestore pra alimentar o Sistema de Gestão.
+import { syncStats } from './statsSync';
 
 const KEY = 'wp_stats_v1';
 export const POINTS_PER_PILL = 10;
@@ -85,15 +86,18 @@ export function recordView(productId: string): Stats {
   }
 
   const dayKey = `${productId}@${day}`;
+  let isNew = false;
   if (!s.perProduct[dayKey]) {
     s.perProduct[dayKey] = 1;
     s.weekViews += 1;
     s.totalViews += 1;
     s.weekPoints += POINTS_PER_PILL;
+    isNew = true;
   }
 
   s.lastDay = day;
   save(s);
+  if (isNew) syncStats(s, { type: 'pill_view', id: productId, points: POINTS_PER_PILL });
   return s;
 }
 
@@ -107,15 +111,18 @@ export function recordMission(missionId: string, points: number): Stats {
     s.streak = s.lastDay === yesterday ? s.streak + 1 : 1;
   }
 
+  let isNew = false;
   if (!s.perMission[missionId]) {
     s.perMission[missionId] = 1;
     s.weekMissions += 1;
     s.totalMissions = (s.totalMissions || 0) + 1;
     s.weekPoints += points;
+    isNew = true;
   }
 
   s.lastDay = day;
   save(s);
+  if (isNew) syncStats(s, { type: 'mission_done', id: missionId, points });
   return s;
 }
 
@@ -126,11 +133,14 @@ export function isMissionDone(missionId: string): boolean {
 // Quiz da pílula: acertou tudo = "domina o produto". Pontua 1x por produto (permanente).
 export function recordQuizPass(productId: string): Stats {
   const s = getStats();
+  let isNew = false;
   if (!s.perQuiz[productId]) {
     s.perQuiz[productId] = 1;
     s.weekPoints += POINTS_PER_QUIZ;
+    isNew = true;
   }
   save(s);
+  if (isNew) syncStats(s, { type: 'quiz_pass', id: productId, points: POINTS_PER_QUIZ });
   return s;
 }
 

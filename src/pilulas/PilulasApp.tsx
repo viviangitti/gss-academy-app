@@ -16,6 +16,7 @@ import BottomNav from './BottomNav';
 import { BrandProvider, useBrand } from './BrandContext';
 import { AuthProvider, useAuth } from './AuthContext';
 import { stageSegmentFromUrl } from './data/segments';
+import { setStatsMeta } from './data/statsSync';
 import './pilulas.css';
 
 function BrandSwitcher() {
@@ -107,6 +108,10 @@ function Shell() {
   const [onboarded, setOnboarded] = useState<boolean>(() => {
     try { return !!localStorage.getItem('wp_onboarded'); } catch { return true; }
   });
+  // Marca/papel/nome viajam junto com os stats que vão pro Sistema de Gestão
+  useEffect(() => {
+    setStatsMeta({ brand: brand.id, role: user?.role, name: user?.name });
+  }, [brand.id, user?.role, user?.name]);
   // Ao trocar de tela, volta pro topo (senão o produto abria no meio/fim da página).
   useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
   const themeStyle = {

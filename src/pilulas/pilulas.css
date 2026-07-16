@@ -1641,3 +1641,13 @@
   text-transform: uppercase; color: var(--wp-soft); padding-top: 2px;
 }
 .wp-ficha-row dd { margin: 0; flex: 1; font-size: 14px; line-height: 1.5; color: var(--wp-ink); }
+
+/* Enviar a ficha pra cliente */
+.wp-ficha-send {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: calc(100% - 32px); margin: 4px 16px 14px; padding: 12px 14px;
+  border-radius: 11px; border: 1px solid var(--wp-border);
+  background: var(--wp-bg); color: var(--wp-ink); cursor: pointer;
+  font-family: inherit; font-size: 13.5px; font-weight: 700;
+}
+.wp-ficha-send:active { transform: scale(0.99); }

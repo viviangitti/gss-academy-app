@@ -618,6 +618,21 @@ export function withBuyLink(text: string, p: Product, role?: string): string {
   return `${text}\n\nPra comprar: ${p.buyUrl}`;
 }
 
+// A ficha técnica virada em mensagem — pra mandar no WhatsApp da cliente quando
+// ela pergunta o que tem, quantos vem e quanto dura. Vai com o aviso de
+// suplemento junto (é informação de produto indo pra consumidora).
+export function buildFichaMessage(p: Product, role?: string): string {
+  if (!p.ficha || !p.ficha.length) return '';
+  const parts = [
+    `*${p.name}*`,
+    '_Ficha do produto_',
+    '',
+    p.ficha.map((r) => `*${r.label}:* ${r.value}`).join('\n'),
+  ];
+  if (p.compliance) parts.push('', p.compliance);
+  return withBuyLink(parts.join('\n'), p, role);
+}
+
 export function buildShareMessage(p: Product, role?: string): string {
   const benefits = p.benefits.slice(0, 3).map((b) => `✅ ${b}`).join('\n');
   return withBuyLink(withVideoLink([

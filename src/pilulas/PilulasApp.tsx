@@ -16,6 +16,7 @@ import BottomNav from './BottomNav';
 import { BrandProvider, useBrand } from './BrandContext';
 import { AuthProvider, useAuth } from './AuthContext';
 import Perfil from './Perfil';
+import Ficha from './Ficha';
 import { stageSegmentFromUrl } from './data/segments';
 import { setStatsMeta } from './data/statsSync';
 import { loadAudienceReels } from './data/audienceVideos';
@@ -165,6 +166,7 @@ function Shell() {
           <Route path="/eleva/trilha" element={<Trilha />} />
           <Route path="/eleva/sobre" element={<Sobre />} />
           <Route path="/eleva/perfil" element={<Perfil />} />
+          <Route path="/eleva/ficha/:id" element={<Ficha />} />
           <Route path="/eleva/ranking" element={<Ranking />} />
           <Route path="/eleva/ofertas" element={<BlockAfiliado><Ofertas /></BlockAfiliado>} />
           <Route path="/eleva/gestor" element={<RequireGestor><Gestor /></RequireGestor>} />

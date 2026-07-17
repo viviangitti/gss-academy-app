@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send,
+  MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
 } from 'lucide-react';
@@ -266,7 +266,6 @@ export default function Product() {
   const product = id ? findProduct(id) : undefined;
   const [openObj, setOpenObj] = useState<number | null>(0);
   const [openFicha, setOpenFicha] = useState(false);
-  const [fichaSent, setFichaSent] = useState(false);
   const [shareIdx, setShareIdx] = useState(0);
   // Se tem MP4, o Instagram vira "prova social" (bônus). Se não tem MP4, o
   // reel do Instagram já é o vídeo principal lá em cima — não repete aqui.
@@ -297,8 +296,6 @@ export default function Product() {
       return;
     }
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-    setFichaSent(true);
-    setTimeout(() => setFichaSent(false), 1800);
   };
 
   const share = () => {
@@ -352,9 +349,14 @@ export default function Product() {
                   </div>
                 ))}
               </dl>
-              <button className="wp-ficha-send" onClick={sendFicha}>
-                {fichaSent ? <><Check size={15} className="wp-ico" /> Ficha copiada!</> : <><Send size={15} className="wp-ico" /> Enviar esta ficha para a cliente</>}
-              </button>
+              <div className="wp-ficha-acts">
+                <button className="wp-ficha-send" onClick={sendFicha}>
+                  <Send size={15} className="wp-ico" /> Enviar no WhatsApp
+                </button>
+                <Link to={`/eleva/ficha/${product.id}`} className="wp-ficha-pdf">
+                  <FileText size={15} className="wp-ico" /> Ver em PDF
+                </Link>
+              </div>
             </>
           )}
         </div>

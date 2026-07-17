@@ -1795,3 +1795,104 @@
   color: var(--wp-soft); font-family: inherit; font-size: 12px; font-weight: 700;
   text-decoration: underline; cursor: pointer;
 }
+
+/* Ficha: dois caminhos — WhatsApp (texto) ou PDF (documento) */
+.wp-ficha-acts { display: flex; gap: 8px; margin: 4px 16px 14px; }
+.wp-ficha-send, .wp-ficha-pdf {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  flex: 1; padding: 12px 10px; border-radius: 11px;
+  border: 1px solid var(--wp-border); background: var(--wp-bg);
+  color: var(--wp-ink); cursor: pointer; text-decoration: none;
+  font-family: inherit; font-size: 13px; font-weight: 700;
+}
+.wp-ficha-send:active, .wp-ficha-pdf:active { transform: scale(0.99); }
+
+/* ---------- Ficha como DOCUMENTO (vira PDF ao imprimir) ---------- */
+.wp-fk-wrap { padding: 4px 0 30px; }
+.wp-fk-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.wp-fk-back {
+  display: flex; align-items: center; gap: 6px; padding: 10px 12px;
+  border-radius: 10px; border: 1px solid var(--wp-border);
+  background: var(--wp-surface); color: var(--wp-ink);
+  font-size: 13px; font-weight: 700; text-decoration: none;
+}
+.wp-fk-print {
+  display: flex; align-items: center; justify-content: center; gap: 7px; flex: 1;
+  padding: 12px; border: 0; border-radius: 11px;
+  background: var(--wp-ink); color: #fff; cursor: pointer;
+  font-family: inherit; font-size: 14px; font-weight: 800;
+}
+.wp-fk-hint { margin: 0 0 14px; font-size: 12px; line-height: 1.5; color: var(--wp-soft); }
+
+.wp-fk {
+  background: #fff; color: #17231d; border: 1px solid var(--wp-border);
+  border-radius: 14px; padding: 22px 20px;
+}
+.wp-fk-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding-bottom: 12px; border-bottom: 2px solid #17231d; margin-bottom: 16px;
+}
+.wp-fk-brand { display: block; font-size: 17px; font-weight: 800; color: #17231d; }
+.wp-fk-kind {
+  display: block; margin-top: 1px; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: #7a857f;
+}
+.wp-fk-logo {
+  font-family: Georgia, serif; font-size: 15px; font-weight: 700;
+  letter-spacing: .04em; color: #7a857f;
+}
+.wp-fk-hero { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; }
+.wp-fk-img {
+  width: 84px; height: 84px; object-fit: contain; flex: none;
+  border: 1px solid #e3e6df; border-radius: 10px; background: #fff; padding: 5px;
+}
+.wp-fk-name { margin: 0; font-size: 19px; line-height: 1.2; color: #17231d; }
+.wp-fk-tag { margin: 5px 0 0; font-size: 12.5px; line-height: 1.5; color: #5c6660; }
+.wp-fk-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.wp-fk-table th, .wp-fk-table td {
+  text-align: left; vertical-align: top; padding: 8px 0; border-top: 1px solid #e8ebe6;
+}
+.wp-fk-table th {
+  width: 96px; font-size: 10px; font-weight: 800; letter-spacing: .06em;
+  text-transform: uppercase; color: #7a857f; padding-right: 12px;
+}
+.wp-fk-table td { font-size: 13px; line-height: 1.5; color: #17231d; }
+.wp-fk-sec { margin-bottom: 14px; }
+.wp-fk-sec h2 {
+  margin: 0 0 6px; font-size: 10px; font-weight: 800; letter-spacing: .06em;
+  text-transform: uppercase; color: #7a857f;
+}
+.wp-fk-sec p { margin: 0; font-size: 13px; line-height: 1.55; color: #17231d; }
+.wp-fk-bens { margin: 0; padding-left: 17px; }
+.wp-fk-bens li { font-size: 13px; line-height: 1.5; color: #17231d; margin: 3px 0; }
+.wp-fk-compliance {
+  margin: 0 0 14px; padding: 10px 12px; border-radius: 8px;
+  background: #f7f4ec; color: #6b5a2e; font-size: 11.5px; line-height: 1.5;
+}
+.wp-fk-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding-top: 12px; border-top: 1px solid #e8ebe6;
+}
+.wp-fk-buy {
+  display: flex; align-items: center; gap: 6px; padding: 9px 13px;
+  border-radius: 9px; background: #17231d; color: #fff;
+  font-size: 12.5px; font-weight: 700; text-decoration: none;
+}
+.wp-fk-url { font-size: 10.5px; color: #7a857f; word-break: break-all; }
+
+/* IMPRESSÃO: só o documento sai no papel/PDF */
+@media print {
+  @page { size: A4; margin: 14mm; }
+  body { background: #fff; }
+  .wp-header, .wp-nav, .wp-fk-bar, .wp-fk-hint, .wp-boot { display: none !important; }
+  /* O app tem largura de celular (480px). No papel isso deixaria o documento
+     espremido num terço da folha — solta a largura na impressão. */
+  .wp-app, .wp-main {
+    max-width: none !important; width: 100% !important;
+    padding: 0 !important; margin: 0 !important; background: #fff !important;
+  }
+  .wp-fk-wrap { padding: 0 !important; max-width: none !important; }
+  .wp-fk { border: 0 !important; border-radius: 0 !important; padding: 0 !important; }
+  .wp-fk-buy { background: transparent !important; color: #17231d !important; padding: 0 !important; }
+  .wp-fk, .wp-fk-sec, .wp-fk-table tr { break-inside: avoid; }
+}

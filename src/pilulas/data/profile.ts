@@ -5,12 +5,14 @@ import { db } from '../../services/firebase';
 import type { Role, AffiliateType } from '../AuthContext';
 import { normalizeRole } from './roles';
 import type { SegmentId } from './segments';
+import { BRANDS, type BrandId } from './brands';
 
 export interface ElevaProfile {
   role: Role;
   name?: string;
   segment?: SegmentId | '';
   affiliateType?: AffiliateType | ''; // só quando role === 'afiliado'
+  brands?: BrandId[]; // marca(s) que a pessoa vê — ex.: ['dsp'] p/ Drogaria São Paulo
 }
 
 export async function getElevaProfile(uid: string): Promise<ElevaProfile | null> {
@@ -21,11 +23,14 @@ export async function getElevaProfile(uid: string): Promise<ElevaProfile | null>
     const d = snap.data();
     const role: Role = normalizeRole(d.role) ?? 'balconista';
     const at = d.affiliateType;
+    const rawBrands = Array.isArray(d.brands) ? d.brands : undefined;
+    const brands = rawBrands?.filter((b: unknown) => BRANDS.some((x) => x.id === b)) as BrandId[] | undefined;
     return {
       role,
       name: typeof d.name === 'string' ? d.name : undefined,
       segment: typeof d.segment === 'string' ? (d.segment as SegmentId | '') : undefined,
       affiliateType: at === 'geral' || at === 'saude' ? at : undefined,
+      brands: brands && brands.length ? brands : undefined,
     };
   } catch {
     return null;
@@ -42,6 +47,7 @@ export async function setElevaProfile(uid: string, p: ElevaProfile): Promise<voi
         name: p.name || '',
         segment: p.segment || '',
         affiliateType: p.affiliateType || '',
+        brands: p.brands || [],
         updatedAt: serverTimestamp(),
       },
       { merge: true }

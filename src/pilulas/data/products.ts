@@ -599,6 +599,181 @@ export const PRODUCTS: Product[] = [
       { t: '19-24s', label: 'CTA', line: 'Leia a bula e me chama que eu te oriento sobre o formato.' },
     ],
   },
+
+  // ───────── DROGARIA SÃO PAULO · marca própria (fabricação Sorocaps) ─────────
+  // Modo balcão: o balconista se prepara pra atender. Conteúdo compliance-safe.
+  // ⚠️ Conferir com a Sorocaps: mg de EPA/DHA, mg de melatonina, e o diferencial
+  // exato do "Plus" (aqui: concentração reforçada).
+  {
+    id: 'dsp-omega-3',
+    brand: 'dsp',
+    name: 'Ômega 3',
+    category: 'capsulas',
+    tagline: 'Óleo de peixe com EPA e DHA em cápsula — para quem não come peixe o suficiente. Em 60 e 120 cápsulas.',
+    hook: 'Come pouco peixe? O ômega 3 que o coração e o cérebro pedem costuma faltar na alimentação.',
+    whatItIs:
+      'O ômega 3 (EPA e DHA) é uma gordura boa que o corpo não produz — vem principalmente do peixe. Quem não come peixe com frequência dificilmente atinge a quantidade recomendada. O Ômega 3 entrega essa dose em cápsula, todos os dias. Disponível em dois tamanhos: 60 e 120 cápsulas.',
+    benefits: [
+      'EPA e DHA, que contribuem para a saúde do coração',
+      'O DHA auxilia a manutenção da função normal do cérebro e da visão',
+      'Prático: entrega uma dose difícil de atingir só com a alimentação',
+      'Dois tamanhos — 60 e 120 cápsulas (o de 120 dura mais e sai melhor por dose)',
+    ],
+    howToUse:
+      'Conforme o rótulo, de preferência junto de uma refeição — ajuda na absorção e evita o "gosto de peixe".',
+    forWho: 'Adultos que comem pouco peixe e querem cuidar do coração e do cérebro.',
+    salesLine: 'Uma cápsula por dia cobre o que falta no prato. Quer que eu te explique a diferença dos tamanhos?',
+    objections: [
+      { trigger: '"Achei caro."', answer: 'Uma cápsula por dia — o frasco de 120 dura cerca de 4 meses. Por dia sai barato, e é um cuidado contínuo com coração e cérebro.' },
+      { trigger: '"Já como peixe."', answer: 'Ótimo! Mas para atingir a dose de ômega 3 seria peixe quase todo dia. A cápsula garante o que o prato nem sempre dá.' },
+      { trigger: '"Fico arrotando gosto de peixe."', answer: 'Tome junto da refeição, que ajuda bastante. E temos a versão Mini e a Plus, que costumam incomodar menos.' },
+      { trigger: '"Funciona mesmo?"', answer: 'O EPA e o DHA contribuem para o coração e para o cérebro — com uso constante, não de um dia para o outro.' },
+    ],
+    compliance:
+      'Suplemento alimentar. Não é medicamento e não substitui uma alimentação equilibrada. Em uso de medicamentos ou gestação, consulte um profissional de saúde.',
+    durationSec: 30,
+    gradient: ['#2f9d6a', '#14603f'],
+    storyboard: [
+      { t: '0-4s', label: 'GANCHO', line: 'Come pouco peixe? O ômega 3 que o corpo pede costuma faltar.' },
+      { t: '4-12s', label: 'O PORQUÊ', line: 'EPA e DHA vêm do peixe — o corpo não produz. Sem peixe frequente, falta.' },
+      { t: '12-24s', label: 'O PRODUTO', line: 'Ômega 3 em cápsula: a dose que o coração e o cérebro pedem, todo dia. Em 60 e 120 cápsulas.' },
+      { t: '24-30s', label: 'CTA', line: 'Uma por dia. Quer entender os tamanhos? Me chama.' },
+    ],
+    ficha: [
+      { label: 'O que é', value: 'Óleo de peixe — fonte de ômega 3 (EPA e DHA)' },
+      { label: 'Ativos', value: 'EPA e DHA (confira a concentração no rótulo)' },
+      { label: 'Formato', value: 'Cápsulas softgel — frascos de 60 e de 120' },
+      { label: 'Dose', value: 'Conforme o rótulo, junto de uma refeição' },
+      { label: 'Duração', value: 'Frasco de 120 = ~4 meses (1 cápsula/dia)' },
+      { label: 'Para quem', value: 'Adultos que comem pouco peixe' },
+    ],
+  },
+  {
+    id: 'dsp-omega-3-plus',
+    brand: 'dsp',
+    name: 'Ômega 3 Plus',
+    category: 'capsulas',
+    tagline: 'Versão com concentração reforçada de ômega 3 — mais EPA e DHA por cápsula.',
+    hook: 'Quer mais ômega 3 sem tomar mais cápsulas? A versão Plus é mais concentrada.',
+    whatItIs:
+      'O Ômega 3 Plus é a versão com concentração reforçada: entrega mais EPA e DHA por cápsula do que o Ômega 3 comum. É a escolha de quem quer uma dose maior sem aumentar a quantidade de cápsulas por dia.',
+    benefits: [
+      'Concentração reforçada de EPA e DHA por cápsula',
+      'Mais ômega 3 sem precisar tomar mais cápsulas',
+      'Mesmos benefícios do ômega 3 para coração e cérebro, em dose maior',
+      'Indicado para quem já entendeu o valor e quer mais concentração',
+    ],
+    howToUse: 'Conforme o rótulo, junto de uma refeição.',
+    forWho: 'Quem quer uma dose maior de ômega 3 por cápsula.',
+    salesLine: 'Se você quer mais ômega 3 sem tomar mais cápsulas, o Plus é o caminho. Quer comparar com o comum?',
+    objections: [
+      { trigger: '"Qual a diferença pro normal?"', answer: 'O Plus é mais concentrado: mais EPA e DHA em cada cápsula. Mesma proposta, dose maior.' },
+      { trigger: '"Preciso do Plus?"', answer: 'Depende do seu objetivo. Se busca uma dose maior de ômega 3, sim. Se é manutenção, o comum já cumpre.' },
+      { trigger: '"É mais caro?"', answer: 'Por ser mais concentrado, costuma ser. Mas você toma menos cápsula para a mesma quantidade de ômega 3.' },
+    ],
+    compliance:
+      'Suplemento alimentar. Não é medicamento e não substitui uma alimentação equilibrada. Em uso de medicamentos ou gestação, consulte um profissional de saúde.',
+    durationSec: 30,
+    gradient: ['#1f7a52', '#0e3f2a'],
+    storyboard: [
+      { t: '0-4s', label: 'GANCHO', line: 'Quer mais ômega 3 sem tomar mais cápsulas?' },
+      { t: '4-14s', label: 'O PRODUTO', line: 'O Ômega 3 Plus é mais concentrado: mais EPA e DHA por cápsula.' },
+      { t: '14-24s', label: 'PRA QUEM', line: 'Pra quem quer uma dose maior, sem aumentar a quantidade de cápsulas.' },
+      { t: '24-30s', label: 'CTA', line: 'Quer comparar com o comum? Me chama.' },
+    ],
+    ficha: [
+      { label: 'Diferencial', value: 'Concentração reforçada de ômega 3 por cápsula' },
+      { label: 'Ativos', value: 'EPA e DHA em maior concentração (confira o rótulo)' },
+      { label: 'Formato', value: 'Cápsulas softgel — frasco de 60' },
+      { label: 'Dose', value: 'Conforme o rótulo, junto de uma refeição' },
+      { label: 'Para quem', value: 'Quer mais ômega 3 sem tomar mais cápsulas' },
+    ],
+  },
+  {
+    id: 'dsp-omega-3-mini',
+    brand: 'dsp',
+    name: 'Ômega 3 Mini Caps',
+    category: 'capsulas',
+    tagline: 'O mesmo ômega 3, em cápsula menor — fácil de engolir.',
+    hook: 'Tem dificuldade de engolir cápsula grande? O ômega 3 também vem em versão mini.',
+    whatItIs:
+      'O Ômega 3 Mini Caps entrega o ômega 3 (EPA e DHA) numa cápsula menor, feita para quem tem dificuldade de engolir cápsulas grandes — idosos, quem tem refluxo ou simplesmente não se dá bem com softgel grande.',
+    benefits: [
+      'Cápsula menor — mais fácil de engolir',
+      'O mesmo ômega 3 (EPA e DHA) para coração e cérebro',
+      'Ideal para idosos e para quem tem dificuldade com cápsulas grandes',
+      'Costuma incomodar menos no estômago',
+    ],
+    howToUse: 'Conforme o rótulo, junto de uma refeição.',
+    forWho: 'Quem tem dificuldade de engolir cápsulas grandes.',
+    salesLine: 'Se cápsula grande é um problema pra você, essa resolve. Quer ver?',
+    objections: [
+      { trigger: '"Não consigo engolir cápsula grande."', answer: 'É exatamente pra isso que a Mini existe: cápsula menor, mesmo ômega 3. Muito mais fácil de tomar.' },
+      { trigger: '"Tem menos ômega que a normal?"', answer: 'A cápsula é menor, então pode precisar de mais unidades para a mesma dose — o rótulo indica. A vantagem é conseguir tomar.' },
+      { trigger: '"É pra idoso?"', answer: 'É ótima pra idoso, mas serve pra qualquer pessoa que não se dá bem com cápsula grande.' },
+    ],
+    compliance:
+      'Suplemento alimentar. Não é medicamento e não substitui uma alimentação equilibrada. Em uso de medicamentos ou gestação, consulte um profissional de saúde.',
+    durationSec: 30,
+    gradient: ['#3aa574', '#14603f'],
+    storyboard: [
+      { t: '0-4s', label: 'GANCHO', line: 'Cápsula grande é um problema pra você?' },
+      { t: '4-14s', label: 'O PRODUTO', line: 'O Ômega 3 Mini traz o mesmo ômega 3 numa cápsula bem menor.' },
+      { t: '14-24s', label: 'PRA QUEM', line: 'Idosos, quem tem refluxo, quem não engole cápsula grande.' },
+      { t: '24-30s', label: 'CTA', line: 'Ficou fácil de tomar. Me chama que eu te mostro.' },
+    ],
+    ficha: [
+      { label: 'Diferencial', value: 'Cápsula menor — fácil de engolir' },
+      { label: 'Ativos', value: 'EPA e DHA (mesmo ômega 3; confira o rótulo)' },
+      { label: 'Formato', value: 'Cápsulas softgel mini — frasco de 60' },
+      { label: 'Dose', value: 'Conforme o rótulo, junto de uma refeição' },
+      { label: 'Para quem', value: 'Dificuldade com cápsulas grandes' },
+    ],
+  },
+  {
+    id: 'dsp-melatonina-triptofano',
+    brand: 'dsp',
+    name: 'Melatonina + Triptofano',
+    category: 'capsulas',
+    tagline: 'Melatonina com triptofano — apoio para quem tem dificuldade de pegar no sono.',
+    hook: 'Custa a pegar no sono ou tem a rotina de sono desregulada?',
+    whatItIs:
+      'A melatonina é o hormônio que sinaliza ao corpo que é hora de dormir; o triptofano é o aminoácido que o corpo usa para produzir serotonina e melatonina. Juntos, dão apoio a quem tem dificuldade de adormecer ou tem a rotina de sono bagunçada (trabalho em turnos, viagens, telas à noite).',
+    benefits: [
+      'Melatonina — o hormônio que regula o ciclo do sono',
+      'Triptofano — aminoácido que o corpo usa para produzir serotonina e melatonina',
+      'Apoio para quem custa a pegar no sono ou tem a rotina desregulada',
+      'Cápsula, para uso à noite',
+    ],
+    howToUse:
+      'Conforme o rótulo, à noite, um pouco antes de dormir. Ajuda combinar com boa higiene do sono (menos tela, ambiente escuro).',
+    forWho: 'Adultos com dificuldade de pegar no sono ou rotina de sono desregulada.',
+    salesLine: 'Se o problema é pegar no sono, vale conhecer. Quer que eu te explique como usar?',
+    objections: [
+      { trigger: '"Melatonina vicia?"', answer: 'Não. A melatonina é o próprio hormônio do sono que o corpo já produz — ela ajuda a regular o ciclo, não causa dependência.' },
+      { trigger: '"É remédio de tarja?"', answer: 'Não, é suplemento alimentar. Mas se você usa outros medicamentos ou tem alguma condição, vale confirmar com o médico.' },
+      { trigger: '"Posso tomar todo dia?"', answer: 'Conforme o rótulo. É bastante usada por quem tem a rotina de sono desregulada. Em caso de dúvida, o médico orienta.' },
+      { trigger: '"Achei caro."', answer: '60 cápsulas — cerca de 2 meses. Uma noite mal dormida custa caro no dia seguinte.' },
+    ],
+    compliance:
+      'Suplemento alimentar. Não é medicamento e não substitui acompanhamento profissional. Gestantes, lactantes e pessoas em uso de medicamentos devem consultar um médico. Insônia persistente: procure orientação médica.',
+    durationSec: 30,
+    gradient: ['#4f7bd6', '#26397a'],
+    storyboard: [
+      { t: '0-4s', label: 'GANCHO', line: 'Custa a pegar no sono? A rotina de sono está bagunçada?' },
+      { t: '4-14s', label: 'O PRODUTO', line: 'Melatonina, o hormônio do sono, com triptofano, que o corpo usa pra produzi-lo.' },
+      { t: '14-24s', label: 'COMO USAR', line: 'À noite, antes de dormir — junto de menos tela e ambiente escuro.' },
+      { t: '24-30s', label: 'CTA', line: 'Suplemento, não vicia. Quer entender melhor? Me chama.' },
+    ],
+    ficha: [
+      { label: 'O que é', value: 'Melatonina (hormônio do sono) + triptofano (aminoácido)' },
+      { label: 'Ativos', value: 'Melatonina e L-triptofano (confira as doses no rótulo)' },
+      { label: 'Formato', value: 'Cápsulas — frasco de 60' },
+      { label: 'Dose', value: 'À noite, antes de dormir (conforme o rótulo)' },
+      { label: 'Duração', value: 'Frasco de 60 = ~2 meses' },
+      { label: 'Atenção', value: 'Não vicia. Gestantes e uso de medicamentos: consulte o médico' },
+    ],
+  },
 ];
 
 export function getProduct(id: string) {

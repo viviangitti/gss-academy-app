@@ -8,6 +8,7 @@ import { audienceOf } from './AuthContext';
 import { CALENDAR, CHANNELS } from './data/creatorContent';
 import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
+import { isBalcao } from './data/brands';
 import { campanhaPara, prazoLabel, diasRestantes } from './data/campanha';
 import { getAbout } from './data/about';
 import { watchedToday, notifState, enableNotif, maybeNotify } from './data/lembrete';
@@ -152,6 +153,7 @@ export default function Hoje() {
   const stats = getStats();
   const trilha = getTrilha(brandId, user?.role);
   const campanha = campanhaPara(user?.role);
+  const balcao = isBalcao(brandId); // farmácia: sem postar/enviar/venda
   const didToday = watchedToday();
   const firstName = (user?.name || '').split(' ')[0] || 'Você';
 
@@ -267,14 +269,17 @@ export default function Hoje() {
                 <Link to={`/eleva/produto/${pill.id}`} className="wp-td-btn wp-td-btn-main">
                   <Play size={15} className="wp-ico" /> Assistir agora
                 </Link>
-                <button className="wp-td-btn" onClick={sharePill}>
-                  <Send size={15} className="wp-ico" /> Enviar à cliente
-                </button>
+                {!balcao && (
+                  <button className="wp-td-btn" onClick={sharePill}>
+                    <Send size={15} className="wp-ico" /> Enviar à cliente
+                  </button>
+                )}
               </div>
             </div>
           )}
 
-          {/* O que postar hoje */}
+          {/* O que postar hoje — não aparece no balcão (não posta) */}
+          {!balcao && (
           <div className="wp-td-card">
             <span className="wp-td-card-label"><CalendarDays size={13} className="wp-ico" /> O que postar hoje ({post.day})</span>
             <div className="wp-td-post">
@@ -288,9 +293,10 @@ export default function Hoje() {
               Ver o roteiro completo <ChevronRight size={15} className="wp-ico" />
             </Link>
           </div>
+          )}
 
-          {/* Vendeu no balcão? Só a pessoa pode contar — a venda dela não passa pelo site. */}
-          {user?.role !== 'afiliado' && (
+          {/* Registrar venda — não no balcão (foco é preparar, não reportar). */}
+          {!balcao && user?.role !== 'afiliado' && (
             <Link to="/eleva/venda" className="wp-td-venda">
               <Receipt size={17} className="wp-ico" />
               <span>Registrar uma venda<i>Vendeu no balcão? Conta pra gente — é assim que a Meraki vê o seu resultado</i></span>

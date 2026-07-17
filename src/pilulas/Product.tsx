@@ -12,6 +12,8 @@ import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, a
 import { getAfiliadoCode } from './data/afiliadoCode';
 import { recordView } from './data/tracking';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
+import { useBrand } from './BrandContext';
+import { isBalcao } from './data/brands';
 
 // Duração de cada cena a partir da marcação de tempo do roteiro ("0-4s" → 4s).
 function sceneMs(t: string): number {
@@ -257,6 +259,8 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
 export default function Product() {
   useStore(); // re-renderiza quando o gestor troca o vídeo
   const { user } = useAuth();
+  const { brandId } = useBrand();
+  const balcao = isBalcao(brandId); // farmácia: sem compartilhar/enviar pra cliente
   // Quem está mandando — vira o rastreio na URL de compra (Shopify lê UTM).
   const buyCtx: BuyContext = {
     medium: audienceOf(user) ?? user?.role,
@@ -350,11 +354,13 @@ export default function Product() {
                 ))}
               </dl>
               <div className="wp-ficha-acts">
-                <button className="wp-ficha-send" onClick={sendFicha}>
-                  <Send size={15} className="wp-ico" /> Enviar no WhatsApp
-                </button>
+                {!balcao && (
+                  <button className="wp-ficha-send" onClick={sendFicha}>
+                    <Send size={15} className="wp-ico" /> Enviar no WhatsApp
+                  </button>
+                )}
                 <Link to={`/eleva/ficha/${product.id}`} className="wp-ficha-pdf">
-                  <FileText size={15} className="wp-ico" /> Ver em PDF
+                  <FileText size={15} className="wp-ico" /> {balcao ? 'Abrir ficha (PDF)' : 'Ver em PDF'}
                 </Link>
               </div>
             </>
@@ -420,11 +426,14 @@ export default function Product() {
         </a>
       )}
 
-      <p className="wp-share-hint">A cada toque, o botão envia uma mensagem diferente — assim você não repete o mesmo texto com clientes diferentes.</p>
-
-      <button className="wp-share" onClick={share}>
-        <ArrowUpRight size={18} className="wp-ico" /> Compartilhar com a cliente
-      </button>
+      {!balcao && (
+        <>
+          <p className="wp-share-hint">A cada toque, o botão envia uma mensagem diferente — assim você não repete o mesmo texto com clientes diferentes.</p>
+          <button className="wp-share" onClick={share}>
+            <ArrowUpRight size={18} className="wp-ico" /> Compartilhar com a cliente
+          </button>
+        </>
+      )}
     </div>
   );
 }

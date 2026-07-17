@@ -4,6 +4,8 @@ import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } f
 import { SEGMENTS, setMySegment, mySegment, type SegmentId } from './data/segments';
 import { setStoredRole, GESTOR_CODE } from './data/roles';
 import { setElevaProfile } from './data/profile';
+import { invitedBrand } from './data/brandInvite';
+import { getBrand, isBalcao } from './data/brands';
 import type { Role, AffiliateType } from './AuthContext';
 
 type Mode = 'entrar' | 'criar';
@@ -22,6 +24,9 @@ export default function Login() {
   // Perfil escolhido no cadastro. Gestor(a) precisa do código da marca.
   const [role, setRole] = useState<Role>('balconista');
   const [affType, setAffType] = useState<AffiliateType>('geral');
+  // Convite por marca (?marca=dsp): a pessoa entra já naquela marca.
+  const invBrand = invitedBrand();
+  const invBalcao = !!invBrand && isBalcao(invBrand);
   const [code, setCode] = useState('');
 
   const emailOk = /\S+@\S+\.\S+/.test(email);
@@ -41,15 +46,16 @@ export default function Login() {
           setBusy(false);
           return;
         }
-        const finalRole: Role = role;
-        const seg = finalRole === 'balconista' ? segment : '';
+        // Balcão (convite por marca): a pessoa é balconista, sem escolher papel.
+        const finalRole: Role = invBalcao ? 'balconista' : role;
+        const seg = finalRole === 'balconista' && !invBalcao ? segment : '';
         const at: AffiliateType | '' = finalRole === 'afiliado' ? affType : '';
         if (seg) setMySegment(seg);
         // Cache local (rápido) + conta cria.
         setStoredRole(email.trim(), finalRole, at);
         const fb = await signUpWithEmail(email.trim(), password, name.trim());
         // Perfil NA CONTA (Firestore) — vale em qualquer aparelho onde logar.
-        await setElevaProfile(fb.uid, { role: finalRole, name: name.trim(), segment: seg as SegmentId | '', affiliateType: at });
+        await setElevaProfile(fb.uid, { role: finalRole, name: name.trim(), segment: seg as SegmentId | '', affiliateType: at, brands: invBrand ? [invBrand] : undefined });
       } else {
         await signInWithEmail(email.trim(), password);
       }
@@ -101,7 +107,17 @@ export default function Login() {
           </button>
         </div>
 
-        {mode === 'criar' && (
+        {mode === 'criar' && invBalcao && (
+          <>
+            <div className="wp-login-brandbanner">
+              Você está entrando em <b>{getBrand(invBrand).name}</b> — treinamento de balcão.
+            </div>
+            <label className="wp-login-label">Seu nome</label>
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />
+          </>
+        )}
+
+        {mode === 'criar' && !invBalcao && (
           <>
             <label className="wp-login-label">Você é...</label>
             <div className="wp-login-roles wp-login-roles--wrap">

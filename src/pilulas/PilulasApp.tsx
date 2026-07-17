@@ -19,6 +19,8 @@ import Perfil from './Perfil';
 import Ficha from './Ficha';
 import Venda from './Venda';
 import { stageSegmentFromUrl } from './data/segments';
+import { stageBrandFromUrl } from './data/brandInvite';
+import { isBalcao } from './data/brands';
 import { setStatsMeta } from './data/statsSync';
 import { loadAudienceReels } from './data/audienceVideos';
 import './pilulas.css';
@@ -71,6 +73,13 @@ function RequireGestor({ children }: { children: React.ReactElement }) {
 function BlockAfiliado({ children }: { children: React.ReactElement }) {
   const { user } = useAuth();
   return user?.role === 'afiliado' ? <Navigate to="/eleva" replace /> : children;
+}
+
+// Modo balcão (farmácia): sem postar, ranking, ofertas nem registrar venda —
+// o foco é preparar o atendimento (catálogo + objeções + formação).
+function BlockBalcao({ children }: { children: React.ReactElement }) {
+  const { brandId } = useBrand();
+  return isBalcao(brandId) ? <Navigate to="/eleva" replace /> : children;
 }
 
 function Header() {
@@ -163,14 +172,14 @@ function Shell() {
           <Route path="/eleva" element={user.role === 'gestor' ? <Navigate to="/eleva/gestor" replace /> : <Hoje />} />
           <Route path="/eleva/catalogo" element={<Catalog />} />
           <Route path="/eleva/produto/:id" element={<Product />} />
-          <Route path="/eleva/missoes" element={<Missoes />} />
+          <Route path="/eleva/missoes" element={<BlockBalcao><Missoes /></BlockBalcao>} />
           <Route path="/eleva/trilha" element={<Trilha />} />
           <Route path="/eleva/sobre" element={<Sobre />} />
           <Route path="/eleva/perfil" element={<Perfil />} />
           <Route path="/eleva/ficha/:id" element={<Ficha />} />
-          <Route path="/eleva/venda" element={<BlockAfiliado><Venda /></BlockAfiliado>} />
-          <Route path="/eleva/ranking" element={<Ranking />} />
-          <Route path="/eleva/ofertas" element={<BlockAfiliado><Ofertas /></BlockAfiliado>} />
+          <Route path="/eleva/venda" element={<BlockBalcao><BlockAfiliado><Venda /></BlockAfiliado></BlockBalcao>} />
+          <Route path="/eleva/ranking" element={<BlockBalcao><Ranking /></BlockBalcao>} />
+          <Route path="/eleva/ofertas" element={<BlockBalcao><BlockAfiliado><Ofertas /></BlockAfiliado></BlockBalcao>} />
           <Route path="/eleva/gestor" element={<RequireGestor><Gestor /></RequireGestor>} />
           <Route path="/pilulas/*" element={<Navigate to="/eleva" replace />} />
         </Routes>
@@ -184,6 +193,7 @@ export default function PilulasApp() {
   // Se a pessoa chegou por um link/QR de convite (?convite=farmacia), guarda a
   // etiqueta de canal ANTES do login — o cadastro já entra segmentado.
   stageSegmentFromUrl();
+  stageBrandFromUrl();
   // Identidade própria: a aba do navegador diz "Eleva", não "MAESTR.IA".
   // Só roda na árvore do Eleva (não toca no app de coaching).
   useEffect(() => {

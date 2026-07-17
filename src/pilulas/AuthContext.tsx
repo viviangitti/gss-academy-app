@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { BrandId } from './data/brands';
 import { mySegment, type SegmentId } from './data/segments';
+import { invitedBrand } from './data/brandInvite';
 import { onAuthChange, signOut as fbSignOut, type AuthUser } from '../services/auth';
 import { firebaseEnabled } from '../services/firebase';
 import { storedRole, setStoredRole, storedAffiliateType } from './data/roles';
@@ -43,7 +44,7 @@ export function audienceOf(user: Pick<User, 'role' | 'affiliateType'> | null | u
 // ATENÇÃO: pra GESTOR, o e-mail também precisa entrar em isGestor() no
 // firestore.eleva.rules — senão a pessoa vê os campos mas a nuvem recusa a
 // escrita, e ela acha que salvou.
-const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType }> = {
+const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType; brands?: BrandId[] }> = {
   'maria26@gmail.com': { role: 'gestor' },
   'viviangitti23@gmail.com': { role: 'gestor' },
   'silene.mendesangelodesouza@gmail.com': { role: 'gestor' },
@@ -74,8 +75,18 @@ function affiliateTypeFor(email: string, profile: ElevaProfile | null): Affiliat
   return storedAffiliateType(email) ?? undefined;
 }
 
-// Por enquanto só a Meraki está ativa — todo mundo vê a Meraki.
 const DEFAULT_BRANDS: BrandId[] = ['meraki'];
+
+// De qual marca a pessoa faz parte: definido pela marca (override) > perfil na
+// conta (Firestore) > convite por link (?marca=dsp) > Meraki.
+function brandsFor(email: string, profile: ElevaProfile | null): BrandId[] {
+  const ov = overrideFor(email);
+  if (ov?.brands?.length) return ov.brands;
+  if (profile?.brands?.length) return profile.brands;
+  const inv = invitedBrand();
+  if (inv) return [inv];
+  return DEFAULT_BRANDS;
+}
 
 function toUser(fb: AuthUser, profile: ElevaProfile | null): User {
   const email = fb.email || '';
@@ -84,7 +95,7 @@ function toUser(fb: AuthUser, profile: ElevaProfile | null): User {
     name: profile?.name || fb.displayName || (email ? email.split('@')[0] : 'Você'),
     email,
     role,
-    brands: DEFAULT_BRANDS,
+    brands: brandsFor(email, profile),
     segment: profile?.segment || mySegment(),
     affiliateType: role === 'afiliado' ? (affiliateTypeFor(email, profile) ?? 'geral') : undefined,
   };

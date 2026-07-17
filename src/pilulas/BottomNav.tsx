@@ -1,6 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import { Home, BookOpen, Sparkles, Trophy, Tag, LayoutDashboard, Eye, GraduationCap } from 'lucide-react';
 import { useAuth } from './AuthContext';
+import { useBrand } from './BrandContext';
+import { isBalcao } from './data/brands';
 
 // Abas por papel: a vendedora consome/posta/compartilha; o gestor só coloca conteúdo
 // (Painel) e pode espiar como o time vê (Ver app).
@@ -27,12 +29,23 @@ const AFILIADO_TABS = [
   { to: '/eleva/ranking', label: 'Ranking', icon: Trophy, end: false },
 ];
 
+// Modo balcão (farmácia): o foco é preparar o atendimento. Sem postar, ranking
+// nem ofertas — só assistir os produtos, as objeções e a formação.
+const BALCAO_TABS = [
+  { to: '/eleva', label: 'Hoje', icon: Home, end: true },
+  { to: '/eleva/catalogo', label: 'Catálogo', icon: BookOpen, end: false },
+  { to: '/eleva/trilha', label: 'Formação', icon: GraduationCap, end: false },
+];
+
 export default function BottomNav() {
   const { user } = useAuth();
+  const { brandId } = useBrand();
+  const balcao = isBalcao(brandId);
   const tabs =
     user?.role === 'gestor' ? GESTOR_TABS :
+    balcao ? BALCAO_TABS : // farmácia: enxuto, independe do papel
     user?.role === 'afiliado' ? AFILIADO_TABS :
-    VENDEDORA_TABS; // balconista e promotor: tudo
+    VENDEDORA_TABS; // balconista e promotor (revenda): tudo
   return (
     <nav className="wp-nav">
       {tabs.map((t) => (

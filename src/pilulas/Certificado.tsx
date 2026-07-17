@@ -6,11 +6,23 @@ interface Props {
   brandName: string;
   date: string; // dd/mm/aaaa
   accent: string;
+  titulo?: string; // a competência certificada (ex.: "Linha GLPEN Nutri")
+  competencia?: string; // o que a pessoa domina, em uma linha
+  role?: string;
+}
+
+// Código de verificação — credencial séria tem número. Determinístico: mesmo
+// nome + data = mesmo código, então confere sempre.
+export function codigoCert(name: string, date: string, brandName: string): string {
+  const base = `${name}|${date}|${brandName}`.toUpperCase();
+  let h = 0;
+  for (let i = 0; i < base.length; i++) h = (h * 31 + base.charCodeAt(i)) >>> 0;
+  return `${brandName.slice(0, 2).toUpperCase()}-${h.toString(36).toUpperCase().padStart(6, '0').slice(0, 6)}`;
 }
 
 // Desenha o certificado numa imagem (canvas) 1080x1350 — formato de story, pronto
 // pra baixar e postar. Sem dependências: tudo na Canvas API.
-function drawCert(canvas: HTMLCanvasElement, { name, brandName, date, accent }: Props) {
+function drawCert(canvas: HTMLCanvasElement, { name, brandName, date, accent, titulo, competencia }: Props) {
   const W = 1080;
   const H = 1350;
   canvas.width = W;
@@ -84,16 +96,46 @@ function drawCert(canvas: HTMLCanvasElement, { name, brandName, date, accent }: 
   // texto
   ctx.fillStyle = 'rgba(255,255,255,0.72)';
   ctx.font = '400 36px Arial, sans-serif';
-  ctx.fillText('concluiu a trilha de formação', W / 2, 740);
-  ctx.fillText('de produtos da marca', W / 2, 792);
+  ctx.fillText('concluiu a formação em', W / 2, 730);
 
-  // Marca do fabricante
+  // A COMPETÊNCIA — é isso que dá valor de credencial. Sem isso o certificado
+  // diz "fez um curso"; com isso, diz o que a pessoa sabe.
   ctx.fillStyle = accent;
   ctx.font = '700 54px Georgia, serif';
-  ctx.fillText(brandName, W / 2, 880);
+  const tit = titulo || `Produtos ${brandName}`;
+  let ts = 54;
+  ctx.font = `700 ${ts}px Georgia, serif`;
+  while (ctx.measureText(tit).width > W - 200 && ts > 32) {
+    ts -= 3;
+    ctx.font = `700 ${ts}px Georgia, serif`;
+  }
+  ctx.fillText(tit, W / 2, 800);
+
+  // a competência em si, quebrada em linhas
+  if (competencia) {
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = '400 27px Arial, sans-serif';
+    const palavras = competencia.split(' ');
+    let linha = '';
+    let y = 850;
+    for (const w of palavras) {
+      const t = linha ? `${linha} ${w}` : w;
+      if (ctx.measureText(t).width > W - 240 && linha) {
+        ctx.fillText(linha, W / 2, y);
+        y += 36;
+        linha = w;
+      } else linha = t;
+    }
+    if (linha) ctx.fillText(linha, W / 2, y);
+  }
+
+  // Emitido por
+  ctx.fillStyle = 'rgba(255,255,255,0.72)';
+  ctx.font = '400 28px Arial, sans-serif';
+  ctx.fillText(`emitido por ${brandName}`, W / 2, 950);
 
   // Selo circular
-  const cy = 1070;
+  const cy = 1105;
   ctx.beginPath();
   ctx.arc(W / 2, cy, 90, 0, Math.PI * 2);
   ctx.fillStyle = accent;
@@ -104,10 +146,13 @@ function drawCert(canvas: HTMLCanvasElement, { name, brandName, date, accent }: 
   ctx.font = '800 46px Arial, sans-serif';
   ctx.fillText('100%', W / 2, cy + 38);
 
-  // Data
+  // Data + código de verificação (credencial tem número)
   ctx.fillStyle = 'rgba(255,255,255,0.55)';
-  ctx.font = '400 30px Arial, sans-serif';
-  ctx.fillText(`Concluído em ${date}`, W / 2, 1235);
+  ctx.font = '400 27px Arial, sans-serif';
+  ctx.fillText(`Concluído em ${date}`, W / 2, 1218);
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.font = '400 22px Arial, sans-serif';
+  ctx.fillText(`Código de verificação ${codigoCert(name, date, brandName)}`, W / 2, 1256);
 }
 
 export default function Certificado(props: Props) {
@@ -148,7 +193,9 @@ export default function Certificado(props: Props) {
         await navigator.share({
           files: [file],
           title: 'Meu certificado Eleva',
-          text: `Concluí a trilha de formação da ${props.brandName}! 🎓`,
+          text: props.titulo
+            ? `Concluí a formação em ${props.titulo}, emitida pela ${props.brandName}.${props.competencia ? ` Competência: ${props.competencia}.` : ''}`
+            : `Concluí a trilha de formação da ${props.brandName}! 🎓`,
         });
         setShared(true);
         setTimeout(() => setShared(false), 1500);

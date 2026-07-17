@@ -8,6 +8,7 @@ import { audienceOf } from './AuthContext';
 import { CALENDAR, CHANNELS } from './data/creatorContent';
 import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
+import { campanhaPara, prazoLabel, diasRestantes } from './data/campanha';
 import { getAbout } from './data/about';
 import { watchedToday, notifState, enableNotif, maybeNotify } from './data/lembrete';
 import { logSearch } from './data/insights';
@@ -150,6 +151,7 @@ export default function Hoje() {
 
   const stats = getStats();
   const trilha = getTrilha(brandId, user?.role);
+  const campanha = campanhaPara(user?.role);
   const didToday = watchedToday();
   const firstName = (user?.name || '').split(' ')[0] || 'Você';
 
@@ -222,8 +224,17 @@ export default function Hoje() {
 
           {/* Trilha de formação — progresso + continuar */}
           {trilha.total > 0 && (
-            <Link to="/eleva/trilha" className="wp-td-card wp-td-trilha">
-              <span className="wp-td-card-label"><GraduationCap size={13} className="wp-ico" /> Sua trilha de formação</span>
+            <Link to="/eleva/trilha" className={`wp-td-card wp-td-trilha ${campanha && !trilha.complete ? 'wp-td-camp' : ''}`}>
+              <span className="wp-td-card-label">
+                <GraduationCap size={13} className="wp-ico" />
+                {campanha ? campanha.nome : 'Sua trilha de formação'}
+                {/* Prazo é o que tira a trilha do "faço qualquer dia" */}
+                {campanha && !trilha.complete && (
+                  <b className={`wp-td-prazo ${diasRestantes(campanha.ate) <= 3 ? 'urg' : ''}`}>
+                    {prazoLabel(campanha)}
+                  </b>
+                )}
+              </span>
               <div className="wp-td-trilha-row">
                 <div className="wp-td-trilha-bar"><span style={{ width: `${trilha.pct}%`, background: brand.accent }} /></div>
                 <b className="wp-td-trilha-num">{trilha.mastered}/{trilha.total}</b>

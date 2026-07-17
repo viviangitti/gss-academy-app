@@ -2041,3 +2041,51 @@
 }
 .wp-gz-vd-ok { background: #dcf5e3; color: #1f7a4d; }
 .wp-gz-vd-no { background: #fdeaea; color: #b3261e; }
+
+/* Campanha com prazo */
+.wp-td-prazo {
+  margin-left: auto; padding: 2px 8px; border-radius: 999px;
+  background: var(--wp-gold-light); color: var(--wp-pink-deep);
+  font-size: 10px; font-weight: 800;
+}
+.wp-td-prazo.urg { background: #fdeaea; color: #b3261e; }
+.wp-td-card.wp-td-camp { border-color: var(--wp-pink); }
+.wp-td-camp .wp-td-card-label { display: flex; align-items: center; gap: 6px; }
+
+.wp-tr-camp {
+  border: 1.5px solid var(--wp-pink); border-radius: 14px;
+  padding: 13px 15px; margin-bottom: 14px; background: var(--wp-surface);
+}
+.wp-tr-camp.urg { border-color: #b3261e; }
+.wp-tr-camp-top { display: flex; align-items: center; gap: 10px; }
+.wp-tr-camp-nome {
+  display: flex; align-items: center; gap: 6px; flex: 1;
+  font-size: 14px; font-weight: 800; color: var(--wp-ink);
+}
+.wp-tr-camp-prazo {
+  display: flex; align-items: center; gap: 4px; flex: none;
+  padding: 3px 9px; border-radius: 999px;
+  background: var(--wp-gold-light); color: var(--wp-pink-deep);
+  font-size: 10.5px; font-weight: 800;
+}
+.wp-tr-camp.urg .wp-tr-camp-prazo { background: #fdeaea; color: #b3261e; }
+.wp-tr-camp-desc { margin: 6px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--wp-soft); }
+
+/* Cobrança de um toque */
+.wp-gz-cob {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-top: 1px solid var(--wp-border);
+}
+.wp-gz-cob:first-of-type { border-top: 0; }
+.wp-gz-cob-info { flex: 1; font-size: 12.5px; min-width: 0; }
+.wp-gz-cob-info b { display: block; color: var(--wp-ink); }
+.wp-gz-cob-info i {
+  display: block; margin-top: 1px; font-style: normal; font-size: 11px;
+  color: var(--wp-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.wp-gz-cob-btn {
+  display: flex; align-items: center; gap: 5px; flex: none;
+  padding: 7px 11px; border-radius: 9px; cursor: pointer;
+  border: 1px solid var(--wp-border); background: var(--wp-surface);
+  color: var(--wp-ink); font-family: inherit; font-size: 12px; font-weight: 700;
+}

@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Receipt, Clock, X } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Receipt, Clock, X, Copy, Bell } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { CATEGORIES, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
 import { CHANNELS, type Channel } from './data/creatorContent';
 import { SEGMENTS, segmentLabel } from './data/segments';
 import { topSearches } from './data/insights';
-import { fetchTeam, buildReport, type TeamReport } from './data/teamStats';
+import { fetchTeam, buildReport, type TeamReport, type TeamPerson } from './data/teamStats';
+import { CAMPANHA, prazoLabel } from './data/campanha';
 import { fetchVendas, decidirVenda, rankVendedores, type Venda as VendaT } from './data/vendas';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
@@ -48,6 +49,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
     );
   }
 
+  const campanha = CAMPANHA;
   const mesAtual = rep.months[rep.months.length - 1];
   const mesAnterior = rep.months[rep.months.length - 2];
   const delta = mesAnterior && mesAnterior.views > 0
@@ -144,11 +146,18 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
         </div>
       )}
 
-      {/* O dado mais acionável: quem entrou e nunca assistiu */}
+      {/* O dado mais acionável — e agora com o botão pra agir */}
       {rep.semUso.length > 0 && (
-        <div className="wp-gz-alert">
-          <b>{rep.semUso.length} pessoa{rep.semUso.length > 1 ? 's' : ''} se cadastrou e nunca assistiu nada.</b>
-          <span>{rep.semUso.slice(0, 6).map((p) => p.name).join(', ')}{rep.semUso.length > 6 ? '…' : ''}</span>
+        <div className="wp-gz-top">
+          <div className="wp-gz-top-head">
+            <Bell size={12} className="wp-ico" /> Cadastrou e nunca assistiu ({rep.semUso.length})
+          </div>
+          <p className="wp-gz-help" style={{ margin: '0 0 8px' }}>
+            Toque em “Cobrar” pra copiar uma mensagem pronta e mandar no WhatsApp.
+          </p>
+          {rep.semUso.map((p) => (
+            <CobrarPessoa key={p.uid} p={p} campanhaNome={campanha?.nome} prazo={campanha ? prazoLabel(campanha) : undefined} />
+          ))}
         </div>
       )}
 
@@ -170,6 +179,37 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
   );
 }
 
+
+
+// ---------- Cobrança de um toque ----------
+// O painel já dizia "3 pessoas nunca assistiram". Dado sem ação vira relatório.
+// Aqui vira gestão: um toque copia a mensagem pronta pra chamar a pessoa.
+function CobrarPessoa({ p, campanhaNome, prazo }: { p: TeamPerson; campanhaNome?: string; prazo?: string }) {
+  const [copiado, setCopiado] = useState(false);
+  const primeiro = (p.name || '').split(' ')[0] || 'Oi';
+  // Aspas no nome da campanha de propósito: sem artigo, funciona pra qualquer
+  // nome ("Lançamento GLPEN" é masculino, "Campanha X" é feminino).
+  const msg = campanhaNome
+    ? `Oi, ${primeiro}! Tudo bem? Vi que você ainda não começou a formação “${campanhaNome}” no Eleva — ${prazo}. São só 3 pílulas de 30 segundos e você já sai com o certificado. Qualquer dúvida me chama!`
+    : `Oi, ${primeiro}! Tudo bem? Vi que você ainda não assistiu nenhuma pílula no Eleva. São vídeos de 30 segundos que ajudam muito na hora de vender. Dá uma olhada quando puder — qualquer dúvida me chama!`;
+  const copiar = () => {
+    navigator.clipboard?.writeText(msg).then(
+      () => { setCopiado(true); setTimeout(() => setCopiado(false), 1800); },
+      () => {}
+    );
+  };
+  return (
+    <div className="wp-gz-cob">
+      <span className="wp-gz-cob-info">
+        <b>{p.name}</b>
+        <i>{ROLE_LB[p.role]?.replace(/s$/, '') || p.role}{p.email ? ` · ${p.email}` : ''}</i>
+      </span>
+      <button className="wp-gz-cob-btn" onClick={copiar} title="Copiar mensagem pronta">
+        {copiado ? <><Check size={13} className="wp-ico" /> Copiada</> : <><Copy size={13} className="wp-ico" /> Cobrar</>}
+      </button>
+    </div>
+  );
+}
 
 // ---------- Vendas declaradas: a única janela pra venda de BALCÃO ----------
 function Vendas({ brandId }: { brandId: string }) {

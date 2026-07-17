@@ -387,11 +387,16 @@ function VideoProductRow({ p }: { p: Product }) {
   );
 }
 
+function videoTotals(products: Product[]) {
+  const total = products.reduce((n, p) => n + audiencesForLine(p.line).length, 0);
+  const feitos = products.reduce((n, p) => n + countDone(p), 0);
+  return { total, feitos };
+}
+
 function VideosPorPublico({ products }: { products: Product[] }) {
   useAudienceReels();
   useStore();
-  const total = products.reduce((n, p) => n + audiencesForLine(p.line).length, 0);
-  const feitos = products.reduce((n, p) => n + countDone(p), 0);
+  const { total, feitos } = videoTotals(products);
   const pct = total ? Math.round((feitos / total) * 100) : 0;
   return (
     <div className="wp-gz-block wp-gz-videos">
@@ -434,8 +439,10 @@ export default function Gestor() {
   const { brand, brandId } = useBrand();
   const [openForm, setOpenForm] = useState<'produto' | 'oferta' | 'calendario' | 'tendencia' | null>(null);
   const [toast, setToast] = useState('');
+  const [tab, setTab] = useState<'resultados' | 'videos' | 'conteudo'>('resultados');
 
   const products = allProducts().filter((p) => p.brand === brandId);
+  const vids = videoTotals(products);
   const offers = allOffers().filter((o) => o.brand === brandId);
   const calendar = allCalendar(brandId);
   const trends = allTrends(brandId);
@@ -461,9 +468,23 @@ export default function Gestor() {
       {toast && <div className="wp-gz-toast"><Check size={13} className="wp-ico" /> {toast} <Link to="/eleva/catalogo">ver no app <ExternalLink size={12} className="wp-ico" /></Link></div>}
 
 
-      {/* Métricas */}
-      <VideosPorPublico products={products} />
+      {/* Abas: o gestor tem dois trabalhos — ver resultado e colocar conteúdo. */}
+      <div className="wp-gz-tabs">
+        <button className={`wp-gz-tab ${tab === 'resultados' ? 'on' : ''}`} onClick={() => setTab('resultados')}>
+          <TrendingUp size={15} className="wp-ico" /> Resultados
+        </button>
+        <button className={`wp-gz-tab ${tab === 'videos' ? 'on' : ''}`} onClick={() => setTab('videos')}>
+          <Video size={15} className="wp-ico" /> Vídeos
+          <span className={`wp-gz-tab-badge ${vids.feitos === vids.total ? 'full' : ''}`}>{vids.feitos}/{vids.total}</span>
+        </button>
+        <button className={`wp-gz-tab ${tab === 'conteudo' ? 'on' : ''}`} onClick={() => setTab('conteudo')}>
+          <Package size={15} className="wp-ico" /> Conteúdo
+        </button>
+      </div>
 
+      {tab === 'videos' && <VideosPorPublico products={products} />}
+
+      {tab === 'resultados' && (
       <div className="wp-gz-metrics">
         <div className="wp-gz-metrics-head"><TrendingUp size={16} className="wp-ico" /> Métricas da semana <span className="wp-gz-demo">· exemplo</span></div>
         <div className="wp-gz-kpis">
@@ -522,7 +543,9 @@ export default function Gestor() {
           )}
         </div>
       </div>
+      )}
 
+      {tab === 'conteudo' && (<>
       {/* Produtos */}
       <div className="wp-gz-block">
         <div className="wp-gz-block-head">
@@ -593,6 +616,7 @@ export default function Gestor() {
           ))}
         </div>
       </div>
+      </>)}
     </div>
   );
 }

@@ -1896,3 +1896,24 @@
   .wp-fk-buy { background: transparent !important; color: #17231d !important; padding: 0 !important; }
   .wp-fk, .wp-fk-sec, .wp-fk-table tr { break-inside: avoid; }
 }
+
+/* Painel do gestor: abas (resultado x conteúdo) */
+.wp-gz-tabs {
+  display: flex; gap: 6px; margin: 14px 0 12px;
+  background: var(--wp-bg); padding: 5px; border-radius: 12px;
+}
+.wp-gz-tab {
+  display: flex; align-items: center; justify-content: center; gap: 6px; flex: 1;
+  padding: 10px 6px; border: 0; border-radius: 9px; background: transparent;
+  color: var(--wp-soft); cursor: pointer;
+  font-family: inherit; font-size: 12.5px; font-weight: 700;
+  transition: background .15s, color .15s;
+}
+.wp-gz-tab.on { background: var(--wp-surface); color: var(--wp-ink); box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+.wp-gz-tab-badge {
+  padding: 2px 6px; border-radius: 999px; background: var(--wp-gold-light);
+  color: var(--wp-pink-deep); font-size: 10.5px; font-weight: 800;
+}
+.wp-gz-tab-badge.full { background: #dcf5e3; color: #1f7a4d; }
+/* dentro da aba o card não precisa da borda de destaque */
+.wp-gz-videos { border: 1px solid var(--wp-border); }

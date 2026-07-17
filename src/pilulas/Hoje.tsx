@@ -143,8 +143,8 @@ export default function Hoje() {
 
   // Inteligência de mercado: o que a ponta busca = as objeções reais do cliente.
   useEffect(() => {
-    if (q.trim().length >= 3) logSearch(q);
-  }, [q]);
+    if (q.trim().length >= 3) logSearch(q, brandId);
+  }, [q, brandId]);
 
   // Lembrete diário: se ligou notificação e não assistiu hoje, avisa (1x/dia).
   useEffect(() => { maybeNotify(); }, []);

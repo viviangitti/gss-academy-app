@@ -28,11 +28,14 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
   useEffect(() => {
     let vivo = true;
     setCarregando(true);
+    const allowed = new Set(products.map((p) => p.id));
     fetchTeam(brandId)
-      .then((people) => { if (vivo) { setRep(buildReport(people)); setErro(''); } })
+      .then((people) => { if (vivo) { setRep(buildReport(people, allowed)); setErro(''); } })
       .catch(() => { if (vivo) setErro('Não consegui ler os dados do time.'); })
       .finally(() => { if (vivo) setCarregando(false); });
     return () => { vivo = false; };
+    // products é determinado por brandId (catálogo da marca) — refetch só na troca de marca.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brandId]);
 
   if (carregando) return <div className="wp-gz-metrics"><p className="wp-gz-help" style={{ margin: 0 }}>Carregando os dados do time…</p></div>;
@@ -691,7 +694,7 @@ export default function Gestor() {
   const offers = allOffers().filter((o) => o.brand === brandId);
   const calendar = allCalendar(brandId);
   const trends = allTrends(brandId);
-  const buscas = topSearches(5);
+  const buscas = topSearches(5, brandId);
 
   const done = (label: string, what: string) => {
     setOpenForm(null);

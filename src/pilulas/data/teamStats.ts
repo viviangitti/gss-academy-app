@@ -90,7 +90,11 @@ export async function fetchTeam(brand: string): Promise<TeamPerson[]> {
   });
 }
 
-export function buildReport(people: TeamPerson[], months = 4): TeamReport {
+// allowedIds: ids dos produtos DESTA marca. Quando informado, eventos de
+// produto/quiz de OUTRA marca são ignorados — o painel da Sorocaps nunca conta
+// atividade da Meraki (uma gestora que navega nas duas marcas grava tudo no
+// mesmo doc; é aqui que separamos por marca na hora de exibir).
+export function buildReport(people: TeamPerson[], allowedIds?: Set<string>, months = 4): TeamReport {
   const now = currentMonthId();
 
   // --- por papel ---
@@ -116,6 +120,9 @@ export function buildReport(people: TeamPerson[], months = 4): TeamReport {
       if (Number.isNaN(d.getTime())) continue;
       const b = buckets.get(monthId(d));
       if (!b) continue;
+      // Evento de produto/quiz de outra marca não entra no painel desta marca.
+      const isProdEvent = e.type === 'pill_view' || e.type === 'quiz_pass';
+      if (allowedIds && isProdEvent && !allowedIds.has(e.id)) continue;
       b.uids.add(p.uid);
       if (e.type === 'pill_view') {
         b.views += 1;

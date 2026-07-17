@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown } from 'lucide-react';
 import { useBrand } from './BrandContext';
@@ -7,46 +7,167 @@ import type { OfferKind } from './data/offers';
 import { CHANNELS, type Channel } from './data/creatorContent';
 import { SEGMENTS, segmentLabel } from './data/segments';
 import { topSearches } from './data/insights';
+import { fetchTeam, buildReport, type TeamReport } from './data/teamStats';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import type { Audience } from './AuthContext';
 
-// Métricas da marca (dados de demonstração — em produção vêm do backend/Firestore).
-const METRICS: Record<string, {
-  vendedoras: number; assistidas: number; missoes: number; uplift: number;
-  top: { name: string; views: number }[];
-}> = {
-  meraki: {
-    vendedoras: 34, assistidas: 512, missoes: 87, uplift: 38,
-    top: [
-      { name: 'GLPEN Nutri Muscle', views: 210 },
-      { name: 'Ative-Fer', views: 120 },
-      { name: 'Moviben', views: 68 },
-    ],
-  },
-  wepink: {
-    vendedoras: 58, assistidas: 903, missoes: 156, uplift: 41,
-    top: [
-      { name: 'Cabelos & Unhas', views: 380 },
-      { name: 'Sérum Facial Glow', views: 240 },
-      { name: 'Body Splash Pink', views: 155 },
-    ],
-  },
+
+// ---------- Resultados: dado REAL do time (elevaStats) ----------
+const ROLE_LB: Record<string, string> = {
+  balconista: 'Balconistas', promotor: 'Promotores', afiliado: 'Afiliados', gestor: 'Gestores',
 };
 
-// Cobertura por canal (demonstração — com o backend, vem agregada dos convites).
-const COVERAGE: Record<string, { seg: string; total: number; ativos: number }[]> = {
-  meraki: [
-    { seg: 'Farmácia (balcão)', total: 620, ativos: 214 },
-    { seg: 'Revenda autônoma', total: 450, ativos: 198 },
-    { seg: 'Quiosque', total: 180, ativos: 71 },
-    { seg: 'Loja / PDV', total: 120, ativos: 34 },
-  ],
-  wepink: [
-    { seg: 'Revenda autônoma', total: 900, ativos: 512 },
-    { seg: 'Loja / PDV', total: 150, ativos: 66 },
-  ],
-};
+function Resultados({ brandId, products, buscas }: { brandId: string; products: Product[]; buscas: { term: string; count: number }[] }) {
+  const [rep, setRep] = useState<TeamReport | null>(null);
+  const [erro, setErro] = useState('');
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    let vivo = true;
+    setCarregando(true);
+    fetchTeam(brandId)
+      .then((people) => { if (vivo) { setRep(buildReport(people)); setErro(''); } })
+      .catch(() => { if (vivo) setErro('Não consegui ler os dados do time.'); })
+      .finally(() => { if (vivo) setCarregando(false); });
+    return () => { vivo = false; };
+  }, [brandId]);
+
+  if (carregando) return <div className="wp-gz-metrics"><p className="wp-gz-help" style={{ margin: 0 }}>Carregando os dados do time…</p></div>;
+  if (erro) return <div className="wp-gz-metrics"><p className="wp-gz-help" style={{ margin: 0 }}>{erro}</p></div>;
+  if (!rep || !rep.people.length) {
+    return (
+      <div className="wp-gz-metrics">
+        <div className="wp-gz-metrics-head"><TrendingUp size={16} className="wp-ico" /> Resultados</div>
+        <p className="wp-gz-help" style={{ margin: 0 }}>
+          Ainda não há uso registrado. Assim que o time começar a assistir as pílulas, os números aparecem aqui —
+          de verdade, sem exemplo.
+        </p>
+      </div>
+    );
+  }
+
+  const mesAtual = rep.months[rep.months.length - 1];
+  const mesAnterior = rep.months[rep.months.length - 2];
+  const delta = mesAnterior && mesAnterior.views > 0
+    ? Math.round(((mesAtual.views - mesAnterior.views) / mesAnterior.views) * 100)
+    : null;
+  const maxMes = Math.max(1, ...rep.months.map((b) => b.views));
+  const nome = (id: string) => products.find((p) => p.id === id)?.name || id;
+  const topMax = Math.max(1, ...rep.topProducts.map((t) => t.views));
+  const ativos = rep.byRole.reduce((n, r) => n + r.ativos, 0);
+
+  return (
+    <div className="wp-gz-metrics">
+      <div className="wp-gz-metrics-head">
+        <TrendingUp size={16} className="wp-ico" /> Resultados <span className="wp-gz-demo">· dado real</span>
+      </div>
+
+      <div className="wp-gz-kpis">
+        <div className="wp-gz-kpi">
+          <Users size={15} className="wp-ico" />
+          <b>{ativos}</b><span>ativos no mês</span>
+        </div>
+        <div className="wp-gz-kpi">
+          <Eye size={15} className="wp-ico" />
+          <b>{mesAtual.views}</b><span>pílulas assistidas</span>
+        </div>
+        <div className="wp-gz-kpi">
+          <Send size={15} className="wp-ico" />
+          <b>{mesAtual.posts}</b><span>posts do time</span>
+        </div>
+      </div>
+
+      {/* Mês a mês — sai dos eventos, que têm data */}
+      <div className="wp-gz-top">
+        <div className="wp-gz-top-head">
+          <CalendarDays size={12} className="wp-ico" /> Mês a mês (pílulas assistidas)
+          {delta !== null && (
+            <span className={`wp-gz-delta ${delta >= 0 ? 'up' : 'down'}`}>
+              {delta >= 0 ? '+' : ''}{delta}% vs {mesAnterior.label}
+            </span>
+          )}
+        </div>
+        {rep.months.map((b) => (
+          <div key={b.id} className="wp-gz-bar-row">
+            <span className="wp-gz-bar-name">{b.label}</span>
+            <span className="wp-gz-bar-track">
+              <span className="wp-gz-bar-fill" style={{ width: `${Math.round((b.views / maxMes) * 100)}%` }} />
+            </span>
+            <span className="wp-gz-bar-val">{b.views}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Por papel */}
+      <div className="wp-gz-top">
+        <div className="wp-gz-top-head"><Users size={12} className="wp-ico" /> Quem está usando, por acesso</div>
+        {rep.byRole.map((r) => (
+          <div key={r.role} className="wp-gz-bar-row">
+            <span className="wp-gz-bar-name">{ROLE_LB[r.role] || r.role}</span>
+            <span className="wp-gz-bar-track">
+              <span className="wp-gz-bar-fill" style={{ width: `${Math.round((r.ativos / Math.max(1, r.total)) * 100)}%` }} />
+            </span>
+            <span className="wp-gz-bar-val">{r.ativos}/{r.total}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Ranking real */}
+      {rep.ranking.length > 0 && (
+        <div className="wp-gz-top">
+          <div className="wp-gz-top-head"><Flame size={12} className="wp-ico" /> Quem mais se dedica no mês</div>
+          {rep.ranking.map((r, i) => (
+            <div key={r.name + i} className="wp-gz-rk">
+              <span className="wp-gz-rk-pos">{i + 1}</span>
+              <span className="wp-gz-rk-name">{r.name}<i>{ROLE_LB[r.role]?.replace(/s$/, '') || r.role}</i></span>
+              <span className="wp-gz-rk-val">{r.points} pts<i>{r.views} pílulas · {r.quiz} dominados</i></span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Produtos realmente assistidos */}
+      {rep.topProducts.length > 0 && (
+        <div className="wp-gz-top">
+          <div className="wp-gz-top-head"><Eye size={12} className="wp-ico" /> Produtos mais assistidos</div>
+          {rep.topProducts.map((t) => (
+            <div key={t.id} className="wp-gz-bar-row">
+              <span className="wp-gz-bar-name">{nome(t.id)}</span>
+              <span className="wp-gz-bar-track">
+                <span className="wp-gz-bar-fill" style={{ width: `${Math.round((t.views / topMax) * 100)}%` }} />
+              </span>
+              <span className="wp-gz-bar-val">{t.views}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* O dado mais acionável: quem entrou e nunca assistiu */}
+      {rep.semUso.length > 0 && (
+        <div className="wp-gz-alert">
+          <b>{rep.semUso.length} pessoa{rep.semUso.length > 1 ? 's' : ''} se cadastrou e nunca assistiu nada.</b>
+          <span>{rep.semUso.slice(0, 6).map((p) => p.name).join(', ')}{rep.semUso.length > 6 ? '…' : ''}</span>
+        </div>
+      )}
+
+      <div className="wp-gz-top">
+        <div className="wp-gz-top-head"><Search size={12} className="wp-ico" /> O que a ponta busca no “me salva” (objeções reais)</div>
+        {buscas.length ? buscas.map((b) => (
+          <div key={b.term} className="wp-gz-bar-row">
+            <span className="wp-gz-bar-name">“{b.term}”</span>
+            <span className="wp-gz-bar-track">
+              <span className="wp-gz-bar-fill" style={{ width: `${Math.min(100, (b.count / (buscas[0]?.count || 1)) * 100)}%` }} />
+            </span>
+            <span className="wp-gz-bar-val">{b.count}</span>
+          </div>
+        )) : (
+          <p className="wp-gz-help" style={{ margin: 0 }}>Ainda sem buscas registradas neste aparelho.</p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 const GRADIENT: Record<Category, [string, string]> = {
   performance: ['#12B5A5', '#0B5563'],
@@ -446,9 +567,6 @@ export default function Gestor() {
   const offers = allOffers().filter((o) => o.brand === brandId);
   const calendar = allCalendar(brandId);
   const trends = allTrends(brandId);
-  const m = METRICS[brandId];
-  const topMax = Math.max(...m.top.map((t) => t.views));
-  const coverage = COVERAGE[brandId] || [];
   const buscas = topSearches(5);
 
   const done = (label: string, what: string) => {
@@ -484,66 +602,7 @@ export default function Gestor() {
 
       {tab === 'videos' && <VideosPorPublico products={products} />}
 
-      {tab === 'resultados' && (
-      <div className="wp-gz-metrics">
-        <div className="wp-gz-metrics-head"><TrendingUp size={16} className="wp-ico" /> Métricas da semana <span className="wp-gz-demo">· exemplo</span></div>
-        <div className="wp-gz-kpis">
-          <div className="wp-gz-kpi">
-            <Users size={16} className="wp-ico wp-gz-kpi-ic" />
-            <b>{m.vendedoras}</b><span>vendedoras ativas</span>
-          </div>
-          <div className="wp-gz-kpi">
-            <Eye size={16} className="wp-ico wp-gz-kpi-ic" />
-            <b>{m.assistidas}</b><span>pílulas assistidas</span>
-          </div>
-          <div className="wp-gz-kpi">
-            <Send size={16} className="wp-ico wp-gz-kpi-ic" />
-            <b>{m.missoes}</b><span>posts de creator</span>
-          </div>
-        </div>
-        <div className="wp-gz-uplift">
-          <b>+{m.uplift}%</b> — vendedora que assiste pílula vende mais que a que não assiste
-        </div>
-        <div className="wp-gz-top">
-          <div className="wp-gz-top-head">Produtos mais assistidos</div>
-          {m.top.map((t) => (
-            <div key={t.name} className="wp-gz-bar-row">
-              <span className="wp-gz-bar-name">{t.name}</span>
-              <span className="wp-gz-bar-track">
-                <span className="wp-gz-bar-fill" style={{ width: `${(t.views / topMax) * 100}%` }} />
-              </span>
-              <span className="wp-gz-bar-val">{t.views}</span>
-            </div>
-          ))}
-        </div>
-        <div className="wp-gz-top">
-          <div className="wp-gz-top-head">Cobertura por canal (pontos ativados)</div>
-          {coverage.map((c) => (
-            <div key={c.seg} className="wp-gz-bar-row">
-              <span className="wp-gz-bar-name">{c.seg}</span>
-              <span className="wp-gz-bar-track">
-                <span className="wp-gz-bar-fill" style={{ width: `${Math.round((c.ativos / c.total) * 100)}%` }} />
-              </span>
-              <span className="wp-gz-bar-val">{c.ativos}/{c.total}</span>
-            </div>
-          ))}
-        </div>
-        <div className="wp-gz-top">
-          <div className="wp-gz-top-head"><Search size={12} className="wp-ico" /> O que a ponta busca no “me salva” (objeções reais)</div>
-          {buscas.length ? buscas.map((b) => (
-            <div key={b.term} className="wp-gz-bar-row">
-              <span className="wp-gz-bar-name">“{b.term}”</span>
-              <span className="wp-gz-bar-track">
-                <span className="wp-gz-bar-fill" style={{ width: `${Math.min(100, (b.count / (buscas[0]?.count || 1)) * 100)}%` }} />
-              </span>
-              <span className="wp-gz-bar-val">{b.count}</span>
-            </div>
-          )) : (
-            <p className="wp-gz-help" style={{ margin: 0 }}>Ainda sem buscas registradas neste aparelho — com o time usando, aqui aparecem as objeções mais digitadas.</p>
-          )}
-        </div>
-      </div>
-      )}
+      {tab === 'resultados' && <Resultados brandId={brandId} products={products} buscas={buscas} />}
 
       {tab === 'conteudo' && (<>
       {/* Produtos */}

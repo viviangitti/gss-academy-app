@@ -45,8 +45,9 @@ export function audienceOf(user: Pick<User, 'role' | 'affiliateType'> | null | u
 // firestore.eleva.rules — senão a pessoa vê os campos mas a nuvem recusa a
 // escrita, e ela acha que salvou.
 const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType; brands?: BrandId[] }> = {
-  'maria26@gmail.com': { role: 'gestor' },
-  'viviangitti23@gmail.com': { role: 'gestor' },
+  // Vivian: gestora das DUAS marcas — troca no seletor do topo.
+  'maria26@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
+  'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
   'silene.mendesangelodesouza@gmail.com': { role: 'gestor' },
   // Mesma pessoa, segunda conta: entra como afiliada pra testar a visão do time.
   'silene_mendes@hotmail.com': { role: 'afiliado', affiliateType: 'geral' },

@@ -10,6 +10,7 @@ import { useSyncExternalStore } from 'react';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import type { Audience } from '../AuthContext';
+import { AFILIADO_LINE } from './products';
 
 // Chave do MP4 no store (IndexedDB) para um produto + público.
 export function audienceVideoKey(productId: string, a: Audience): string {
@@ -98,3 +99,12 @@ export const AUDIENCES: { id: Audience; label: string }[] = [
   { id: 'afiliado-geral', label: 'Afiliado' },
   { id: 'afiliado-saude', label: 'Afiliado — profissional da saúde' },
 ];
+
+// Quais públicos REALMENTE veem este produto — é o que o gestor precisa subir.
+// O afiliado só enxerga a linha GLPEN (ver visibleProducts em products.ts), então
+// pedir vídeo de afiliado pra Hyaluvita/Moviben seria trabalho jogado fora e um
+// contador que nunca fecha.
+export function audiencesForLine(line?: string): { id: Audience; label: string }[] {
+  if (line === AFILIADO_LINE) return AUDIENCES;
+  return AUDIENCES.filter((a) => a.id === 'balconista' || a.id === 'promotor');
+}

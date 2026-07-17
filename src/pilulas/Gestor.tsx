@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { CATEGORIES, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
 import { CHANNELS, type Channel } from './data/creatorContent';
 import { SEGMENTS, segmentLabel } from './data/segments';
 import { topSearches } from './data/insights';
-import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, useStore } from './data/store';
+import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
+import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
+import type { Audience } from './AuthContext';
 
 // Métricas da marca (dados de demonstração — em produção vêm do backend/Firestore).
 const METRICS: Record<string, {
@@ -304,6 +306,110 @@ function TrendForm({ brand, onDone }: { brand: string; onDone: (t: string) => vo
   );
 }
 
+// ---------- Vídeos por público: a função PRINCIPAL do gestor ----------
+// Antes isso vivia só dentro da pílula, a 6 toques de distância — o gestor caía
+// no Painel e a principal tarefa dele não estava aqui. Agora está: lista os
+// produtos, mostra quanto falta e deixa preencher sem sair da tela.
+
+function AudienceSlot({ productId, audience, label }: { productId: string; audience: Audience; label: string }) {
+  useAudienceReels();
+  const key = audienceVideoKey(productId, audience);
+  const reel = getAudienceReel(productId, audience);
+  const mp4 = hasVideo(key);
+  const [ig, setIg] = useState(reel || '');
+  const [saved, setSaved] = useState(false);
+  const salvar = () => {
+    clearProductVideo(key);
+    setAudienceReel(productId, audience, ig);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1600);
+  };
+  const subirMp4 = (f: File) => { setAudienceReel(productId, audience, ''); setIg(''); setProductVideo(key, f); };
+  const tirar = () => { clearProductVideo(key); setAudienceReel(productId, audience, ''); setIg(''); };
+  const ok = mp4 || !!reel;
+  return (
+    <div className="wp-gz-slot">
+      <div className="wp-gz-slot-head">
+        <span className={`wp-gz-slot-dot ${ok ? 'on' : ''}`}>{ok ? <Check size={11} /> : null}</span>
+        <b>{label}</b>
+        <span className="wp-gz-slot-st">{mp4 ? 'vídeo MP4' : reel ? 'reel do Instagram' : 'falta'}</span>
+      </div>
+      <div className="wp-gz-slot-body">
+        <input
+          value={ig}
+          onChange={(e) => setIg(e.target.value)}
+          onFocus={(e) => e.target.select()}
+          placeholder="Cole o link do reel do Instagram"
+        />
+        <div className="wp-gz-slot-acts">
+          <button className="wp-gz-slot-save" disabled={!ig.trim()} onClick={salvar}>
+            {saved ? <><Check size={14} className="wp-ico" /> Salvo</> : 'Salvar'}
+          </button>
+          <label className="wp-gz-slot-mp4">
+            <UploadCloud size={14} className="wp-ico" /> MP4
+            <input type="file" accept="video/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) subirMp4(f); }} />
+          </label>
+          {ok && <button className="wp-gz-slot-clear" onClick={tirar}>Tirar</button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Quantos públicos DESTE produto já têm vídeo (só os que o veem).
+function countDone(p: Product): number {
+  return audiencesForLine(p.line).filter(
+    (a) => hasVideo(audienceVideoKey(p.id, a.id)) || !!getAudienceReel(p.id, a.id)
+  ).length;
+}
+
+function VideoProductRow({ p }: { p: Product }) {
+  useAudienceReels();
+  useStore();
+  const [open, setOpen] = useState(false);
+  const auds = audiencesForLine(p.line);
+  const done = countDone(p);
+  return (
+    <div className={`wp-gz-vp ${open ? 'open' : ''}`}>
+      <button className="wp-gz-vp-head" onClick={() => setOpen((o) => !o)}>
+        <span className="wp-gz-vp-name">{p.name}</span>
+        <span className={`wp-gz-vp-count ${done === auds.length ? 'full' : ''}`}>{done}/{auds.length}</span>
+        <ChevronDown size={16} className={`wp-ico wp-gz-vp-chev ${open ? 'open' : ''}`} />
+      </button>
+      {open && (
+        <div className="wp-gz-vp-body">
+          {auds.map((a) => (
+            <AudienceSlot key={a.id} productId={p.id} audience={a.id} label={a.label} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function VideosPorPublico({ products }: { products: Product[] }) {
+  useAudienceReels();
+  useStore();
+  const total = products.reduce((n, p) => n + audiencesForLine(p.line).length, 0);
+  const feitos = products.reduce((n, p) => n + countDone(p), 0);
+  const pct = total ? Math.round((feitos / total) * 100) : 0;
+  return (
+    <div className="wp-gz-block wp-gz-videos">
+      <div className="wp-gz-block-head">
+        <span className="wp-gz-block-title"><Video size={17} className="wp-ico" /> Vídeos por público</span>
+        <span className={`wp-gz-vcount ${feitos === total ? 'full' : ''}`}>{feitos} de {total}</span>
+      </div>
+      <p className="wp-gz-help" style={{ marginTop: 0 }}>
+        Cada público vê o vídeo dele. Quem não tiver o do público assiste o vídeo padrão do produto.
+      </p>
+      <div className="wp-gz-vbar"><span className="wp-gz-vbar-fill" style={{ width: `${pct}%` }} /></div>
+      <div className="wp-gz-vlist">
+        {products.map((p) => <VideoProductRow key={p.id} p={p} />)}
+      </div>
+    </div>
+  );
+}
+
 function ProductRow({ p }: { p: Product }) {
   useStore();
   const uploaded = hasVideo(p.id);
@@ -356,6 +462,8 @@ export default function Gestor() {
 
 
       {/* Métricas */}
+      <VideosPorPublico products={products} />
+
       <div className="wp-gz-metrics">
         <div className="wp-gz-metrics-head"><TrendingUp size={16} className="wp-ico" /> Métricas da semana <span className="wp-gz-demo">· exemplo</span></div>
         <div className="wp-gz-kpis">

@@ -8,7 +8,7 @@ import {
 import { buildShareVariants, buildFichaMessage, buyLinkFor, type BuyContext, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
-import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, AUDIENCES } from './data/audienceVideos';
+import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { getAfiliadoCode } from './data/afiliadoCode';
 import { recordView } from './data/tracking';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
@@ -233,7 +233,7 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
 
           <div className="wp-videdit-divider" />
           <p className="wp-videdit-now">Vídeo por público <span className="wp-videdit-cap">— cada um vê o conteúdo dele</span></p>
-          {AUDIENCES.map((a) => (
+          {audiencesForLine(product.line).map((a) => (
             <AudienceVideoRow key={a.id} productId={product.id} audience={a.id} label={a.label} />
           ))}
 

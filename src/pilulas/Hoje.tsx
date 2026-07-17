@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon } from 'lucide-react';
+import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Receipt, Infinity as InfinityIcon } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
 import { buildShareMessage, visibleProducts, type Product } from './data/products';
 import { getAfiliadoCode } from './data/afiliadoCode';
@@ -277,6 +277,15 @@ export default function Hoje() {
               Ver o roteiro completo <ChevronRight size={15} className="wp-ico" />
             </Link>
           </div>
+
+          {/* Vendeu no balcão? Só a pessoa pode contar — a venda dela não passa pelo site. */}
+          {user?.role !== 'afiliado' && (
+            <Link to="/eleva/venda" className="wp-td-venda">
+              <Receipt size={17} className="wp-ico" />
+              <span>Registrar uma venda<i>Vendeu no balcão? Conta pra gente — é assim que a Meraki vê o seu resultado</i></span>
+              <ChevronRight size={16} className="wp-ico" />
+            </Link>
+          )}
 
           {/* Quem é a marca — contexto institucional pra vender com segurança */}
           {getAbout(brandId) && (

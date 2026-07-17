@@ -1949,3 +1949,95 @@
 }
 .wp-gz-alert b { display: block; font-size: 12.5px; }
 .wp-gz-alert span { display: block; margin-top: 3px; font-size: 11.5px; opacity: .85; }
+
+/* Registrar venda (ponta) */
+.wp-td-venda {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 14px 16px; margin-bottom: 12px;
+  border: 1px solid var(--wp-border); border-radius: 14px;
+  background: var(--wp-surface); color: var(--wp-ink); text-decoration: none;
+  font-size: 14px; font-weight: 700;
+}
+.wp-td-venda span { flex: 1; }
+.wp-td-venda i {
+  display: block; margin-top: 2px; font-style: normal;
+  font-size: 11.5px; font-weight: 500; color: var(--wp-soft);
+}
+.wp-vd { padding: 4px 0 24px; }
+.wp-vd-back {
+  display: inline-flex; align-items: center; gap: 4px; margin-bottom: 12px;
+  color: var(--wp-soft); font-size: 13px; font-weight: 700; text-decoration: none;
+}
+.wp-vd-title { display: flex; align-items: center; gap: 9px; margin: 0; font-size: 22px; }
+.wp-vd-sub { margin: 6px 0 16px; font-size: 13.5px; line-height: 1.5; color: var(--wp-soft); }
+.wp-vd-form {
+  background: var(--wp-surface); border: 1px solid var(--wp-border);
+  border-radius: 14px; padding: 16px;
+}
+.wp-vd-label {
+  display: block; margin-bottom: 6px; font-size: 11.5px; font-weight: 800;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--wp-pink-deep);
+}
+.wp-vd-select, .wp-vd-input {
+  width: 100%; padding: 12px 13px; margin-bottom: 14px; border-radius: 11px;
+  border: 1.5px solid var(--wp-border); background: var(--wp-bg);
+  font-family: inherit; font-size: 15px; color: var(--wp-ink);
+}
+.wp-vd-select:focus, .wp-vd-input:focus { border-color: var(--wp-pink); outline: none; }
+.wp-vd-qty { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.wp-vd-qty button {
+  width: 40px; height: 40px; border-radius: 10px; cursor: pointer;
+  border: 1.5px solid var(--wp-border); background: var(--wp-surface);
+  font-size: 19px; font-weight: 700; color: var(--wp-ink);
+}
+.wp-vd-qty b { font-size: 19px; min-width: 28px; text-align: center; }
+.wp-vd-hint { margin: -6px 0 14px; font-size: 11.5px; line-height: 1.5; color: var(--wp-soft); }
+.wp-vd-erro { margin: 0 0 10px; font-size: 12.5px; color: #b3261e; }
+.wp-vd-send {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%; padding: 14px; border: 0; border-radius: 12px;
+  background: var(--wp-pink); color: var(--wp-on-accent);
+  font-family: inherit; font-size: 15px; font-weight: 800; cursor: pointer;
+}
+.wp-vd-send:disabled { opacity: .45; cursor: not-allowed; }
+.wp-vd-list { margin-top: 18px; }
+.wp-vd-list-h {
+  display: block; margin-bottom: 8px; font-size: 11.5px; font-weight: 800;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--wp-soft);
+}
+.wp-vd-item {
+  display: flex; align-items: center; gap: 10px; padding: 11px 13px; margin-bottom: 7px;
+  border: 1px solid var(--wp-border); border-radius: 11px; background: var(--wp-surface);
+}
+.wp-vd-item-name { flex: 1; font-size: 13.5px; font-weight: 700; color: var(--wp-ink); }
+.wp-vd-item-name i {
+  display: block; margin-top: 1px; font-style: normal;
+  font-size: 11px; font-weight: 500; color: var(--wp-soft);
+}
+.wp-vd-st {
+  display: flex; align-items: center; gap: 4px; flex: none;
+  padding: 3px 8px; border-radius: 999px; background: var(--wp-bg);
+  color: var(--wp-soft); font-size: 10.5px; font-weight: 800;
+}
+.wp-vd-st.on { background: #dcf5e3; color: #1f7a4d; }
+.wp-vd-st.no { background: #fdeaea; color: #b3261e; }
+
+/* Painel: fila de aprovação */
+.wp-gz-vd {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-top: 1px solid var(--wp-border);
+}
+.wp-gz-vd:first-of-type { border-top: 0; }
+.wp-gz-vd-info { flex: 1; font-size: 12.5px; }
+.wp-gz-vd-info b { display: block; color: var(--wp-ink); }
+.wp-gz-vd-info i {
+  display: block; margin-top: 1px; font-style: normal;
+  font-size: 11px; color: var(--wp-soft);
+}
+.wp-gz-vd-acts { display: flex; gap: 6px; flex: none; }
+.wp-gz-vd-ok, .wp-gz-vd-no {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 9px; cursor: pointer; border: 0;
+}
+.wp-gz-vd-ok { background: #dcf5e3; color: #1f7a4d; }
+.wp-gz-vd-no { background: #fdeaea; color: #b3261e; }

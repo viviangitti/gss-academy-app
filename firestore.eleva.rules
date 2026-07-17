@@ -22,6 +22,26 @@ service cloud.firestore {
       allow list: if isGestor();
       allow write: if request.auth != null && request.auth.uid == uid;
     }
+    // Vendas declaradas pela ponta (venda de balcão não passa pelo site, então
+    // só existe se a pessoa declarar). Guardamos o NÚMERO do cupom, nunca a
+    // imagem — cupom de farmácia expõe o que a cliente comprou (dado sensível
+    // de saúde, LGPD).
+    match /elevaSales/{id} {
+      // Cada um declara a própria venda, e ela nasce PENDENTE — ninguém se
+      // auto-aprova.
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'pendente';
+      // A pessoa acompanha o que declarou; o gestor vê tudo pra aprovar.
+      allow read, list: if request.auth != null
+        && (resource == null || resource.data.uid == request.auth.uid || isGestor());
+      // Só o gestor decide. E não pode reescrever a venda, só o status.
+      allow update: if isGestor()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'decidedAt']);
+      allow delete: if false;
+    }
+
     // Conteúdo do Eleva: quem está logado LÊ; só o gestor ESCREVE.
     match /{document=**} {
       allow read: if request.auth != null;

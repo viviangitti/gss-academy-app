@@ -34,22 +34,41 @@ export function audienceOf(user: Pick<User, 'role' | 'affiliateType'> | null | u
   return null; // gestor vê o vídeo padrão
 }
 
-// GESTORES AUTORIZADOS — controla quem entra no Painel do Gestor e vê os campos
-// de subir vídeo. Quem loga com um e-mail desta lista vira gestor; qualquer
-// outro entra como balconista.
-// Para adicionar outro gestor: inclua o e-mail aqui (minúsculo) E em isGestor()
-// no firestore.eleva.rules — senão a pessoa vê os campos mas não salva na nuvem.
-const GESTOR_EMAILS = ['maria26@gmail.com', 'viviangitti23@gmail.com'];
+// PAPÉIS DEFINIDOS PELA MARCA — mandam mais que o que a pessoa escolheu no
+// cadastro. Serve pra dois casos:
+//   1) gestor: só quem está aqui vê o Painel e os campos de vídeo;
+//   2) corrigir/definir o papel de quem já se cadastrou (ex.: entrou como
+//      balconista antes de o papel "afiliado" existir).
+//
+// ATENÇÃO: pra GESTOR, o e-mail também precisa entrar em isGestor() no
+// firestore.eleva.rules — senão a pessoa vê os campos mas a nuvem recusa a
+// escrita, e ela acha que salvou.
+const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType }> = {
+  'maria26@gmail.com': { role: 'gestor' },
+  'viviangitti23@gmail.com': { role: 'gestor' },
+  'silene.mendesangelodesouza@gmail.com': { role: 'gestor' },
+  // Mesma pessoa, segunda conta: entra como afiliada pra testar a visão do time.
+  'silene_mendes@hotmail.com': { role: 'afiliado', affiliateType: 'geral' },
+};
+
+function overrideFor(email: string) {
+  return ROLE_OVERRIDES[email.trim().toLowerCase()];
+}
 
 function roleFor(email: string, profile: ElevaProfile | null): Role {
   const e = email.trim().toLowerCase();
-  // Prioridade: e-mail na lista de autorizados > perfil salvo NA CONTA (Firestore,
-  // vale em qualquer aparelho) > perfil salvo neste aparelho (cache) > vendedora.
-  if (GESTOR_EMAILS.includes(e)) return 'gestor';
+  // Prioridade: papel definido pela marca > perfil salvo NA CONTA (Firestore,
+  // vale em qualquer aparelho) > perfil salvo neste aparelho (cache) > balconista.
+  const ov = overrideFor(e);
+  if (ov) return ov.role;
   return profile?.role ?? storedRole(e) ?? 'balconista';
 }
 
 function affiliateTypeFor(email: string, profile: ElevaProfile | null): AffiliateType | undefined {
+  // O que a marca definiu manda — inclusive sobre o que a pessoa escolheu no
+  // cadastro (ex.: entrou como balconista antes de o papel afiliado existir).
+  const ov = overrideFor(email);
+  if (ov?.affiliateType) return ov.affiliateType;
   const fromProfile = profile?.affiliateType;
   if (fromProfile === 'geral' || fromProfile === 'saude') return fromProfile;
   return storedAffiliateType(email) ?? undefined;

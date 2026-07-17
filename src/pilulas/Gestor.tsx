@@ -684,7 +684,7 @@ export default function Gestor() {
   const { brand, brandId } = useBrand();
   const [openForm, setOpenForm] = useState<'produto' | 'oferta' | 'calendario' | 'tendencia' | null>(null);
   const [toast, setToast] = useState('');
-  const [tab, setTab] = useState<'resultados' | 'vendas' | 'videos' | 'conteudo'>('resultados');
+  const [tab, setTab] = useState<'resultados' | 'vendas' | 'conteudo'>('resultados');
 
   const products = allProducts().filter((p) => p.brand === brandId);
   const vids = videoTotals(products);
@@ -718,22 +718,21 @@ export default function Gestor() {
         <button className={`wp-gz-tab ${tab === 'vendas' ? 'on' : ''}`} onClick={() => setTab('vendas')}>
           <Receipt size={15} className="wp-ico" /> Vendas
         </button>
-        <button className={`wp-gz-tab ${tab === 'videos' ? 'on' : ''}`} onClick={() => setTab('videos')}>
-          <Video size={15} className="wp-ico" /> Vídeos
-          <span className={`wp-gz-tab-badge ${vids.feitos === vids.total ? 'full' : ''}`}>{vids.feitos}/{vids.total}</span>
-        </button>
         <button className={`wp-gz-tab ${tab === 'conteudo' ? 'on' : ''}`} onClick={() => setTab('conteudo')}>
           <Package size={15} className="wp-ico" /> Conteúdo
+          {/* Contador de vídeos na aba — a tarefa principal não some por estar aqui dentro */}
+          <span className={`wp-gz-tab-badge ${vids.feitos === vids.total ? 'full' : ''}`}>{vids.feitos}/{vids.total}</span>
         </button>
       </div>
 
       {tab === 'vendas' && <Vendas brandId={brandId} />}
 
-      {tab === 'videos' && <VideosPorPublico products={products} />}
-
       {tab === 'resultados' && <Resultados brandId={brandId} products={products} buscas={buscas} />}
 
       {tab === 'conteudo' && (<>
+      {/* Vídeos por público vem PRIMEIRO — é a principal função do gestor */}
+      <VideosPorPublico products={products} />
+
       {/* Produtos */}
       <div className="wp-gz-block">
         <div className="wp-gz-block-head">

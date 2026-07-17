@@ -22,7 +22,7 @@ export const BRANDS: Brand[] = [
   // Drogaria São Paulo — marca própria fabricada pela Sorocaps. Modo BALCÃO:
   // o balconista se prepara pra atender (catálogo + objeções + formação), sem
   // postar/compartilhar/ofertas. Tema verde (identidade Sorocaps do deck).
-  { id: 'dsp', name: 'Drogaria São Paulo', accent: '#1f7a52', accentDeep: '#14603f', light: '#5fce9a', onAccent: '#ffffff', mode: 'balcao' },
+  { id: 'dsp', name: 'Sorocaps · Drogaria São Paulo', accent: '#1f7a52', accentDeep: '#14603f', light: '#5fce9a', onAccent: '#ffffff', mode: 'balcao' },
   // HyaluVita: por ora os produtos dela ficam JUNTO no catálogo da Meraki (a pedido).
   // Para separar em marca própria, descomente a linha e ponha brand:'hyaluvita' nos produtos:
   // { id: 'hyaluvita', name: 'HyaluVita', accent: '#7a3f9e', accentDeep: '#5a2a80', light: '#b98fd6', onAccent: '#ffffff' },

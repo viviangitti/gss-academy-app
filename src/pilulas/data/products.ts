@@ -602,13 +602,16 @@ export const PRODUCTS: Product[] = [
 
   // ───────── DROGARIA SÃO PAULO · marca própria (fabricação Sorocaps) ─────────
   // Modo balcão: o balconista se prepara pra atender. Conteúdo compliance-safe.
-  // ⚠️ Conferir com a Sorocaps: mg de EPA/DHA, mg de melatonina, e o diferencial
-  // exato do "Plus" (aqui: concentração reforçada).
+  // Especificações confirmadas no site da Drogaria São Paulo (marca própria):
+  // Ômega 3 = 1000mg/cáps, Plus = 1050mg (concentração reforçada), Mini = 550mg
+  // (cápsula menor). ⚠️ Ainda conferir com a Sorocaps: a divisão exata de EPA/DHA
+  // e o mg de melatonina.
   {
     id: 'dsp-omega-3',
     brand: 'dsp',
     name: 'Ômega 3',
     category: 'capsulas',
+    imageUrl: 'https://drogariasp.vteximg.com.br/arquivos/ids/1624324-1000-1000/893056---omega-3-drogaria-sao-paulo-1000mg-120-capsulas-1.jpg?v=639053966796200000',
     tagline: 'Óleo de peixe com EPA e DHA em cápsula — para quem não come peixe o suficiente. Em 60 e 120 cápsulas.',
     hook: 'Come pouco peixe? O ômega 3 que o coração e o cérebro pedem costuma faltar na alimentação.',
     whatItIs:
@@ -641,7 +644,8 @@ export const PRODUCTS: Product[] = [
     ],
     ficha: [
       { label: 'O que é', value: 'Óleo de peixe — fonte de ômega 3 (EPA e DHA)' },
-      { label: 'Ativos', value: 'EPA e DHA (confira a concentração no rótulo)' },
+      { label: 'Concentração', value: '1000mg por cápsula' },
+      { label: 'Ativos', value: 'EPA e DHA (confira a divisão no rótulo)' },
       { label: 'Formato', value: 'Cápsulas softgel — frascos de 60 e de 120' },
       { label: 'Dose', value: 'Conforme o rótulo, junto de uma refeição' },
       { label: 'Duração', value: 'Frasco de 120 = ~4 meses (1 cápsula/dia)' },
@@ -653,6 +657,7 @@ export const PRODUCTS: Product[] = [
     brand: 'dsp',
     name: 'Ômega 3 Plus',
     category: 'capsulas',
+    imageUrl: 'https://drogariasp.vteximg.com.br/arquivos/ids/1624320-1000-1000/891908---Suplemento-Alimentar-Omega-3-Plus-1050mg-Drogaria-Sao-Paulo-60-Capsulas-1.jpg?v=639053966414500000',
     tagline: 'Versão com concentração reforçada de ômega 3 — mais EPA e DHA por cápsula.',
     hook: 'Quer mais ômega 3 sem tomar mais cápsulas? A versão Plus é mais concentrada.',
     whatItIs:
@@ -682,7 +687,7 @@ export const PRODUCTS: Product[] = [
       { t: '24-30s', label: 'CTA', line: 'Quer comparar com o comum? Me chama.' },
     ],
     ficha: [
-      { label: 'Diferencial', value: 'Concentração reforçada de ômega 3 por cápsula' },
+      { label: 'Diferencial', value: '1050mg por cápsula — concentração reforçada' },
       { label: 'Ativos', value: 'EPA e DHA em maior concentração (confira o rótulo)' },
       { label: 'Formato', value: 'Cápsulas softgel — frasco de 60' },
       { label: 'Dose', value: 'Conforme o rótulo, junto de uma refeição' },
@@ -694,6 +699,7 @@ export const PRODUCTS: Product[] = [
     brand: 'dsp',
     name: 'Ômega 3 Mini Caps',
     category: 'capsulas',
+    imageUrl: 'https://drogariasp.vteximg.com.br/arquivos/ids/1624318-1000-1000/891843---Suplemento-Alimentar-Omega-3-Mini-550mg-Drogaria-Sao-Paulo-60-Capsulas-1.jpg?v=639053966234230000',
     tagline: 'O mesmo ômega 3, em cápsula menor — fácil de engolir.',
     hook: 'Tem dificuldade de engolir cápsula grande? O ômega 3 também vem em versão mini.',
     whatItIs:
@@ -723,7 +729,7 @@ export const PRODUCTS: Product[] = [
       { t: '24-30s', label: 'CTA', line: 'Ficou fácil de tomar. Me chama que eu te mostro.' },
     ],
     ficha: [
-      { label: 'Diferencial', value: 'Cápsula menor — fácil de engolir' },
+      { label: 'Diferencial', value: '550mg — cápsula menor, fácil de engolir' },
       { label: 'Ativos', value: 'EPA e DHA (mesmo ômega 3; confira o rótulo)' },
       { label: 'Formato', value: 'Cápsulas softgel mini — frasco de 60' },
       { label: 'Dose', value: 'Conforme o rótulo, junto de uma refeição' },
@@ -735,6 +741,7 @@ export const PRODUCTS: Product[] = [
     brand: 'dsp',
     name: 'Melatonina + Triptofano',
     category: 'capsulas',
+    imageUrl: 'https://drogariasp.vteximg.com.br/arquivos/ids/1926936-1000-1000/891959---MELATONINA-TRIPTOFANO-DSP-60-CPS-1.jpg?v=639141980457530000',
     tagline: 'Melatonina com triptofano — apoio para quem tem dificuldade de pegar no sono.',
     hook: 'Custa a pegar no sono ou tem a rotina de sono desregulada?',
     whatItIs:

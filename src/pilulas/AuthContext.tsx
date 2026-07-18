@@ -48,7 +48,7 @@ const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType
   // Vivian: gestora das DUAS marcas — troca no seletor do topo.
   'maria26@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
   'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
-  'silene.mendesangelodesouza@gmail.com': { role: 'gestor' },
+  'silene.mendesangelodesouza@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
   // Mesma pessoa, segunda conta: entra como afiliada pra testar a visão do time.
   'silene_mendes@hotmail.com': { role: 'afiliado', affiliateType: 'geral' },
 };

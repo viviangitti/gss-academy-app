@@ -67,7 +67,10 @@ function searchPills(query: string, products: Product[]): Hit[] {
     }
     // o produto em si (nome, dor, benefício, pra quem é)
     const blob = norm([p.name, p.tagline, p.hook, p.whatItIs, p.forWho, p.howToUse, ...p.benefits].join(' '));
-    const s = score(blob, words);
+    // Se o NOME do produto bate, o card de benefícios vem forte na frente —
+    // é o caso "digitei o nome do produto, quero ver os benefícios".
+    const nameMatch = score(norm(p.name), words);
+    const s = score(blob, words) + nameMatch * 5;
     if (s > 0) hits.push({ product: p, kind: 'produto', score: s });
   }
   // Mais palavras batidas primeiro; no empate, resposta pronta (objeção) na frente.
@@ -110,9 +113,13 @@ function HitCard({ hit }: { hit: Hit }) {
   }
   return (
     <Link to={`/eleva/produto/${hit.product.id}`} className="wp-td-hit wp-td-hit-prod">
-      <span className="wp-td-hit-tag"><Play size={12} className="wp-ico" /> Pílula · 30s</span>
-      <p className="wp-td-hit-trigger">{hit.product.name}</p>
-      <p className="wp-td-hit-answer">{hit.product.hook}</p>
+      <span className="wp-td-hit-tag"><Play size={12} className="wp-ico" /> {hit.product.name} · benefícios</span>
+      <ul className="wp-td-hit-bens">
+        {hit.product.benefits.slice(0, 4).map((b, i) => (
+          <li key={i}><Check size={13} className="wp-ico" /> {b}</li>
+        ))}
+      </ul>
+      <span className="wp-td-hit-open">ver pílula (30s) <ChevronRight size={14} className="wp-ico" /></span>
     </Link>
   );
 }

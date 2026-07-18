@@ -1300,6 +1300,14 @@
   display: inline-flex; align-items: center; gap: 3px;
   color: var(--wp-pink-deep); font-size: 12.5px; font-weight: 800; text-decoration: none;
 }
+/* Benefícios direto no card de busca do produto (digitou o nome → vê benefícios) */
+.wp-td-hit-bens { list-style: none; margin: 8px 0 4px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.wp-td-hit-bens li {
+  display: flex; align-items: flex-start; gap: 7px;
+  font-size: 13.5px; line-height: 1.4; color: var(--wp-text);
+}
+.wp-td-hit-bens li .wp-ico { color: var(--wp-pink-deep); flex: none; margin-top: 2px; }
+.wp-td-hit-prod .wp-td-hit-open { margin-top: 8px; }
 .wp-td-nohit { font-size: 13px; color: var(--wp-soft); text-align: center; padding: 10px; }
 .wp-td-card {
   background: var(--wp-surface); border-radius: 18px; padding: 14px;

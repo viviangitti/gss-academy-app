@@ -4,7 +4,9 @@ import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
+  Volume2, VolumeX,
 } from 'lucide-react';
+import { speak, stopSpeaking, speechSupported, primeSpeech } from './data/speech';
 import { buildShareVariants, buildFichaMessage, buyLinkFor, type BuyContext, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
@@ -36,6 +38,7 @@ function Reel({ product }: { product: ProductT }) {
   const { user } = useAuth();
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(true);
+  const [narrate, setNarrate] = useState(false); // locução pela voz do navegador
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Cada público vê o vídeo dele (balconista / promotor / afiliado geral /
@@ -55,15 +58,32 @@ function Reel({ product }: { product: ProductT }) {
   const scene = product.storyboard[i];
   const ms = sceneMs(scene.t);
 
+  // Avanço por TEMPO — só quando NÃO está narrando (aí quem conduz é a voz).
   useEffect(() => {
-    if (!playing) return;
+    if (!playing || narrate) return;
     timer.current = setTimeout(() => {
       setI((prev) => (prev + 1) % product.storyboard.length);
     }, ms);
     return () => {
       if (timer.current) clearTimeout(timer.current);
     };
-  }, [i, playing, ms, product.storyboard.length]);
+  }, [i, playing, ms, narrate, product.storyboard.length]);
+
+  // Locução: fala o trecho da cena e, quando termina de falar, avança o slide.
+  // A voz é quem dita o ritmo — assim nada é cortado no meio.
+  useEffect(() => {
+    if (!narrate || !playing) {
+      stopSpeaking();
+      return;
+    }
+    speak(scene.line, () => {
+      setI((prev) => (prev + 1) % product.storyboard.length);
+    });
+    return () => stopSpeaking();
+  }, [i, narrate, playing, scene.line, product.storyboard.length]);
+
+  // Sai da pílula (ou troca pra vídeo) → cala a voz.
+  useEffect(() => () => stopSpeaking(), []);
 
   // Prioridade: [afiliado] vídeo do tipo (MP4 > reel) > [base] MP4 > reel > storyboard animado.
   if (variantMp4) return <VideoMp4 url={variantMp4} />;
@@ -88,6 +108,24 @@ function Reel({ product }: { product: ProductT }) {
       onClick={() => setPlaying((p) => !p)}
     >
       <div className="wp-reel-glow" />
+      {speechSupported() && (
+        <button
+          type="button"
+          className={`wp-reel-narrate ${narrate ? 'on' : ''}`}
+          onClick={(e) => {
+            e.stopPropagation(); // não pausa o reel ao tocar no botão
+            if (!narrate) {
+              primeSpeech(); // destrava a voz no iOS (dentro do toque)
+              setPlaying(true);
+            }
+            setNarrate((n) => !n);
+          }}
+          aria-label={narrate ? 'Desligar locução' : 'Ouvir a locução'}
+        >
+          {narrate ? <Volume2 size={13} className="wp-ico" /> : <VolumeX size={13} className="wp-ico" />}
+          {narrate ? 'Narrando' : 'Ouvir'}
+        </button>
+      )}
       <div className="wp-reel-top">
         <span className="wp-reel-badge" key={`b${i}`}>{scene.label}</span>
         <span className="wp-reel-time">{scene.t}</span>

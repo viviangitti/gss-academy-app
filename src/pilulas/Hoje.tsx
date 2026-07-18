@@ -141,6 +141,10 @@ export default function Hoje() {
   );
   const hits = useMemo(() => searchPills(q, products), [q, products]);
 
+  // Trocou de marca? Limpa a busca — senão o texto da marca anterior fica no
+  // campo e o próximo termo entra colado (ex.: "emagrecer" + "colesterol").
+  useEffect(() => { setQ(''); }, [brandId]);
+
   // Inteligência de mercado: o que a ponta busca = as objeções reais do cliente.
   useEffect(() => {
     if (q.trim().length >= 3) logSearch(q, brandId);

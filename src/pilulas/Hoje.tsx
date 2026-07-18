@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Receipt, Infinity as InfinityIcon, Sparkles } from 'lucide-react';
+import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Receipt, Infinity as InfinityIcon } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
 import { buildShareMessage, visibleProducts, type Product } from './data/products';
 import { getAfiliadoCode } from './data/afiliadoCode';
@@ -208,17 +208,6 @@ export default function Hoje() {
           aria-label="Buscar resposta pronta"
         />
       </div>
-      {/* Assistente de balcão (IA) — atalho pra tirar dúvida em linguagem natural */}
-      {balcao && !q.trim() && (
-        <Link to="/eleva/assistente" className="wp-td-ia">
-          <span className="wp-td-ia-ic"><Sparkles size={18} className="wp-ico" /></span>
-          <span className="wp-td-ia-txt">
-            <b>Tira-dúvida do balcão</b>
-            <small>Pergunte à IA sobre os produtos — resposta rápida e certa</small>
-          </span>
-          <ChevronRight size={18} className="wp-ico wp-td-ia-chev" />
-        </Link>
-      )}
       {q.trim().length >= 2 && (
         <div className="wp-td-hits">
           {hits.length ? hits.map((h, i) => <HitCard key={i} hit={h} />) : (

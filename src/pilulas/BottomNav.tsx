@@ -1,5 +1,5 @@
-import { NavLink, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Sparkles, Trophy, Tag, LayoutDashboard, Eye, GraduationCap } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { Home, BookOpen, Sparkles, Trophy, Tag, LayoutDashboard, Eye, GraduationCap, MessageCircleQuestion } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { isBalcao } from './data/brands';
@@ -34,17 +34,14 @@ const AFILIADO_TABS = [
 const BALCAO_TABS = [
   { to: '/eleva', label: 'Hoje', icon: Home, end: true },
   { to: '/eleva/catalogo', label: 'Catálogo', icon: BookOpen, end: false },
+  { to: '/eleva/assistente', label: 'Tira-dúvida', icon: MessageCircleQuestion, end: false },
   { to: '/eleva/trilha', label: 'Formação', icon: GraduationCap, end: false },
 ];
 
 export default function BottomNav() {
   const { user } = useAuth();
   const { brandId } = useBrand();
-  const { pathname } = useLocation();
   const balcao = isBalcao(brandId);
-  // Chat da IA é tela focada (tem "Voltar" própria) — esconde o menu de baixo
-  // pra a barra de digitar não colidir com a navegação.
-  if (pathname.startsWith('/eleva/assistente')) return null;
   const tabs =
     user?.role === 'gestor' ? GESTOR_TABS :
     balcao ? BALCAO_TABS : // farmácia: enxuto, independe do papel

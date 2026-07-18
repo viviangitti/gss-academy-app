@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ArrowRight, ArrowUpRight, Eye, EyeOff } from 'lucide-react';
 import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } from '../services/auth';
 import { SEGMENTS, setMySegment, mySegment, type SegmentId } from './data/segments';
-import { setStoredRole, GESTOR_CODE } from './data/roles';
+import { setStoredRole } from './data/roles';
 import { setElevaProfile } from './data/profile';
 import { invitedBrand } from './data/brandInvite';
 import { getBrand, isBalcao } from './data/brands';
@@ -27,7 +27,6 @@ export default function Login() {
   // Convite por marca (?marca=dsp): a pessoa entra já naquela marca.
   const invBrand = invitedBrand();
   const invBalcao = !!invBrand && isBalcao(invBrand);
-  const [code, setCode] = useState('');
 
   const emailOk = /\S+@\S+\.\S+/.test(email);
   const valid =
@@ -40,12 +39,8 @@ export default function Login() {
     setInfo('');
     try {
       if (mode === 'criar') {
-        // Gestor(a) da marca só com o código certo; senão, avisa (não vira gestor mudo).
-        if (role === 'gestor' && code.trim() !== GESTOR_CODE) {
-          setError('Código de gestor inválido. Se você vende na ponta, escolha "Vendedor(a)".');
-          setBusy(false);
-          return;
-        }
+        // Papel escolhido no cadastro é só o inicial: o poder real de gestor vem
+        // do e-mail (override + regras do Firestore), não de um código na tela.
         // Balcão (convite por marca): a pessoa é balconista, sem escolher papel.
         const finalRole: Role = invBalcao ? 'balconista' : role;
         const seg = finalRole === 'balconista' && !invBalcao ? segment : '';
@@ -176,13 +171,6 @@ export default function Login() {
             <label className="wp-login-label">Seu nome</label>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />
 
-            {role === 'gestor' && (
-              <>
-                <label className="wp-login-label">Código de gestor</label>
-                <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="O código que a marca te passou" />
-                <p className="wp-login-hint">A marca fornece esse código apenas a quem faz parte do time dela.</p>
-              </>
-            )}
             {role === 'balconista' && (
               <>
                 <label className="wp-login-label">Onde você vende? (opcional)</label>
@@ -238,7 +226,7 @@ export default function Login() {
           </button>
         )}
       </div>
-      <p className="wp-login-note">Balconista, promotor(a) e afiliado(a) entram direto. Gestor(a) da marca precisa do código de acesso.</p>
+      <p className="wp-login-note">Escolha seu perfil e crie sua conta. Seu acesso é liberado pela marca conforme o seu e-mail.</p>
     </div>
   );
 }

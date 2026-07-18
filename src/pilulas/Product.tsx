@@ -4,7 +4,7 @@ import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
-  Volume2, VolumeX,
+  Volume2,
 } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { buildShareVariants, buildFichaMessage, buyLinkFor, type BuyContext, type Product as ProductT } from './data/products';
@@ -170,51 +170,54 @@ function Reel({ product }: { product: ProductT }) {
 
   // Sem vídeo: o storyboard animado (a foto NÃO entra aqui — é só capa do catálogo).
   return (
-    <div
-      className="wp-reel"
-      style={{ background: `linear-gradient(160deg, ${product.gradient[0]}, ${product.gradient[1]})` }}
-      onClick={togglePlay}
-    >
-      <div className="wp-reel-glow" />
-      {/* Áudio pronto (voz neural Francisca). preload=none: só baixa ao tocar. */}
-      <audio ref={audioRef} preload="none" hidden />
+    <>
+      <div
+        className="wp-reel"
+        style={{ background: `linear-gradient(160deg, ${product.gradient[0]}, ${product.gradient[1]})` }}
+        onClick={togglePlay}
+      >
+        <div className="wp-reel-glow" />
+        {/* Áudio pronto (voz neural Francisca). preload=none: só baixa ao tocar. */}
+        <audio ref={audioRef} preload="none" hidden />
+        <div className="wp-reel-top">
+          <span className="wp-reel-badge" key={`b${i}`}>{scene.label}</span>
+          <span className="wp-reel-time">{scene.t}</span>
+        </div>
+
+        <div className="wp-reel-caption" key={i}>
+          {scene.line}
+        </div>
+
+        <div className="wp-reel-bottom">
+          <div className="wp-reel-bars">
+            {product.storyboard.map((_, idx) => (
+              <span key={idx} className={`wp-reel-bar ${idx < i ? 'done' : ''}`}>
+                {idx === i && (
+                  <span
+                    className="wp-reel-bar-fill"
+                    style={{ animationDuration: `${ms}ms`, animationPlayState: playing ? 'running' : 'paused' }}
+                  />
+                )}
+              </span>
+            ))}
+          </div>
+          <div className="wp-reel-hint">
+            {playing ? <Pause size={11} className="wp-ico" /> : <Play size={11} className="wp-ico" />}
+            {playing ? ' toque p/ pausar' : ' toque p/ tocar'}
+          </div>
+        </div>
+      </div>
+
+      {/* Botão SEPARADO abaixo da pílula — sem se confundir com o toque no card. */}
       <button
         type="button"
-        className={`wp-reel-narrate ${narrate ? 'on' : ''}`}
+        className={`wp-reel-listen ${narrate ? 'on' : ''}`}
         onClick={toggleNarrate}
-        aria-label={narrate ? 'Desligar locução' : 'Ouvir a locução'}
       >
-        {narrate ? <Volume2 size={13} className="wp-ico" /> : <VolumeX size={13} className="wp-ico" />}
-        {narrate ? 'Narrando' : 'Ouvir'}
+        {narrate ? <Pause size={16} className="wp-ico" /> : <Volume2 size={16} className="wp-ico" />}
+        {narrate ? 'Parar narração' : 'Ouvir a locução'}
       </button>
-      <div className="wp-reel-top">
-        <span className="wp-reel-badge" key={`b${i}`}>{scene.label}</span>
-        <span className="wp-reel-time">{scene.t}</span>
-      </div>
-
-      <div className="wp-reel-caption" key={i}>
-        {scene.line}
-      </div>
-
-      <div className="wp-reel-bottom">
-        <div className="wp-reel-bars">
-          {product.storyboard.map((_, idx) => (
-            <span key={idx} className={`wp-reel-bar ${idx < i ? 'done' : ''}`}>
-              {idx === i && (
-                <span
-                  className="wp-reel-bar-fill"
-                  style={{ animationDuration: `${ms}ms`, animationPlayState: playing ? 'running' : 'paused' }}
-                />
-              )}
-            </span>
-          ))}
-        </div>
-        <div className="wp-reel-hint">
-          {playing ? <Pause size={11} className="wp-ico" /> : <Play size={11} className="wp-ico" />}
-          {playing ? ' toque p/ pausar' : ' toque p/ tocar'}
-        </div>
-      </div>
-    </div>
+    </>
   );
 }
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
@@ -6,7 +6,7 @@ import {
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
   Volume2, VolumeX,
 } from 'lucide-react';
-import { speak, stopSpeaking, speechSupported, primeSpeech } from './data/speech';
+import { speak, stopSpeaking, speechSupported } from './data/speech';
 import { buildShareVariants, buildFichaMessage, buyLinkFor, type BuyContext, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
@@ -40,6 +40,12 @@ function Reel({ product }: { product: ProductT }) {
   const [playing, setPlaying] = useState(true);
   const [narrate, setNarrate] = useState(false); // locução pela voz do navegador
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Refs pra ler o estado atual DENTRO dos callbacks (onEnd da fala, cliques) sem
+  // depender de re-render — essencial pro iOS, que só fala dentro do gesto.
+  const iRef = useRef(0);
+  const narrateRef = useRef(false);
+  const playRef = useRef(true);
+  const narrateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Cada público vê o vídeo dele (balconista / promotor / afiliado geral /
   // afiliado saúde). Sem vídeo do público, cai no vídeo padrão do produto.
@@ -57,33 +63,82 @@ function Reel({ product }: { product: ProductT }) {
 
   const scene = product.storyboard[i];
   const ms = sceneMs(scene.t);
+  const len = product.storyboard.length;
+
+  // Mantém os refs em dia com o estado (usados dentro dos callbacks).
+  useEffect(() => { iRef.current = i; }, [i]);
+  useEffect(() => { playRef.current = playing; }, [playing]);
+  useEffect(() => { narrateRef.current = narrate; }, [narrate]);
 
   // Avanço por TEMPO — só quando NÃO está narrando (aí quem conduz é a voz).
   useEffect(() => {
     if (!playing || narrate) return;
     timer.current = setTimeout(() => {
-      setI((prev) => (prev + 1) % product.storyboard.length);
+      setI((prev) => (prev + 1) % len);
     }, ms);
     return () => {
       if (timer.current) clearTimeout(timer.current);
     };
-  }, [i, playing, ms, narrate, product.storyboard.length]);
+  }, [i, playing, ms, narrate, len]);
 
-  // Locução: fala o trecho da cena e, quando termina de falar, avança o slide.
-  // A voz é quem dita o ritmo — assim nada é cortado no meio.
-  useEffect(() => {
-    if (!narrate || !playing) {
-      stopSpeaking();
-      return;
+  // Para a voz E o timer de segurança de uma vez.
+  const haltNarration = () => {
+    if (narrateTimer.current) clearTimeout(narrateTimer.current);
+    narrateTimer.current = null;
+    stopSpeaking();
+  };
+
+  // Fala a cena `idx` e avança pra próxima. O avanço NÃO depende só do onEnd do
+  // navegador (que no Chrome às vezes não dispara em frases longas e a voz
+  // congela): um timer estimado pelo tamanho do texto avança de qualquer jeito.
+  // Tudo imperativo e iniciado DENTRO do gesto do usuário (senão o iOS bloqueia).
+  const speakFrom = (idx: number) => {
+    if (!narrateRef.current || !playRef.current) return;
+    iRef.current = idx;
+    setI(idx);
+    const line = product.storyboard[idx].line;
+    let advanced = false;
+    const next = () => {
+      if (advanced) return; // onEnd e timer não avançam duas vezes
+      advanced = true;
+      if (narrateTimer.current) clearTimeout(narrateTimer.current);
+      if (!narrateRef.current || !playRef.current) return;
+      speakFrom((idx + 1) % len);
+    };
+    speak(line, next); // avança quando a voz termina (se o onEnd disparar)
+    // Rede de segurança: ~75ms por caractere + folga (nunca menos de 3s).
+    narrateTimer.current = setTimeout(next, Math.max(3000, line.length * 75 + 800));
+  };
+
+  // Liga/desliga a locução — chamado no toque do botão.
+  const toggleNarrate = (e: MouseEvent) => {
+    e.stopPropagation(); // não pausa o reel ao tocar no botão
+    if (narrateRef.current) {
+      narrateRef.current = false;
+      setNarrate(false);
+      haltNarration();
+    } else {
+      narrateRef.current = true;
+      playRef.current = true;
+      setNarrate(true);
+      setPlaying(true);
+      speakFrom(iRef.current); // fala já, dentro do gesto → destrava no iOS
     }
-    speak(scene.line, () => {
-      setI((prev) => (prev + 1) % product.storyboard.length);
-    });
-    return () => stopSpeaking();
-  }, [i, narrate, playing, scene.line, product.storyboard.length]);
+  };
 
-  // Sai da pílula (ou troca pra vídeo) → cala a voz.
-  useEffect(() => () => stopSpeaking(), []);
+  // Toque no reel pausa/retoma — e, se narrando, para/retoma a voz junto.
+  const togglePlay = () => {
+    const np = !playRef.current;
+    playRef.current = np;
+    setPlaying(np);
+    if (narrateRef.current) {
+      if (np) speakFrom(iRef.current);
+      else haltNarration();
+    }
+  };
+
+  // Sai da pílula (ou troca pra vídeo) → cala a voz e mata o timer.
+  useEffect(() => () => haltNarration(), []);
 
   // Prioridade: [afiliado] vídeo do tipo (MP4 > reel) > [base] MP4 > reel > storyboard animado.
   if (variantMp4) return <VideoMp4 url={variantMp4} />;
@@ -105,21 +160,14 @@ function Reel({ product }: { product: ProductT }) {
     <div
       className="wp-reel"
       style={{ background: `linear-gradient(160deg, ${product.gradient[0]}, ${product.gradient[1]})` }}
-      onClick={() => setPlaying((p) => !p)}
+      onClick={togglePlay}
     >
       <div className="wp-reel-glow" />
       {speechSupported() && (
         <button
           type="button"
           className={`wp-reel-narrate ${narrate ? 'on' : ''}`}
-          onClick={(e) => {
-            e.stopPropagation(); // não pausa o reel ao tocar no botão
-            if (!narrate) {
-              primeSpeech(); // destrava a voz no iOS (dentro do toque)
-              setPlaying(true);
-            }
-            setNarrate((n) => !n);
-          }}
+          onClick={toggleNarrate}
           aria-label={narrate ? 'Desligar locução' : 'Ouvir a locução'}
         >
           {narrate ? <Volume2 size={13} className="wp-ico" /> : <VolumeX size={13} className="wp-ico" />}

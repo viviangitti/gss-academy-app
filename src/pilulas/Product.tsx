@@ -357,7 +357,7 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
 
           <div className="wp-videdit-divider" />
           <p className="wp-videdit-now">Vídeo por público <span className="wp-videdit-cap">— cada um vê o conteúdo dele</span></p>
-          {audiencesForLine(product.line).map((a) => (
+          {audiencesForLine(product.line, product.brand).map((a) => (
             <AudienceVideoRow key={a.id} productId={product.id} audience={a.id} label={a.label} />
           ))}
 

@@ -606,7 +606,7 @@ function AudienceSlot({ productId, audience, label }: { productId: string; audie
 
 // Quantos públicos DESTE produto já têm vídeo (só os que o veem).
 function countDone(p: Product): number {
-  return audiencesForLine(p.line).filter(
+  return audiencesForLine(p.line, p.brand).filter(
     (a) => hasVideo(audienceVideoKey(p.id, a.id)) || !!getAudienceReel(p.id, a.id)
   ).length;
 }
@@ -615,7 +615,7 @@ function VideoProductRow({ p }: { p: Product }) {
   useAudienceReels();
   useStore();
   const [open, setOpen] = useState(false);
-  const auds = audiencesForLine(p.line);
+  const auds = audiencesForLine(p.line, p.brand);
   const done = countDone(p);
   return (
     <div className={`wp-gz-vp ${open ? 'open' : ''}`}>
@@ -636,7 +636,7 @@ function VideoProductRow({ p }: { p: Product }) {
 }
 
 function videoTotals(products: Product[]) {
-  const total = products.reduce((n, p) => n + audiencesForLine(p.line).length, 0);
+  const total = products.reduce((n, p) => n + audiencesForLine(p.line, p.brand).length, 0);
   const feitos = products.reduce((n, p) => n + countDone(p), 0);
   return { total, feitos };
 }

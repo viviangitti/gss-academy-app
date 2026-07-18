@@ -11,6 +11,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import type { Audience } from '../AuthContext';
 import { AFILIADO_LINE } from './products';
+import { isBalcao, type BrandId } from './brands';
 
 // Chave do MP4 no store (IndexedDB) para um produto + público.
 export function audienceVideoKey(productId: string, a: Audience): string {
@@ -104,7 +105,10 @@ export const AUDIENCES: { id: Audience; label: string }[] = [
 // O afiliado só enxerga a linha GLPEN (ver visibleProducts em products.ts), então
 // pedir vídeo de afiliado pra Hyaluvita/Moviben seria trabalho jogado fora e um
 // contador que nunca fecha.
-export function audiencesForLine(line?: string): { id: Audience; label: string }[] {
+export function audiencesForLine(line?: string, brandId?: BrandId): { id: Audience; label: string }[] {
+  // Marca em modo balcão (ex.: Drogaria São Paulo) só tem balconista — não há
+  // promotor nem afiliado ali. Manda mais que a linha.
+  if (brandId && isBalcao(brandId)) return AUDIENCES.filter((a) => a.id === 'balconista');
   if (line === AFILIADO_LINE) return AUDIENCES;
   return AUDIENCES.filter((a) => a.id === 'balconista' || a.id === 'promotor');
 }

@@ -15,15 +15,29 @@ export function speechSupported(): boolean {
 // a voz pt-BR quando ela fica disponível (evento 'voiceschanged').
 let ptVoice: SpeechSynthesisVoice | null | undefined;
 
+// Nem toda voz pt-BR é boa: o macOS tem vozes "de brincadeira" (Eddy, Flo…)
+// que soam péssimas, e o Chrome/Android têm a voz do Google (de rede), bem mais
+// natural. Damos nota pra cada voz e escolhemos a melhor.
+const GOOD = /google|luciana|microsoft|maria|helo[íi]sa|francisca|ant[oô]nio|enhanced|premium|natural|neural|online|siri/i;
+const NOVELTY = /eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley|bubbles|jester|superstar|bells|boing|bad news|good news|wobble|trinoids|albert|organ|cellos|zarvox/i;
+
+function voiceScore(v: SpeechSynthesisVoice): number {
+  if (!/^pt/i.test(v.lang)) return -1;
+  let s = 0;
+  if (/pt[-_]BR/i.test(v.lang)) s += 2; // prefere Brasil a Portugal
+  if (GOOD.test(v.name)) s += 5;
+  if (v.localService === false) s += 3; // vozes de rede costumam ser melhores
+  if (NOVELTY.test(v.name)) s -= 8; // fora com as vozes de brincadeira
+  return s;
+}
+
 function loadVoice(): SpeechSynthesisVoice | null {
   if (!speechSupported()) return null;
   const voices = window.speechSynthesis.getVoices();
   if (!voices.length) return null;
-  return (
-    voices.find((v) => /pt[-_]BR/i.test(v.lang)) ||
-    voices.find((v) => /^pt/i.test(v.lang)) ||
-    null
-  );
+  const pt = voices.filter((v) => /^pt/i.test(v.lang));
+  if (!pt.length) return null;
+  return pt.sort((a, b) => voiceScore(b) - voiceScore(a))[0];
 }
 
 if (speechSupported() && typeof window.speechSynthesis.addEventListener === 'function') {
@@ -52,7 +66,7 @@ export function speak(text: string, onEnd?: () => void): void {
   u.lang = 'pt-BR';
   if (ptVoice === undefined) ptVoice = loadVoice();
   if (ptVoice) u.voice = ptVoice;
-  u.rate = 1;
+  u.rate = 0.95; // um tico mais devagar soa menos "robô"
   u.pitch = 1;
   u.onend = () => onEnd?.();
   u.onerror = () => onEnd?.(); // se falhar, não trava o slideshow

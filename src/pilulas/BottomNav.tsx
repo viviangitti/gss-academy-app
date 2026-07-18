@@ -19,6 +19,14 @@ const GESTOR_TABS = [
   { to: '/eleva/catalogo', label: 'Ver como o time', icon: Eye, end: false },
 ];
 
+// Gestor numa marca de balcão (Sorocaps): também pode abrir o Tira-dúvida da
+// marca que gerencia, pra testar/conferir a IA.
+const GESTOR_BALCAO_TABS = [
+  { to: '/eleva/gestor', label: 'Painel', icon: LayoutDashboard, end: false },
+  { to: '/eleva/catalogo', label: 'Ver como time', icon: Eye, end: false },
+  { to: '/eleva/assistente', label: 'Tira-dúvida', icon: MessageCircleQuestion, end: false },
+];
+
 // Afiliado: tem tudo, MENOS Ofertas (preço/promoção é assunto de quem vende na
 // farmácia). Ele posta, mas no Ranking dele só conta a Formação (ver Missoes).
 const AFILIADO_TABS = [
@@ -43,7 +51,7 @@ export default function BottomNav() {
   const { brandId } = useBrand();
   const balcao = isBalcao(brandId);
   const tabs =
-    user?.role === 'gestor' ? GESTOR_TABS :
+    user?.role === 'gestor' ? (balcao ? GESTOR_BALCAO_TABS : GESTOR_TABS) :
     balcao ? BALCAO_TABS : // farmácia: enxuto, independe do papel
     user?.role === 'afiliado' ? AFILIADO_TABS :
     VENDEDORA_TABS; // balconista e promotor (revenda): tudo

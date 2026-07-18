@@ -7,6 +7,7 @@ import {
   Volume2,
 } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
+import { NARRATION_TIMINGS } from './data/narrationTimings';
 import { buildShareVariants, buildFichaMessage, buyLinkFor, type BuyContext, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
@@ -82,45 +83,59 @@ function Reel({ product }: { product: ProductT }) {
     };
   }, [i, playing, ms, narrate, len]);
 
-  // Para a locução de vez: pausa o áudio pronto, cala a voz do navegador e
-  // mata o timer de segurança.
+  // Marcas de início de cada cena no MP3 único da pílula (voz Francisca).
+  const timings = NARRATION_TIMINGS[product.id];
+
+  // Para a locução de vez: pausa o áudio, tira os listeners, cala a voz de
+  // reserva e mata o timer.
   const haltNarration = () => {
     if (narrateTimer.current) clearTimeout(narrateTimer.current);
     narrateTimer.current = null;
     const a = audioRef.current;
-    if (a) { a.onended = null; a.onerror = null; a.pause(); }
+    if (a) { a.ontimeupdate = null; a.onended = null; a.onerror = null; a.pause(); }
     stopSpeaking();
   };
 
-  // Narra a cena `idx` e avança pra próxima. Prioriza o MP3 PRONTO (voz neural
-  // Francisca em public/audio/narration) — humano e igual em todo aparelho. Se
-  // o MP3 faltar ou o navegador bloquear, cai na voz do próprio navegador.
-  // Tudo imperativo e iniciado DENTRO do gesto do usuário (senão o iOS bloqueia).
-  const playScene = (idx: number) => {
+  // Sincroniza o slide pelo tempo do áudio: mostra a última cena já começada.
+  const syncSlide = () => {
+    const a = audioRef.current;
+    if (!a || !timings) return;
+    let idx = 0;
+    for (let k = 0; k < timings.length; k++) if (a.currentTime >= timings[k] - 0.05) idx = k;
+    if (idx !== iRef.current) { iRef.current = idx; setI(idx); }
+  };
+
+  // RESERVA: voz do navegador, cena a cena (só se faltar o MP3/timings). Avanço
+  // não depende só do onEnd (que congela no Chrome): timer estimado garante.
+  const speakFrom = (idx: number) => {
     if (!narrateRef.current || !playRef.current) return;
     iRef.current = idx;
     setI(idx);
     const line = product.storyboard[idx].line;
     let advanced = false;
     const next = () => {
-      if (advanced) return; // 'ended', timer ou fallback não avançam duas vezes
+      if (advanced) return;
       advanced = true;
       if (narrateTimer.current) clearTimeout(narrateTimer.current);
       if (!narrateRef.current || !playRef.current) return;
-      playScene((idx + 1) % len);
+      speakFrom((idx + 1) % len);
     };
-    // Reserva: voz do navegador + timer estimado (usada só se o MP3 falhar).
-    const fallback = () => {
-      speak(line, next);
-      narrateTimer.current = setTimeout(next, Math.max(3000, line.length * 75 + 800));
-    };
+    speak(line, next);
+    narrateTimer.current = setTimeout(next, Math.max(3000, line.length * 75 + 800));
+  };
+
+  // PREFERIDO: UM MP3 por pílula (voz Francisca). Um único play() dentro do
+  // toque → o iOS libera e as cenas seguintes NÃO precisam de novo gesto (era o
+  // bug: só a 1ª cena tocava). Os slides seguem o tempo do áudio.
+  const startAudioNarration = () => {
     const a = audioRef.current;
-    if (!a) { fallback(); return; }
-    a.onended = next;
-    a.onerror = () => { a.onerror = null; fallback(); }; // sem MP3 pronto → voz do navegador
-    a.src = `/audio/narration/${product.id}-${idx}.mp3`;
+    if (!a || !timings) { speakFrom(iRef.current); return; }
+    a.ontimeupdate = syncSlide;
+    a.onended = () => { narrateRef.current = false; setNarrate(false); haltNarration(); };
+    a.onerror = () => { a.onerror = null; speakFrom(iRef.current); };
+    if (!a.src.endsWith(`${product.id}.mp3`)) a.src = `/audio/narration/${product.id}.mp3`;
     const pr = a.play();
-    if (pr && typeof pr.catch === 'function') pr.catch(() => fallback()); // play bloqueado
+    if (pr && typeof pr.catch === 'function') pr.catch(() => speakFrom(iRef.current));
   };
 
   // Liga/desliga a locução — chamado no toque do botão.
@@ -135,17 +150,22 @@ function Reel({ product }: { product: ProductT }) {
       playRef.current = true;
       setNarrate(true);
       setPlaying(true);
-      playScene(iRef.current); // toca já, dentro do gesto → destrava no iOS
+      startAudioNarration(); // toca já, dentro do gesto → destrava no iOS
     }
   };
 
-  // Toque no reel pausa/retoma — e, se narrando, para/retoma a voz junto.
+  // Toque no reel pausa/retoma — e, se narrando, para/retoma a locução junto.
   const togglePlay = () => {
     const np = !playRef.current;
     playRef.current = np;
     setPlaying(np);
-    if (narrateRef.current) {
-      if (np) playScene(iRef.current);
+    if (!narrateRef.current) return;
+    const a = audioRef.current;
+    if (timings && a) {
+      if (np) { const pr = a.play(); if (pr && pr.catch) pr.catch(() => {}); }
+      else a.pause();
+    } else {
+      if (np) speakFrom(iRef.current);
       else haltNarration();
     }
   };

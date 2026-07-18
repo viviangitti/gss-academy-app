@@ -83,9 +83,10 @@ export const NARRATION_TIMINGS: Record<string, number[]> = {
   ],
   "dsp-omega-3": [
     0.0,
-    5.21,
-    11.45,
-    19.92
+    5.62,
+    16.27,
+    25.49,
+    40.3
   ],
   "dsp-omega-3-plus": [
     0.0,

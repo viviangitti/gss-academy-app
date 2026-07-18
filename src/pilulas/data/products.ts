@@ -637,10 +637,11 @@ export const PRODUCTS: Product[] = [
     durationSec: 30,
     gradient: ['#2f9d6a', '#14603f'],
     storyboard: [
-      { t: '0-4s', label: 'GANCHO', line: 'Come pouco peixe? O ômega 3 que o corpo pede costuma faltar.' },
-      { t: '4-12s', label: 'O PORQUÊ', line: 'EPA e DHA vêm do peixe — o corpo não produz. Sem peixe frequente, falta.' },
-      { t: '12-24s', label: 'O PRODUTO', line: 'Ômega 3 em cápsula: a dose que o coração e o cérebro pedem, todo dia. Em 60 e 120 cápsulas.' },
-      { t: '24-30s', label: 'CTA', line: 'Uma por dia. Quer entender os tamanhos? Me chama.' },
+      { t: '0-5s', label: 'GANCHO', line: 'Come pouco peixe? Então provavelmente falta ômega 3 no seu dia.' },
+      { t: '5-13s', label: 'POR QUE TOMAR', line: 'EPA e DHA vêm do peixe, o corpo não produz, e são eles que contribuem pro coração e ajudam o cérebro. Sem peixe quase todo dia, falta.' },
+      { t: '13-21s', label: 'O PRODUTO', line: 'Uma cápsula por dia repõe o que faltou no prato: 540mg de EPA e 360mg de DHA.' },
+      { t: '21-33s', label: 'POR QUE ESTE', line: 'Por que este e não outro? É a marca própria da Drogaria São Paulo: a farmácia bota o nome dela, com preço justo. E tem a linha completa — 120 pra economizar, Mini pra engolir fácil e Plus concentrado, sem gosto de peixe.' },
+      { t: '33-38s', label: 'CTA', line: 'Uma por dia. Me chama que eu te ajudo a escolher a sua.' },
     ],
     ficha: [
       { label: 'O que é', value: 'Óleo de peixe — fonte de ômega 3 (EPA e DHA)' },

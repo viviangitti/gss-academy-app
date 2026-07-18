@@ -6,7 +6,7 @@ import {
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
   Volume2, VolumeX,
 } from 'lucide-react';
-import { speak, stopSpeaking, speechSupported } from './data/speech';
+import { speak, stopSpeaking } from './data/speech';
 import { buildShareVariants, buildFichaMessage, buyLinkFor, type BuyContext, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
@@ -46,6 +46,7 @@ function Reel({ product }: { product: ProductT }) {
   const narrateRef = useRef(false);
   const playRef = useRef(true);
   const narrateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Cada público vê o vídeo dele (balconista / promotor / afiliado geral /
   // afiliado saúde). Sem vídeo do público, cai no vídeo padrão do produto.
@@ -81,33 +82,45 @@ function Reel({ product }: { product: ProductT }) {
     };
   }, [i, playing, ms, narrate, len]);
 
-  // Para a voz E o timer de segurança de uma vez.
+  // Para a locução de vez: pausa o áudio pronto, cala a voz do navegador e
+  // mata o timer de segurança.
   const haltNarration = () => {
     if (narrateTimer.current) clearTimeout(narrateTimer.current);
     narrateTimer.current = null;
+    const a = audioRef.current;
+    if (a) { a.onended = null; a.onerror = null; a.pause(); }
     stopSpeaking();
   };
 
-  // Fala a cena `idx` e avança pra próxima. O avanço NÃO depende só do onEnd do
-  // navegador (que no Chrome às vezes não dispara em frases longas e a voz
-  // congela): um timer estimado pelo tamanho do texto avança de qualquer jeito.
+  // Narra a cena `idx` e avança pra próxima. Prioriza o MP3 PRONTO (voz neural
+  // Francisca em public/audio/narration) — humano e igual em todo aparelho. Se
+  // o MP3 faltar ou o navegador bloquear, cai na voz do próprio navegador.
   // Tudo imperativo e iniciado DENTRO do gesto do usuário (senão o iOS bloqueia).
-  const speakFrom = (idx: number) => {
+  const playScene = (idx: number) => {
     if (!narrateRef.current || !playRef.current) return;
     iRef.current = idx;
     setI(idx);
     const line = product.storyboard[idx].line;
     let advanced = false;
     const next = () => {
-      if (advanced) return; // onEnd e timer não avançam duas vezes
+      if (advanced) return; // 'ended', timer ou fallback não avançam duas vezes
       advanced = true;
       if (narrateTimer.current) clearTimeout(narrateTimer.current);
       if (!narrateRef.current || !playRef.current) return;
-      speakFrom((idx + 1) % len);
+      playScene((idx + 1) % len);
     };
-    speak(line, next); // avança quando a voz termina (se o onEnd disparar)
-    // Rede de segurança: ~75ms por caractere + folga (nunca menos de 3s).
-    narrateTimer.current = setTimeout(next, Math.max(3000, line.length * 75 + 800));
+    // Reserva: voz do navegador + timer estimado (usada só se o MP3 falhar).
+    const fallback = () => {
+      speak(line, next);
+      narrateTimer.current = setTimeout(next, Math.max(3000, line.length * 75 + 800));
+    };
+    const a = audioRef.current;
+    if (!a) { fallback(); return; }
+    a.onended = next;
+    a.onerror = () => { a.onerror = null; fallback(); }; // sem MP3 pronto → voz do navegador
+    a.src = `/audio/narration/${product.id}-${idx}.mp3`;
+    const pr = a.play();
+    if (pr && typeof pr.catch === 'function') pr.catch(() => fallback()); // play bloqueado
   };
 
   // Liga/desliga a locução — chamado no toque do botão.
@@ -122,7 +135,7 @@ function Reel({ product }: { product: ProductT }) {
       playRef.current = true;
       setNarrate(true);
       setPlaying(true);
-      speakFrom(iRef.current); // fala já, dentro do gesto → destrava no iOS
+      playScene(iRef.current); // toca já, dentro do gesto → destrava no iOS
     }
   };
 
@@ -132,7 +145,7 @@ function Reel({ product }: { product: ProductT }) {
     playRef.current = np;
     setPlaying(np);
     if (narrateRef.current) {
-      if (np) speakFrom(iRef.current);
+      if (np) playScene(iRef.current);
       else haltNarration();
     }
   };
@@ -163,17 +176,17 @@ function Reel({ product }: { product: ProductT }) {
       onClick={togglePlay}
     >
       <div className="wp-reel-glow" />
-      {speechSupported() && (
-        <button
-          type="button"
-          className={`wp-reel-narrate ${narrate ? 'on' : ''}`}
-          onClick={toggleNarrate}
-          aria-label={narrate ? 'Desligar locução' : 'Ouvir a locução'}
-        >
-          {narrate ? <Volume2 size={13} className="wp-ico" /> : <VolumeX size={13} className="wp-ico" />}
-          {narrate ? 'Narrando' : 'Ouvir'}
-        </button>
-      )}
+      {/* Áudio pronto (voz neural Francisca). preload=none: só baixa ao tocar. */}
+      <audio ref={audioRef} preload="none" hidden />
+      <button
+        type="button"
+        className={`wp-reel-narrate ${narrate ? 'on' : ''}`}
+        onClick={toggleNarrate}
+        aria-label={narrate ? 'Desligar locução' : 'Ouvir a locução'}
+      >
+        {narrate ? <Volume2 size={13} className="wp-ico" /> : <VolumeX size={13} className="wp-ico" />}
+        {narrate ? 'Narrando' : 'Ouvir'}
+      </button>
       <div className="wp-reel-top">
         <span className="wp-reel-badge" key={`b${i}`}>{scene.label}</span>
         <span className="wp-reel-time">{scene.t}</span>

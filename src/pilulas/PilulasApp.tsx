@@ -2,6 +2,7 @@ import { useEffect, useState, type CSSProperties } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowUpRight, ArrowLeft, ChevronDown, Check, LayoutDashboard } from 'lucide-react';
 import Hoje from './Hoje';
+import AssistenteBalcao from './AssistenteBalcao';
 import Catalog from './Catalog';
 import Product from './Product';
 import Ranking from './Ranking';
@@ -176,6 +177,7 @@ function Shell() {
           <Route path="/eleva/trilha" element={<Trilha />} />
           <Route path="/eleva/sobre" element={<Sobre />} />
           <Route path="/eleva/perfil" element={<Perfil />} />
+          <Route path="/eleva/assistente" element={<AssistenteBalcao />} />
           <Route path="/eleva/ficha/:id" element={<Ficha />} />
           <Route path="/eleva/venda" element={<BlockBalcao><BlockAfiliado><Venda /></BlockAfiliado></BlockBalcao>} />
           <Route path="/eleva/ranking" element={<BlockBalcao><Ranking /></BlockBalcao>} />

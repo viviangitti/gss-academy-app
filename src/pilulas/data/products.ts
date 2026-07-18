@@ -837,6 +837,33 @@ export function buildFichaMessage(p: Product, ctx: BuyContext = {}): string {
   return withBuyLink(parts.join('\n'), p, ctx);
 }
 
+// Monta o "conhecimento" dos produtos que vai como contexto pra IA de balcão.
+// É SÓ o conteúdo já aprovado (o que é, benefícios, objeções, ficha, aviso) —
+// a IA responde em cima disso e nada além. Ver api/eleva-ia.js.
+export function productKnowledge(products: Product[]): string {
+  return products
+    .map((p) => {
+      const benefits = p.benefits.map((b) => `- ${b}`).join('\n');
+      const objs = p.objections
+        .map((o) => `  • Se o cliente diz ${o.trigger}: ${o.answer}`)
+        .join('\n');
+      const ficha = (p.ficha || []).map((r) => `  - ${r.label}: ${r.value}`).join('\n');
+      return [
+        `### ${p.name}`,
+        p.tagline ? `Resumo: ${p.tagline}` : '',
+        `O que é: ${p.whatItIs}`,
+        `Para quem: ${p.forWho}`,
+        `Benefícios (linguagem permitida):\n${benefits}`,
+        objs ? `Objeções comuns e como responder:\n${objs}` : '',
+        ficha ? `Ficha:\n${ficha}` : '',
+        p.compliance ? `Aviso de enquadramento: ${p.compliance}` : '',
+      ]
+        .filter(Boolean)
+        .join('\n');
+    })
+    .join('\n\n');
+}
+
 export function buildShareMessage(p: Product, ctx: BuyContext = {}): string {
   const benefits = p.benefits.slice(0, 3).map((b) => `✅ ${b}`).join('\n');
   return withBuyLink(withVideoLink([

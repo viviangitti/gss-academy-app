@@ -19,6 +19,11 @@ import type { Audience } from './AuthContext';
 const ROLE_LB: Record<string, string> = {
   balconista: 'Balconistas', promotor: 'Promotores', afiliado: 'Afiliados', gestor: 'Gestores',
 };
+// Singular certo por papel — antes o código tirava só o último "s" do plural, o
+// que gerava "Gestore" (de Gestores) e "Promotore" (de Promotores).
+const ROLE_LB1: Record<string, string> = {
+  balconista: 'Balconista', promotor: 'Promotor', afiliado: 'Afiliado', gestor: 'Gestor',
+};
 
 function Resultados({ brandId, products, buscas }: { brandId: string; products: Product[]; buscas: { term: string; count: number }[] }) {
   const [rep, setRep] = useState<TeamReport | null>(null);
@@ -126,7 +131,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
           {rep.ranking.map((r, i) => (
             <div key={r.name + i} className="wp-gz-rk">
               <span className="wp-gz-rk-pos">{i + 1}</span>
-              <span className="wp-gz-rk-name">{r.name}<i>{ROLE_LB[r.role]?.replace(/s$/, '') || r.role}</i></span>
+              <span className="wp-gz-rk-name">{r.name}<i>{ROLE_LB1[r.role] || r.role}</i></span>
               <span className="wp-gz-rk-val">{r.points} pts<i>{r.views} pílulas · {r.quiz} dominados</i></span>
             </div>
           ))}
@@ -205,7 +210,7 @@ function CobrarPessoa({ p, campanhaNome, prazo }: { p: TeamPerson; campanhaNome?
     <div className="wp-gz-cob">
       <span className="wp-gz-cob-info">
         <b>{p.name}</b>
-        <i>{ROLE_LB[p.role]?.replace(/s$/, '') || p.role}{p.email ? ` · ${p.email}` : ''}</i>
+        <i>{ROLE_LB1[p.role] || p.role}{p.email ? ` · ${p.email}` : ''}</i>
       </span>
       <button className="wp-gz-cob-btn" onClick={copiar} title="Copiar mensagem pronta">
         {copiado ? <><Check size={13} className="wp-ico" /> Copiada</> : <><Copy size={13} className="wp-ico" /> Cobrar</>}
@@ -284,7 +289,7 @@ function Vendas({ brandId }: { brandId: string }) {
               {rank.slice(0, 8).map((r, i) => (
                 <div key={r.name + i} className="wp-gz-rk">
                   <span className="wp-gz-rk-pos">{i + 1}</span>
-                  <span className="wp-gz-rk-name">{r.name}<i>{ROLE_LB[r.role]?.replace(/s$/, '') || r.role}</i></span>
+                  <span className="wp-gz-rk-name">{r.name}<i>{ROLE_LB1[r.role] || r.role}</i></span>
                   <span className="wp-gz-rk-val">{r.qty} un.<i>{r.vendas} venda{r.vendas > 1 ? 's' : ''}</i></span>
                 </div>
               ))}

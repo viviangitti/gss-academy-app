@@ -70,13 +70,21 @@
   color: #fff;
   font-size: 22px;
   line-height: 1;
-  width: 26px;
   background: none;
   border: none;
-  padding: 0;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  /* Área de toque generosa (44px) e sem o atraso de ~300ms do mobile — antes o
+     alvo tinha só 26px e o toque caía fora ("clico e não vai"). O margin negativo
+     mantém o ícone alinhado à esquerda como antes. */
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px;
+  margin: -10px 4px -10px -10px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 .wp-spacer { flex: 1; }
 .wp-gear {

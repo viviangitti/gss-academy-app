@@ -48,9 +48,9 @@ const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType
   // Vivian: gestora das DUAS marcas — troca no seletor do topo.
   'maria26@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
   'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
-  // Silene: as DUAS contas são gestoras das duas marcas (a pedido).
+  // Silene: Gmail é a conta de GESTORA (as duas marcas); Hotmail é a de AFILIADA.
   'silene.mendesangelodesouza@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
-  'silene_mendes@hotmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
+  'silene_mendes@hotmail.com': { role: 'afiliado', affiliateType: 'geral' },
 };
 
 function overrideFor(email: string) {

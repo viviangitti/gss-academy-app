@@ -8,6 +8,8 @@ import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
 import { getAfiliadoCode, setAfiliadoCode } from './data/afiliadoCode';
 import { notifState, notifPref, enableNotif, disableNotif } from './data/lembrete';
+import { updateElevaName } from './data/profile';
+import { auth } from '../services/firebase';
 
 // Iniciais do nome pro avatar (ex.: "Ana Paula" -> "AP").
 function initials(name?: string): string {
@@ -25,6 +27,17 @@ export default function Perfil() {
   const [code, setCode] = useState(() => getAfiliadoCode(user?.email));
   const [codeSaved, setCodeSaved] = useState(false);
   const [notifOn, setNotifOn] = useState(() => notifState() === 'granted' && notifPref());
+  const [nome, setNome] = useState(user?.name || '');
+  const [nomeBusy, setNomeBusy] = useState(false);
+
+  const salvarNome = async () => {
+    const uid = auth?.currentUser?.uid;
+    if (!uid || !nome.trim() || nome.trim() === user?.name) return;
+    setNomeBusy(true);
+    await updateElevaName(uid, nome);
+    // Recarrega pra o app reler o perfil e mostrar o nome novo em todo lugar.
+    window.location.reload();
+  };
 
   const salvarCode = () => {
     if (!user?.email) return;
@@ -54,6 +67,22 @@ export default function Perfil() {
           <p>{roleLabel(user.role, user.affiliateType)}</p>
           <span className="wp-perfil-brand">{brand.name}</span>
         </div>
+      </div>
+
+      {/* Editar o nome — antes não dava, e o ranking mostrava o e-mail de quem não preencheu */}
+      <div className="wp-perfil-card">
+        <span className="wp-perfil-label">Seu nome</span>
+        <input
+          className="wp-perfil-input"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          placeholder="Como você quer aparecer"
+          onFocus={(e) => e.target.select()}
+        />
+        <p className="wp-perfil-hint">É o nome que aparece no painel e no ranking do time.</p>
+        <button className="wp-perfil-save" onClick={salvarNome} disabled={nomeBusy || !nome.trim() || nome.trim() === user.name}>
+          {nomeBusy ? 'Salvando…' : 'Salvar nome'}
+        </button>
       </div>
 
       {/* Resumo — só pra quem consome conteúdo (gestor não tem trilha/pontos) */}

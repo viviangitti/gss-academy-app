@@ -37,6 +37,14 @@ export async function getElevaProfile(uid: string): Promise<ElevaProfile | null>
   }
 }
 
+// Atualiza SÓ o nome (merge) — sem tocar em papel/marcas. Usado no Perfil.
+export async function updateElevaName(uid: string, name: string): Promise<void> {
+  if (!db) return;
+  try {
+    await setDoc(doc(db, 'elevaUsers', uid), { name: name.trim(), updatedAt: serverTimestamp() }, { merge: true });
+  } catch { /* offline / sem permissão */ }
+}
+
 export async function setElevaProfile(uid: string, p: ElevaProfile): Promise<void> {
   if (!db) return;
   try {

@@ -35,7 +35,7 @@ export const MISSIONS: Mission[] = [
     goal: 'O vídeo de 30s já está pronto. Fale com quem está em tratamento com a medicação — é o público mais interessado.',
     productId: 'glpen-nutri-muscle',
     caption:
-      'Emagrecer com a medicação pode custar massa magra no caminho. O GLPEN Nutri Muscle traz proteína de alto valor biológico, leucina e creatina para apoiar a manutenção da massa muscular durante o processo — sempre junto do treino de força e da orientação do seu profissional de saúde. Quer saber se faz sentido para você? Me chama.',
+      'Emagrecer com a medicação pode custar massa magra no caminho. O GLPEN Nutri Muscle traz HMB, arginina e glutamina para apoiar a manutenção da massa muscular durante o processo — sempre junto do treino de força e da orientação do seu profissional de saúde. Quer saber se faz sentido para você? Me chama.',
     hashtags: '#glp1 #massamagra #emagrecimento #proteina #massamuscular #meraki',
   },
   {

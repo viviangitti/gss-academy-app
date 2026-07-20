@@ -788,7 +788,10 @@
 .wp-ms-doneflag { flex: 1; text-align: center; color: #10b981; font-weight: 800; font-size: 14px; }
 
 /* ===== Reel com vídeo real ===== */
-.wp-reel--video { padding: 0; align-items: stretch; }
+/* Vídeo real: container na altura CHEIA 9:16 (sem o cap de 62vh das outras
+   reels). Assim o vídeo 9:16 preenche exatamente — sem cortar (o produto na mão
+   dela aparece) e sem faixa preta. */
+.wp-reel--video { padding: 0; align-items: stretch; max-height: none; }
 /* Reel do Instagram como vídeo principal: iframe que toca dentro do app. */
 .wp-reel--ig {
   aspect-ratio: auto; max-height: none; height: auto;

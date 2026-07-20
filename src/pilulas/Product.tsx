@@ -61,6 +61,8 @@ function Reel({ product }: { product: ProductT }) {
 
   const variantMp4 = avKey ? getVideoObjectUrl(avKey) : undefined;
   const variantReel = audience ? getAudienceReel(product.id, audience) : undefined;
+  // Vídeo PRONTO por público (bundled em /public/videos — ex.: vídeos da Mari).
+  const staticAudienceVid = audience ? product.audienceVideos?.[audience] : undefined;
   const baseMp4 = getVideoObjectUrl(product.id) || product.videoUrl;
 
   const scene = product.storyboard[i];
@@ -173,11 +175,13 @@ function Reel({ product }: { product: ProductT }) {
   // Sai da pílula (ou troca pra vídeo) → cala a voz e mata o timer.
   useEffect(() => () => haltNarration(), []);
 
-  // Prioridade: [afiliado] vídeo do tipo (MP4 > reel) > [base] MP4 > reel > storyboard animado.
+  // Prioridade: [público] upload MP4 > reel do IG > MP4 pronto por público (bundled)
+  //           > [base] MP4 > reel base > storyboard animado.
   if (variantMp4) return <VideoMp4 url={variantMp4} />;
   if (variantReel) {
     return <div className="wp-reel wp-reel--ig"><InstagramEmbed url={variantReel} /></div>;
   }
+  if (staticAudienceVid) return <VideoMp4 url={staticAudienceVid} />;
   if (baseMp4) return <VideoMp4 url={baseMp4} />;
 
   if (product.instagramUrl) {

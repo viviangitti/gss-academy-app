@@ -4,6 +4,7 @@
 //
 import { Dumbbell, Pill, Wind, Sparkles, Flower2, type LucideIcon } from 'lucide-react';
 import type { BrandId } from './brands';
+import type { Audience } from '../AuthContext';
 //
 // Regra de ouro (compliance ANVISA p/ suplementos): benefício sempre no
 // enquadramento "auxilia / contribui / ajuda a", NUNCA "cura / trata / emagrece".
@@ -49,6 +50,7 @@ export interface Product {
   gradient: [string, string]; // capa da "reel"
   storyboard: Scene[]; // roteiro do vídeo de 30s
   videoUrl?: string; // MP4 real da pílula (quando o gestor sobe um vídeo)
+  audienceVideos?: Partial<Record<Audience, string>>; // MP4 pronto POR PÚBLICO (bundled em /public/videos) — ex.: vídeos da Mari
   instagramUrl?: string; // link de um reel/post público do IG — prova social (só o gestor cadastra)
   imageUrl?: string; // foto de capa (URL hospedada; upload local fica no IndexedDB)
   buyUrl?: string; // e-commerce oficial — a cliente compra direto
@@ -78,6 +80,7 @@ export const PRODUCTS: Product[] = [
   // ───────────────────────── CARRO-CHEFE (MERAKI) ─────────────────────────
   {
     id: 'glpen-nutri-muscle',
+    audienceVideos: { 'afiliado-saude': '/videos/glpen-nutri-muscle-nutri.mp4', 'afiliado-geral': '/videos/glpen-nutri-muscle-afiliado.mp4' },
     brand: 'meraki',
     line: 'glpen',
     buyUrl: 'https://glpennutri.com.br/products/muscle',
@@ -155,6 +158,7 @@ export const PRODUCTS: Product[] = [
 
   {
     id: 'glpen-nutri-energy',
+    audienceVideos: { 'afiliado-saude': '/videos/glpen-nutri-energy-nutri.mp4', 'afiliado-geral': '/videos/glpen-nutri-energy-afiliado.mp4' },
     brand: 'meraki',
     line: 'glpen',
     buyUrl: 'https://glpennutri.com.br/products/energy',
@@ -204,6 +208,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'glpen-nutri-ultra-az',
+    audienceVideos: { 'afiliado-saude': '/videos/glpen-nutri-ultra-az-nutri.mp4', 'afiliado-geral': '/videos/glpen-nutri-ultra-az-afiliado.mp4' },
     brand: 'meraki',
     line: 'glpen',
     buyUrl: 'https://glpennutri.com.br/products/ultra-az',

@@ -81,6 +81,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'glpen-nutri-muscle',
     audienceVideos: { 'afiliado-saude': '/videos/glpen-nutri-muscle-nutri.mp4', 'afiliado-geral': '/videos/glpen-nutri-muscle-afiliado.mp4' },
+    videoUrl: '/videos/glpen-nutri-muscle-afiliado.mp4', // base (balconista/promotor/gestor) = versão geral da Mari
     brand: 'meraki',
     line: 'glpen',
     buyUrl: 'https://glpennutri.com.br/products/muscle',
@@ -159,6 +160,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'glpen-nutri-energy',
     audienceVideos: { 'afiliado-saude': '/videos/glpen-nutri-energy-nutri.mp4', 'afiliado-geral': '/videos/glpen-nutri-energy-afiliado.mp4' },
+    videoUrl: '/videos/glpen-nutri-energy-afiliado.mp4', // base (balconista/promotor/gestor) = versão geral da Mari
     brand: 'meraki',
     line: 'glpen',
     buyUrl: 'https://glpennutri.com.br/products/energy',
@@ -209,6 +211,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'glpen-nutri-ultra-az',
     audienceVideos: { 'afiliado-saude': '/videos/glpen-nutri-ultra-az-nutri.mp4', 'afiliado-geral': '/videos/glpen-nutri-ultra-az-afiliado.mp4' },
+    videoUrl: '/videos/glpen-nutri-ultra-az-afiliado.mp4', // base (balconista/promotor/gestor) = versão geral da Mari
     brand: 'meraki',
     line: 'glpen',
     buyUrl: 'https://glpennutri.com.br/products/ultra-az',

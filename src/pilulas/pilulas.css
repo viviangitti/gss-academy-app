@@ -816,7 +816,7 @@
 .wp-reel-videoel {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* mostra o vídeo INTEIRO, sem cortar o rosto (antes: cover) */
   border-radius: 22px;
   background: #000;
 }

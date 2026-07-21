@@ -30,7 +30,6 @@ function sceneMs(t: string): number {
 // a Mari manda o vídeo já editado COM legenda queimada, tiramos o nome daqui e
 // apagamos o .vtt — senão apareceria legenda em cima de legenda.
 const LEGENDA_AUTO = new Set([
-  'glpen-nutri-muscle-afiliado',
   'glpen-nutri-energy-nutri',
   'glpen-nutri-energy-afiliado',
   'glpen-nutri-ultra-az-nutri',

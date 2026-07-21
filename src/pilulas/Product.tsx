@@ -26,9 +26,21 @@ function sceneMs(t: string): number {
   return 2600;
 }
 
+// Vídeos que AINDA usam legenda automática (.vtt gerado por transcrição). Quando
+// a Mari manda o vídeo já editado COM legenda queimada, tiramos o nome daqui e
+// apagamos o .vtt — senão apareceria legenda em cima de legenda.
+const LEGENDA_AUTO = new Set([
+  'glpen-nutri-muscle-afiliado',
+  'glpen-nutri-energy-nutri',
+  'glpen-nutri-energy-afiliado',
+  'glpen-nutri-ultra-az-nutri',
+  'glpen-nutri-ultra-az-afiliado',
+]);
+
 function VideoMp4({ url }: { url: string }) {
-  // Legenda (CC): pra vídeos bundled em /videos, existe um .vtt do mesmo nome.
-  const vtt = url.startsWith('/videos/') ? url.replace(/\.mp4$/, '.vtt') : null;
+  // Legenda (CC) só pros vídeos que ainda não vieram editados com legenda.
+  const base = url.startsWith('/videos/') ? url.split('/videos/')[1].replace(/\.mp4$/, '') : '';
+  const vtt = base && LEGENDA_AUTO.has(base) ? `/videos/${base}.vtt` : null;
   const vidRef = useRef<HTMLVideoElement | null>(null);
   const [cc, setCc] = useState('');
   const [muted, setMuted] = useState(true); // navegador só deixa autoplay se mudo

@@ -26,11 +26,33 @@ function sceneMs(t: string): number {
 }
 
 function VideoMp4({ url }: { url: string }) {
+  // Legenda (CC): pra vídeos bundled em /videos, existe um .vtt do mesmo nome.
+  const vtt = url.startsWith('/videos/') ? url.replace(/\.mp4$/, '.vtt') : null;
+  const vidRef = useRef<HTMLVideoElement | null>(null);
+  const [cc, setCc] = useState('');
+  // Lê a legenda ativa e mostra num overlay próprio (o render nativo fica atrás
+  // dos controles e some no fundo). mode='hidden': parseia mas não desenha.
+  useEffect(() => {
+    const v = vidRef.current;
+    if (!v || !vtt) return;
+    const t = v.textTracks[0];
+    if (!t) return;
+    t.mode = 'hidden';
+    const onChange = () => {
+      const cue = t.activeCues && t.activeCues[0];
+      setCc(cue ? (cue as VTTCue).text : '');
+    };
+    t.addEventListener('cuechange', onChange);
+    return () => t.removeEventListener('cuechange', onChange);
+  }, [vtt]);
   return (
     <div className="wp-reel wp-reel--video" style={{ background: '#000' }}>
       {/* Sem autoplay-mudo: mostra o play e, ao tocar (gesto do usuário), toca
           COM som. Antes começava mudo em loop e a pessoa tinha que desmutar. */}
-      <video className="wp-reel-videoel" src={url} playsInline controls preload="metadata" />
+      <video ref={vidRef} className="wp-reel-videoel" src={url} playsInline controls preload="metadata">
+        {vtt && <track kind="captions" srcLang="pt" label="Português" src={vtt} default />}
+      </video>
+      {cc && <div className="wp-reel-cc">{cc}</div>}
     </div>
   );
 }

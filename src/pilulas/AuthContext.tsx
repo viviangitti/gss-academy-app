@@ -49,6 +49,9 @@ const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType
   'maria26@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
   'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
   // Silene: Gmail é a conta de GESTORA (as duas marcas); Hotmail é a de AFILIADA.
+  // ATENÇÃO: a conta real dela é "mendesdesouza" (sem "angelo"). O endereço com
+  // "angelo" fica aqui só por segurança, caso ela use os dois.
+  'silene.mendesdesouza@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
   'silene.mendesangelodesouza@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
   'silene_mendes@hotmail.com': { role: 'afiliado', affiliateType: 'geral' },
 };

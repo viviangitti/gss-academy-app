@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Receipt, Clock, X, Copy, Bell } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Receipt, Clock, X, Copy, Bell, MessageCircle } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { CATEGORIES, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
@@ -12,6 +12,8 @@ import { CAMPANHA, prazoLabel } from './data/campanha';
 import { fetchVendas, decidirVenda, rankVendedores, type Venda as VendaT } from './data/vendas';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
+import { fetchObjections, type TeamObjection } from './data/objections';
+import type { BrandId } from './data/brands';
 import type { Audience } from './AuthContext';
 
 
@@ -183,6 +185,37 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
           <p className="wp-gz-help" style={{ margin: 0 }}>Ainda sem buscas registradas neste aparelho.</p>
         )}
       </div>
+
+      <ObjectionsPanel brandId={brandId} />
+    </div>
+  );
+}
+
+// Objeções que a PONTA registrou na pílula (ponto de contato). Dado da nuvem.
+function ObjectionsPanel({ brandId }: { brandId: string }) {
+  const [objs, setObjs] = useState<TeamObjection[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  useEffect(() => {
+    let vivo = true;
+    setCarregando(true);
+    fetchObjections(brandId as BrandId)
+      .then((r) => { if (vivo) setObjs(r); })
+      .finally(() => { if (vivo) setCarregando(false); });
+    return () => { vivo = false; };
+  }, [brandId]);
+  if (carregando) return null;
+  return (
+    <div className="wp-gz-top">
+      <div className="wp-gz-top-head"><MessageCircle size={12} className="wp-ico" /> Objeções da ponta (registradas pelo time)</div>
+      {objs.length ? objs.slice(0, 25).map((o) => (
+        <div key={o.id} className="wp-gz-obj">
+          <p className="wp-gz-obj-q">“{o.text}”</p>
+          {o.answer && <p className="wp-gz-obj-a">Respondeu: {o.answer}</p>}
+          <span className="wp-gz-obj-meta">{o.productName} · {o.byName}{o.byRole ? ` · ${o.byRole}` : ''}</span>
+        </div>
+      )) : (
+        <p className="wp-gz-help" style={{ margin: 0 }}>Ninguém registrou objeção nova ainda. Quando o time registrar na pílula (“Recebeu uma objeção nova?”), aparece aqui.</p>
+      )}
     </div>
   );
 }

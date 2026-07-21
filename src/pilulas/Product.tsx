@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
+import { submitObjection } from './data/objections';
 import { buildShareVariants, buildFichaMessage, buyLinkFor, type BuyContext, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
@@ -281,6 +282,53 @@ function Reel({ product }: { product: ProductT }) {
         {narrate ? 'Parar narração' : 'Ouvir a locução'}
       </button>
     </>
+  );
+}
+
+// Campo pra a PONTA registrar uma objeção nova (que não está na pílula). Vira um
+// ponto de contato: cai no painel do gestor. Gestor não vê aqui (ele vê a lista).
+function ObjectionSubmit({ product }: { product: ProductT }) {
+  const { brandId } = useBrand();
+  const { user } = useAuth();
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  if (user?.role === 'gestor') return null;
+
+  const enviar = async () => {
+    if (!text.trim() || busy) return;
+    setBusy(true);
+    const ok = await submitObjection(
+      { brand: brandId, productId: product.id, productName: product.name, text, answer },
+      { name: user?.name, role: user?.role },
+    );
+    setBusy(false);
+    if (ok) {
+      setSent(true); setText(''); setAnswer('');
+      setTimeout(() => { setSent(false); setOpen(false); }, 2200);
+    }
+  };
+
+  return (
+    <div className="wp-block">
+      <button type="button" className="wp-objadd-head" onClick={() => setOpen((o) => !o)}>
+        <span className="wp-block-label"><MessageCircle size={14} className="wp-ico" /> Recebeu uma objeção nova?</span>
+        <ChevronDown size={16} className={`wp-ico wp-objadd-chev ${open ? 'open' : ''}`} />
+      </button>
+      {open && (
+        <div className="wp-objadd">
+          <p className="wp-objadd-hint">Ouviu do cliente uma objeção que não está aqui em cima? Registre — chega direto pra gestão.</p>
+          <textarea className="wp-objadd-in" value={text} onChange={(e) => setText(e.target.value)} placeholder={'O que a cliente falou? Ex.: "tenho medo de misturar com meu remédio"'} rows={2} />
+          <textarea className="wp-objadd-in" value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder="Como você respondeu? (opcional)" rows={2} />
+          <button type="button" className="wp-objadd-btn" onClick={enviar} disabled={busy || !text.trim()}>
+            {sent ? <><Check size={15} className="wp-ico" /> Registrada! Valeu 👏</> : busy ? 'Enviando…' : 'Registrar objeção'}
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -582,6 +630,8 @@ export default function Product() {
         </div>
       </div>
       )}
+
+      <ObjectionSubmit product={product} />
 
       <Quiz product={product} />
 

@@ -42,6 +42,14 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // Objeções da ponta: qualquer pessoa logada REGISTRA (a leitura cai no
+    // catch-all abaixo — é conteúdo do time, não dado pessoal). Editar/apagar
+    // só o gestor (moderação).
+    match /elevaObjections/{id} {
+      allow create: if request.auth != null;
+      allow update, delete: if isGestor();
+    }
+
     // Conteúdo do Eleva: quem está logado LÊ; só o gestor ESCREVE.
     match /{document=**} {
       allow read: if request.auth != null;

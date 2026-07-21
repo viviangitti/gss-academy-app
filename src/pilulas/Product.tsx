@@ -30,6 +30,7 @@ function VideoMp4({ url }: { url: string }) {
   const vtt = url.startsWith('/videos/') ? url.replace(/\.mp4$/, '.vtt') : null;
   const vidRef = useRef<HTMLVideoElement | null>(null);
   const [cc, setCc] = useState('');
+  const [muted, setMuted] = useState(true); // navegador só deixa autoplay se mudo
   // Lê a legenda ativa e mostra num overlay próprio (o render nativo fica atrás
   // dos controles e some no fundo). mode='hidden': parseia mas não desenha.
   useEffect(() => {
@@ -45,13 +46,27 @@ function VideoMp4({ url }: { url: string }) {
     t.addEventListener('cuechange', onChange);
     return () => t.removeEventListener('cuechange', onChange);
   }, [vtt]);
+  // Ativa o som (toque do usuário) e recomeça do início pra não perder nada.
+  const ativarSom = () => {
+    const v = vidRef.current;
+    if (!v) return;
+    v.muted = false;
+    v.currentTime = 0;
+    v.play().catch(() => {});
+    setMuted(false);
+  };
   return (
     <div className="wp-reel wp-reel--video" style={{ background: '#000' }}>
-      {/* Sem autoplay-mudo: mostra o play e, ao tocar (gesto do usuário), toca
-          COM som. Antes começava mudo em loop e a pessoa tinha que desmutar. */}
-      <video ref={vidRef} className="wp-reel-videoel" src={url} playsInline controls preload="metadata">
+      {/* Abre tocando (mudo — regra do navegador) com legenda. Um toque em
+          "Ativar som" liga o áudio do início. */}
+      <video ref={vidRef} className="wp-reel-videoel" src={url} autoPlay muted playsInline controls preload="auto">
         {vtt && <track kind="captions" srcLang="pt" label="Português" src={vtt} default />}
       </video>
+      {muted && (
+        <button type="button" className="wp-reel-unmute" onClick={ativarSom}>
+          <Volume2 size={16} className="wp-ico" /> Ativar som
+        </button>
+      )}
       {cc && <div className="wp-reel-cc">{cc}</div>}
     </div>
   );
@@ -452,10 +467,26 @@ export default function Product() {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
-  const share = () => {
+  const share = async () => {
     const variants = buildShareVariants(product, buyCtx);
     const text = variants[shareIdx % variants.length];
     setShareIdx((n) => n + 1); // próximo toque = próxima versão
+    // VÍDEO + texto: manda o MP4 do público junto da mensagem (share nativo com
+    // arquivo). Se o aparelho não suportar arquivo, cai no texto (como antes).
+    const aud = audienceOf(user);
+    const vurl = (aud && product.audienceVideos?.[aud])
+      || (product.videoUrl?.startsWith('/videos/') ? product.videoUrl : null);
+    if (vurl && typeof navigator.canShare === 'function') {
+      try {
+        const resp = await fetch(vurl);
+        const blob = await resp.blob();
+        const file = new File([blob], `${product.name}.mp4`, { type: 'video/mp4' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], text, title: product.name });
+          return;
+        }
+      } catch { /* sem suporte a arquivo → cai pro texto */ }
+    }
     if (navigator.share) {
       navigator.share({ text, title: product.name }).catch(() => {});
       return;

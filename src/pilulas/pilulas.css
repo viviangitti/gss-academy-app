@@ -455,6 +455,16 @@
   padding: 10px 16px; font-size: 13.5px; font-weight: 800; font-family: inherit; cursor: pointer;
 }
 .wp-objadd-btn:disabled { opacity: 0.55; cursor: default; }
+/* Confirmação pra quem registrou: o que já chegou na gestão */
+.wp-objmine { margin-top: 6px; border-top: 1px solid var(--wp-line, #eef1ef); padding-top: 10px; }
+.wp-objmine-t {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--wp-pink-deep);
+}
+.wp-objmine-item { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; margin-top: 7px; }
+.wp-objmine-item p { margin: 0; font-size: 13px; color: var(--wp-text); line-height: 1.4; }
+.wp-objmine-item span { flex: none; font-size: 11px; color: var(--wp-soft); }
 
 /* ---------- Compliance + sales line ---------- */
 .wp-compliance {
@@ -846,6 +856,10 @@
 .wp-gz-obj-q { margin: 0; font-size: 14px; font-weight: 700; color: var(--wp-ink); line-height: 1.4; }
 .wp-gz-obj-a { margin: 4px 0 0; font-size: 13px; color: var(--wp-text); line-height: 1.45; }
 .wp-gz-obj-meta { display: block; margin-top: 5px; font-size: 11.5px; color: var(--wp-soft); }
+.wp-gz-obj-count {
+  margin-left: 6px; background: var(--wp-pink); color: var(--wp-on-accent);
+  border-radius: 999px; padding: 1px 7px; font-size: 10.5px; font-weight: 800;
+}
 .wp-reel-videoel {
   width: 100%;
   height: 100%;

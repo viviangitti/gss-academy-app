@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
-import { submitObjection } from './data/objections';
+import { submitObjection, fetchMyObjections, objectionDate, type TeamObjection } from './data/objections';
 import { buildShareVariants, buildFichaMessage, buyLinkFor, type BuyContext, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
@@ -297,6 +297,13 @@ function ObjectionSubmit({ product }: { product: ProductT }) {
   const [answer, setAnswer] = useState('');
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
+  const [minhas, setMinhas] = useState<TeamObjection[]>([]);
+
+  // Confirmação: carrega o que ESTA pessoa já registrou neste produto.
+  const recarregarMinhas = useCallback(() => {
+    fetchMyObjections(product.id, user?.email).then(setMinhas).catch(() => {});
+  }, [product.id, user?.email]);
+  useEffect(() => { if (open) recarregarMinhas(); }, [open, recarregarMinhas]);
 
   if (user?.role === 'gestor') return null;
 
@@ -310,7 +317,8 @@ function ObjectionSubmit({ product }: { product: ProductT }) {
     setBusy(false);
     if (ok) {
       setSent(true); setText(''); setAnswer('');
-      setTimeout(() => { setSent(false); setOpen(false); }, 2200);
+      recarregarMinhas(); // aparece na lista dela = prova de que chegou
+      setTimeout(() => setSent(false), 4000);
     }
   };
 
@@ -328,6 +336,19 @@ function ObjectionSubmit({ product }: { product: ProductT }) {
           <button type="button" className="wp-objadd-btn" onClick={enviar} disabled={busy || !text.trim()}>
             {sent ? <><Check size={15} className="wp-ico" /> Registrada! Valeu 👏</> : busy ? 'Enviando…' : 'Registrar objeção'}
           </button>
+
+          {/* Confirmação: o que ela já mandou (prova de que chegou na gestão) */}
+          {minhas.length > 0 && (
+            <div className="wp-objmine">
+              <span className="wp-objmine-t"><Check size={12} className="wp-ico" /> Recebidas de você ({minhas.length})</span>
+              {minhas.map((o) => (
+                <div key={o.id} className="wp-objmine-item">
+                  <p>“{o.text}”</p>
+                  <span>{objectionDate(o.at) || 'agora'}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

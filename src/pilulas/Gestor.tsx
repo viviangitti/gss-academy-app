@@ -12,7 +12,7 @@ import { CAMPANHA, prazoLabel } from './data/campanha';
 import { fetchVendas, decidirVenda, rankVendedores, type Venda as VendaT } from './data/vendas';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
-import { fetchObjections, type TeamObjection } from './data/objections';
+import { fetchObjections, objectionDate, type TeamObjection } from './data/objections';
 import type { BrandId } from './data/brands';
 import type { Audience } from './AuthContext';
 
@@ -206,12 +206,17 @@ function ObjectionsPanel({ brandId }: { brandId: string }) {
   if (carregando) return null;
   return (
     <div className="wp-gz-top">
-      <div className="wp-gz-top-head"><MessageCircle size={12} className="wp-ico" /> Objeções da ponta (registradas pelo time)</div>
-      {objs.length ? objs.slice(0, 25).map((o) => (
+      <div className="wp-gz-top-head">
+        <MessageCircle size={12} className="wp-ico" /> Objeções da ponta — histórico
+        {objs.length > 0 && <span className="wp-gz-obj-count">{objs.length}</span>}
+      </div>
+      {objs.length ? objs.map((o) => (
         <div key={o.id} className="wp-gz-obj">
           <p className="wp-gz-obj-q">“{o.text}”</p>
           {o.answer && <p className="wp-gz-obj-a">Respondeu: {o.answer}</p>}
-          <span className="wp-gz-obj-meta">{o.productName} · {o.byName}{o.byRole ? ` · ${o.byRole}` : ''}</span>
+          <span className="wp-gz-obj-meta">
+            {objectionDate(o.at)} · {o.productName} · {o.byName}{o.byRole ? ` (${o.byRole})` : ''}
+          </span>
         </div>
       )) : (
         <p className="wp-gz-help" style={{ margin: 0 }}>Ninguém registrou objeção nova ainda. Quando o time registrar na pílula (“Recebeu uma objeção nova?”), aparece aqui.</p>

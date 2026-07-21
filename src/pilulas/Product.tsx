@@ -60,8 +60,10 @@ function VideoMp4({ url }: { url: string }) {
     <div className="wp-reel wp-reel--video" style={{ background: '#000' }}>
       {/* Abre tocando (mudo — regra do navegador) com legenda. Um toque em
           "Ativar som" liga o áudio do início. */}
+      {/* SEM default: senão o navegador desenha a legenda nativa E a nossa (fica
+          dobrada). O efeito acima põe mode='hidden' — carrega as cues sem desenhar. */}
       <video ref={vidRef} className="wp-reel-videoel" src={url} autoPlay muted playsInline controls preload="auto">
-        {vtt && <track kind="captions" srcLang="pt" label="Português" src={vtt} default />}
+        {vtt && <track kind="captions" srcLang="pt" label="Português" src={vtt} />}
       </video>
       {muted && (
         <button type="button" className="wp-reel-unmute" onClick={ativarSom}>

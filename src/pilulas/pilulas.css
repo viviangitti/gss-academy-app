@@ -868,7 +868,7 @@
 /* Legenda (CC) — overlay próprio no rodapé do vídeo, acima da barra de controles */
 .wp-reel-cc {
   position: absolute;
-  left: 10px; right: 10px; bottom: 52px;
+  left: 10px; right: 10px; bottom: 62px;
   z-index: 4;
   text-align: center;
   color: #fff;

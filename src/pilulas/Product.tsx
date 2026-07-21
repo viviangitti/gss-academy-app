@@ -28,7 +28,9 @@ function sceneMs(t: string): number {
 function VideoMp4({ url }: { url: string }) {
   return (
     <div className="wp-reel wp-reel--video" style={{ background: '#000' }}>
-      <video className="wp-reel-videoel" src={url} autoPlay muted loop playsInline controls />
+      {/* Sem autoplay-mudo: mostra o play e, ao tocar (gesto do usuário), toca
+          COM som. Antes começava mudo em loop e a pessoa tinha que desmutar. */}
+      <video className="wp-reel-videoel" src={url} playsInline controls preload="metadata" />
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { SEGMENTS, setMySegment, mySegment, type SegmentId } from './data/segmen
 import { setStoredRole } from './data/roles';
 import { setElevaProfile } from './data/profile';
 import { invitedBrand } from './data/brandInvite';
-import { getBrand, isBalcao } from './data/brands';
+import { getBrand, isBalcao, BRANDS, type BrandId } from './data/brands';
 import type { Role, AffiliateType } from './AuthContext';
 
 type Mode = 'entrar' | 'criar';
@@ -24,9 +24,11 @@ export default function Login() {
   // Perfil escolhido no cadastro. Gestor(a) precisa do código da marca.
   const [role, setRole] = useState<Role>('balconista');
   const [affType, setAffType] = useState<AffiliateType>('geral');
-  // Convite por marca (?marca=dsp): a pessoa entra já naquela marca.
+  // Marca: escolhida no cadastro OU fixada pelo convite por link (?marca=dsp).
   const invBrand = invitedBrand();
-  const invBalcao = !!invBrand && isBalcao(invBrand);
+  const [brand, setBrand] = useState<BrandId>(() => invBrand || 'meraki');
+  const effBrand: BrandId = invBrand || brand;
+  const balcao = isBalcao(effBrand); // Sorocaps = balcão → só balconista, sem escolher papel
 
   const emailOk = /\S+@\S+\.\S+/.test(email);
   const valid =
@@ -41,16 +43,16 @@ export default function Login() {
       if (mode === 'criar') {
         // Papel escolhido no cadastro é só o inicial: o poder real de gestor vem
         // do e-mail (override + regras do Firestore), não de um código na tela.
-        // Balcão (convite por marca): a pessoa é balconista, sem escolher papel.
-        const finalRole: Role = invBalcao ? 'balconista' : role;
-        const seg = finalRole === 'balconista' && !invBalcao ? segment : '';
+        // Balcão (Sorocaps): a pessoa é balconista, sem escolher papel.
+        const finalRole: Role = balcao ? 'balconista' : role;
+        const seg = finalRole === 'balconista' && !balcao ? segment : '';
         const at: AffiliateType | '' = finalRole === 'afiliado' ? affType : '';
         if (seg) setMySegment(seg);
         // Cache local (rápido) + conta cria.
         setStoredRole(email.trim(), finalRole, at);
         const fb = await signUpWithEmail(email.trim(), password, name.trim());
-        // Perfil NA CONTA (Firestore) — vale em qualquer aparelho onde logar.
-        await setElevaProfile(fb.uid, { role: finalRole, name: name.trim(), segment: seg as SegmentId | '', affiliateType: at, brands: invBrand ? [invBrand] : undefined });
+        // Perfil NA CONTA (Firestore) — inclui a marca escolhida.
+        await setElevaProfile(fb.uid, { role: finalRole, name: name.trim(), segment: seg as SegmentId | '', affiliateType: at, brands: [effBrand] });
       } else {
         await signInWithEmail(email.trim(), password);
       }
@@ -102,17 +104,37 @@ export default function Login() {
           </button>
         </div>
 
-        {mode === 'criar' && invBalcao && (
+        {/* Escolha de marca — a pessoa diz se é Meraki ou Sorocaps. Some se veio
+            por link de convite (?marca=), que já fixa a marca. */}
+        {mode === 'criar' && !invBrand && (
+          <>
+            <label className="wp-login-label">Qual marca você representa?</label>
+            <div className="wp-login-roles wp-login-roles--wrap">
+              {BRANDS.map((b) => (
+                <button
+                  key={b.id}
+                  type="button"
+                  className={`wp-login-role ${brand === b.id ? 'on' : ''}`}
+                  onClick={() => { setBrand(b.id); setError(''); }}
+                >
+                  {b.name}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {mode === 'criar' && balcao && (
           <>
             <div className="wp-login-brandbanner">
-              Você está entrando em <b>{getBrand(invBrand).name}</b> — treinamento de balcão.
+              Você está entrando em <b>{getBrand(effBrand).name}</b> — treinamento de balcão.
             </div>
             <label className="wp-login-label">Seu nome</label>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />
           </>
         )}
 
-        {mode === 'criar' && !invBalcao && (
+        {mode === 'criar' && !balcao && (
           <>
             <label className="wp-login-label">Você é...</label>
             <div className="wp-login-roles wp-login-roles--wrap">

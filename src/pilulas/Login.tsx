@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowRight, ArrowUpRight, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Eye, EyeOff, Check } from 'lucide-react';
 import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } from '../services/auth';
 import { SEGMENTS, setMySegment, mySegment, type SegmentId } from './data/segments';
 import { setStoredRole } from './data/roles';
@@ -24,11 +24,20 @@ export default function Login() {
   // Perfil escolhido no cadastro. Gestor(a) precisa do código da marca.
   const [role, setRole] = useState<Role>('balconista');
   const [affType, setAffType] = useState<AffiliateType>('geral');
-  // Marca: escolhida no cadastro OU fixada pelo convite por link (?marca=dsp).
+  // Marcas: a pessoa pode representar UMA ou AS DUAS. Se veio por link de
+  // convite (?marca=dsp), a marca já vem fixa e o seletor some.
   const invBrand = invitedBrand();
-  const [brand, setBrand] = useState<BrandId>(() => invBrand || 'meraki');
-  const effBrand: BrandId = invBrand || brand;
-  const balcao = isBalcao(effBrand); // Sorocaps = balcão → só balconista, sem escolher papel
+  const [brands, setBrands] = useState<BrandId[]>(() => (invBrand ? [invBrand] : ['meraki']));
+  const effBrands: BrandId[] = invBrand ? [invBrand] : brands;
+  // Só é "balcão" se TODAS as marcas escolhidas forem de balcão (ex.: só Sorocaps).
+  // Com a Meraki no meio, a pessoa escolhe o papel normalmente.
+  const balcao = effBrands.length > 0 && effBrands.every((b) => isBalcao(b));
+  const toggleBrand = (id: BrandId) => {
+    setError('');
+    setBrands((cur) => (cur.includes(id)
+      ? (cur.length > 1 ? cur.filter((b) => b !== id) : cur) // nunca deixa zerar
+      : [...cur, id]));
+  };
 
   const emailOk = /\S+@\S+\.\S+/.test(email);
   const valid =
@@ -52,7 +61,7 @@ export default function Login() {
         setStoredRole(email.trim(), finalRole, at);
         const fb = await signUpWithEmail(email.trim(), password, name.trim());
         // Perfil NA CONTA (Firestore) — inclui a marca escolhida.
-        await setElevaProfile(fb.uid, { role: finalRole, name: name.trim(), segment: seg as SegmentId | '', affiliateType: at, brands: [effBrand] });
+        await setElevaProfile(fb.uid, { role: finalRole, name: name.trim(), segment: seg as SegmentId | '', affiliateType: at, brands: effBrands });
       } else {
         await signInWithEmail(email.trim(), password);
       }
@@ -114,20 +123,21 @@ export default function Login() {
                 <button
                   key={b.id}
                   type="button"
-                  className={`wp-login-role ${brand === b.id ? 'on' : ''}`}
-                  onClick={() => { setBrand(b.id); setError(''); }}
+                  className={`wp-login-role ${brands.includes(b.id) ? 'on' : ''}`}
+                  onClick={() => toggleBrand(b.id)}
                 >
-                  {b.name}
+                  {brands.includes(b.id) && <Check size={13} className="wp-ico" />} {b.name}
                 </button>
               ))}
             </div>
+            <p className="wp-login-hint">Trabalha com as duas? Pode marcar as duas — você troca de marca dentro do app.</p>
           </>
         )}
 
         {mode === 'criar' && balcao && (
           <>
             <div className="wp-login-brandbanner">
-              Você está entrando em <b>{getBrand(effBrand).name}</b> — treinamento de balcão.
+              Você está entrando em <b>{effBrands.map((b) => getBrand(b).name).join(' + ')}</b> — treinamento de balcão.
             </div>
             <label className="wp-login-label">Seu nome</label>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />

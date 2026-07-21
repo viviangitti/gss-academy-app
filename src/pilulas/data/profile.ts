@@ -8,7 +8,8 @@ import type { SegmentId } from './segments';
 import { BRANDS, type BrandId } from './brands';
 
 export interface ElevaProfile {
-  role: Role;
+  role: Role; // o perfil PRINCIPAL — é o que o app usa pra montar a experiência
+  roles?: Role[]; // todos os perfis marcados no cadastro (a pessoa pode ser mais de um)
   name?: string;
   segment?: SegmentId | '';
   affiliateType?: AffiliateType | ''; // só quando role === 'afiliado'
@@ -52,6 +53,7 @@ export async function setElevaProfile(uid: string, p: ElevaProfile): Promise<voi
       doc(db, 'elevaUsers', uid),
       {
         role: p.role,
+        roles: p.roles || [p.role],
         name: p.name || '',
         segment: p.segment || '',
         affiliateType: p.affiliateType || '',

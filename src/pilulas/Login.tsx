@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ArrowRight, ArrowUpRight, Eye, EyeOff, Check } from 'lucide-react';
 import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } from '../services/auth';
-import { SEGMENTS, setMySegment, mySegment, type SegmentId } from './data/segments';
 import { setStoredRole } from './data/roles';
 import { setElevaProfile } from './data/profile';
 import { invitedBrand } from './data/brandInvite';
@@ -19,11 +18,19 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
-  // Canal de venda: vem pré-preenchido se a pessoa chegou por link/QR de convite.
-  const [segment, setSegment] = useState<string>(() => mySegment() || '');
-  // Perfil escolhido no cadastro. Gestor(a) precisa do código da marca.
-  const [role, setRole] = useState<Role>('balconista');
+  // Perfis: a pessoa pode ser mais de um (ex.: balconista E afiliada).
+  const [roles, setRoles] = useState<Role[]>(['balconista']);
   const [affType, setAffType] = useState<AffiliateType>('geral');
+  const toggleRole = (id: Role) => {
+    setError('');
+    setRoles((cur) => (cur.includes(id)
+      ? (cur.length > 1 ? cur.filter((r) => r !== id) : cur) // nunca deixa zerar
+      : [...cur, id]));
+  };
+  // O app funciona com UM perfil por vez. Quando a pessoa marca vários, este é o
+  // que vale (o mais abrangente): gestor > balconista > promotor > afiliado.
+  const ORDEM: Role[] = ['gestor', 'balconista', 'promotor', 'afiliado'];
+  const rolePrincipal = (rs: Role[]): Role => ORDEM.find((r) => rs.includes(r)) || 'balconista';
   // Marcas: a pessoa pode representar UMA ou AS DUAS. Se veio por link de
   // convite (?marca=dsp), a marca já vem fixa e o seletor some.
   const invBrand = invitedBrand();
@@ -53,15 +60,18 @@ export default function Login() {
         // Papel escolhido no cadastro é só o inicial: o poder real de gestor vem
         // do e-mail (override + regras do Firestore), não de um código na tela.
         // Balcão (Sorocaps): a pessoa é balconista, sem escolher papel.
-        const finalRole: Role = balcao ? 'balconista' : role;
-        const seg = finalRole === 'balconista' && !balcao ? segment : '';
-        const at: AffiliateType | '' = finalRole === 'afiliado' ? affType : '';
-        if (seg) setMySegment(seg);
+        const finalRoles: Role[] = balcao ? ['balconista'] : roles;
+        const finalRole: Role = rolePrincipal(finalRoles);
+        const at: AffiliateType | '' = finalRoles.includes('afiliado') ? affType : '';
         // Cache local (rápido) + conta cria.
         setStoredRole(email.trim(), finalRole, at);
         const fb = await signUpWithEmail(email.trim(), password, name.trim());
-        // Perfil NA CONTA (Firestore) — inclui a marca escolhida.
-        await setElevaProfile(fb.uid, { role: finalRole, name: name.trim(), segment: seg as SegmentId | '', affiliateType: at, brands: effBrands });
+        // Perfil NA CONTA (Firestore): guarda TODOS os perfis marcados (pro
+        // gestor saber) + o principal, que é o que o app usa.
+        await setElevaProfile(fb.uid, {
+          role: finalRole, roles: finalRoles, name: name.trim(),
+          segment: '', affiliateType: at, brands: effBrands,
+        });
       } else {
         await signInWithEmail(email.trim(), password);
       }
@@ -148,37 +158,25 @@ export default function Login() {
           <>
             <label className="wp-login-label">Você é...</label>
             <div className="wp-login-roles wp-login-roles--wrap">
-              <button
-                type="button"
-                className={`wp-login-role ${role === 'balconista' ? 'on' : ''}`}
-                onClick={() => { setRole('balconista'); setError(''); }}
-              >
-                Balconista
-              </button>
-              <button
-                type="button"
-                className={`wp-login-role ${role === 'promotor' ? 'on' : ''}`}
-                onClick={() => { setRole('promotor'); setError(''); }}
-              >
-                Promotor(a)
-              </button>
-              <button
-                type="button"
-                className={`wp-login-role ${role === 'afiliado' ? 'on' : ''}`}
-                onClick={() => { setRole('afiliado'); setError(''); }}
-              >
-                Afiliado(a)
-              </button>
-              <button
-                type="button"
-                className={`wp-login-role ${role === 'gestor' ? 'on' : ''}`}
-                onClick={() => { setRole('gestor'); setError(''); }}
-              >
-                Gestor(a)
-              </button>
+              {([
+                ['balconista', 'Balconista'],
+                ['promotor', 'Promotor(a)'],
+                ['afiliado', 'Afiliado(a)'],
+                ['gestor', 'Gestor(a)'],
+              ] as [Role, string][]).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={`wp-login-role ${roles.includes(id) ? 'on' : ''}`}
+                  onClick={() => toggleRole(id)}
+                >
+                  {roles.includes(id) && <Check size={13} className="wp-ico" />} {label}
+                </button>
+              ))}
             </div>
+            <p className="wp-login-hint">É mais de um? Pode marcar quantos quiser.</p>
 
-            {role === 'afiliado' && (
+            {roles.includes('afiliado') && (
               <>
                 <label className="wp-login-label">Que tipo de afiliado?</label>
                 <div className="wp-login-roles">
@@ -203,15 +201,6 @@ export default function Login() {
             <label className="wp-login-label">Seu nome</label>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />
 
-            {role === 'balconista' && (
-              <>
-                <label className="wp-login-label">Onde você vende? (opcional)</label>
-                <select className="wp-login-select" value={segment} onChange={(e) => setSegment(e.target.value)}>
-                  <option value="">Prefiro não dizer</option>
-                  {SEGMENTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
-                </select>
-              </>
-            )}
           </>
         )}
 

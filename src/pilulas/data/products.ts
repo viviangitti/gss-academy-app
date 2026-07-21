@@ -796,11 +796,9 @@ export function getProduct(id: string) {
   return PRODUCTS.find((p) => p.id === id);
 }
 
-// Se o produto tem um reel do Instagram, o link do VÍDEO vai junto na mensagem —
-// a cliente assiste sem sair do WhatsApp. (Só entra quando existe vídeo de verdade.)
-export function withVideoLink(text: string, p: Product): string {
-  return p.instagramUrl ? `${text}\n\nVeja o vídeo do produto: ${p.instagramUrl}` : text;
-}
+// (Removido o link do reel do Instagram das mensagens: o compartilhar agora
+// manda o PRÓPRIO VÍDEO em anexo, então o link ficava repetido e ainda tirava a
+// cliente da conversa.)
 
 // De quem partiu o link — vira o rastreio (UTM) na URL de compra.
 export interface BuyContext {
@@ -874,7 +872,7 @@ export function productKnowledge(products: Product[]): string {
 
 export function buildShareMessage(p: Product, ctx: BuyContext = {}): string {
   const benefits = p.benefits.slice(0, 3).map((b) => `✅ ${b}`).join('\n');
-  return withBuyLink(withVideoLink([
+  return withBuyLink([
     `*${p.name}*`,
     '',
     p.hook,
@@ -882,7 +880,7 @@ export function buildShareMessage(p: Product, ctx: BuyContext = {}): string {
     benefits,
     '',
     p.salesLine,
-  ].join('\n'), p), p, ctx);
+  ].join('\n'), p, ctx);
 }
 
 // Várias versões da mensagem pronta — todas puxam os BENEFÍCIOS, em ângulos
@@ -963,5 +961,5 @@ export function buildShareVariants(p: Product, ctx: BuyContext = {}): string[] {
 
   // Toda versão leva o vídeo E o link de compra rastreado — a cliente recebe a
   // mensagem, vê o vídeo e compra sem sair da conversa.
-  return variants.map((v) => withBuyLink(withVideoLink(v, p), p, ctx));
+  return variants.map((v) => withBuyLink(v, p, ctx));
 }

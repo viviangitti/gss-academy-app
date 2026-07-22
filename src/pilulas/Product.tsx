@@ -32,8 +32,6 @@ function sceneMs(t: string): number {
 const LEGENDA_AUTO = new Set([
   'glpen-nutri-energy-nutri',
   'glpen-nutri-energy-afiliado',
-  'glpen-nutri-ultra-az-nutri',
-  'glpen-nutri-ultra-az-afiliado',
 ]);
 
 function VideoMp4({ url }: { url: string }) {

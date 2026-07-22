@@ -319,23 +319,28 @@ function AudiencePreview({ product, value, onChange }: {
   };
   const srcGeral = hasVideo(product.id) ? `enviado:${product.id}` : product.videoUrl || null;
 
-  // Só entra na lista o público que REALMENTE tem vídeo próprio, e só se for um
-  // vídeo DIFERENTE do geral. Mostrar "sem vídeo" poluía a tela e parecia troca
-  // de perfil ("visão do balconista"), que não é o caso.
+  // Todo público que TEM vídeo entra na lista, com o nome do público — é assim
+  // que o gestor acha "o do afiliado" e "o do profissional da saúde". Público
+  // sem vídeo nenhum não aparece (poluía e parecia troca de perfil).
   const comVideo = audiencesForLine(product.line, product.brand)
     .map((a) => ({ ...a, src: srcDoPublico(a.id) }))
-    .filter((a) => a.src && a.src !== srcGeral);
+    .filter((a) => a.src);
+
+  // "Geral" só aparece se for MESMO um vídeo à parte. Quando o vídeo geral é o
+  // mesmo de um público (caso comum), ele já está na lista com o nome certo.
+  const geralAvulso = !!srcGeral && !comVideo.some((a) => a.src === srcGeral);
+  const total = comVideo.length + (geralAvulso ? 1 : 0);
 
   // Nada pra escolher (o produto tem um vídeo só): não mostra seletor nenhum.
-  if (comVideo.length + (srcGeral ? 1 : 0) < 2) return null;
+  if (total < 2) return null;
 
   return (
     <div className="wp-audprev">
       <span className="wp-audprev-t">
-        Este produto tem {comVideo.length + (srcGeral ? 1 : 0)} vídeos diferentes. Assista cada um:
+        Este produto tem {total} vídeos. Assista o de cada público:
       </span>
       <div className="wp-audprev-row">
-        {srcGeral && (
+        {geralAvulso && (
           <button
             type="button"
             className={`wp-audprev-b ${value === null ? 'on' : ''}`}
@@ -348,7 +353,7 @@ function AudiencePreview({ product, value, onChange }: {
           <button
             key={a.id}
             type="button"
-            className={`wp-audprev-b ${value === a.id ? 'on' : ''}`}
+            className={`wp-audprev-b ${value === a.id || (value === null && a.src === srcGeral) ? 'on' : ''}`}
             onClick={() => onChange(a.id)}
           >
             {a.label}

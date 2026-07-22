@@ -3,6 +3,7 @@ import type { BrandId } from './data/brands';
 import { mySegment, type SegmentId } from './data/segments';
 import { invitedBrand } from './data/brandInvite';
 import { onAuthChange, signOut as fbSignOut, type AuthUser } from '../services/auth';
+import { setStatsAccount } from './data/tracking';
 import { firebaseEnabled } from '../services/firebase';
 import { storedRole, setStoredRole, storedAffiliateType } from './data/roles';
 import { getElevaProfile, type ElevaProfile } from './data/profile';
@@ -126,7 +127,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const raw = localStorage.getItem('wp_dev_user');
         if (raw) {
-          setUser(JSON.parse(raw) as User);
+          const u = JSON.parse(raw) as User;
+          setStatsAccount(u.email || null);
+          setUser(u);
           setLoading(false);
           return;
         }
@@ -138,6 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     const unsub = onAuthChange(async (fb) => {
       if (!fb) {
+        setStatsAccount(null);
         setUser(null);
         setLoading(false);
         return;
@@ -153,6 +157,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch { /* ignore */ }
       // Espelha o papel da conta neste aparelho (cache pra próxima abertura).
       if (profile && fb.email) setStoredRole(fb.email, profile.role, profile.affiliateType);
+      // ANTES do setUser: as telas leem os pontos já no primeiro render, e
+      // precisam ler os da conta certa.
+      setStatsAccount(fb.email || fb.uid);
       setUser(toUser(fb, profile));
       setLoading(false);
     });
@@ -161,6 +168,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     fbSignOut();
+    setStatsAccount(null);
     setUser(null);
   };
 

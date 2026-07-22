@@ -3,7 +3,35 @@
 // cópia agregada pro Firestore pra alimentar o Sistema de Gestão.
 import { syncStats } from './statsSync';
 
-const KEY = 'wp_stats_v1';
+// Progresso é POR CONTA, não por aparelho. Antes havia uma chave só: quem
+// entrasse depois no mesmo celular herdava as pílulas, os pontos e a ofensiva
+// de quem tinha usado antes — uma conta nova já abria com tudo "feito".
+const KEY_LEGADO = 'wp_stats_v1';
+const KEY_DONO = 'wp_stats_dono';
+let conta: string | null = null;
+
+function KEY(): string {
+  return conta ? `wp_stats_v1:${conta}` : 'wp_stats_v1:anon';
+}
+
+// Chamado assim que o app sabe quem está logado (ver AuthContext).
+export function setStatsAccount(id: string | null): void {
+  const novo = id ? id.trim().toLowerCase() : null;
+  if (novo === conta) return;
+  conta = novo;
+  if (!novo) return;
+  try {
+    // Migração de uma vez só: o progresso que já estava neste aparelho pertence
+    // à PRIMEIRA conta que entrar depois desta mudança. Da segunda em diante,
+    // cada conta começa do zero — que é o certo.
+    const dono = localStorage.getItem(KEY_DONO);
+    if (!dono) {
+      localStorage.setItem(KEY_DONO, novo);
+      const legado = localStorage.getItem(KEY_LEGADO);
+      if (legado && !localStorage.getItem(KEY())) localStorage.setItem(KEY(), legado);
+    }
+  } catch { /* modo anônimo / storage cheio */ }
+}
 export const POINTS_PER_PILL = 10;
 export const POINTS_PER_QUIZ = 30;
 export const WEEKLY_GOAL = 10; // pílulas/semana
@@ -49,7 +77,7 @@ function fresh(): Stats {
 
 export function getStats(): Stats {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(KEY());
     if (!raw) return fresh();
     const s = JSON.parse(raw) as Stats;
     // virou a semana? zera o placar semanal, mantém histórico e ofensiva
@@ -68,7 +96,7 @@ export function getStats(): Stats {
 
 function save(s: Stats) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(s));
+    localStorage.setItem(KEY(), JSON.stringify(s));
   } catch {
     /* ignore */
   }

@@ -140,6 +140,7 @@ function Header() {
 
 function Shell() {
   const location = useLocation();
+  const navigate = useNavigate();
   const onProduct = location.pathname.includes('/produto/');
   const { brand } = useBrand();
   const { user, loading } = useAuth();
@@ -163,6 +164,21 @@ function Shell() {
     // Entrou uma vez neste aparelho: nas próximas, abre direto no login/app.
     try { localStorage.setItem('wp_ja_entrou', '1'); } catch { /* ignore */ }
   }, [user]);
+  // Depois de entrar, cai na HOME — não na tela em que o navegador tinha
+  // parado da última vez (era isso que fazia o login abrir direto no Perfil).
+  // Exceção: link de produto compartilhado no WhatsApp, que a pessoa abriu de
+  // propósito e deve continuar valendo depois do login.
+  // Só vale quando a pessoa passou PELA TELA DE LOGIN agora. Recarregar a
+  // página com a sessão já aberta não pode tirar ninguém de onde estava.
+  const veioDoLogin = useRef(false);
+  useEffect(() => {
+    if (!user || !veioDoLogin.current) return;
+    veioDoLogin.current = false;
+    if (!location.pathname.startsWith('/eleva/produto/')) navigate('/eleva', { replace: true });
+    // location.pathname é lido no momento do login, de propósito.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
   // O vídeo da pílula precisa começar AQUI, no toque que abre o produto: é o
   // único momento em que o navegador libera áudio. Um ouvinte só, no app
   // inteiro, cobre todos os cards (catálogo, pílula do dia, trilha, busca) sem
@@ -210,6 +226,7 @@ function Shell() {
     if (mostrarLanding && !invitedBrand()) {
       return <Landing onEntrar={() => setMostrarLanding(false)} />;
     }
+    veioDoLogin.current = true; // entrou pela tela de login: ao logar, vai pra home
     return (
       <div className="wp-app" style={themeStyle}>
         <Login />

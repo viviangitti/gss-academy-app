@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail } from 'lucide-react';
 import { useBrand } from './BrandContext';
+import { useAuth } from './AuthContext';
 import { CATEGORIES, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
 import { CHANNELS, type Channel } from './data/creatorContent';
@@ -12,6 +13,7 @@ import { CAMPANHA, prazoLabel } from './data/campanha';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, type TeamObjection } from './data/objections';
+import { buscarLeads, type Lead } from './data/leads';
 import type { BrandId } from './data/brands';
 import type { Audience } from './AuthContext';
 
@@ -608,6 +610,43 @@ function VideoProductRow({ p }: { p: Product }) {
   );
 }
 
+
+// Contatos que chegaram pelo formulário da landing. É informação do NEGÓCIO da
+// GSS, não da marca — por isso só quem toca a GSS vê, e não todo gestor.
+const DONOS_GSS = ['viviangitti23@gmail.com'];
+
+function Interessados({ email }: { email?: string }) {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [aberto, setAberto] = useState(false);
+  const podeVer = !!email && DONOS_GSS.includes(email.trim().toLowerCase());
+
+  useEffect(() => {
+    if (podeVer) buscarLeads().then(setLeads).catch(() => {});
+  }, [podeVer]);
+
+  if (!podeVer || !leads.length) return null;
+  return (
+    <div className="wp-gz-block">
+      <button type="button" className="wp-objadd-head" onClick={() => setAberto((o) => !o)}>
+        <span className="wp-gz-block-title"><Mail size={17} className="wp-ico" /> Marcas interessadas ({leads.length})</span>
+        <ChevronDown size={16} className={`wp-ico wp-objadd-chev ${aberto ? 'open' : ''}`} />
+      </button>
+      {aberto && (
+        <div className="wp-gz-leads">
+          {leads.map((l) => (
+            <div key={l.id} className="wp-gz-lead">
+              <b>{l.empresa || 'Sem empresa'}</b>
+              <span>{l.nome} · {l.email}{l.whatsapp ? ` · ${l.whatsapp}` : ''}</span>
+              {l.mensagem && <p>&ldquo;{l.mensagem}&rdquo;</p>}
+              <i>{l.criadoEm ? l.criadoEm.toLocaleDateString('pt-BR') : ''}</i>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function videoTotals(products: Product[]) {
   const total = products.reduce((n, p) => n + audiencesForLine(p.line, p.brand).length, 0);
   const feitos = products.reduce((n, p) => n + countDone(p), 0);
@@ -660,6 +699,7 @@ function ProductRow({ p }: { p: Product }) {
 }
 
 export default function Gestor() {
+  const { user } = useAuth();
   useStore();
   const { brand, brandId } = useBrand();
   const [openForm, setOpenForm] = useState<'produto' | 'oferta' | 'calendario' | 'tendencia' | null>(null);
@@ -702,7 +742,7 @@ export default function Gestor() {
         </button>
       </div>
 
-      {tab === 'resultados' && <Resultados brandId={brandId} products={products} buscas={buscas} />}
+      {tab === 'resultados' && <><Interessados email={user?.email} /><Resultados brandId={brandId} products={products} buscas={buscas} /></>}
 
       {tab === 'conteudo' && (<>
       {/* Vídeos por público vem PRIMEIRO — é a principal função do gestor */}

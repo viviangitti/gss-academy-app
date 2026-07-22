@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, ArrowRight, MessageCircle, Send, GraduationCap, LayoutDashboard, Volume2, Play } from 'lucide-react';
+import { ArrowUpRight, ArrowRight, MessageCircle, Send, GraduationCap, LayoutDashboard, Volume2, Play, Check } from 'lucide-react';
+import { enviarLead } from './data/leads';
 
 // Porta de entrada pública do Eleva. Quem chega aqui é de dois tipos muito
 // diferentes — o time de uma marca que já usa (quer só logar) e uma marca
@@ -72,6 +73,84 @@ function Fone() {
   );
 }
 
+
+// Formulário de contato da marca interessada. Grava direto no Firestore — sem
+// depender de a pessoa ter cliente de e-mail configurado, que é o que faz muito
+// "fale conosco" por mailto não gerar contato nenhum.
+function Formulario() {
+  const [nome, setNome] = useState('');
+  const [empresa, setEmpresa] = useState('');
+  const [email, setEmail] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
+  const [mensagem, setMensagem] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [pronto, setPronto] = useState(false);
+  const [erro, setErro] = useState('');
+
+  const emailOk = /\S+@\S+\.\S+/.test(email);
+  const valido = nome.trim().length >= 2 && empresa.trim().length >= 2 && emailOk;
+
+  const enviar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!valido || enviando) return;
+    setEnviando(true);
+    setErro('');
+    const ok = await enviarLead({ nome, empresa, email, whatsapp, mensagem });
+    setEnviando(false);
+    if (ok) setPronto(true);
+    else setErro(`Não consegui enviar agora. Me chama direto: ${CONTATO}`);
+  };
+
+  if (pronto) {
+    return (
+      <div className="wp-lp-form-ok">
+        <Check size={20} />
+        <b>Recebi, {nome.trim().split(' ')[0]}!</b>
+        <span>Vou olhar os seus produtos e te respondo em {empresa.trim() ? 'breve' : 'breve'} no e-mail que você deixou.</span>
+      </div>
+    );
+  }
+
+  return (
+    <form className="wp-lp-form" onSubmit={enviar}>
+      <div className="wp-lp-form-linha">
+        <label>
+          Seu nome
+          <input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Como te chamam?" autoComplete="name" />
+        </label>
+        <label>
+          Marca / empresa
+          <input value={empresa} onChange={(e) => setEmpresa(e.target.value)} placeholder="Ex.: Meraki" autoComplete="organization" />
+        </label>
+      </div>
+      <div className="wp-lp-form-linha">
+        <label>
+          E-mail
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@empresa.com.br" autoComplete="email" />
+        </label>
+        <label>
+          WhatsApp <i>opcional</i>
+          <input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="(11) 90000-0000" autoComplete="tel" />
+        </label>
+      </div>
+      <label>
+        Que linha você quer treinar? <i>opcional</i>
+        <textarea
+          value={mensagem}
+          onChange={(e) => setMensagem(e.target.value)}
+          rows={3}
+          placeholder="Quantos produtos, quem vende (balcão, afiliado, promotor) e qual o tamanho do time."
+        />
+      </label>
+      {erro && <p className="wp-lp-form-erro">{erro}</p>}
+      <button type="submit" className="wp-lp-btn wp-lp-btn--gold" disabled={!valido || enviando}>
+        {enviando ? 'Enviando…' : <>Quero o Eleva para a minha marca <ArrowRight size={16} /></>}
+      </button>
+      <p className="wp-lp-form-nota">Chega direto para a GSS. Sem lista de e-mail, sem robô.</p>
+    </form>
+  );
+}
+
 export default function Landing({ onEntrar }: { onEntrar: () => void }) {
   return (
     <div className="wp-lp">
@@ -95,7 +174,7 @@ export default function Landing({ onEntrar }: { onEntrar: () => void }) {
             <button type="button" className="wp-lp-btn wp-lp-btn--gold" onClick={onEntrar}>
               Entrar na minha conta <ArrowRight size={16} />
             </button>
-            <a className="wp-lp-btn wp-lp-btn--ghost" href={`mailto:${CONTATO}?subject=Quero%20o%20Eleva%20para%20a%20minha%20marca`}>
+            <a className="wp-lp-btn wp-lp-btn--ghost" href="#contato">
               Quero para a minha marca
             </a>
           </div>
@@ -156,6 +235,46 @@ export default function Landing({ onEntrar }: { onEntrar: () => void }) {
         </div>
       </section>
 
+      <section className="wp-lp-afil">
+        <p className="wp-lp-eyebrow">Não é só para quem está atrás do balcão</p>
+        <h2>Afiliado, promotor, balconista — cada um com o seu Eleva.</h2>
+        <p className="wp-lp-marca-sub">
+          Quem revende não aprende igual a quem atende na farmácia, e um nutricionista não precisa
+          da mesma explicação que um afiliado. No Eleva, o mesmo produto entrega o conteúdo certo
+          para cada perfil.
+        </p>
+        <div className="wp-lp-afil-grid">
+          <div className="wp-lp-afil-card">
+            <h3>Vídeo por público</h3>
+            <p>
+              Hoje um produto da Meraki tem dois vídeos: um para o afiliado e outro para o
+              profissional da saúde. A pessoa abre a pílula e vê o dela — sem escolher nada.
+            </p>
+          </div>
+          <div className="wp-lp-afil-card">
+            <h3>Missão de creator</h3>
+            <p>
+              Calendário da semana, roteiro pronto por canal e tendências. O afiliado marca
+              &ldquo;postei&rdquo;, pontua e sobe de nível — de Bronze a Creator Ouro.
+            </p>
+          </div>
+          <div className="wp-lp-afil-card">
+            <h3>Código de afiliado</h3>
+            <p>
+              Cada pessoa tem o seu código no perfil. Ele entra no link que ela manda para a
+              cliente — é o que identifica a venda como dela.
+            </p>
+          </div>
+          <div className="wp-lp-afil-card">
+            <h3>Ranking e certificado</h3>
+            <p>
+              Quem assiste e acerta o quiz domina o produto e caminha para o certificado da marca.
+              O ranking do mês mostra quem está puxando o time.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="wp-lp-marca">
         <p className="wp-lp-eyebrow">Sua marca, não a nossa</p>
         <h2>O Eleva veste a identidade de quem contrata.</h2>
@@ -170,20 +289,16 @@ export default function Landing({ onEntrar }: { onEntrar: () => void }) {
         </div>
       </section>
 
-      <section className="wp-lp-final">
+      <section className="wp-lp-final" id="contato">
         <h2>Quer ver com os seus produtos?</h2>
         <p>
-          Me manda a linha que você quer treinar. Eu monto uma pílula do seu produto e te mostro
+          Me diga qual linha você quer treinar. Eu monto uma pílula do seu produto e te mostro
           funcionando — no seu celular, com a sua marca.
         </p>
-        <div className="wp-lp-ctas wp-lp-ctas--centro">
-          <a className="wp-lp-btn wp-lp-btn--gold" href={`mailto:${CONTATO}?subject=Quero%20o%20Eleva%20para%20a%20minha%20marca`}>
-            Falar com a GSS <ArrowRight size={16} />
-          </a>
-          <button type="button" className="wp-lp-btn wp-lp-btn--ghost" onClick={onEntrar}>
-            Já tenho conta
-          </button>
-        </div>
+        <Formulario />
+        <button type="button" className="wp-lp-jatenho" onClick={onEntrar}>
+          Já tenho conta — entrar
+        </button>
       </section>
 
       <footer className="wp-lp-rodape">

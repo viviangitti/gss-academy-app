@@ -50,6 +50,24 @@ service cloud.firestore {
       allow update, delete: if isGestor();
     }
 
+    // Contatos da landing: quem chega no site NÃO está logado, então a criação
+    // é aberta — mas só a criação, e com o formato travado. Ninguém lê, edita
+    // ou apaga a não ser o gestor. Os limites de tamanho e o formato do e-mail
+    // são a defesa contra robô de spam entupir a coleção.
+    match /elevaLeads/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['nome', 'empresa', 'email', 'whatsapp', 'mensagem', 'criadoEm'])
+        && request.resource.data.nome is string
+        && request.resource.data.nome.size() >= 2 && request.resource.data.nome.size() <= 80
+        && request.resource.data.empresa is string && request.resource.data.empresa.size() <= 120
+        && request.resource.data.email is string
+        && request.resource.data.email.matches('.+@.+[.].+') && request.resource.data.email.size() <= 120
+        && request.resource.data.whatsapp is string && request.resource.data.whatsapp.size() <= 40
+        && request.resource.data.mensagem is string && request.resource.data.mensagem.size() <= 800
+        && request.resource.data.criadoEm == request.time;
+      allow read, list: if isGestor();
+      allow update, delete: if false;
+    }
+
     // Conteúdo do Eleva: quem está logado LÊ; só o gestor ESCREVE.
     match /{document=**} {
       allow read: if request.auth != null;

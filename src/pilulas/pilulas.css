@@ -2319,3 +2319,181 @@
   display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
 }
 .wp-ia-send:disabled { opacity: .45; }
+
+/* ===== Landing pública (antes do login) =====
+   Navy + dourado da GSS, serifa só na marca — mesma identidade do app, para
+   quem entra reconhecer a casa. Fundo escuro do começo ao fim: a landing é a
+   vitrine, o app é a ferramenta. */
+.wp-lp {
+  --lp-navy: #0f0f1e;
+  --lp-navy-2: #171729;
+  --lp-line: rgba(255, 255, 255, 0.1);
+  --lp-gold: #c9a84c;
+  --lp-gold-soft: #e0c987;
+  --lp-txt: #f2f1ee;
+  --lp-txt-soft: #a7a7b8;
+  background: var(--lp-navy);
+  color: var(--lp-txt);
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: clip;
+}
+
+.wp-lp-nav {
+  max-width: 1040px; margin: 0 auto; padding: 20px 22px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.wp-lp-logo {
+  font-family: 'Cinzel', Georgia, serif; font-weight: 800; font-size: 22px;
+  letter-spacing: .02em; display: inline-flex; align-items: center;
+}
+.wp-lp-logo--peq { font-size: 17px; }
+.wp-lp-caret { color: var(--lp-gold); transform: translateY(-3px); margin-left: 1px; }
+.wp-lp-nav-entrar {
+  background: none; border: 1px solid var(--lp-line); color: var(--lp-txt);
+  border-radius: 999px; padding: 8px 18px; font: inherit; font-weight: 600;
+  font-size: 14px; cursor: pointer; transition: border-color .2s ease, background .2s ease;
+}
+.wp-lp-nav-entrar:hover, .wp-lp-nav-entrar:focus-visible { border-color: var(--lp-gold); background: rgba(201,168,76,.1); }
+
+/* ---- herói: texto à esquerda, o app rodando à direita ---- */
+.wp-lp-hero {
+  max-width: 1040px; margin: 0 auto; padding: 22px 22px 72px;
+  display: grid; gap: 46px; align-items: center;
+}
+@media (min-width: 900px) {
+  .wp-lp-hero { grid-template-columns: 1.05fr .95fr; padding-top: 46px; padding-bottom: 96px; }
+}
+.wp-lp-kicker {
+  margin: 0 0 14px; font-size: 11.5px; font-weight: 700; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--lp-gold);
+}
+.wp-lp-hero h1 {
+  font-family: 'Cinzel', Georgia, serif; font-weight: 700;
+  font-size: clamp(2rem, 6.4vw, 3.15rem); line-height: 1.14; letter-spacing: -.01em;
+  margin: 0; text-wrap: balance;
+}
+.wp-lp-hero h1 em { font-style: normal; color: var(--lp-gold); }
+.wp-lp-sub {
+  margin: 20px 0 0; color: var(--lp-txt-soft); font-size: 16.5px; line-height: 1.62; max-width: 34rem;
+}
+.wp-lp-ctas { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 28px; }
+.wp-lp-ctas--centro { justify-content: center; }
+.wp-lp-btn {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  border-radius: 999px; padding: 13px 24px; font: inherit; font-weight: 700;
+  font-size: 15px; text-decoration: none; border: 1px solid transparent;
+  transition: transform .15s ease, background .2s ease, border-color .2s ease;
+}
+.wp-lp-btn:active { transform: translateY(1px); }
+.wp-lp-btn--gold { background: var(--lp-gold); color: var(--lp-navy); }
+.wp-lp-btn--gold:hover, .wp-lp-btn--gold:focus-visible { background: var(--lp-gold-soft); }
+.wp-lp-btn--ghost { border-color: var(--lp-line); color: var(--lp-txt); background: none; }
+.wp-lp-btn--ghost:hover, .wp-lp-btn--ghost:focus-visible { border-color: var(--lp-gold); background: rgba(201,168,76,.09); }
+.wp-lp-nota { margin: 22px 0 0; font-size: 13.5px; color: var(--lp-txt-soft); }
+.wp-lp-nota b { color: var(--lp-txt); }
+
+/* ---- o "celular": é o app de verdade, não um mockup genérico ---- */
+.wp-lp-hero-fone { display: flex; justify-content: center; }
+.wp-lp-fone {
+  width: min(300px, 84vw); border-radius: 34px; padding: 9px;
+  background: linear-gradient(160deg, #2b2b40, #12121f);
+  box-shadow: 0 26px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.07);
+}
+.wp-lp-fone-tela {
+  background: #f6f6f9; border-radius: 26px; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.wp-lp-fone-top {
+  background: linear-gradient(120deg, #1a1a2e, #26263f); color: #fff;
+  padding: 10px 13px; display: flex; align-items: center; justify-content: space-between;
+}
+.wp-lp-fone-marca { font-family: 'Cinzel', Georgia, serif; font-weight: 800; font-size: 14px; display: inline-flex; align-items: center; }
+.wp-lp-fone-marca svg { color: var(--lp-gold); transform: translateY(-2px); }
+.wp-lp-fone-brand {
+  font-size: 10.5px; font-weight: 700; background: rgba(255,255,255,.14);
+  border-radius: 999px; padding: 3px 10px;
+}
+.wp-lp-fone-video {
+  position: relative; display: block; width: 100%; padding: 0; border: 0;
+  background: #000; cursor: pointer; line-height: 0;
+}
+.wp-lp-fone-video video { width: 100%; display: block; aspect-ratio: 9 / 16; object-fit: cover; }
+.wp-lp-fone-play {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.32); color: #fff;
+}
+.wp-lp-fone-legenda { padding: 11px 13px 4px; text-align: left; }
+.wp-lp-fone-cc { display: block; font-size: 14px; font-weight: 800; color: #1a1a2e; }
+.wp-lp-fone-sub { display: block; font-size: 11.5px; color: #6b6b7d; margin-top: 2px; line-height: 1.4; }
+.wp-lp-fone-cta {
+  margin: 10px 13px 13px; background: linear-gradient(120deg, #25d366, #1aa851); color: #fff;
+  border-radius: 12px; padding: 10px; font-size: 12.5px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+
+/* ---- fluxo: a cliente falou -> a resposta -> manda ---- */
+.wp-lp-fluxo, .wp-lp-blocos, .wp-lp-marca, .wp-lp-final {
+  max-width: 1040px; margin: 0 auto; padding: 0 22px;
+}
+.wp-lp-fluxo { padding-bottom: 76px; }
+.wp-lp-eyebrow {
+  font-size: 11.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--lp-gold); margin: 0 0 20px;
+}
+.wp-lp-passos { display: grid; gap: 14px; }
+@media (min-width: 860px) { .wp-lp-passos { grid-template-columns: repeat(3, 1fr); align-items: stretch; } }
+.wp-lp-passo {
+  background: var(--lp-navy-2); border: 1px solid var(--lp-line); border-radius: 16px;
+  padding: 18px 19px; display: flex; flex-direction: column; gap: 10px;
+}
+.wp-lp-passo--resp { border-color: rgba(201,168,76,.42); background: rgba(201,168,76,.07); }
+.wp-lp-passo-tag {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--lp-txt-soft);
+}
+.wp-lp-passo--resp .wp-lp-passo-tag { color: var(--lp-gold); }
+.wp-lp-passo p { margin: 0; font-size: 14.5px; line-height: 1.6; color: var(--lp-txt); }
+.wp-lp-passo-fala { font-size: 17px !important; font-weight: 600; }
+.wp-lp-passo-zap { color: var(--lp-txt-soft) !important; }
+.wp-lp-fonte { margin: 16px 0 0; font-size: 12.5px; color: var(--lp-txt-soft); }
+
+/* ---- três blocos do que o app faz ---- */
+.wp-lp-blocos { display: grid; gap: 16px; padding-bottom: 80px; }
+@media (min-width: 860px) { .wp-lp-blocos { grid-template-columns: repeat(3, 1fr); } }
+.wp-lp-bloco { border-top: 1px solid var(--lp-line); padding-top: 20px; }
+.wp-lp-bico { color: var(--lp-gold); }
+.wp-lp-bloco h3 {
+  font-family: 'Cinzel', Georgia, serif; font-size: 19px; font-weight: 700;
+  margin: 12px 0 8px; line-height: 1.25; text-wrap: balance;
+}
+.wp-lp-bloco p { margin: 0; font-size: 14.5px; line-height: 1.62; color: var(--lp-txt-soft); }
+
+/* ---- white-label ---- */
+.wp-lp-marca { padding-bottom: 80px; }
+.wp-lp-marca h2, .wp-lp-final h2 {
+  font-family: 'Cinzel', Georgia, serif; font-weight: 700;
+  font-size: clamp(1.6rem, 4.4vw, 2.2rem); line-height: 1.2; margin: 0; text-wrap: balance;
+}
+.wp-lp-marca-sub { margin: 14px 0 0; color: var(--lp-txt-soft); font-size: 16px; line-height: 1.62; max-width: 40rem; }
+.wp-lp-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.wp-lp-chip {
+  border-radius: 999px; padding: 9px 18px; font-size: 13.5px; font-weight: 700;
+  border: 1px solid var(--lp-line);
+}
+.wp-lp-chip--meraki { background: rgba(201,168,76,.16); border-color: rgba(201,168,76,.5); color: var(--lp-gold-soft); }
+.wp-lp-chip--dsp { background: rgba(31,122,82,.18); border-color: rgba(95,206,154,.45); color: #7fd6a8; }
+.wp-lp-chip--vazio { border-style: dashed; color: var(--lp-txt-soft); }
+
+/* ---- fechamento ---- */
+.wp-lp-final {
+  text-align: center; padding-top: 56px; padding-bottom: 72px;
+  border-top: 1px solid var(--lp-line);
+}
+.wp-lp-final p { margin: 14px auto 0; max-width: 32rem; color: var(--lp-txt-soft); font-size: 16px; line-height: 1.62; }
+.wp-lp-rodape {
+  border-top: 1px solid var(--lp-line); padding: 26px 22px 40px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--lp-txt-soft); font-size: 12.5px; text-align: center;
+}

@@ -12,6 +12,7 @@ import Trilha from './Trilha';
 import Sobre from './Sobre';
 import Gestor from './Gestor';
 import Login from './Login';
+import Landing from './Landing';
 import Onboarding from './Onboarding';
 import BottomNav from './BottomNav';
 import { BrandProvider, useBrand } from './BrandContext';
@@ -20,7 +21,7 @@ import Perfil from './Perfil';
 import Ficha from './Ficha';
 import Venda from './Venda';
 import { stageSegmentFromUrl } from './data/segments';
-import { stageBrandFromUrl } from './data/brandInvite';
+import { stageBrandFromUrl, invitedBrand } from './data/brandInvite';
 import { isBalcao, type BrandId } from './data/brands';
 import { setStatsMeta } from './data/statsSync';
 import { loadAudienceReels } from './data/audienceVideos';
@@ -144,6 +145,11 @@ function Shell() {
   const [onboarded, setOnboarded] = useState<boolean>(() => {
     try { return !!localStorage.getItem('wp_onboarded'); } catch { return true; }
   });
+  // Vitrine pública. Quem já entrou alguma vez neste aparelho pula direto pro
+  // login — a landing é pra quem está chegando, não pra quem usa todo dia.
+  const [mostrarLanding, setMostrarLanding] = useState<boolean>(() => {
+    try { return !localStorage.getItem('wp_ja_entrou'); } catch { return true; }
+  });
   // Marca/papel/nome viajam junto com os stats que vão pro Sistema de Gestão
   useEffect(() => {
     setStatsMeta({ brand: brand.id, role: user?.role, name: user?.name });
@@ -151,7 +157,10 @@ function Shell() {
   // Puxa da nuvem os vídeos que o gestor configurou por público — é o que faz o
   // link chegar no celular do time, e não só no aparelho de quem cadastrou.
   useEffect(() => {
-    if (user) loadAudienceReels();
+    if (!user) return;
+    loadAudienceReels();
+    // Entrou uma vez neste aparelho: nas próximas, abre direto no login/app.
+    try { localStorage.setItem('wp_ja_entrou', '1'); } catch { /* ignore */ }
   }, [user]);
   // Ao trocar de tela, volta pro topo (senão o produto abria no meio/fim da página).
   useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
@@ -171,6 +180,13 @@ function Shell() {
   }
 
   if (!user) {
+    // Quem chega por link de convite (?marca=) já foi convidado por alguém —
+    // vitrine não faz sentido: vai direto pro cadastro.
+    // Fora do .wp-app de propósito: o app tem largura de celular (480px) e a
+    // vitrine precisa da tela inteira no computador.
+    if (mostrarLanding && !invitedBrand()) {
+      return <Landing onEntrar={() => setMostrarLanding(false)} />;
+    }
     return (
       <div className="wp-app" style={themeStyle}>
         <Login />

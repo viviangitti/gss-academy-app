@@ -19,7 +19,6 @@ import { BrandProvider, useBrand } from './BrandContext';
 import { AuthProvider, useAuth, audienceOf } from './AuthContext';
 import Perfil from './Perfil';
 import Ficha from './Ficha';
-import Venda from './Venda';
 import { stageSegmentFromUrl } from './data/segments';
 import { stageBrandFromUrl, invitedBrand } from './data/brandInvite';
 import { isBalcao, type BrandId } from './data/brands';
@@ -255,11 +254,13 @@ function Shell() {
           <Route path="/eleva/perfil" element={<Perfil />} />
           <Route path="/eleva/assistente" element={<AssistenteBalcao />} />
           <Route path="/eleva/ficha/:id" element={<Ficha />} />
-          <Route path="/eleva/venda" element={<BlockBalcao><BlockAfiliado><Venda /></BlockAfiliado></BlockBalcao>} />
           <Route path="/eleva/ranking" element={<BlockBalcao><Ranking /></BlockBalcao>} />
           <Route path="/eleva/ofertas" element={<BlockBalcao><BlockAfiliado><Ofertas /></BlockAfiliado></BlockBalcao>} />
           <Route path="/eleva/gestor" element={<RequireGestor><Gestor /></RequireGestor>} />
           <Route path="/pilulas/*" element={<Navigate to="/eleva" replace />} />
+          {/* Link antigo ou telas que saíram do ar (ex.: /eleva/venda) caem na
+              home em vez de deixar a tela vazia. */}
+          <Route path="*" element={<Navigate to="/eleva" replace />} />
         </Routes>
       </main>
       {!onProduct && <BottomNav />}

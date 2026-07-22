@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Receipt, Clock, X, Copy, Bell, MessageCircle } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { CATEGORIES, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
@@ -9,7 +9,6 @@ import { SEGMENTS, segmentLabel } from './data/segments';
 import { topSearches } from './data/insights';
 import { fetchTeam, buildReport, type TeamReport, type TeamPerson } from './data/teamStats';
 import { CAMPANHA, prazoLabel } from './data/campanha';
-import { fetchVendas, decidirVenda, rankVendedores, type Venda as VendaT } from './data/vendas';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, type TeamObjection } from './data/objections';
@@ -265,88 +264,6 @@ function CobrarPessoa({ p, campanhaNome, prazo }: { p: TeamPerson; campanhaNome?
       <button className="wp-gz-cob-btn" onClick={copiar} title="Copiar mensagem pronta">
         {copiado ? <><Check size={13} className="wp-ico" /> Copiada</> : <><Copy size={13} className="wp-ico" /> Cobrar</>}
       </button>
-    </div>
-  );
-}
-
-// ---------- Vendas declaradas: a única janela pra venda de BALCÃO ----------
-function Vendas({ brandId }: { brandId: string }) {
-  const [vendas, setVendas] = useState<VendaT[]>([]);
-  const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState('');
-
-  const carregar = () => {
-    setCarregando(true);
-    fetchVendas(brandId)
-      .then((v) => { setVendas(v); setErro(''); })
-      .catch(() => setErro('Não consegui ler as vendas.'))
-      .finally(() => setCarregando(false));
-  };
-  useEffect(carregar, [brandId]);
-
-  const decidir = async (id: string, st: 'aprovada' | 'recusada') => {
-    setVendas((vs) => vs.map((v) => (v.id === id ? { ...v, status: st } : v))); // otimista
-    try { await decidirVenda(id, st); } catch { carregar(); }
-  };
-
-  if (carregando) return <div className="wp-gz-metrics"><p className="wp-gz-help" style={{ margin: 0 }}>Carregando as vendas…</p></div>;
-  if (erro) return <div className="wp-gz-metrics"><p className="wp-gz-help" style={{ margin: 0 }}>{erro}</p></div>;
-
-  const pendentes = vendas.filter((v) => v.status === 'pendente');
-  const rank = rankVendedores(vendas);
-  const totalUn = vendas.filter((v) => v.status === 'aprovada').reduce((n, v) => n + v.qty, 0);
-
-  return (
-    <div className="wp-gz-metrics">
-      <div className="wp-gz-metrics-head">
-        <Receipt size={16} className="wp-ico" /> Vendas declaradas
-        <span className="wp-gz-demo">· venda de balcão</span>
-      </div>
-
-      {!vendas.length ? (
-        <p className="wp-gz-help" style={{ margin: 0 }}>
-          Ninguém registrou venda ainda. Quando o time vender no balcão e declarar, aparece aqui pra você aprovar.
-        </p>
-      ) : (
-        <>
-          <div className="wp-gz-kpis">
-            <div className="wp-gz-kpi"><Clock size={15} className="wp-ico" /><b>{pendentes.length}</b><span>a aprovar</span></div>
-            <div className="wp-gz-kpi"><Check size={15} className="wp-ico" /><b>{totalUn}</b><span>unidades vendidas</span></div>
-            <div className="wp-gz-kpi"><Users size={15} className="wp-ico" /><b>{rank.length}</b><span>vendendo</span></div>
-          </div>
-
-          {pendentes.length > 0 && (
-            <div className="wp-gz-top">
-              <div className="wp-gz-top-head"><Clock size={12} className="wp-ico" /> Aguardando sua aprovação</div>
-              {pendentes.map((v) => (
-                <div key={v.id} className="wp-gz-vd">
-                  <span className="wp-gz-vd-info">
-                    <b>{v.name}</b>
-                    <i>{v.productName} · {v.qty} un. · cupom {v.cupom}</i>
-                  </span>
-                  <span className="wp-gz-vd-acts">
-                    <button className="wp-gz-vd-no" onClick={() => decidir(v.id, 'recusada')} aria-label="Recusar"><X size={15} /></button>
-                    <button className="wp-gz-vd-ok" onClick={() => decidir(v.id, 'aprovada')} aria-label="Aprovar"><Check size={15} /></button>
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {rank.length > 0 && (
-            <div className="wp-gz-top">
-              <div className="wp-gz-top-head"><TrendingUp size={12} className="wp-ico" /> Quem mais vende (só aprovadas)</div>
-              {rank.slice(0, 8).map((r, i) => (
-                <div key={r.name + i} className="wp-gz-rk">
-                  <span className="wp-gz-rk-pos">{i + 1}</span>
-                  <span className="wp-gz-rk-name">{r.name}<i>{ROLE_LB1[r.role] || r.role}</i></span>
-                  <span className="wp-gz-rk-val">{r.qty} un.<i>{r.vendas} venda{r.vendas > 1 ? 's' : ''}</i></span>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
     </div>
   );
 }
@@ -778,17 +695,12 @@ export default function Gestor() {
         <button className={`wp-gz-tab ${tab === 'resultados' ? 'on' : ''}`} onClick={() => setTab('resultados')}>
           <TrendingUp size={15} className="wp-ico" /> Resultados
         </button>
-        <button className={`wp-gz-tab ${tab === 'vendas' ? 'on' : ''}`} onClick={() => setTab('vendas')}>
-          <Receipt size={15} className="wp-ico" /> Vendas
-        </button>
         <button className={`wp-gz-tab ${tab === 'conteudo' ? 'on' : ''}`} onClick={() => setTab('conteudo')}>
           <Package size={15} className="wp-ico" /> Conteúdo
           {/* Contador de vídeos na aba — a tarefa principal não some por estar aqui dentro */}
           <span className={`wp-gz-tab-badge ${vids.feitos === vids.total ? 'full' : ''}`}>{vids.feitos}/{vids.total}</span>
         </button>
       </div>
-
-      {tab === 'vendas' && <Vendas brandId={brandId} />}
 
       {tab === 'resultados' && <Resultados brandId={brandId} products={products} buscas={buscas} />}
 

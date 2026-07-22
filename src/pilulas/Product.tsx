@@ -27,13 +27,11 @@ function sceneMs(t: string): number {
   return 2600;
 }
 
-// Vídeos que AINDA usam legenda automática (.vtt gerado por transcrição). Quando
-// a Mari manda o vídeo já editado COM legenda queimada, tiramos o nome daqui e
-// apagamos o .vtt — senão apareceria legenda em cima de legenda.
-const LEGENDA_AUTO = new Set([
-  'glpen-nutri-energy-nutri',
-  'glpen-nutri-energy-afiliado',
-]);
+// Vídeos que ainda usam legenda automática (.vtt gerado por transcrição).
+// Hoje: nenhum — todos os vídeos vieram editados, com a legenda já no vídeo.
+// Se um dia entrar um vídeo sem legenda, basta gerar o .vtt e pôr o nome aqui;
+// o mecanismo de exibição continua de pé.
+const LEGENDA_AUTO = new Set<string>([]);
 
 function VideoMp4({ url }: { url: string }) {
   // Legenda (CC) só pros vídeos que ainda não vieram editados com legenda.

@@ -86,7 +86,7 @@ function VideoMp4({ url }: { url: string }) {
   );
 }
 
-function Reel({ product }: { product: ProductT }) {
+function Reel({ product, previewAudience }: { product: ProductT; previewAudience?: Audience | null }) {
   useStore(); // re-renderiza quando o vídeo do IndexedDB termina de carregar
   useAudienceReels(); // ...e quando os links do gestor chegam da nuvem
   const { user } = useAuth();
@@ -104,7 +104,9 @@ function Reel({ product }: { product: ProductT }) {
 
   // Cada público vê o vídeo dele (balconista / promotor / afiliado geral /
   // afiliado saúde). Sem vídeo do público, cai no vídeo padrão do produto.
-  const audience = audienceOf(user);
+  // previewAudience: o gestor escolhe qual público quer ASSISTIR (ele não tem
+  // público próprio, então sem isso só veria o vídeo padrão).
+  const audience = previewAudience ?? audienceOf(user);
   const avKey = audience ? audienceVideoKey(product.id, audience) : null;
 
   useEffect(() => {
@@ -295,6 +297,48 @@ function Reel({ product }: { product: ProductT }) {
         {narrate ? 'Parar narração' : 'Ouvir a locução'}
       </button>
     </>
+  );
+}
+
+// Seletor do GESTOR: assiste o vídeo de cada público sem precisar sair da conta.
+// Mostra também quais públicos JÁ TÊM vídeo e quais ainda faltam.
+function AudiencePreview({ product, value, onChange }: {
+  product: ProductT;
+  value: Audience | null;
+  onChange: (a: Audience | null) => void;
+}) {
+  useStore();
+  useAudienceReels();
+  const auds = audiencesForLine(product.line, product.brand);
+  if (!auds.length) return null;
+  const temVideo = (a: Audience) =>
+    hasVideo(audienceVideoKey(product.id, a)) ||
+    !!getAudienceReel(product.id, a) ||
+    !!product.audienceVideos?.[a];
+  return (
+    <div className="wp-audprev">
+      <span className="wp-audprev-t">Ver o vídeo de:</span>
+      <div className="wp-audprev-row">
+        <button
+          type="button"
+          className={`wp-audprev-b ${value === null ? 'on' : ''}`}
+          onClick={() => onChange(null)}
+        >
+          Padrão
+        </button>
+        {auds.map((a) => (
+          <button
+            key={a.id}
+            type="button"
+            className={`wp-audprev-b ${value === a.id ? 'on' : ''} ${temVideo(a.id) ? 'tem' : 'falta'}`}
+            onClick={() => onChange(a.id)}
+          >
+            {a.label}
+            <i>{temVideo(a.id) ? 'tem vídeo' : 'sem vídeo'}</i>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -518,6 +562,8 @@ export default function Product() {
   const [openObj, setOpenObj] = useState<number | null>(0);
   const [openFicha, setOpenFicha] = useState(false);
   const [shareIdx, setShareIdx] = useState(0);
+  // Gestor: qual público ele está ASSISTINDO (null = o vídeo padrão).
+  const [previewAud, setPreviewAud] = useState<Audience | null>(null);
   // Se tem MP4, o Instagram vira "prova social" (bônus). Se não tem MP4, o
   // reel do Instagram já é o vídeo principal lá em cima — não repete aqui.
   const mp4 = product ? getVideoObjectUrl(product.id) || product.videoUrl : undefined;
@@ -578,7 +624,8 @@ export default function Product() {
 
   return (
     <div className="wp-product">
-      <Reel product={product} />
+      {user?.role === 'gestor' && <AudiencePreview product={product} value={previewAud} onChange={setPreviewAud} />}
+      <Reel product={product} previewAudience={previewAud} />
       <GestorVideoEditor product={product} />
 
       <h1 className="wp-prod-name">{product.name}</h1>

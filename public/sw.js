@@ -1,5 +1,5 @@
 // Service Worker — network first, sem cache de JS/CSS (evita versões travadas)
-const CACHE_NAME = 'gss-academy-v133';
+const CACHE_NAME = 'gss-academy-v134';
 const STATIC_CACHE = ['/', '/manifest.json'];
 
 self.addEventListener('install', (event) => {

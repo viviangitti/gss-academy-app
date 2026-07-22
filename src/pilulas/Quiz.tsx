@@ -38,13 +38,25 @@ function pick<T>(arr: T[], n: number): T[] {
 // linha GLPEN, então não faz sentido oferecer resposta de outro produto.
 function buildQuestions(product: Product, role?: string): Question[] {
   const others = visibleProducts(
-    allProducts().filter((p) => p.brand === product.brand && p.id !== product.id),
+    allProducts().filter(
+      (p) =>
+        p.brand === product.brand &&
+        p.id !== product.id &&
+        // Variação do MESMO produto (Ômega 3 Plus / Mini) não serve de resposta
+        // errada: o benefício dela também vale pro produto da pergunta.
+        !(product.family && p.family === product.family)
+    ),
     role
   );
   const qs: Question[] = [];
 
+  // O nome do produto sem "Plus/Mini/Caps" etc. — pra reconhecer alternativa que
+  // fala do próprio produto ("Mais ômega 3 sem tomar mais cápsulas").
+  const nucleo = product.name.toLowerCase().split(' ').slice(0, 2).join(' ');
+  const falaDoProduto = (t: string) => t.toLowerCase().includes(nucleo);
+
   const make = (q: string, correct: string, wrong: string[]): Question | null => {
-    const distractors = pick(wrong.filter((w) => w && w !== correct), 2);
+    const distractors = pick(wrong.filter((w) => w && w !== correct && !falaDoProduto(w)), 2);
     if (distractors.length < 2) return null;
     const options = shuffle([cut(correct), ...distractors.map((d) => cut(d))]);
     return { q, options, correct: options.indexOf(cut(correct)) };

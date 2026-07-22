@@ -36,6 +36,10 @@ export interface Product {
   brand: BrandId;
   name: string;
   line?: string; // linha do produto (ex.: 'glpen') — usado p/ liberar catálogo por papel
+  // Variações do MESMO produto (ex.: Ômega 3, Ômega 3 Plus, Ômega 3 Mini) dividem
+  // a mesma family. O quiz nunca usa uma como resposta errada da outra — os
+  // benefícios são praticamente os mesmos, e a pergunta ficava sem resposta errada.
+  family?: string;
   category: Category;
   tagline: string; // 1 linha do que é
   hook: string; // gancho — a dor/desejo da cliente
@@ -617,6 +621,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'dsp-omega-3',
     brand: 'dsp',
+    family: 'dsp-omega-3',
     name: 'Ômega 3',
     category: 'capsulas',
     imageUrl: 'https://drogariasp.vteximg.com.br/arquivos/ids/1624324-1000-1000/893056---omega-3-drogaria-sao-paulo-1000mg-120-capsulas-1.jpg?v=639053966796200000',
@@ -664,6 +669,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'dsp-omega-3-plus',
     brand: 'dsp',
+    family: 'dsp-omega-3',
     name: 'Ômega 3 Plus',
     category: 'capsulas',
     imageUrl: 'https://drogariasp.vteximg.com.br/arquivos/ids/1624320-1000-1000/891908---Suplemento-Alimentar-Omega-3-Plus-1050mg-Drogaria-Sao-Paulo-60-Capsulas-1.jpg?v=639053966414500000',
@@ -706,6 +712,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'dsp-omega-3-mini',
     brand: 'dsp',
+    family: 'dsp-omega-3',
     name: 'Ômega 3 Mini Caps',
     category: 'capsulas',
     imageUrl: 'https://drogariasp.vteximg.com.br/arquivos/ids/1624318-1000-1000/891843---Suplemento-Alimentar-Omega-3-Mini-550mg-Drogaria-Sao-Paulo-60-Capsulas-1.jpg?v=639053966234230000',

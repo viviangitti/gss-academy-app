@@ -267,6 +267,7 @@ export default function Hoje() {
               <span className="wp-td-card-label"><Play size={13} className="wp-ico" /> Sua pílula de hoje · {duracaoLabel(pill)}</span>
               <div
                 className="wp-td-pill"
+                data-produto={pill.id}
                 style={{ background: `linear-gradient(135deg, ${pill.gradient[0]}, ${pill.gradient[1]})` }}
                 onClick={() => navigate(`/eleva/produto/${pill.id}`)}
                 role="button"

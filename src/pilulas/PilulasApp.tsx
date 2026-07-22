@@ -16,7 +16,7 @@ import Landing from './Landing';
 import Onboarding from './Onboarding';
 import BottomNav from './BottomNav';
 import { BrandProvider, useBrand } from './BrandContext';
-import { AuthProvider, useAuth } from './AuthContext';
+import { AuthProvider, useAuth, audienceOf } from './AuthContext';
 import Perfil from './Perfil';
 import Ficha from './Ficha';
 import Venda from './Venda';
@@ -25,6 +25,7 @@ import { stageBrandFromUrl, invitedBrand } from './data/brandInvite';
 import { isBalcao, type BrandId } from './data/brands';
 import { setStatsMeta } from './data/statsSync';
 import { loadAudienceReels } from './data/audienceVideos';
+import { prepararVideo, videoDoProduto } from './data/videoGesture';
 import './pilulas.css';
 
 // Iniciais pro avatar do cabeçalho.
@@ -162,6 +163,28 @@ function Shell() {
     // Entrou uma vez neste aparelho: nas próximas, abre direto no login/app.
     try { localStorage.setItem('wp_ja_entrou', '1'); } catch { /* ignore */ }
   }, [user]);
+  // O vídeo da pílula precisa começar AQUI, no toque que abre o produto: é o
+  // único momento em que o navegador libera áudio. Um ouvinte só, no app
+  // inteiro, cobre todos os cards (catálogo, pílula do dia, trilha, busca) sem
+  // ter que mexer em cada um deles.
+  useEffect(() => {
+    if (!user) return;
+    const aoTocar = (e: PointerEvent) => {
+      const alvo = e.target as HTMLElement | null;
+      const card = alvo?.closest?.('a[href*="/eleva/produto/"], [data-produto]') as HTMLElement | null;
+      if (!card) return;
+      const id = card.dataset.produto
+        || card.getAttribute('href')?.split('/eleva/produto/')[1]?.split(/[?#]/)[0];
+      if (!id) return;
+      const url = videoDoProduto(id, audienceOf(user));
+      if (url) prepararVideo(url);
+    };
+    // Fase de captura: garante que a gente chega antes de qualquer handler que
+    // possa parar a propagação do evento.
+    document.addEventListener('pointerdown', aoTocar, true);
+    return () => document.removeEventListener('pointerdown', aoTocar, true);
+  }, [user]);
+
   // Ao trocar de tela, volta pro topo (senão o produto abria no meio/fim da página).
   useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
   const themeStyle = {

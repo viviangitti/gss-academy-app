@@ -2497,3 +2497,8 @@
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   color: var(--lp-txt-soft); font-size: 12.5px; text-align: center;
 }
+
+/* Encaixe do player que veio tocando desde o toque no card (videoGesture.ts).
+   O <video> é inserido aqui pelo JS, então o host precisa se comportar igual
+   ao próprio vídeo no layout. */
+.wp-reel-videohost { display: contents; }

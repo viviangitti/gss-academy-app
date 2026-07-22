@@ -13,6 +13,7 @@ import { buildShareVariants, buildFichaMessage, buyLinkFor, type BuyContext, typ
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
+import { pegarVideoPreparado, adotarVideo } from './data/videoGesture';
 import { getAfiliadoCode } from './data/afiliadoCode';
 import { recordView } from './data/tracking';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
@@ -39,13 +40,46 @@ function VideoMp4({ url }: { url: string }) {
   const base = url.startsWith('/videos/') ? url.split('/videos/')[1].replace(/\.mp4$/, '') : '';
   const vtt = base && LEGENDA_AUTO.has(base) ? `/videos/${base}.vtt` : null;
   const vidRef = useRef<HTMLVideoElement | null>(null);
+  const hostRef = useRef<HTMLDivElement | null>(null);
   const [cc, setCc] = useState('');
-  const [muted, setMuted] = useState(true);
-  // Abrir COM SOM. O navegador só libera áudio automático se houver um gesto
-  // recente — e existe: o toque no card que abriu esta tela. Como o app é uma
-  // página só (não recarrega), essa "autorização do toque" ainda vale aqui.
-  // Tentamos com som; se o aparelho recusar, cai pro mudo com o botão de som.
+  // Player que já começou a tocar COM SOM lá no toque do card (ver
+  // data/videoGesture.ts). Se ele existe, esta tela adota o elemento em vez de
+  // criar outro — interromper e recomeçar é justamente o que faz o navegador
+  // cortar o áudio.
+  const [adotado] = useState(() => pegarVideoPreparado(url));
+  const [muted, setMuted] = useState(!adotado);
+
+  // Encaixa o player adotado na tela e cuida dele daqui pra frente.
   useEffect(() => {
+    const host = hostRef.current;
+    if (!adotado || !host) return;
+    adotarVideo(adotado);
+    adotado.className = 'wp-reel-videoel';
+    vidRef.current = adotado;
+    if (vtt && !adotado.querySelector('track')) {
+      const t = document.createElement('track');
+      t.kind = 'captions';
+      t.srclang = 'pt';
+      t.label = 'Português';
+      t.src = vtt;
+      adotado.appendChild(t);
+    }
+    host.appendChild(adotado);
+    // Em desenvolvimento o React monta/desmonta/monta: a limpeza pausa o vídeo
+    // e a segunda montagem precisa retomar. Em produção isso nem chega a rodar.
+    if (adotado.paused) adotado.play().catch(() => {});
+    setMuted(adotado.muted);
+    return () => {
+      adotado.pause();
+      adotado.remove();
+    };
+  }, [adotado, vtt]);
+
+  // Sem player adotado (link direto, recarregar a página, produto aberto pelo
+  // seletor do gestor): tenta com som e, se o navegador negar, fica mudo com o
+  // botão "Ativar som".
+  useEffect(() => {
+    if (adotado) return;
     const v = vidRef.current;
     if (!v) return;
     let cancelado = false;
@@ -53,15 +87,13 @@ function VideoMp4({ url }: { url: string }) {
     v.play()
       .then(() => { if (!cancelado) setMuted(false); })
       .catch(() => {
-        // Sem gesto válido (link direto, recarregar a página): mudo é o que o
-        // navegador permite. O botão "Ativar som" cobre o resto.
         if (cancelado) return;
         v.muted = true;
         setMuted(true);
         v.play().catch(() => {});
       });
     return () => { cancelado = true; };
-  }, [url]);
+  }, [url, adotado]);
   // Lê a legenda ativa e mostra num overlay próprio (o render nativo fica atrás
   // dos controles e some no fundo). mode='hidden': parseia mas não desenha.
   useEffect(() => {
@@ -92,11 +124,16 @@ function VideoMp4({ url }: { url: string }) {
           "Ativar som" liga o áudio do início. */}
       {/* SEM default: senão o navegador desenha a legenda nativa E a nossa (fica
           dobrada). O efeito acima põe mode='hidden' — carrega as cues sem desenhar. */}
-      {/* muted={muted}: preso ao estado, senão o React devolveria o vídeo pro
-          mudo no primeiro re-render depois de ligarmos o som. */}
-      <video ref={vidRef} className="wp-reel-videoel" src={url} autoPlay muted={muted} playsInline controls preload="auto">
-        {vtt && <track kind="captions" srcLang="pt" label="Português" src={vtt} />}
-      </video>
+      {/* Adotado: o player veio do toque, já tocando com som — só encaixamos.
+          Senão, criamos aqui. muted={muted} preso ao estado, senão o React
+          devolveria o vídeo pro mudo no primeiro re-render depois do som. */}
+      {adotado ? (
+        <div ref={hostRef} className="wp-reel-videohost" />
+      ) : (
+        <video ref={vidRef} className="wp-reel-videoel" src={url} autoPlay muted={muted} playsInline controls preload="auto">
+          {vtt && <track kind="captions" srcLang="pt" label="Português" src={vtt} />}
+        </video>
+      )}
       {muted && (
         <button type="button" className="wp-reel-unmute" onClick={ativarSom}>
           <Volume2 size={16} className="wp-ico" /> Ativar som
@@ -253,12 +290,12 @@ function Reel({ product, previewAudience }: { product: ProductT; previewAudience
 
   // Prioridade: [público] upload MP4 > reel do IG > MP4 pronto por público (bundled)
   //           > [base] MP4 > reel base > storyboard animado.
-  if (variantMp4) return <VideoMp4 url={variantMp4} />;
+  if (variantMp4) return <VideoMp4 key={variantMp4} url={variantMp4} />;
   if (variantReel) {
     return <div className="wp-reel wp-reel--ig"><InstagramEmbed url={variantReel} /></div>;
   }
-  if (staticAudienceVid) return <VideoMp4 url={staticAudienceVid} />;
-  if (baseMp4) return <VideoMp4 url={baseMp4} />;
+  if (staticAudienceVid) return <VideoMp4 key={staticAudienceVid} url={staticAudienceVid} />;
+  if (baseMp4) return <VideoMp4 key={baseMp4} url={baseMp4} />;
 
   if (product.instagramUrl) {
     return (

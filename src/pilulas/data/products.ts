@@ -65,6 +65,15 @@ export interface Product {
 // portfólio (Hyaluvita, Moviben, Resfben...) é assunto de balconista/promotor.
 export const AFILIADO_LINE = 'glpen';
 
+// Rótulo de duração da pílula. Quando o produto tem vídeo gravado, o
+// `durationSec` (que é o tempo do roteiro animado, 30s) não vale mais — os
+// vídeos da Mari têm de 56s a 80s, e cada público tem o seu. Nesse caso a tela
+// diz só "vídeo", em vez de mentir um número.
+export function duracaoLabel(p: Product): string {
+  const temVideo = !!p.videoUrl || !!(p.audienceVideos && Object.keys(p.audienceVideos).length);
+  return temVideo ? 'vídeo' : `${p.durationSec}s`;
+}
+
 // Filtra o catálogo pelo que o papel pode ver. Afiliado só vê a linha GLPEN;
 // balconista, promotor e gestor veem tudo.
 export function visibleProducts(products: Product[], role?: string): Product[] {

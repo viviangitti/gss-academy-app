@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Play } from 'lucide-react';
-import { CATEGORIES, visibleProducts, type Category } from './data/products';
+import { CATEGORIES, visibleProducts, duracaoLabel, type Category } from './data/products';
 import { allProducts, hasImage, getProductImageUrl, ensureImageLoaded, useStore } from './data/store';
 import { useBrand } from './BrandContext';
 import { useAuth } from './AuthContext';
@@ -48,7 +48,7 @@ export default function Catalog() {
                       style={capa ? undefined : { background: `linear-gradient(150deg, ${p.gradient[0]}, ${p.gradient[1]})` }}
                     >
                       {capa && <img src={capa} alt={p.name} className="wp-card-img" />}
-                      <span className="wp-card-dur"><Play size={10} className="wp-ico" /> {p.durationSec}s</span>
+                      <span className="wp-card-dur"><Play size={10} className="wp-ico" /> {duracaoLabel(p)}</span>
                       {!capa && <CardIcon size={44} strokeWidth={1.5} className="wp-card-emoji" />}
                     </div>
                     <div className="wp-card-body">

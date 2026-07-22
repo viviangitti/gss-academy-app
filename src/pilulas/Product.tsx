@@ -42,7 +42,28 @@ function VideoMp4({ url }: { url: string }) {
   const vtt = base && LEGENDA_AUTO.has(base) ? `/videos/${base}.vtt` : null;
   const vidRef = useRef<HTMLVideoElement | null>(null);
   const [cc, setCc] = useState('');
-  const [muted, setMuted] = useState(true); // navegador só deixa autoplay se mudo
+  const [muted, setMuted] = useState(true);
+  // Abrir COM SOM. O navegador só libera áudio automático se houver um gesto
+  // recente — e existe: o toque no card que abriu esta tela. Como o app é uma
+  // página só (não recarrega), essa "autorização do toque" ainda vale aqui.
+  // Tentamos com som; se o aparelho recusar, cai pro mudo com o botão de som.
+  useEffect(() => {
+    const v = vidRef.current;
+    if (!v) return;
+    let cancelado = false;
+    v.muted = false;
+    v.play()
+      .then(() => { if (!cancelado) setMuted(false); })
+      .catch(() => {
+        // Sem gesto válido (link direto, recarregar a página): mudo é o que o
+        // navegador permite. O botão "Ativar som" cobre o resto.
+        if (cancelado) return;
+        v.muted = true;
+        setMuted(true);
+        v.play().catch(() => {});
+      });
+    return () => { cancelado = true; };
+  }, [url]);
   // Lê a legenda ativa e mostra num overlay próprio (o render nativo fica atrás
   // dos controles e some no fundo). mode='hidden': parseia mas não desenha.
   useEffect(() => {
@@ -73,7 +94,9 @@ function VideoMp4({ url }: { url: string }) {
           "Ativar som" liga o áudio do início. */}
       {/* SEM default: senão o navegador desenha a legenda nativa E a nossa (fica
           dobrada). O efeito acima põe mode='hidden' — carrega as cues sem desenhar. */}
-      <video ref={vidRef} className="wp-reel-videoel" src={url} autoPlay muted playsInline controls preload="auto">
+      {/* muted={muted}: preso ao estado, senão o React devolveria o vídeo pro
+          mudo no primeiro re-render depois de ligarmos o som. */}
+      <video ref={vidRef} className="wp-reel-videoel" src={url} autoPlay muted={muted} playsInline controls preload="auto">
         {vtt && <track kind="captions" srcLang="pt" label="Português" src={vtt} />}
       </video>
       {muted && (

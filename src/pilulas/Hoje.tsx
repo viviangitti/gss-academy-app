@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Receipt, Infinity as InfinityIcon } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
-import { buildShareMessage, visibleProducts, type Product } from './data/products';
+import { buildShareMessage, visibleProducts, duracaoLabel, type Product } from './data/products';
 import { getAfiliadoCode } from './data/afiliadoCode';
 import { audienceOf } from './AuthContext';
 import { CALENDAR, CHANNELS } from './data/creatorContent';
@@ -264,7 +264,7 @@ export default function Hoje() {
           {/* Pílula do dia */}
           {pill && (
             <div className="wp-td-card">
-              <span className="wp-td-card-label"><Play size={13} className="wp-ico" /> Sua pílula de hoje · {pill.durationSec}s</span>
+              <span className="wp-td-card-label"><Play size={13} className="wp-ico" /> Sua pílula de hoje · {duracaoLabel(pill)}</span>
               <div
                 className="wp-td-pill"
                 style={{ background: `linear-gradient(135deg, ${pill.gradient[0]}, ${pill.gradient[1]})` }}

@@ -33,7 +33,7 @@ export default function PrimeirosPassos() {
     {
       id: 'pilula', done: stats.totalViews >= 1, Icon: PlayCircle,
       title: 'Assista sua 1ª pílula',
-      sub: '30 segundos e você já sabe vender o produto',
+      sub: 'Poucos minutos e você já sabe vender o produto',
       go: () => first && navigate(`/eleva/produto/${first.id}`),
     },
     {

@@ -21,7 +21,7 @@ export default function Catalog() {
   return (
     <div className="wp-catalog">
       <div className="wp-hero">
-        <h1 className="wp-hero-title">Cada produto em 30 segundos.</h1>
+        <h1 className="wp-hero-title">Um produto por vez, em minutos.</h1>
         <p className="wp-hero-sub">
           Aprenda o benefício, quebre a objeção e envie a resposta pronta à cliente — tudo num app só.
         </p>

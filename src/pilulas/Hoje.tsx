@@ -119,7 +119,7 @@ function HitCard({ hit }: { hit: Hit }) {
           <li key={i}><Check size={13} className="wp-ico" /> {b}</li>
         ))}
       </ul>
-      <span className="wp-td-hit-open">ver pílula (30s) <ChevronRight size={14} className="wp-ico" /></span>
+      <span className="wp-td-hit-open">ver pílula <ChevronRight size={14} className="wp-ico" /></span>
     </Link>
   );
 }

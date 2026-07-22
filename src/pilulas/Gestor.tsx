@@ -248,8 +248,8 @@ function CobrarPessoa({ p, campanhaNome, prazo }: { p: TeamPerson; campanhaNome?
   // Aspas no nome da campanha de propósito: sem artigo, funciona pra qualquer
   // nome ("Lançamento GLPEN" é masculino, "Campanha X" é feminino).
   const msg = campanhaNome
-    ? `Oi, ${primeiro}! Tudo bem? Vi que você ainda não começou a formação “${campanhaNome}” no Eleva — ${prazo}. São só 3 pílulas de 30 segundos e você já sai com o certificado. Qualquer dúvida me chama!`
-    : `Oi, ${primeiro}! Tudo bem? Vi que você ainda não assistiu nenhuma pílula no Eleva. São vídeos de 30 segundos que ajudam muito na hora de vender. Dá uma olhada quando puder — qualquer dúvida me chama!`;
+    ? `Oi, ${primeiro}! Tudo bem? Vi que você ainda não começou a formação “${campanhaNome}” no Eleva — ${prazo}. São só 3 pílulas curtas e você já sai com o certificado. Qualquer dúvida me chama!`
+    : `Oi, ${primeiro}! Tudo bem? Vi que você ainda não assistiu nenhuma pílula no Eleva. São vídeos curtos que ajudam muito na hora de vender. Dá uma olhada quando puder — qualquer dúvida me chama!`;
   const copiar = () => {
     navigator.clipboard?.writeText(msg).then(
       () => { setCopiado(true); setTimeout(() => setCopiado(false), 1800); },
@@ -697,10 +697,14 @@ function videoTotals(products: Product[]) {
   return { total, feitos };
 }
 
-function VideosPorPublico({ products }: { products: Product[] }) {
+function VideosPorPublico({ products: todos }: { products: Product[] }) {
   useAudienceReels();
   useStore();
+  // Produto sem público próprio (ex.: os de balcão na Meraki, que ainda não tem
+  // balconista) não entra na lista — virava um monte de linha "0/0" sem ação.
+  const products = todos.filter((p) => audiencesForLine(p.line, p.brand).length > 0);
   const { total, feitos } = videoTotals(products);
+  if (!products.length) return null;
   const pct = total ? Math.round((feitos / total) * 100) : 0;
   return (
     <div className="wp-gz-block wp-gz-videos">

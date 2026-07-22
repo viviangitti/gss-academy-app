@@ -4,8 +4,8 @@ import { BookOpen, Sparkles, Trophy, ArrowRight, Check } from 'lucide-react';
 const STEPS = [
   {
     Icon: BookOpen,
-    title: 'Cada produto em 30 segundos',
-    text: 'No Catálogo, toque em um produto e assista à pílula de 30 segundos. Você aprende o benefício e a resposta para a objeção — e envia tudo pronto para a cliente no WhatsApp (com o vídeo, quando o produto tem).',
+    title: 'Um produto por vez, em minutos',
+    text: 'No Catálogo, toque em um produto e assista à pílula. Você aprende o benefício e a resposta para a objeção — e envia tudo pronto para a cliente no WhatsApp (com o vídeo, quando o produto tem).',
   },
   {
     Icon: Sparkles,

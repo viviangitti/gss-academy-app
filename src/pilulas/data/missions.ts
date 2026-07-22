@@ -32,7 +32,7 @@ export const MISSIONS: Mission[] = [
     kind: 'stories',
     points: 30,
     title: 'Poste a pílula do GLPEN Nutri Muscle no seu Stories',
-    goal: 'O vídeo de 30s já está pronto. Fale com quem está em tratamento com a medicação — é o público mais interessado.',
+    goal: 'O vídeo já está pronto. Fale com quem está em tratamento com a medicação — é o público mais interessado.',
     productId: 'glpen-nutri-muscle',
     caption:
       'Emagrecer com a medicação pode custar massa magra no caminho. O GLPEN Nutri Muscle traz HMB, arginina e glutamina para apoiar a manutenção da massa muscular durante o processo — sempre junto do treino de força e da orientação do seu profissional de saúde. Quer saber se faz sentido para você? Me chama.',

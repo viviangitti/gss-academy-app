@@ -11,7 +11,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import type { Audience } from '../AuthContext';
 import { AFILIADO_LINE } from './products';
-import { isBalcao, type BrandId } from './brands';
+import { getBrand, type BrandId } from './brands';
 
 // Chave do MP4 no store (IndexedDB) para um produto + público.
 export function audienceVideoKey(productId: string, a: Audience): string {
@@ -106,9 +106,14 @@ export const AUDIENCES: { id: Audience; label: string }[] = [
 // pedir vídeo de afiliado pra Hyaluvita/Moviben seria trabalho jogado fora e um
 // contador que nunca fecha.
 export function audiencesForLine(line?: string, brandId?: BrandId): { id: Audience; label: string }[] {
-  // Marca em modo balcão (ex.: Drogaria São Paulo) só tem balconista — não há
-  // promotor nem afiliado ali. Manda mais que a linha.
-  if (brandId && isBalcao(brandId)) return AUDIENCES.filter((a) => a.id === 'balconista');
-  if (line === AFILIADO_LINE) return AUDIENCES;
-  return AUDIENCES.filter((a) => a.id === 'balconista' || a.id === 'promotor');
+  // Só os públicos que a MARCA tem hoje (ver `audiences` em brands.ts). Antes o
+  // gestor via campo de vídeo pra Balconista e Promotor na Meraki, que ainda não
+  // existem lá.
+  const daMarca = brandId ? getBrand(brandId).audiences : AUDIENCES.map((a) => a.id);
+  // A linha GLPEN é a do afiliado; as demais são de quem atende no balcão.
+  const daLinha: Audience[] =
+    line === AFILIADO_LINE
+      ? ['afiliado-geral', 'afiliado-saude']
+      : ['balconista', 'promotor'];
+  return AUDIENCES.filter((a) => daMarca.includes(a.id) && daLinha.includes(a.id));
 }

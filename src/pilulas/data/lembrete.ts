@@ -73,7 +73,7 @@ export function maybeNotify(): void {
     localStorage.setItem(LAST_KEY, day);
     if (notifState() === 'granted' && typeof Notification !== 'undefined') {
       new Notification('Sua pílula de hoje 💊', {
-        body: 'Assiste 30s e mantém sua ofensiva viva — a cliente já já pergunta.',
+        body: 'Assiste uma pílula e mantém sua ofensiva viva — a cliente já já pergunta.',
       });
     }
   } catch {

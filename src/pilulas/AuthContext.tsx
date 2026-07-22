@@ -55,6 +55,8 @@ const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType
   'silene.mendesdesouza@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
   'silene.mendesangelodesouza@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
   'silene_mendes@hotmail.com': { role: 'afiliado', affiliateType: 'geral' },
+  // Mari (Meraki): gestora SÓ da Meraki — sem o seletor de marca, sem Sorocaps.
+  'mari.briso@merakifarma.com.br': { role: 'gestor', brands: ['meraki'] },
 };
 
 function overrideFor(email: string) {

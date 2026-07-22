@@ -15,9 +15,10 @@ interface Question {
   correct: number; // índice da certa em options
 }
 
-function cut(s: string, max = 110): string {
-  const t = s.trim();
-  return t.length > max ? t.slice(0, max - 1).trimEnd() + '…' : t;
+// A alternativa aparece INTEIRA. Cortar com "…" fazia a pessoa errar sem saber
+// o que estava lendo — o quiz mede conhecimento, não paciência pra adivinhar.
+function cut(s: string): string {
+  return s.trim();
 }
 
 function shuffle<T>(arr: T[]): T[] {

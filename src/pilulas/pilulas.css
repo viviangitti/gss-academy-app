@@ -2204,7 +2204,8 @@
 .wp-gz-cob-info b { display: block; color: var(--wp-ink); }
 .wp-gz-cob-info i {
   display: block; margin-top: 1px; font-style: normal; font-size: 11px;
-  color: var(--wp-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  /* E-mail longo QUEBRA a linha em vez de virar "…" — o gestor precisa ler inteiro. */
+  color: var(--wp-soft); overflow-wrap: anywhere;
 }
 .wp-gz-cob-btn {
   display: flex; align-items: center; gap: 5px; flex: none;

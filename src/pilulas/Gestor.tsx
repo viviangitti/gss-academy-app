@@ -27,6 +27,18 @@ const ROLE_LB1: Record<string, string> = {
   balconista: 'Balconista', promotor: 'Promotor', afiliado: 'Afiliado', gestor: 'Gestor',
 };
 
+// Encurta um texto SEM cortar palavra pela metade: prefere terminar numa frase
+// completa; se não der, na última palavra inteira.
+function resumo(s: string, max: number): string {
+  const t = s.trim();
+  if (t.length <= max) return t;
+  const corte = t.slice(0, max);
+  const frase = Math.max(corte.lastIndexOf('. '), corte.lastIndexOf('! '), corte.lastIndexOf('? '));
+  if (frase > max * 0.5) return corte.slice(0, frase + 1);
+  const palavra = corte.lastIndexOf(' ');
+  return (palavra > 0 ? corte.slice(0, palavra) : corte).trimEnd();
+}
+
 function Resultados({ brandId, products, buscas }: { brandId: string; products: Product[]; buscas: { term: string; count: number }[] }) {
   const [rep, setRep] = useState<TeamReport | null>(null);
   const [erro, setErro] = useState('');
@@ -375,7 +387,8 @@ function ProductForm({ brand, onDone }: { brand: string; onDone: (name: string) 
       brand: brand as Product['brand'],
       name: name.trim(),
       category,
-      tagline: whatItIs.trim().slice(0, 140),
+      // Resumo curto: corta na última frase/palavra inteira, nunca no meio dela.
+      tagline: resumo(whatItIs, 140),
       hook: hook.trim(),
       whatItIs: whatItIs.trim(),
       benefits: bens.length ? bens : ['Benefício a preencher'],

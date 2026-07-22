@@ -20,9 +20,19 @@
   background: var(--wp-bg);
   color: var(--wp-text);
   position: relative;
-  overflow-x: hidden;
+  /* NÃO troque por 'hidden': overflow-x:hidden faz o navegador tratar este
+     container como área de rolagem própria, e aí o cabeçalho 'sticky' deixa de
+     grudar no topo — ele sobe junto com a página e o botão voltar some da tela
+     (era o "clico e não vai" nos vídeos, que são altos e obrigam a rolar).
+     'clip' corta o excesso na horizontal sem criar área de rolagem. */
+  overflow-x: clip;
   /* Corpo/UI em Inter (leitura leve). Cinzel fica só na marca e nos títulos grandes. */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+/* Navegador antigo, sem 'clip': volta pro hidden (perde o sticky, mas não deixa
+   a tela rolar pro lado). */
+@supports not (overflow-x: clip) {
+  .wp-app { overflow-x: hidden; }
 }
 /* Toque de serifa premium: só na marca (wordmark/logo) e nos títulos de topo. */
 .wp-logo-mark,
@@ -40,7 +50,13 @@
 .wp-header {
   position: sticky;
   top: 0;
-  z-index: 20;
+  /* Acima de TUDO, inclusive do vídeo. No iOS o <video> tocando vira uma camada
+     acelerada por hardware: quando o vídeo rola por baixo do cabeçalho, o toque
+     no "voltar" caía no vídeo em vez do botão ("clico e não vai"). Forçar a
+     própria camada (translateZ) e isolar o contexto resolve. */
+  z-index: 60;
+  transform: translateZ(0);
+  isolation: isolate;
   background: linear-gradient(120deg, var(--wp-ink), #26263f);
   color: #fff;
 }
@@ -83,6 +99,8 @@
   min-height: 44px;
   padding: 10px;
   margin: -10px 4px -10px -10px;
+  position: relative;
+  z-index: 2;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowUpRight, ArrowLeft, ChevronDown, Check, LayoutDashboard } from 'lucide-react';
 import Hoje from './Hoje';
@@ -21,7 +21,7 @@ import Ficha from './Ficha';
 import Venda from './Venda';
 import { stageSegmentFromUrl } from './data/segments';
 import { stageBrandFromUrl } from './data/brandInvite';
-import { isBalcao } from './data/brands';
+import { isBalcao, type BrandId } from './data/brands';
 import { setStatsMeta } from './data/statsSync';
 import { loadAudienceReels } from './data/audienceVideos';
 import './pilulas.css';
@@ -36,6 +36,16 @@ function inits(name?: string): string {
 function BrandSwitcher() {
   const { brand, brandId, setBrand, brands } = useBrand();
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  // Trocar de marca muda TUDO (catálogo, time, metas). Ficar na mesma tela — um
+  // produto da Meraki, por exemplo — não faz sentido depois de virar Sorocaps:
+  // volta pra tela inicial. 'replace' pra que o voltar não caia na marca antiga.
+  const trocar = (id: BrandId) => {
+    setOpen(false);
+    if (id === brandId) return;
+    setBrand(id);
+    navigate('/eleva', { replace: true });
+  };
   return (
     <div className="wp-brandsw">
       <button className="wp-brandsw-btn" onClick={() => setOpen((o) => !o)}>
@@ -51,7 +61,7 @@ function BrandSwitcher() {
               <button
                 key={b.id}
                 className={`wp-brandsw-item ${b.id === brandId ? 'active' : ''}`}
-                onClick={() => { setBrand(b.id); setOpen(false); }}
+                onClick={() => trocar(b.id)}
               >
                 <span className="wp-brandsw-dot" style={{ background: b.accent }} />
                 <span className="wp-brandsw-name">{b.name}</span>
@@ -90,15 +100,25 @@ function Header() {
   const { user } = useAuth();
   // Voltar = volta pra tela de onde a pessoa veio (Hoje, busca, catálogo, painel).
   // Se caiu direto no produto (link/QR, sem histórico), cai no catálogo.
+  // Guarda contra voltar DUAS telas: o toque dispara 'pointerdown' e, logo
+  // depois, o 'click' — e os dois chamam goBack.
+  const ultimoVoltar = useRef(0);
   const goBack = () => {
+    const agora = Date.now();
+    if (agora - ultimoVoltar.current < 700) return;
+    ultimoVoltar.current = agora;
     if (window.history.length > 1) navigate(-1);
     else navigate('/eleva/catalogo');
   };
+  // Dispara no TOQUE, não no clique. Com vídeo tocando o iOS às vezes engolia o
+  // 'click' (a camada do vídeo fica por cima na hora de decidir quem recebeu o
+  // toque) e o botão parecia travado. 'pointerdown' chega antes disso.
+  const voltarNoToque = (e: React.PointerEvent) => { e.preventDefault(); goBack(); };
   return (
     <header className="wp-header">
       <div className="wp-header-inner">
         {onProduct && (
-          <button type="button" onClick={goBack} className="wp-back" aria-label="Voltar"><ArrowLeft size={20} className="wp-ico" /></button>
+          <button type="button" onPointerDown={voltarNoToque} onClick={goBack} className="wp-back" aria-label="Voltar"><ArrowLeft size={20} className="wp-ico" /></button>
         )}
         <span className="wp-logo-mark">eleva<ArrowUpRight size={17} strokeWidth={2.5} className="wp-logo-caret" /></span>
         <span className="wp-spacer" />

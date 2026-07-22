@@ -309,32 +309,49 @@ function AudiencePreview({ product, value, onChange }: {
 }) {
   useStore();
   useAudienceReels();
-  const auds = audiencesForLine(product.line, product.brand);
-  if (!auds.length) return null;
-  const temVideo = (a: Audience) =>
-    hasVideo(audienceVideoKey(product.id, a)) ||
-    !!getAudienceReel(product.id, a) ||
-    !!product.audienceVideos?.[a];
+  // Qual ARQUIVO cada público vê (mesma ordem de prioridade do Reel). Serve pra
+  // não contar duas vezes o mesmo vídeo — o "geral" costuma ser igual ao de um
+  // dos públicos.
+  const srcDoPublico = (a: Audience): string | null => {
+    const k = audienceVideoKey(product.id, a);
+    if (hasVideo(k)) return `enviado:${k}`;
+    return getAudienceReel(product.id, a) || product.audienceVideos?.[a] || null;
+  };
+  const srcGeral = hasVideo(product.id) ? `enviado:${product.id}` : product.videoUrl || null;
+
+  // Só entra na lista o público que REALMENTE tem vídeo próprio, e só se for um
+  // vídeo DIFERENTE do geral. Mostrar "sem vídeo" poluía a tela e parecia troca
+  // de perfil ("visão do balconista"), que não é o caso.
+  const comVideo = audiencesForLine(product.line, product.brand)
+    .map((a) => ({ ...a, src: srcDoPublico(a.id) }))
+    .filter((a) => a.src && a.src !== srcGeral);
+
+  // Nada pra escolher (o produto tem um vídeo só): não mostra seletor nenhum.
+  if (comVideo.length + (srcGeral ? 1 : 0) < 2) return null;
+
   return (
     <div className="wp-audprev">
-      <span className="wp-audprev-t">Ver o vídeo de:</span>
+      <span className="wp-audprev-t">
+        Este produto tem {comVideo.length + (srcGeral ? 1 : 0)} vídeos diferentes. Assista cada um:
+      </span>
       <div className="wp-audprev-row">
-        <button
-          type="button"
-          className={`wp-audprev-b ${value === null ? 'on' : ''}`}
-          onClick={() => onChange(null)}
-        >
-          Padrão
-        </button>
-        {auds.map((a) => (
+        {srcGeral && (
+          <button
+            type="button"
+            className={`wp-audprev-b ${value === null ? 'on' : ''}`}
+            onClick={() => onChange(null)}
+          >
+            Geral
+          </button>
+        )}
+        {comVideo.map((a) => (
           <button
             key={a.id}
             type="button"
-            className={`wp-audprev-b ${value === a.id ? 'on' : ''} ${temVideo(a.id) ? 'tem' : 'falta'}`}
+            className={`wp-audprev-b ${value === a.id ? 'on' : ''}`}
             onClick={() => onChange(a.id)}
           >
             {a.label}
-            <i>{temVideo(a.id) ? 'tem vídeo' : 'sem vídeo'}</i>
           </button>
         ))}
       </div>

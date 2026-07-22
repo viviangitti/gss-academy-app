@@ -770,24 +770,6 @@
 .wp-ms-hero-stats { display: flex; gap: 18px; margin-top: 12px; font-size: 12px; color: #cfd0da; }
 .wp-ms-hero-stats b { color: #fff; font-size: 15px; }
 
-.wp-ms-link {
-  background: var(--wp-surface);
-  border: 1px dashed var(--wp-pink);
-  border-radius: 14px;
-  padding: 13px 15px;
-  margin-bottom: 20px;
-}
-.wp-ms-link-label { font-size: 10.5px; font-weight: 800; letter-spacing: 0.08em; color: var(--wp-soft); }
-.wp-ms-link-row { display: flex; align-items: center; gap: 8px; margin: 7px 0 6px; }
-.wp-ms-link-row code {
-  flex: 1; font-family: 'Courier New', monospace; font-size: 14px; font-weight: 700;
-  color: var(--wp-pink-deep); background: var(--wp-bg); padding: 8px 11px; border-radius: 8px;
-}
-.wp-ms-link-row button {
-  width: 40px; height: 36px; border: none; border-radius: 8px; background: var(--wp-pink);
-  color: var(--wp-on-accent); font-size: 15px; cursor: pointer; flex-shrink: 0;
-}
-.wp-ms-link-note { font-size: 11px; color: var(--wp-soft); line-height: 1.35; }
 
 .wp-ms-section { font-size: 15px; font-weight: 800; color: var(--wp-ink); margin-bottom: 12px; }
 .wp-ms-list { display: flex; flex-direction: column; gap: 12px; }

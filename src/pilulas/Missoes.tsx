@@ -222,18 +222,6 @@ export default function Missoes() {
         </div>
       </div>
 
-      <div className="wp-ms-link">
-        <span className="wp-ms-link-label">SEU LINK DE CREATOR · EM BREVE</span>
-        <div className="wp-ms-link-row">
-          <code>eleva.link/vc-maria</code>
-          <button
-            aria-label="Copiar link"
-            onClick={() => navigator.clipboard?.writeText('https://eleva.link/vc-maria')}
-          ><Copy size={15} className="wp-ico" /></button>
-        </div>
-        <p className="wp-ms-link-note">Em breve: um link exclusivo para acompanhar as vendas que você indica.</p>
-      </div>
-
       {/* Filtro de canal */}
       <div className="wp-cr-channels">
         <button className={`wp-cr-chbtn ${channel === 'todos' ? 'on' : ''}`} onClick={() => setChannel('todos')}>Todos</button>

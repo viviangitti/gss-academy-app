@@ -343,7 +343,8 @@ function AudiencePreview({ product, value, onChange }: {
 }
 
 // Campo pra a PONTA registrar uma objeção nova (que não está na pílula). Vira um
-// ponto de contato: cai no painel do gestor. Gestor não vê aqui (ele vê a lista).
+// ponto de contato: cai no painel do gestor. O gestor também vê e pode registrar
+// (ele ouve objeção em visita/treinamento) — o histórico completo fica no Painel.
 function ObjectionSubmit({ product }: { product: ProductT }) {
   const { brandId } = useBrand();
   const { user } = useAuth();
@@ -359,8 +360,6 @@ function ObjectionSubmit({ product }: { product: ProductT }) {
     fetchMyObjections(product.id, user?.email).then(setMinhas).catch(() => {});
   }, [product.id, user?.email]);
   useEffect(() => { if (open) recarregarMinhas(); }, [open, recarregarMinhas]);
-
-  if (user?.role === 'gestor') return null;
 
   const enviar = async () => {
     if (!text.trim() || busy) return;

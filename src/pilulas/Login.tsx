@@ -140,7 +140,7 @@ export default function Login() {
                 </button>
               ))}
             </div>
-            <p className="wp-login-hint">Trabalha com as duas? Pode marcar as duas — você troca de marca dentro do app.</p>
+            <p className="wp-login-hint">Trabalha com as duas? Pode marcar as duas — você troca de marca a qualquer momento.</p>
           </>
         )}
 

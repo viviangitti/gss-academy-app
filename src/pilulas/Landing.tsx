@@ -186,7 +186,7 @@ export default function Landing({ onEntrar }: { onEntrar: () => void }) {
       </section>
 
       <section className="wp-lp-fluxo">
-        <p className="wp-lp-eyebrow">O caminho inteiro, dentro do app</p>
+        <p className="wp-lp-eyebrow">O caminho inteiro, num programa só</p>
         <div className="wp-lp-passos">
           <div className="wp-lp-passo">
             <span className="wp-lp-passo-tag"><MessageCircle size={13} /> A cliente falou</span>
@@ -204,7 +204,7 @@ export default function Landing({ onEntrar }: { onEntrar: () => void }) {
           </div>
         </div>
         <p className="wp-lp-fonte">
-          Objeção e resposta reais do GLPEN Nutri Muscle, como estão no app da Meraki hoje.
+          Objeção e resposta reais do GLPEN Nutri Muscle, como estão no programa da Meraki hoje.
         </p>
       </section>
 
@@ -280,7 +280,7 @@ export default function Landing({ onEntrar }: { onEntrar: () => void }) {
         <h2>O Eleva veste a identidade de quem contrata.</h2>
         <p className="wp-lp-marca-sub">
           Cor, nome, catálogo e certificado são da marca. Quem usa vê a sua empresa — a GSS fica por trás.
-          Hoje o app roda com duas marcas ao mesmo tempo, cada uma com o seu time e os seus números.
+          Hoje o Eleva roda com duas marcas ao mesmo tempo, cada uma com o seu time e os seus números.
         </p>
         <div className="wp-lp-chips">
           <span className="wp-lp-chip wp-lp-chip--meraki">Meraki</span>

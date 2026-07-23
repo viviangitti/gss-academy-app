@@ -715,7 +715,7 @@ export default function Gestor() {
 
   const done = (label: string, what: string) => {
     setOpenForm(null);
-    setToast(`${what} "${label}" publicado — já está no app.`);
+    setToast(`${what} "${label}" publicado — o time já vê.`);
     setTimeout(() => setToast(''), 4000);
   };
 
@@ -727,7 +727,7 @@ export default function Gestor() {
         <p className="wp-gz-hero-sub">Cadastre produtos, envie vídeos e crie ofertas. O que você publica aqui aparece na hora para o time.</p>
       </div>
 
-      {toast && <div className="wp-gz-toast"><Check size={13} className="wp-ico" /> {toast} <Link to="/eleva/catalogo">ver no app <ExternalLink size={12} className="wp-ico" /></Link></div>}
+      {toast && <div className="wp-gz-toast"><Check size={13} className="wp-ico" /> {toast} <Link to="/eleva/catalogo">ver no catálogo <ExternalLink size={12} className="wp-ico" /></Link></div>}
 
 
       {/* Abas: o gestor tem dois trabalhos — ver resultado e colocar conteúdo. */}

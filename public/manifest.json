@@ -1,7 +1,7 @@
 {
   "name": "Eleva — produto que vende na ponta",
   "short_name": "Eleva",
-  "description": "Cada produto vira uma pílula de 30s: quem vende aprende o benefício, responde a objeção da cliente e manda o vídeo pronto no WhatsApp.",
+  "description": "Programa de educação de produto: cada produto vira uma pílula. Quem vende aprende o benefício, responde a objeção da cliente e manda o vídeo pronto no WhatsApp.",
   "start_url": "/eleva",
   "display": "standalone",
   "orientation": "portrait",

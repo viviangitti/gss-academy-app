@@ -19,7 +19,6 @@ const QUICK_PROMPTS = [
   'Como qualificar um cliente potencial?',
 ];
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -105,7 +104,7 @@ export default function AICoach() {
     const withSuggestions = msg + '\n\n(Ao final da resposta, inclua exatamente neste formato: [SUGESTÕES: pergunta 1 | pergunta 2 | pergunta 3] com 2-3 perguntas que o vendedor poderia fazer ao cliente em seguida)';
 
     try {
-      const response = await sendMessage(withSuggestions, API_KEY);
+      const response = await sendMessage(withSuggestions);
       const { clean, suggestions: newSug } = parseSuggestions(response);
       setSuggestions(newSug);
 
@@ -245,7 +244,6 @@ export default function AICoach() {
     ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
   if (!isOnline) return <OfflineState feature="o Coach de IA" />;
-  if (!API_KEY) return <OfflineState feature="o Coach de IA" subtitle="Configuração de IA indisponível. Fale com o suporte." />;
 
   return (
     <div className="ai-coach-page">

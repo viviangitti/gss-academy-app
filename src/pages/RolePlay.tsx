@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { Swords, Send, RotateCcw, Star, ChevronDown, Sparkles } from 'lucide-react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getObjections } from '../services/content';
 import { loadData, KEYS } from '../services/storage';
 import { addHistory } from '../services/history';
@@ -11,7 +10,7 @@ import OfflineState from '../components/OfflineState';
 import { useOnline } from '../hooks/useOnline';
 import './RolePlay.css';
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+import { createAI } from '../lib/aiProxy';
 
 const ROLEPLAY_PROMPT = `Você é um cliente DIFÍCIL em uma simulação de vendas. Seu papel:
 
@@ -71,7 +70,7 @@ export default function RolePlay() {
   const [showSelector, setShowSelector] = useState(false);
   const [exchangeCount, setExchangeCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatRef = useRef<ReturnType<ReturnType<GoogleGenerativeAI['getGenerativeModel']>['startChat']> | null>(null);
+  const chatRef = useRef<ReturnType<ReturnType<ReturnType<typeof createAI>['getGenerativeModel']>['startChat']> | null>(null);
 
   useEffect(() => {
     const profile = loadData<UserProfile>(KEYS.PROFILE, { name: '', role: '', company: '', segment: '' });
@@ -90,7 +89,7 @@ export default function RolePlay() {
     setExchangeCount(0);
     setShowSelector(false);
 
-    const genAI = new GoogleGenerativeAI(API_KEY);
+    const genAI = createAI();
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
     chatRef.current = model.startChat({
@@ -138,7 +137,7 @@ export default function RolePlay() {
   const evaluateTraining = async (allMessages: TrainingMessage[]) => {
     setLoading(true);
     try {
-      const genAI = new GoogleGenerativeAI(API_KEY);
+      const genAI = createAI();
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
       const conversation = allMessages
@@ -183,7 +182,6 @@ export default function RolePlay() {
   };
 
   if (!isOnline) return <OfflineState feature="o Simulador de Treino" />;
-  if (!API_KEY) return <OfflineState feature="o Simulador de Treino" subtitle="Configuração de IA indisponível. Fale com o suporte." />;
 
   // Selection screen
   if (!selectedObjection) {

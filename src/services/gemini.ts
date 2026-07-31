@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { createAI } from '../lib/aiProxy';
 
 const SYSTEM_PROMPT = `Você é o Consultor de Vendas da MAESTR.IA em Vendas, um especialista em vendas consultivas, negociação e liderança comercial de alta performance.
 
@@ -56,11 +56,11 @@ Seu papel é ajudar líderes comerciais a dominar vendas com base nos princípio
 - Sugira técnicas como Perguntas Estratégicas, Venda Desafiadora, Qualificação em 4 Passos, Conexão e Confiança, Histórias que Vendem, Fechamento Alternativo, Método Sanduíche
 - Sempre inclua um elemento de ação prática que o vendedor possa aplicar imediatamente`;
 
-let chat: ReturnType<ReturnType<GoogleGenerativeAI['getGenerativeModel']>['startChat']> | null = null;
+let chat: ReturnType<ReturnType<ReturnType<typeof createAI>['getGenerativeModel']>['startChat']> | null = null;
 
-export async function sendMessage(message: string, apiKey: string): Promise<string> {
+export async function sendMessage(message: string): Promise<string> {
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
+    const genAI = createAI();
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
     if (!chat) {

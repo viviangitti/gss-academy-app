@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Mic, Sparkles, RotateCcw, Users, Shield, ArrowRight, AlertTriangle, Target, Edit3, Trash2, CheckSquare, Lightbulb, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { addHistory } from '../services/history';
 import { addTask } from '../services/day';
 import ShareButton from '../components/ShareButton';
@@ -10,7 +9,7 @@ import OfflineState from '../components/OfflineState';
 import { useOnline } from '../hooks/useOnline';
 import './MeetingAnalysis.css';
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+import { createAI } from '../lib/aiProxy';
 
 interface Analysis {
   summary: string;
@@ -259,7 +258,7 @@ export default function MeetingAnalysis() {
     setAnalysis(null);
 
     try {
-      const genAI = new GoogleGenerativeAI(API_KEY);
+      const genAI = createAI();
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
       const result = await model.generateContent(ANALYSIS_PROMPT(fullText));
       const text = result.response.text().trim();
@@ -382,7 +381,6 @@ export default function MeetingAnalysis() {
   }
 
   if (!isOnline) return <OfflineState feature="a Análise de Reunião" />;
-  if (!API_KEY) return <OfflineState feature="a Análise de Reunião" subtitle="Configuração de IA indisponível. Fale com o suporte." />;
 
   // ── Tela de gravação ────────────────────────────────────────────────────
   return (

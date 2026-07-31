@@ -73,6 +73,30 @@
         "--strictPort"
       ],
       "port": 5183
+    },
+    {
+      "name": "maestria-noauth",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/viviangitti/maestria-empresas && VITE_FIREBASE_API_KEY= /opt/homebrew/bin/npx vite --port 5176"
+      ],
+      "port": 5176,
+      "env": {
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    },
+    {
+      "name": "dilnara",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/viviangitti/dilnara-app && python3 -m http.server 5185"
+      ],
+      "port": 5185,
+      "env": {
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+      }
     }
   ]
 }

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Wand2, Sparkles, Copy, Check, RotateCcw, AlertTriangle, ThumbsUp, MessageSquare, Lightbulb } from 'lucide-react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { addHistory } from '../services/history';
 import ShareButton from '../components/ShareButton';
 import SpeakButton from '../components/SpeakButton';
@@ -8,7 +7,9 @@ import OfflineState from '../components/OfflineState';
 import { useOnline } from '../hooks/useOnline';
 import './MessageCoach.css';
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+// A análise roda no servidor (/api/message-coach). A chave do Gemini NUNCA
+// chega ao navegador — antes ela era embutida no bundle via VITE_GEMINI_API_KEY,
+// o que permitiu o sequestro da chave.
 
 const CONTEXTS = [
   { value: '', label: 'Qualquer mensagem' },
@@ -35,30 +36,6 @@ interface Analysis {
   improved: string;
   whyBetter: string;
 }
-
-const ANALYSIS_PROMPT = (message: string, context: string, channel: string) => `Você é um coach de vendas especialista. Analise esta mensagem comercial que o vendedor vai enviar para o cliente.
-
-CANAL: ${channel}
-CONTEXTO: ${context || 'não especificado'}
-
-MENSAGEM DO VENDEDOR:
-"""
-${message}
-"""
-
-Responda EXATAMENTE neste formato JSON (sem markdown, sem crases), em português brasileiro:
-
-{
-  "score": <nota de 1 a 10>,
-  "tone": "<descrição curta do tom, ex: 'Genérico e passivo'>",
-  "strengths": ["<1-3 pontos fortes em frases curtas>"],
-  "problems": ["<1-4 problemas específicos em frases diretas>"],
-  "improved": "<mensagem reescrita do zero, MUITO MELHOR, pronta para copiar e enviar. Mantenha o canal escolhido. Para WhatsApp seja curto e direto. Para e-mail seja estruturado. Não use formalidades exageradas>",
-  "whyBetter": "<1 frase explicando por que a versão melhorada funciona melhor>"
-}
-
-Seja honesto: se a mensagem for ruim, dê nota baixa. Se for excelente, dê nota alta.
-NÃO inclua nenhum texto antes ou depois do JSON.`;
 
 interface SavedAnalysis {
   message: string;
@@ -107,16 +84,18 @@ export default function MessageCoach() {
     setAnalysis(null);
 
     try {
-      const genAI = new GoogleGenerativeAI(API_KEY);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
       const contextLabel = CONTEXTS.find(c => c.value === context)?.label || '';
       const channelLabel = CHANNELS.find(c => c.value === channel)?.label || channel;
 
-      const result = await model.generateContent(ANALYSIS_PROMPT(message, contextLabel, channelLabel));
-      const text = result.response.text().trim();
-      // Remove possíveis crases de markdown
-      const cleaned = text.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
-      const parsed = JSON.parse(cleaned) as Analysis;
+      // Análise no servidor — a chave do Gemini não trafega no cliente.
+      const res = await fetch('/api/message-coach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, context: contextLabel, channel: channelLabel }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || 'Falha na análise');
+      const parsed = data.analysis as Analysis;
       setAnalysis(parsed);
 
       // Salvar no histórico
@@ -157,7 +136,8 @@ export default function MessageCoach() {
     : '';
 
   if (!isOnline) return <OfflineState feature="o Coach de Mensagem" />;
-  if (!API_KEY) return <OfflineState feature="o Coach de Mensagem" subtitle="Configuração de IA indisponível. Fale com o suporte." />;
+  // A disponibilidade da IA é decidida no servidor; erros de configuração
+  // aparecem na mensagem de erro da análise.
 
   return (
     <div className="msgcoach-page">

@@ -6,6 +6,7 @@ import { visibleProducts, productKnowledge } from './data/products';
 import { useBrand } from './BrandContext';
 import { useAuth } from './AuthContext';
 import { getBrand } from './data/brands';
+import { aiAuthHeaders } from '../lib/aiProxy';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -50,7 +51,7 @@ export default function AssistenteBalcao() {
     try {
       const r = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await aiAuthHeaders(),
         body: JSON.stringify({ message: pergunta, history: historico, context: contexto }),
       });
       const data = await r.json();

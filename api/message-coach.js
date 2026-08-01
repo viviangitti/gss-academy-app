@@ -9,6 +9,7 @@
 // vira um proxy genérico de IA para terceiros.
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { requireAuth, checkRateLimit } from './_auth.js';
 
 const MAX_MESSAGE_CHARS = 4000;
 
@@ -43,6 +44,14 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+    // Exige usuária logada — sem isso o endpoint fica aberto e um robô consegue
+    // queimar o crédito do Gemini chamando direto, mesmo sem ter a chave.
+    const uid = await requireAuth(req, res);
+    if (!uid) return;
+    if (!checkRateLimit(uid)) {
+        return res.status(429).json({ error: 'Muitas requisições. Aguarde um minuto.' });
+    }
 
   const { message, context = '', channel = '' } = req.body || {};
   if (!message || typeof message !== 'string' || !message.trim()) {

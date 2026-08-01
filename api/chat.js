@@ -2,6 +2,7 @@
 // Endpoint: POST /api/chat
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { requireAuth, checkRateLimit } from './_auth.js';
 
 const BUSINESS_CONTEXT = `
 Você é a **Silvia**, assistente pessoal de IA da Silene, co-fundadora da GSS Academy.
@@ -118,6 +119,14 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Exige usuária logada — sem isso o endpoint fica aberto e um robô consegue
+  // queimar o crédito do Gemini chamando direto, mesmo sem ter a chave.
+  const uid = await requireAuth(req, res);
+  if (!uid) return;
+  if (!checkRateLimit(uid)) {
+    return res.status(429).json({ error: 'Muitas requisições. Aguarde um minuto.' });
   }
 
   try {

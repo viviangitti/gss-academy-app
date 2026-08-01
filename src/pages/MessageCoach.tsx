@@ -88,9 +88,10 @@ export default function MessageCoach() {
       const channelLabel = CHANNELS.find(c => c.value === channel)?.label || channel;
 
       // Análise no servidor — a chave do Gemini não trafega no cliente.
+      const { aiAuthHeaders } = await import('../lib/aiProxy');
       const res = await fetch('/api/message-coach', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await aiAuthHeaders(),
         body: JSON.stringify({ message, context: contextLabel, channel: channelLabel }),
       });
       const data = await res.json().catch(() => ({}));

@@ -41,10 +41,23 @@ function toContents(input: PromptInput): Content[] {
     return [{ role: 'user', parts: input as Part[] }];
 }
 
+/** Cabeçalhos com o token do Firebase — o servidor exige usuária logada. */
+export async function aiAuthHeaders(): Promise<Record<string, string>> {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    try {
+        const { auth } = await import('../services/firebase');
+        const token = await auth?.currentUser?.getIdToken();
+        if (token) headers.Authorization = `Bearer ${token}`;
+    } catch {
+        // sem Firebase disponível — o servidor responderá 401
+    }
+    return headers;
+}
+
 async function callProxy(body: Record<string, unknown>, signal?: AbortSignal): Promise<AIResponse> {
     const res = await fetch('/api/ai-proxy', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await aiAuthHeaders(),
         body: JSON.stringify(body),
         signal,
     });

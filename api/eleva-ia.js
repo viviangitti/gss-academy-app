@@ -6,6 +6,7 @@
 // AQUI no servidor, então valem mesmo que o cliente mude o contexto.
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { requireAuth, checkRateLimit } from './_auth.js';
 
 const GUARDRAILS = `Você é o "Assistente de Balcão", uma IA de uso INTERNO para o balconista da farmácia se preparar para atender o cliente. Você conhece APENAS os itens em INFORMAÇÕES DOS PRODUTOS.
 
@@ -25,6 +26,14 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+    // Exige usuária logada — sem isso o endpoint fica aberto e um robô consegue
+    // queimar o crédito do Gemini chamando direto, mesmo sem ter a chave.
+    const uid = await requireAuth(req, res);
+    if (!uid) return;
+    if (!checkRateLimit(uid)) {
+        return res.status(429).json({ error: 'Muitas requisições. Aguarde um minuto.' });
+    }
 
   try {
     const { message, history = [], context = '' } = req.body || {};

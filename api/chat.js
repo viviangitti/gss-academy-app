@@ -127,7 +127,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Mensagem inválida' });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+    // SÓ a chave de servidor. Sem fallback pra VITE_ (que vaza no navegador).
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return res.status(500).json({ error: 'API key não configurada' });
     }

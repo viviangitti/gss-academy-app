@@ -32,9 +32,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Mensagem inválida' });
     }
 
-    // VITE_GEMINI_API_KEY primeiro: no projeto do Eleva a GEMINI_API_KEY do
-    // servidor está expirada; a do cliente (usada pelo app) tende a ser a válida.
-    const apiKey = process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    // SÓ a chave de servidor (GEMINI_API_KEY, sem VITE_). Nunca cair pra
+    // VITE_GEMINI_API_KEY: essa vaza no bundle do navegador e já foi abusada por
+    // robô (13,5 mil chamadas/dia). A chave fica aqui, no servidor, invisível.
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return res.status(500).json({ error: 'API key não configurada' });
 
     const systemInstruction =

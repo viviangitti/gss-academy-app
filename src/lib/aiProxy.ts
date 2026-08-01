@@ -41,11 +41,12 @@ function toContents(input: PromptInput): Content[] {
     return [{ role: 'user', parts: input as Part[] }];
 }
 
-async function callProxy(body: Record<string, unknown>): Promise<AIResponse> {
+async function callProxy(body: Record<string, unknown>, signal?: AbortSignal): Promise<AIResponse> {
     const res = await fetch('/api/ai-proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        signal,
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data?.error || 'Falha na chamada da IA');
@@ -55,8 +56,9 @@ async function callProxy(body: Record<string, unknown>): Promise<AIResponse> {
 
 export function createAI() {
     return {
-        getGenerativeModel(opts: ModelOptions) {
+        getGenerativeModel(opts: ModelOptions, requestOptions?: { signal?: AbortSignal }) {
             const { model, systemInstruction, generationConfig, tools } = opts;
+            const signal = requestOptions?.signal;
 
             return {
                 async generateContent(input: PromptInput): Promise<AIResponse> {
@@ -66,7 +68,7 @@ export function createAI() {
                         systemInstruction,
                         generationConfig,
                         tools,
-                    });
+                    }, signal);
                 },
 
                 /** Chat com histórico mantido no cliente (enviado a cada mensagem). */
@@ -83,7 +85,7 @@ export function createAI() {
                                 systemInstruction,
                                 generationConfig,
                                 tools,
-                            });
+                            }, signal);
 
                             // mantém o histórico coerente para a próxima mensagem
                             history.push(userTurn);

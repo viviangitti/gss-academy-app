@@ -61,7 +61,7 @@ export default async function handler(req, res) {
     return res.status(413).json({ error: 'Mensagem muito longa' });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return res.status(503).json({ error: 'IA não configurada no servidor' });
 
   try {

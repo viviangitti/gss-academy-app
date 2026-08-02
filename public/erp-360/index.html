@@ -81,6 +81,51 @@
     .kanban-col { min-width: 260px; }
   }
 </style>
+<script>
+// ===== Senha do painel =====
+// Estes endpoints devolvem dado pessoal (nome, empresa, cargo, histórico).
+// Ficaram abertos e qualquer um na internet conseguia listar os usuários.
+// Agora o servidor exige o cabeçalho x-admin-token; aqui a gente pede a senha
+// uma vez e guarda neste navegador.
+window.__adminToken = (function () {
+  try { return localStorage.getItem('gss_admin_token') || ''; } catch (e) { return ''; }
+})();
+
+function pedirSenhaAdmin(forcar) {
+  if (window.__adminToken && !forcar) return window.__adminToken;
+  var t = window.prompt('Senha do painel de gestão:');
+  if (t) {
+    window.__adminToken = t.trim();
+    try { localStorage.setItem('gss_admin_token', window.__adminToken); } catch (e) {}
+  }
+  return window.__adminToken;
+}
+
+// Intercepta as chamadas /api/ do painel e anexa a senha. Se o servidor
+// recusar (401), pede a senha de novo e tenta uma vez.
+(function () {
+  var original = window.fetch;
+  window.fetch = async function (url, opts) {
+    var u = String(url || '');
+    var isPainel = u.indexOf('/api/maestria') === 0 || u.indexOf('/api/waitlist') === 0;
+    if (!isPainel) return original(url, opts);
+
+    var o = Object.assign({}, opts || {});
+    o.headers = Object.assign({}, o.headers || {}, { 'x-admin-token': pedirSenhaAdmin(false) || '' });
+    var res = await original(url, o);
+    if (res.status === 401) {
+      try { localStorage.removeItem('gss_admin_token'); } catch (e) {}
+      window.__adminToken = '';
+      var novo = pedirSenhaAdmin(true);
+      if (novo) {
+        o.headers['x-admin-token'] = novo;
+        return original(url, o);
+      }
+    }
+    return res;
+  };
+})();
+</script>
 </head>
 <body class="min-h-screen">
 

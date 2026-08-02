@@ -76,6 +76,34 @@ export async function requireAuth(req, res) {
     }
 }
 
+/**
+ * Exige senha de ADMIN. Protege os painéis de gestão (maestria-*, waitlist-*),
+ * que expõem dado pessoal (nome, empresa, cargo, histórico de uso).
+ *
+ * Por que existe: esses endpoints ficaram abertos e qualquer um na internet
+ * conseguia listar os usuários e puxar o histórico de cada um pelo uid.
+ *
+ * Falha FECHADA: sem ADMIN_TOKEN configurado no servidor, ninguém entra.
+ * Uso:  if (!requireAdmin(req, res)) return;
+ */
+export function requireAdmin(req, res) {
+    const expected = process.env.ADMIN_TOKEN;
+    if (!expected) {
+        res.status(503).json({ error: 'ADMIN_TOKEN não configurado no servidor' });
+        return false;
+    }
+    const sent = req.headers['x-admin-token'] || '';
+    // Comparação de tempo constante: evita descobrir a senha medindo o tempo.
+    const a = Buffer.from(String(sent));
+    const b = Buffer.from(String(expected));
+    const ok = a.length === b.length && crypto.timingSafeEqual(a, b);
+    if (!ok) {
+        res.status(401).json({ error: 'Não autorizado' });
+        return false;
+    }
+    return true;
+}
+
 // ---- Rate limit por usuário (best-effort: por instância da function) ----
 const RATE_LIMIT = 30;
 const RATE_WINDOW_MS = 60_000;

@@ -6,6 +6,7 @@
 
 import { getDb, isInternalUser } from './_firebase.js';
 
+import { requireAdmin } from './_auth.js';
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   // Impede CDN da Vercel/browser de cachear a resposta — o cache em memória da função já existe
@@ -13,7 +14,11 @@ export default async function handler(req, res) {
   res.setHeader('CDN-Cache-Control', 'no-store');
   res.setHeader('Vercel-CDN-Cache-Control', 'no-store');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-token');
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // Painel de gestão: expõe dado pessoal — exige senha de admin.
+  if (!requireAdmin(req, res)) return;
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
   const uid = String(req.query.uid || '').trim();

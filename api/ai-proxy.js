@@ -9,6 +9,7 @@
 // O cliente usa src/lib/aiProxy.ts, que expõe a mesma interface do SDK.
 
 import { requireAuth, checkRateLimit } from './_auth.js';
+import { guardBudget } from './_aiBudget.js';
 
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 
@@ -33,6 +34,10 @@ export default async function handler(req, res) {
     if (!checkRateLimit(uid)) {
         return res.status(429).json({ error: 'Muitas requisições. Aguarde um minuto.' });
     }
+
+    // Teto DIÁRIO global (contador no Firestore). O 'orçamento' do Google é
+    // só alerta e não segura gasto — este segura.
+    if (!(await guardBudget(res))) return;
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return res.status(503).json({ error: 'IA não configurada no servidor' });

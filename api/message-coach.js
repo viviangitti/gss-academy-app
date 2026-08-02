@@ -10,6 +10,7 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { requireAuth, checkRateLimit } from './_auth.js';
+import { guardBudget } from './_aiBudget.js';
 
 const MAX_MESSAGE_CHARS = 4000;
 
@@ -52,6 +53,10 @@ export default async function handler(req, res) {
     if (!checkRateLimit(uid)) {
         return res.status(429).json({ error: 'Muitas requisições. Aguarde um minuto.' });
     }
+
+    // Teto DIÁRIO global (contador no Firestore). O 'orçamento' do Google é
+    // só alerta e não segura gasto — este segura.
+    if (!(await guardBudget(res))) return;
 
   const { message, context = '', channel = '' } = req.body || {};
   if (!message || typeof message !== 'string' || !message.trim()) {

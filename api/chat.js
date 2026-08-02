@@ -3,6 +3,7 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { requireAuth, checkRateLimit } from './_auth.js';
+import { guardBudget } from './_aiBudget.js';
 
 const BUSINESS_CONTEXT = `
 Você é a **Silvia**, assistente pessoal de IA da Silene, co-fundadora da GSS Academy.
@@ -128,6 +129,10 @@ export default async function handler(req, res) {
   if (!checkRateLimit(uid)) {
     return res.status(429).json({ error: 'Muitas requisições. Aguarde um minuto.' });
   }
+
+  // Teto DIÁRIO global (contador no Firestore). O 'orçamento' do Google é
+  // só alerta e não segura gasto — este segura.
+  if (!(await guardBudget(res))) return;
 
   try {
     const { message, history = [] } = req.body || {};

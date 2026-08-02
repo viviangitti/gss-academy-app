@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Eye, EyeOff, Check } from 'lucide-react';
 import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } from '../services/auth';
 import { setStoredRole } from './data/roles';
@@ -15,6 +16,9 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
+  // LGPD: o cadastro precisa registrar que a pessoa leu e aceitou. Só no
+  // "criar conta" — quem já tem conta já aceitou.
+  const [aceite, setAceite] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
@@ -48,7 +52,8 @@ export default function Login() {
 
   const emailOk = /\S+@\S+\.\S+/.test(email);
   const valid =
-    emailOk && password.length >= 6 && (mode === 'entrar' || name.trim().length > 0);
+    emailOk && password.length >= 6 &&
+    (mode === 'entrar' || (name.trim().length > 0 && aceite));
 
   const submit = async () => {
     if (!valid || busy) return;
@@ -233,6 +238,15 @@ export default function Login() {
           </button>
         </div>
 
+        {mode === 'criar' && (
+          <label className="wp-login-aceite">
+            <input type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} />
+            <span>
+              Li e aceito a <Link to="/eleva/privacidade" target="_blank" rel="noreferrer">Política de Privacidade</Link>.
+            </span>
+          </label>
+        )}
+
         {error && <p className="wp-login-error">{error}</p>}
         {info && <p className="wp-login-info">{info}</p>}
 
@@ -247,7 +261,10 @@ export default function Login() {
           </button>
         )}
       </div>
-      <p className="wp-login-note">Escolha seu perfil e crie sua conta. Seu acesso é liberado pela marca conforme o seu e-mail.</p>
+      <p className="wp-login-note">
+        Escolha seu perfil e crie sua conta. Seu acesso é liberado pela marca conforme o seu e-mail.
+        {' '}<Link to="/eleva/privacidade">Política de Privacidade</Link>.
+      </p>
     </div>
   );
 }

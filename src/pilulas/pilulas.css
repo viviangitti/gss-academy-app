@@ -2558,3 +2558,40 @@
   color: var(--wp-soft); border-left: 2px solid var(--wp-pink);
   padding: 2px 0 2px 9px;
 }
+
+/* ===== Política de privacidade ===== */
+.wp-priv { max-width: 480px; margin: 0 auto; padding: 14px 16px 90px; }
+.wp-priv-back {
+  display: inline-flex; align-items: center; gap: 4px; text-decoration: none;
+  font-size: 13.5px; font-weight: 700; color: var(--wp-pink-deep); margin-bottom: 14px;
+}
+.wp-priv-hero { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 20px; }
+.wp-priv-hero-icon {
+  flex: none; width: 38px; height: 38px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--wp-pink) 16%, transparent); color: var(--wp-pink-deep);
+}
+.wp-priv-title { font-family: 'Cinzel', Georgia, serif; font-size: 23px; font-weight: 700; margin: 0; line-height: 1.2; }
+.wp-priv-sub { margin: 4px 0 0; font-size: 13px; color: var(--wp-soft); line-height: 1.45; }
+.wp-priv-sec { margin-bottom: 22px; }
+.wp-priv-sec h2 {
+  font-size: 15.5px; font-weight: 800; margin: 0 0 8px; color: var(--wp-ink);
+  padding-bottom: 6px; border-bottom: 1px solid var(--wp-border);
+}
+.wp-priv-sec h3 { font-size: 13.5px; font-weight: 800; margin: 14px 0 6px; color: var(--wp-pink-deep); }
+.wp-priv-sec p { margin: 0 0 8px; font-size: 14px; line-height: 1.6; color: var(--wp-ink); }
+.wp-priv-sec ul { margin: 0 0 8px; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+.wp-priv-sec li { font-size: 14px; line-height: 1.55; color: var(--wp-ink); }
+.wp-priv-sec a { color: var(--wp-pink-deep); }
+.wp-priv-foot { margin-top: 26px; font-size: 12px; color: var(--wp-soft); text-align: center; }
+
+/* Aceite no cadastro */
+.wp-login-aceite {
+  display: flex; align-items: flex-start; gap: 9px; margin-top: 14px;
+  font-size: 13px; line-height: 1.45; color: var(--wp-ink); cursor: pointer;
+}
+.wp-login-aceite input { margin-top: 2px; width: 17px; height: 17px; flex: none; accent-color: var(--wp-pink); }
+.wp-login-aceite a { color: var(--wp-pink-deep); font-weight: 700; }
+
+/* Link da política no rodapé do login (herdava o azul padrão do navegador) */
+.wp-login-note a { color: var(--wp-pink-deep); font-weight: 700; text-decoration: underline; }

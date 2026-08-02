@@ -12,6 +12,7 @@ import Trilha from './Trilha';
 import Sobre from './Sobre';
 import Gestor from './Gestor';
 import Login from './Login';
+import Privacidade from './Privacidade';
 import Landing from './Landing';
 import Onboarding from './Onboarding';
 import BottomNav from './BottomNav';
@@ -218,6 +219,16 @@ function Shell() {
   }
 
   if (!user) {
+    // A política de privacidade tem que abrir SEM login: o link dela fica no
+    // rodapé da tela de entrada e na caixa de aceite do cadastro — quem ainda
+    // não tem conta é justamente quem precisa lê-la antes de aceitar.
+    if (location.pathname.startsWith('/eleva/privacidade')) {
+      return (
+        <div className="wp-app" style={themeStyle}>
+          <Privacidade />
+        </div>
+      );
+    }
     // Quem chega por link de convite (?marca=) já foi convidado por alguém —
     // vitrine não faz sentido: vai direto pro cadastro.
     // Fora do .wp-app de propósito: o app tem largura de celular (480px) e a
@@ -257,6 +268,7 @@ function Shell() {
           <Route path="/eleva/ranking" element={<BlockBalcao><Ranking /></BlockBalcao>} />
           <Route path="/eleva/ofertas" element={<BlockBalcao><BlockAfiliado><Ofertas /></BlockAfiliado></BlockBalcao>} />
           <Route path="/eleva/gestor" element={<RequireGestor><Gestor /></RequireGestor>} />
+          <Route path="/eleva/privacidade" element={<Privacidade />} />
           <Route path="/pilulas/*" element={<Navigate to="/eleva" replace />} />
           {/* Link antigo ou telas que saíram do ar (ex.: /eleva/venda) caem na
               home em vez de deixar a tela vazia. */}

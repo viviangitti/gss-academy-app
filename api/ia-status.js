@@ -42,6 +42,22 @@ export default async function handler(req, res) {
     else if (/quota|RESOURCE_EXHAUSTED|429/i.test(msg)) diagnostico = 'COTA ESTOURADA (limite do nível gratuito)';
     else if (/PERMISSION_DENIED|403/i.test(msg)) diagnostico = 'SEM PERMISSÃO (API não habilitada no projeto)';
     else if (/billing/i.test(msg)) diagnostico = 'problema de faturamento no projeto';
-    return res.status(200).json({ ...info, ok: false, diagnostico, erroBruto: msg.slice(0, 200) });
+    else if (/not found|404/i.test(msg)) diagnostico = 'MODELO NÃO ENCONTRADO para esta chave';
+
+    // Modelo não existe? Lista os que a chave PODE usar — é a resposta prática.
+    let modelosDisponiveis = null;
+    if (/not found|404/i.test(msg)) {
+      try {
+        const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?key=' + encodeURIComponent(key));
+        const j = await r.json();
+        modelosDisponiveis = (j.models || [])
+          .filter((m) => (m.supportedGenerationMethods || []).includes('generateContent'))
+          .map((m) => String(m.name).replace('models/', ''))
+          .slice(0, 25);
+      } catch (e2) {
+        modelosDisponiveis = 'falha ao listar: ' + String(e2?.message || e2).slice(0, 80);
+      }
+    }
+    return res.status(200).json({ ...info, ok: false, diagnostico, erroBruto: msg.slice(0, 200), modelosDisponiveis });
   }
 }

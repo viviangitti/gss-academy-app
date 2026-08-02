@@ -55,7 +55,16 @@ service cloud.firestore {
         && request.resource.data.byEmail == request.auth.token.email;
       allow read: if isGestor()
         || (request.auth != null && resource.data.byEmail == request.auth.token.email);
-      allow update, delete: if isGestor();
+      // O gestor modera. A própria pessoa só pode ANONIMIZAR a sua objeção —
+      // é o que roda quando ela exclui a conta (LGPD): tira o nome e o e-mail
+      // e deixa o conteúdo, que é aprendizado da marca. Não pode reescrever o
+      // texto nem mexer na de outra pessoa.
+      allow update: if isGestor()
+        || (request.auth != null
+            && resource.data.byEmail == request.auth.token.email
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['byName', 'byEmail'])
+            && request.resource.data.byEmail == '');
+      allow delete: if isGestor();
     }
 
     // Contatos da landing: quem chega no site NÃO está logado, então a criação

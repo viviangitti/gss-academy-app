@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, Trophy, GraduationCap, Bell, BellOff, LogOut, Check, Tag, ChevronRight } from 'lucide-react';
+import { Flame, Trophy, GraduationCap, Bell, BellOff, LogOut, Check, Tag, ChevronRight, Trash2, ShieldCheck } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { roleLabel } from './data/roles';
@@ -10,6 +10,7 @@ import { getAfiliadoCode, setAfiliadoCode } from './data/afiliadoCode';
 import { notifState, notifPref, enableNotif, disableNotif } from './data/lembrete';
 import { updateElevaName } from './data/profile';
 import { auth } from '../services/firebase';
+import { excluirConta } from './data/excluirConta';
 
 // Iniciais do nome pro avatar (ex.: "Ana Paula" -> "AP").
 function initials(name?: string): string {
@@ -20,6 +21,11 @@ function initials(name?: string): string {
 
 export default function Perfil() {
   const { user, logout } = useAuth();
+  // Exclusão de conta (LGPD). Confirmação em dois passos de propósito: é
+  // irreversível, e um toque sem querer não pode apagar a conta de ninguém.
+  const [excluirAberto, setExcluirAberto] = useState(false);
+  const [excluindo, setExcluindo] = useState(false);
+  const [erroExcluir, setErroExcluir] = useState('');
   const { brandId, brand } = useBrand();
   const stats = getStats();
   const trilha = getTrilha(brandId, user?.role);
@@ -57,6 +63,24 @@ export default function Perfil() {
   };
 
   if (!user) return null;
+
+  const confirmarExclusao = async () => {
+    if (excluindo) return;
+    setExcluindo(true);
+    setErroExcluir('');
+    const r = await excluirConta();
+    setExcluindo(false);
+    if (r.ok) {
+      // A conta não existe mais: o app volta pro login sozinho.
+      window.location.href = '/eleva';
+      return;
+    }
+    setErroExcluir(
+      r.motivo === 'precisa-entrar-de-novo'
+        ? 'Por segurança, o login precisa ser recente. Saia da conta, entre de novo e repita a exclusão.'
+        : 'Não consegui excluir agora. Tente de novo ou escreva para viviangitti23@gmail.com.',
+    );
+  };
 
   return (
     <div className="wp-perfil">
@@ -150,6 +174,38 @@ export default function Perfil() {
         <LogOut size={16} className="wp-ico" />
         <span>Sair da conta<i>{user.email}</i></span>
       </button>
+
+      <Link to="/eleva/privacidade" className="wp-perfil-row">
+        <ShieldCheck size={16} className="wp-ico" />
+        <span>Privacidade<i>O que guardamos e seus direitos</i></span>
+        <ChevronRight size={16} className="wp-ico" />
+      </Link>
+
+      {/* LGPD: direito à eliminação. Fica por último e discreto — é uma saída,
+          não um atalho. */}
+      {!excluirAberto ? (
+        <button type="button" className="wp-perfil-excluir-link" onClick={() => setExcluirAberto(true)}>
+          Excluir minha conta e meus dados
+        </button>
+      ) : (
+        <div className="wp-perfil-excluir">
+          <b>Tem certeza?</b>
+          <p>
+            Isso apaga sua conta, seu histórico de pílulas, seus pontos e sua ofensiva.
+            As objeções que você registrou continuam para a marca, mas <b>sem o seu nome</b>.
+            Não dá para desfazer.
+          </p>
+          {erroExcluir && <p className="wp-perfil-excluir-erro">{erroExcluir}</p>}
+          <div className="wp-perfil-excluir-btns">
+            <button type="button" className="wp-perfil-excluir-nao" onClick={() => { setExcluirAberto(false); setErroExcluir(''); }} disabled={excluindo}>
+              Cancelar
+            </button>
+            <button type="button" className="wp-perfil-excluir-sim" onClick={confirmarExclusao} disabled={excluindo}>
+              <Trash2 size={14} className="wp-ico" /> {excluindo ? 'Excluindo…' : 'Sim, excluir tudo'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2550,3 +2550,11 @@
 .wp-gz-lead span { font-size: 12.5px; color: var(--wp-soft); overflow-wrap: anywhere; }
 .wp-gz-lead p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--wp-ink); }
 .wp-gz-lead i { font-style: normal; font-size: 11.5px; color: var(--wp-muted, #9a9aa8); }
+
+/* Aviso de LGPD no campo de objeção — o campo é texto livre e pode atrair
+   relato de saúde da cliente (dado sensível de terceiro). */
+.wp-objadd-aviso {
+  margin: 0; font-size: 12px; line-height: 1.45;
+  color: var(--wp-soft); border-left: 2px solid var(--wp-pink);
+  padding: 2px 0 2px 9px;
+}

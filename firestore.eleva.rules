@@ -42,11 +42,19 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // Objeções da ponta: qualquer pessoa logada REGISTRA (a leitura cai no
-    // catch-all abaixo — é conteúdo do time, não dado pessoal). Editar/apagar
-    // só o gestor (moderação).
+    // Objeções da ponta. É TEXTO LIVRE escrito por quem atende, então pode
+    // conter relato de cliente ("ela disse que tem diabetes") — dado de saúde de
+    // um terceiro que nunca consentiu. Por isso a leitura NÃO cai mais no
+    // catch-all (que liberava pra qualquer pessoa logada):
+    //   - cada um lê SÓ as que registrou (a confirmação "recebidas de você");
+    //   - o gestor lê todas, que é o trabalho dele.
+    // Para a consulta funcionar, ela precisa vir filtrada por byEmail — ver
+    // fetchMyObjections em data/objections.ts.
     match /elevaObjections/{id} {
-      allow create: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.byEmail == request.auth.token.email;
+      allow read: if isGestor()
+        || (request.auth != null && resource.data.byEmail == request.auth.token.email);
       allow update, delete: if isGestor();
     }
 

@@ -85,17 +85,22 @@ export async function fetchObjections(brand: BrandId): Promise<TeamObjection[]> 
 
 /**
  * As objeções que ESTA pessoa já registrou neste produto — é a confirmação de
- * que chegou (ela vê o que mandou, com data). Filtro por e-mail no cliente pra
- * não precisar de índice composto no Firestore.
+ * que chegou (ela vê o que mandou, com data).
+ *
+ * Filtra por byEmail NO SERVIDOR, não no navegador. Antes a consulta era por
+ * productId e o filtro por e-mail acontecia aqui — o que fazia o Firestore
+ * mandar pro aparelho dela a objeção de TODOS os colegas daquele produto.
+ * Objeção é texto livre e pode conter relato de cliente; ninguém precisa ver a
+ * do outro. O productId é filtrado aqui (evita índice composto).
  */
 export async function fetchMyObjections(productId: string, email?: string): Promise<TeamObjection[]> {
   if (!db || !email) return [];
   try {
-    const q = query(collection(db, 'elevaObjections'), where('productId', '==', productId));
+    const q = query(collection(db, 'elevaObjections'), where('byEmail', '==', email));
     const snap = await getDocs(q);
     return snap.docs
       .map((d) => toObjection(d.id, d.data() as Record<string, unknown>))
-      .filter((o) => o.byEmail && o.byEmail === email)
+      .filter((o) => o.productId === productId)
       .sort(maisNovoPrimeiro);
   } catch {
     return [];

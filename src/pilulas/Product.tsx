@@ -463,7 +463,13 @@ function ObjectionSubmit({ product }: { product: ProductT }) {
       {open && (
         <div className="wp-objadd">
           <p className="wp-objadd-hint">Ouviu do cliente uma objeção que não está aqui em cima? Registre — chega direto pra gestão.</p>
-          <textarea className="wp-objadd-in" value={text} onChange={(e) => setText(e.target.value)} placeholder={'O que a cliente falou? Ex.: "tenho medo de misturar com meu remédio"'} rows={2} />
+          {/* LGPD: o campo é texto livre e convida a escrever o caso da cliente.
+              Relato de saúde de terceiro é dado sensível — e a cliente não
+              consentiu. O aviso vem ANTES do campo, não depois. */}
+          <p className="wp-objadd-aviso">
+            Escreva só a objeção, sem nome da cliente e sem dado de saúde dela.
+          </p>
+          <textarea className="wp-objadd-in" value={text} onChange={(e) => setText(e.target.value)} placeholder={'O que a cliente falou? Ex.: "tenho medo de misturar com remédio"'} rows={2} />
           <textarea className="wp-objadd-in" value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder="Como você respondeu? (opcional)" rows={2} />
           <button type="button" className="wp-objadd-btn" onClick={enviar} disabled={busy || !text.trim()}>
             {sent ? <><Check size={15} className="wp-ico" /> Registrada! Valeu 👏</> : busy ? 'Enviando…' : 'Registrar objeção'}

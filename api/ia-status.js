@@ -58,6 +58,26 @@ export default async function handler(req, res) {
         modelosDisponiveis = 'falha ao listar: ' + String(e2?.message || e2).slice(0, 80);
       }
     }
-    return res.status(200).json({ ...info, ok: false, diagnostico, erroBruto: msg.slice(0, 200), modelosDisponiveis });
+    // A biblioteca falhou. Tenta na mão (REST puro) pra saber se o problema é a
+    // biblioteca antiga ou o modelo mesmo.
+    const testeDireto = {};
+    for (const mdl of ['gemini-2.5-flash-lite', 'gemini-flash-lite-latest', 'gemini-2.0-flash-lite']) {
+      for (const v of ['v1beta', 'v1']) {
+        try {
+          const r = await fetch(
+            `https://generativelanguage.googleapis.com/${v}/models/${mdl}:generateContent?key=${encodeURIComponent(key)}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ contents: [{ parts: [{ text: 'ok' }] }] }),
+            }
+          );
+          testeDireto[`${v}/${mdl}`] = r.status === 200 ? 'FUNCIONA' : `HTTP ${r.status}`;
+        } catch (e3) {
+          testeDireto[`${v}/${mdl}`] = 'erro: ' + String(e3?.message || e3).slice(0, 40);
+        }
+      }
+    }
+    return res.status(200).json({ ...info, ok: false, diagnostico, erroBruto: msg.slice(0, 200), modelosDisponiveis, testeDireto });
   }
 }

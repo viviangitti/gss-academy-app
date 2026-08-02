@@ -8,8 +8,10 @@
 // instâncias da função. Passou do limite do dia, ninguém mais chama o Gemini —
 // nem usuário logado, nem robô, nem bug em loop.
 //
-// FALHA FECHADA: se o contador não puder ser lido/gravado, a chamada é negada.
-// Prefere-se o app sem IA por alguns minutos a uma conta surpresa.
+// Quando o Firestore não está disponível (projeto sem FIREBASE_SERVICE_ACCOUNT),
+// cai num contador EM MEMÓRIA por instância — mais fraco, mas não derruba a IA.
+// Bloquear tudo por não conseguir contar é pior que contar por baixo: a proteção
+// principal contra cobrança é a chave ser do nível gratuito, sem cartão.
 
 import { getDb } from './_firebase.js';
 
@@ -32,13 +34,32 @@ export function limiteDiario() {
  * Consome 1 chamada do teto do dia.
  * @returns {Promise<{ok: boolean, usado: number, limite: number, motivo?: string}>}
  */
+// Contador de emergência, por instância da função. Vale só enquanto o container
+// vive, então conta por baixo — é rede de segurança, não o teto principal.
+const memoria = { dia: '', count: 0 };
+
+function consumirNaMemoria(limite) {
+  const dia = hojeSP();
+  if (memoria.dia !== dia) {
+    memoria.dia = dia;
+    memoria.count = 0;
+  }
+  if (memoria.count >= limite) {
+    return { ok: false, usado: memoria.count, limite, motivo: 'teto diário atingido (contagem local)' };
+  }
+  memoria.count += 1;
+  return { ok: true, usado: memoria.count, limite, motivo: 'contagem local' };
+}
+
 export async function consumirChamadaIA() {
   const limite = limiteDiario();
   let db;
   try {
     db = getDb();
   } catch (e) {
-    return { ok: false, usado: -1, limite, motivo: 'contador indisponível' };
+    // Sem Firestore neste projeto: não dá pra contar globalmente, mas também
+    // não faz sentido derrubar a IA por isso.
+    return consumirNaMemoria(limite);
   }
 
   const ref = db.doc(DOC);
@@ -58,7 +79,8 @@ export async function consumirChamadaIA() {
       return { ok: true, usado: usadoAntes + 1, limite };
     });
   } catch (e) {
-    return { ok: false, usado: -1, limite, motivo: 'contador indisponível' };
+    // Firestore configurado mas falhou (rede, permissão): idem, contagem local.
+    return consumirNaMemoria(limite);
   }
 }
 

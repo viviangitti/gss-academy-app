@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, BookOpen, Sparkles, Trophy, Tag, LayoutDashboard, Eye, GraduationCap, MessageCircleQuestion } from 'lucide-react';
+import { Home, BookOpen, Sparkles, Tag, LayoutDashboard, Eye, GraduationCap, MessageCircleQuestion } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { isBalcao } from './data/brands';
@@ -9,14 +9,15 @@ import { isBalcao } from './data/brands';
 const VENDEDORA_TABS = [
   { to: '/eleva', label: 'Hoje', icon: Home, end: true },
   { to: '/eleva/catalogo', label: 'Catálogo', icon: BookOpen, end: false },
+  { to: '/eleva/assistente', label: 'Tira-dúvida', icon: MessageCircleQuestion, end: false },
   { to: '/eleva/missoes', label: 'Postar', icon: Sparkles, end: false },
-  { to: '/eleva/ranking', label: 'Ranking', icon: Trophy, end: false },
   { to: '/eleva/ofertas', label: 'Ofertas', icon: Tag, end: false },
 ];
 
 const GESTOR_TABS = [
   { to: '/eleva/gestor', label: 'Painel', icon: LayoutDashboard, end: false },
-  { to: '/eleva/catalogo', label: 'Ver como o time', icon: Eye, end: false },
+  { to: '/eleva/catalogo', label: 'Ver como time', icon: Eye, end: false },
+  { to: '/eleva/assistente', label: 'Tira-dúvida', icon: MessageCircleQuestion, end: false },
 ];
 
 // Gestor numa marca de balcão (Sorocaps): também pode abrir o Tira-dúvida da
@@ -32,9 +33,9 @@ const GESTOR_BALCAO_TABS = [
 const AFILIADO_TABS = [
   { to: '/eleva', label: 'Hoje', icon: Home, end: true },
   { to: '/eleva/catalogo', label: 'Catálogo', icon: BookOpen, end: false },
+  { to: '/eleva/assistente', label: 'Tira-dúvida', icon: MessageCircleQuestion, end: false },
   { to: '/eleva/missoes', label: 'Postar', icon: Sparkles, end: false },
   { to: '/eleva/trilha', label: 'Formação', icon: GraduationCap, end: false },
-  { to: '/eleva/ranking', label: 'Ranking', icon: Trophy, end: false },
 ];
 
 // Modo balcão (farmácia): o foco é preparar o atendimento. Sem postar, ranking

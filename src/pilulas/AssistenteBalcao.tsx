@@ -5,7 +5,7 @@ import { allProducts } from './data/store';
 import { visibleProducts, productKnowledge } from './data/products';
 import { useBrand } from './BrandContext';
 import { useAuth } from './AuthContext';
-import { getBrand } from './data/brands';
+import { getBrand, isBalcao } from './data/brands';
 import { aiAuthHeaders } from '../lib/aiProxy';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
@@ -13,11 +13,20 @@ type Msg = { role: 'user' | 'assistant'; content: string };
 // Em dev (vite) as funções /api não rodam local — aponta pra produção pra testar.
 const API_URL = import.meta.env.DEV ? 'https://eleva-five.vercel.app/api/eleva-ia' : '/api/eleva-ia';
 
-const SUGESTOES = [
+// Sugestões por marca: dar exemplo de produto que a pessoa NÃO tem no catálogo
+// só ensina a errar. Balcão pergunta pra atender; afiliado pergunta pra vender.
+const SUGESTOES_BALCAO = [
   'Quais os benefícios do Ômega 3?',
   'Qual a diferença do Plus pro comum?',
   'Cliente reclamou do gosto de peixe',
   'Pra que serve a melatonina com triptofano?',
+];
+
+const SUGESTOES_REVENDA = [
+  'Quais os benefícios do GLPEN Nutri Muscle?',
+  'Qual a diferença do Muscle pro Energy?',
+  'Cliente disse que já toma whey',
+  'Pra que serve o Ultra AZ?',
 ];
 
 export default function AssistenteBalcao() {
@@ -35,6 +44,14 @@ export default function AssistenteBalcao() {
   );
   const contexto = useMemo(() => productKnowledge(produtos), [produtos]);
   const marca = getBrand(brandId).name;
+  // Balcão (farmácia) atende no balcão; revenda (Meraki) fala com a cliente.
+  const ehBalcao = isBalcao(brandId);
+  const SUGESTOES = ehBalcao ? SUGESTOES_BALCAO : SUGESTOES_REVENDA;
+  const titulo = ehBalcao ? 'Tira-dúvida do balcão' : 'Tira-dúvida';
+  const subtitulo = ehBalcao
+    ? `Pergunte sobre os produtos ${marca}. Responde só com o conteúdo aprovado — pra você atender rápido.`
+    : `Pergunte sobre os produtos ${marca}. Responde só com o conteúdo aprovado — pra você vender com segurança.`;
+  const vazioTitulo = ehBalcao ? 'Como posso ajudar no atendimento?' : 'O que a cliente perguntou?';
 
   useEffect(() => {
     fimRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -52,7 +69,7 @@ export default function AssistenteBalcao() {
       const r = await fetch(API_URL, {
         method: 'POST',
         headers: await aiAuthHeaders(),
-        body: JSON.stringify({ message: pergunta, history: historico, context: contexto }),
+        body: JSON.stringify({ message: pergunta, history: historico, context: contexto, perfil: ehBalcao ? 'balcao' : 'revenda' }),
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data?.error || 'falhou');
@@ -71,8 +88,8 @@ export default function AssistenteBalcao() {
       <div className="wp-ia-hero">
         <div className="wp-ia-hero-icon"><Sparkles size={18} className="wp-ico" /></div>
         <div>
-          <h1 className="wp-ia-title">Tira-dúvida do balcão</h1>
-          <p className="wp-ia-sub">Pergunte sobre os produtos {marca}. Responde só com o conteúdo aprovado — pra você atender rápido.</p>
+          <h1 className="wp-ia-title">{titulo}</h1>
+          <p className="wp-ia-sub">{subtitulo}</p>
         </div>
       </div>
 
@@ -83,7 +100,7 @@ export default function AssistenteBalcao() {
       <div className="wp-ia-thread">
         {msgs.length === 0 && (
           <div className="wp-ia-empty">
-            <p className="wp-ia-empty-t">Como posso ajudar no atendimento?</p>
+            <p className="wp-ia-empty-t">{vazioTitulo}</p>
             <div className="wp-ia-sugs">
               {SUGESTOES.map((s) => (
                 <button key={s} type="button" className="wp-ia-sug" onClick={() => enviar(s)}>{s}</button>

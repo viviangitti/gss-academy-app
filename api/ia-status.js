@@ -29,6 +29,31 @@ export default async function handler(req, res) {
     return res.status(200).json({ ...info, ok: false, diagnostico: 'GEMINI_API_KEY não está configurada neste projeto' });
   }
 
+  // ?modelos=a,b,c  → testa esses modelos via REST e diz quais funcionam.
+  // Serve pra descobrir o modelo certo de OUTRO app (ex.: Corpo Leve) usando
+  // esta chave, sem precisar mexer no outro projeto às cegas.
+  const pedidos = String(req.query?.modelos || '').trim();
+  if (pedidos) {
+    const lista = pedidos.split(',').map((s) => s.trim()).filter(Boolean).slice(0, 8);
+    const resultado = {};
+    for (const mdl of lista) {
+      try {
+        const r = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${mdl}:generateContent?key=${encodeURIComponent(key)}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: 'ok' }] }] }),
+          }
+        );
+        resultado[mdl] = r.status === 200 ? 'FUNCIONA' : `HTTP ${r.status}`;
+      } catch (e) {
+        resultado[mdl] = 'erro: ' + String(e?.message || e).slice(0, 50);
+      }
+    }
+    return res.status(200).json({ ...info, testeDeModelos: resultado });
+  }
+
   try {
     const genAI = new GoogleGenerativeAI(key);
     const model = genAI.getGenerativeModel({ model: 'gemini-flash-lite-latest' });

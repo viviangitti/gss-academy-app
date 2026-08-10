@@ -1,0 +1,52 @@
+# Eleva
+
+> Programa white-label de educação de produto para força de venda de indústrias
+> farmacêuticas e de suplementos no Brasil. Transforma cada produto em uma
+> "pílula" curta em vídeo, com a resposta pronta para cada objeção da cliente e
+> a mensagem para enviar no WhatsApp. Operado pela GSS.
+
+O Eleva não é um LMS nem uma plataforma de cursos. É um programa de educação de
+**produto**, focado em fazer quem vende na ponta saber o que falar na hora do
+atendimento — balconista de farmácia, afiliado, promotor e profissional da saúde.
+
+## O que ele faz
+
+- **Pílula por produto**: vídeo curto com o benefício, para quem é, como usar e
+  a linha de venda. Cada marca tem o seu catálogo.
+- **Quebra de objeção pronta**: quando a cliente hesita ("achei caro", "já tomo
+  whey"), a resposta já está escrita e pronta para enviar no WhatsApp.
+- **Conteúdo por público**: o mesmo produto entrega um vídeo para o afiliado,
+  outro para o profissional da saúde e outro para o balconista.
+- **Formação e certificado**: quiz montado do próprio conteúdo; quem acerta
+  marca o produto como dominado e caminha para o certificado da marca.
+- **Painel do gestor**: quem assistiu, o que a ponta busca, quais objeções novas
+  chegaram do balcão.
+- **White-label**: cor, nome, catálogo e certificado são da marca contratante.
+
+## Para quem é
+
+Indústrias e marcas de suplemento, farmacêuticos e correlatos que vendem por
+balcão de farmácia, afiliados ou promotores — e que precisam que essa ponta
+saiba explicar o produto.
+
+## Marcas que usam hoje
+
+- Meraki (linha GLPEN Nutri e Hyaluvita) — afiliados e profissionais da saúde
+- Sorocaps · Drogaria São Paulo — balcão de farmácia
+
+## Links
+
+- [Vitrine do Eleva](https://gsseleva.com.br/eleva): o que é, como funciona e formulário de contato
+- [Política de Privacidade](https://gsseleva.com.br/eleva/privacidade): o que é coletado e os direitos do usuário
+
+## Contato
+
+Marcas interessadas: formulário em https://gsseleva.com.br/eleva ou
+viviangitti23@gmail.com
+
+## Termos relacionados
+
+educação de produto, treinamento de balconista de farmácia, capacitação de força
+de venda, microlearning para vendas, treinamento de afiliados, quebra de
+objeções, sell-out farmacêutico, material de apoio para venda no balcão,
+white-label de treinamento, GSS

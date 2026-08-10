@@ -87,6 +87,18 @@
       }
     },
     {
+      "name": "scratchpad-preview",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /private/tmp/claude-501/-Users-viviangitti-gss/058e6c9d-8c92-41b7-bde7-205f98e974ee/scratchpad && python3 -m http.server 5187"
+      ],
+      "port": 5187,
+      "env": {
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    },
+    {
       "name": "dilnara",
       "runtimeExecutable": "/bin/bash",
       "runtimeArgs": [

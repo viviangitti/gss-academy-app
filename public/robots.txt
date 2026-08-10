@@ -1,0 +1,25 @@
+# Eleva — GSS
+# Programa de educação de produto para força de venda.
+
+# Buscadores e IAs podem indexar a vitrine e a política.
+User-agent: *
+Allow: /eleva$
+Allow: /eleva/privacidade
+Allow: /llms.txt
+
+# Área logada: nada aqui é público, e indexar só geraria página de login
+# nos resultados. Bloqueado por higiene, não por segurança (a proteção de
+# verdade são as regras do Firestore e o login).
+Disallow: /eleva/produto/
+Disallow: /eleva/gestor
+Disallow: /eleva/perfil
+Disallow: /eleva/catalogo
+Disallow: /eleva/assistente
+Disallow: /eleva/missoes
+Disallow: /eleva/trilha
+Disallow: /eleva/ranking
+Disallow: /eleva/ofertas
+Disallow: /eleva/ficha/
+Disallow: /api/
+
+Sitemap: https://gsseleva.com.br/sitemap.xml

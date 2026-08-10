@@ -13,6 +13,7 @@ import Sobre from './Sobre';
 import Gestor from './Gestor';
 import Login from './Login';
 import Privacidade from './Privacidade';
+import Noticias from './Noticias';
 import Landing from './Landing';
 import Onboarding from './Onboarding';
 import BottomNav from './BottomNav';
@@ -269,6 +270,7 @@ function Shell() {
           <Route path="/eleva/ofertas" element={<BlockBalcao><BlockAfiliado><Ofertas /></BlockAfiliado></BlockBalcao>} />
           <Route path="/eleva/gestor" element={<RequireGestor><Gestor /></RequireGestor>} />
           <Route path="/eleva/privacidade" element={<Privacidade />} />
+          <Route path="/eleva/noticias" element={<Noticias />} />
           <Route path="/pilulas/*" element={<Navigate to="/eleva" replace />} />
           {/* Link antigo ou telas que saíram do ar (ex.: /eleva/venda) caem na
               home em vez de deixar a tela vazia. */}

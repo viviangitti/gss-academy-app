@@ -16,7 +16,9 @@ export type AffiliateType = 'geral' | 'saude';
 
 // PÚBLICO DE CONTEÚDO — define QUAL vídeo a pessoa vê em cada produto.
 // O conteúdo do afiliado é diferente do do promotor, que é diferente do do balconista.
-export type Audience = 'balconista' | 'promotor' | 'afiliado-geral' | 'afiliado-saude';
+// Públicos que recebem conteúdo próprio. Os quatro primeiros são do vertical
+// saúde; 'vendedor' e 'gerente' são do automotivo (showroom).
+export type Audience = 'balconista' | 'promotor' | 'afiliado-geral' | 'afiliado-saude' | 'vendedor' | 'gerente';
 
 export interface User {
   name: string;
@@ -48,7 +50,7 @@ export function audienceOf(user: Pick<User, 'role' | 'affiliateType'> | null | u
 const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType; brands?: BrandId[] }> = {
   // Vivian: gestora das DUAS marcas — troca no seletor do topo.
   'maria26@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
-  'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
+  'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp', 'ramasa'] },
   // Silene: Gmail é a conta de GESTORA (as duas marcas); Hotmail é a de AFILIADA.
   // ATENÇÃO: a conta real dela é "mendesdesouza" (sem "angelo"). O endereço com
   // "angelo" fica aqui só por segurança, caso ela use os dois.

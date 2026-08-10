@@ -4,9 +4,12 @@ import { Play } from 'lucide-react';
 import { CATEGORIES, visibleProducts, duracaoLabel, type Category } from './data/products';
 import { allProducts, hasImage, getProductImageUrl, ensureImageLoaded, useStore } from './data/store';
 import { useBrand } from './BrandContext';
+import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 
-const ORDER: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria'];
+// Ordem em que as categorias aparecem. Categoria fora desta lista NÃO é
+// renderizada — foi o que sumiu com o catálogo da Ramasa quando 'suv' entrou.
+const ORDER: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria', 'suv', 'eletrificado'];
 
 export default function Catalog() {
   useStore(); // re-renderiza quando o gestor cadastra produto
@@ -21,9 +24,9 @@ export default function Catalog() {
   return (
     <div className="wp-catalog">
       <div className="wp-hero">
-        <h1 className="wp-hero-title">Um produto por vez, em minutos.</h1>
+        <h1 className="wp-hero-title">{isAuto(brandId) ? 'Um carro por vez, em minutos.' : 'Um produto por vez, em minutos.'}</h1>
         <p className="wp-hero-sub">
-          Aprenda o benefício, quebre a objeção e envie a resposta pronta à cliente — sem sair daqui.
+          {isAuto(brandId) ? 'Conheça o carro, quebre a objeção e mande a condição pro cliente — sem sair daqui.' : 'Aprenda o benefício, quebre a objeção e envie a resposta pronta à cliente — sem sair daqui.'}
         </p>
       </div>
 

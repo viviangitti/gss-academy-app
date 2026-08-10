@@ -11,7 +11,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import type { Audience } from '../AuthContext';
 import { AFILIADO_LINE } from './products';
-import { getBrand, type BrandId } from './brands';
+import { getBrand, isAuto, type BrandId } from './brands';
 
 // Chave do MP4 no store (IndexedDB) para um produto + público.
 export function audienceVideoKey(productId: string, a: Audience): string {
@@ -99,6 +99,9 @@ export const AUDIENCES: { id: Audience; label: string }[] = [
   { id: 'promotor', label: 'Promotor' },
   { id: 'afiliado-geral', label: 'Afiliado' },
   { id: 'afiliado-saude', label: 'Afiliado — profissional da saúde' },
+  // Vertical automotivo (showroom)
+  { id: 'vendedor', label: 'Vendedor de salão' },
+  { id: 'gerente', label: 'Gerente' },
 ];
 
 // Quais públicos REALMENTE veem este produto — é o que o gestor precisa subir.
@@ -110,6 +113,11 @@ export function audiencesForLine(line?: string, brandId?: BrandId): { id: Audien
   // gestor via campo de vídeo pra Balconista e Promotor na Meraki, que ainda não
   // existem lá.
   const daMarca = brandId ? getBrand(brandId).audiences : AUDIENCES.map((a) => a.id);
+  // No automotivo não existe "linha do afiliado": todo carro vale para todos os
+  // públicos que a concessionária tem. A regra de linha é só do vertical saúde.
+  if (brandId && isAuto(brandId)) {
+    return AUDIENCES.filter((a) => daMarca.includes(a.id));
+  }
   // A linha GLPEN é a do afiliado; as demais são de quem atende no balcão.
   const daLinha: Audience[] =
     line === AFILIADO_LINE

@@ -2,7 +2,7 @@
 // Cada produto vira uma "pílula": conteúdo curto, focado em BENEFÍCIO,
 // de uso duplo (treina a vendedora + ela compartilha com a cliente).
 //
-import { Dumbbell, Pill, Wind, Sparkles, Flower2, type LucideIcon } from 'lucide-react';
+import { Dumbbell, Pill, Wind, Sparkles, Flower2, Car, Zap, type LucideIcon } from 'lucide-react';
 import type { BrandId } from './brands';
 import type { Audience } from '../AuthContext';
 //
@@ -11,7 +11,10 @@ import type { Audience } from '../AuthContext';
 // Para MEDICAMENTOS (ex.: acetilcisteína, expectorantes): copy factual, sem
 // promessa, sempre remetendo à bula/rótulo e à orientação profissional.
 
-export type Category = 'performance' | 'capsulas' | 'respiratorio' | 'cosmeticos' | 'perfumaria';
+// Categorias dos dois verticais. As de saúde vieram primeiro; 'suv' e
+// 'eletrificado' são do automotivo. O catálogo só mostra a categoria que tem
+// produto da marca aberta, então nenhuma marca vê a categoria da outra.
+export type Category = 'performance' | 'capsulas' | 'respiratorio' | 'cosmeticos' | 'perfumaria' | 'suv' | 'eletrificado';
 
 export interface Objection {
   trigger: string; // o que a cliente fala
@@ -87,6 +90,8 @@ export const CATEGORIES: Record<Category, { label: string; Icon: LucideIcon }> =
   respiratorio: { label: 'Vias Respiratórias', Icon: Wind },
   cosmeticos: { label: 'Cosméticos & Skincare', Icon: Sparkles },
   perfumaria: { label: 'Perfumaria', Icon: Flower2 },
+  suv: { label: 'SUV', Icon: Car },
+  eletrificado: { label: 'Híbrido & Elétrico', Icon: Zap },
 };
 
 export const PRODUCTS: Product[] = [
@@ -806,6 +811,82 @@ export const PRODUCTS: Product[] = [
       { label: 'Atenção', value: 'Não vicia. Gestantes e uso de medicamentos: consulte o médico' },
     ],
   },
+
+  // ===================== VERTICAL AUTOMOTIVO — Ramasa =====================
+  // EXEMPLO DE ESTRUTURA. As objeções abaixo são reais do mercado (é o que a
+  // Ramasa vai usar de verdade); a ficha técnica está com os RÓTULOS certos e
+  // os valores marcados "a confirmar" de propósito — dado de carro (motor,
+  // consumo, garantia, preço) tem que vir da concessionária, não de estimativa.
+  {
+    id: 'jaecoo-j7',
+    brand: 'ramasa',
+    category: 'suv',
+    name: 'Jaecoo J7',
+    tagline: 'SUV da Jaecoo, marca do grupo Chery — desenho robusto e pacote de série cheio para a faixa.',
+    hook: 'O cliente gostou do carro, mas trava numa frase: "é chinês, né?"',
+    whatItIs:
+      'O Jaecoo J7 é o SUV que abre a marca Jaecoo no Brasil. A Jaecoo faz parte do grupo Chery, que está no país desde 2009 — não é marca que chegou ontem. O apelo do J7 é entregar, no preço de um SUV médio, um pacote de itens de série que a concorrência costuma cobrar à parte.',
+    benefits: [
+      'Pacote de série cheio para a faixa de preço — o argumento principal na comparação',
+      'Marca do grupo Chery, presente no Brasil desde 2009 (rede e peça já existem no país)',
+      'Desenho de SUV robusto, que agrada quem quer presença sem pagar de importado premium',
+      'Garantia de fábrica — confirmar o prazo vigente com a Ramasa',
+    ],
+    howToUse:
+      'Na abordagem: leve o cliente para o test drive antes de falar de preço. O J7 vende no rodar e no acabamento — argumento de ficha isolado perde para a experiência.',
+    forWho:
+      'Cliente que busca SUV médio, compara preço x itens de série, e está aberto a marca nova desde que a assistência esteja resolvida.',
+    salesLine: 'Vale sentir o carro antes de comparar tabela. Quer que eu separe um horário para o test drive?',
+    objections: [
+      {
+        trigger: '"É chinês, né?"',
+        answer:
+          'Entendo a dúvida — mas vale separar o carimbo do fato. A Jaecoo é do grupo Chery, que está no Brasil desde 2009, com fábrica e rede aqui. Carro chinês de hoje não é o de dez anos atrás: a mesma indústria fornece para montadoras europeias. O que eu sugiro é você dirigir e julgar pelo carro.',
+      },
+      {
+        trigger: '"E a revenda? Vou perder muito."',
+        answer:
+          'É a pergunta certa a fazer. Toda marca em entrada de mercado deprecia mais nos primeiros anos — isso é verdade e não vou dizer o contrário. O que muda a conta é o preço de compra: você entra pagando menos por um pacote que, na concorrência estabelecida, custa bem mais. Posso levantar a tabela de referência atual para a gente ver o número real.',
+      },
+      {
+        trigger: '"Se quebrar, tem peça? Onde faço revisão?"',
+        answer:
+          'Assistência aqui é nossa, na Ramasa, e a rede é a do grupo Chery no Brasil — não depende de importar peça a peça. Posso te mostrar a cobertura da rede e o prazo médio de peça para o modelo.',
+      },
+      {
+        trigger: '"Achei caro."',
+        answer:
+          'Vamos comparar do jeito justo: pegue um SUV da mesma faixa e liste o que vem de série em cada um. A conversa muda quando a comparação é item a item, não só preço de tabela. Quer que eu monte esse comparativo com o modelo que você está considerando?',
+      },
+      {
+        trigger: '"Vou pesquisar e volto."',
+        answer:
+          'Perfeito, é uma decisão grande mesmo. Só me deixa fazer duas coisas antes: agendar o test drive, porque é o que costuma decidir, e te mandar a condição vigente por escrito — ela tem validade, e não quero que você perca por prazo.',
+      },
+    ],
+    compliance:
+      'Itens de série, garantia, prazo de entrega e condições variam por versão e por campanha vigente. Confirme sempre na tabela e na condição do dia antes de prometer ao cliente.',
+    durationSec: 45,
+    gradient: ['#1e6fd9', '#0f3a75'],
+    ficha: [
+      { label: 'Marca', value: 'Jaecoo (grupo Chery)' },
+      { label: 'Categoria', value: 'SUV' },
+      { label: 'Versões', value: 'a confirmar com a Ramasa' },
+      { label: 'Motorização', value: 'a confirmar com a Ramasa' },
+      { label: 'Câmbio', value: 'a confirmar com a Ramasa' },
+      { label: 'Consumo', value: 'a confirmar (Inmetro)' },
+      { label: 'Garantia', value: 'a confirmar com a Ramasa' },
+      { label: 'Preço', value: 'consultar a tabela vigente' },
+    ],
+    storyboard: [
+      { t: '0-5s', label: 'GANCHO', line: 'O cliente gostou do carro. Aí ele fala: "mas e a revenda?"' },
+      { t: '5-15s', label: 'A CAUSA', line: 'Marca nova assusta porque o cliente não tem referência. Ele não está negando o carro — está pedindo segurança.' },
+      { t: '15-30s', label: 'O ARGUMENTO', line: 'Jaecoo é do grupo Chery, no Brasil desde 2009. Rede e peça existem aqui. E o preço de entrada compensa a curva.' },
+      { t: '30-40s', label: 'A VIRADA', line: 'Compare item a item, não só tabela. E leve pro test drive: é ele que decide.' },
+      { t: '40-45s', label: 'CTA', line: 'Agende o test drive e mande a condição por escrito — ela tem validade.' },
+    ],
+  },
+
 ];
 
 export function getProduct(id: string) {

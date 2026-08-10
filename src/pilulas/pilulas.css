@@ -2620,3 +2620,35 @@
 .wp-perfil-excluir-nao { background: #fff; border: 1px solid var(--wp-border); color: var(--wp-ink); }
 .wp-perfil-excluir-sim { background: #b3261e; border: 1px solid #b3261e; color: #fff; }
 .wp-perfil-excluir-sim:disabled, .wp-perfil-excluir-nao:disabled { opacity: .6; cursor: not-allowed; }
+
+/* ===== Notícias (vertical automotivo) ===== */
+.wp-news { max-width: 480px; margin: 0 auto; padding: 14px 16px 90px; }
+.wp-news-back {
+  display: inline-flex; align-items: center; gap: 4px; text-decoration: none;
+  font-size: 13.5px; font-weight: 700; color: var(--wp-pink-deep); margin-bottom: 14px;
+}
+.wp-news-hero { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; }
+.wp-news-hero-icon {
+  flex: none; width: 38px; height: 38px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--wp-pink) 16%, transparent); color: var(--wp-pink-deep);
+}
+.wp-news-title { font-family: 'Cinzel', Georgia, serif; font-size: 22px; font-weight: 700; margin: 0; }
+.wp-news-sub { margin: 3px 0 0; font-size: 12.5px; color: var(--wp-soft); line-height: 1.45; }
+.wp-news-refresh {
+  flex: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--wp-border); background: var(--wp-surface); color: var(--wp-soft);
+  display: flex; align-items: center; justify-content: center;
+}
+.wp-news-msg { font-size: 13.5px; color: var(--wp-soft); padding: 8px 0; }
+.wp-news-list { display: flex; flex-direction: column; gap: 9px; }
+.wp-news-item {
+  position: relative; display: flex; flex-direction: column; gap: 4px;
+  padding: 13px 34px 13px 14px; border-radius: 13px; text-decoration: none;
+  background: var(--wp-surface); border: 1px solid var(--wp-border);
+}
+.wp-news-item b { font-size: 14.5px; line-height: 1.4; color: var(--wp-ink); font-weight: 700; }
+.wp-news-item span { font-size: 11.5px; color: var(--wp-soft); }
+.wp-news-item i { font-style: normal; font-weight: 600; }
+.wp-news-ext { position: absolute; top: 13px; right: 12px; color: var(--wp-soft); }
+.wp-news-foot { margin-top: 18px; font-size: 11.5px; color: var(--wp-soft); line-height: 1.5; }

@@ -1,5 +1,6 @@
 import { Tag, ArrowUpRight } from 'lucide-react';
 import { useBrand } from './BrandContext';
+import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 import { allOffers, useStore } from './data/store';
 
@@ -23,7 +24,7 @@ export default function Ofertas() {
   return (
     <div className="wp-ofertas">
       <div className="wp-of-hero">
-        <h1 className="wp-of-title"><Tag size={19} className="wp-ico" /> Ofertas da semana</h1>
+        <h1 className="wp-of-title"><Tag size={19} className="wp-ico" /> {isAuto(brandId) ? 'Condições comerciais' : 'Ofertas da semana'}</h1>
         <p className="wp-of-sub">As condições vigentes, prontas para você enviar à cliente.</p>
       </div>
 

@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
-import { Home, BookOpen, Sparkles, Tag, LayoutDashboard, Eye, GraduationCap, MessageCircleQuestion } from 'lucide-react';
+import { Home, BookOpen, Sparkles, Tag, LayoutDashboard, Eye, GraduationCap, MessageCircleQuestion, Newspaper } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
-import { isBalcao } from './data/brands';
+import { isBalcao, isAuto } from './data/brands';
 
 // Abas por papel: a vendedora consome/posta/compartilha; o gestor só coloca conteúdo
 // (Painel) e pode espiar como o time vê (Ver app).
@@ -38,6 +38,25 @@ const AFILIADO_TABS = [
   { to: '/eleva/trilha', label: 'Formação', icon: GraduationCap, end: false },
 ];
 
+// Vertical AUTOMOTIVO (showroom): o vendedor precisa do carro, da condição
+// comercial vigente e da notícia do dia — cliente chega tendo lido matéria.
+// Sem "Postar": quem posta pela concessionária é o marketing, não o vendedor.
+const AUTO_TABS = [
+  { to: '/eleva', label: 'Hoje', icon: Home, end: true },
+  { to: '/eleva/catalogo', label: 'Carros', icon: BookOpen, end: false },
+  { to: '/eleva/ofertas', label: 'Condições', icon: Tag, end: false },
+  { to: '/eleva/noticias', label: 'Notícias', icon: Newspaper, end: false },
+  { to: '/eleva/assistente', label: 'Tira-dúvida', icon: MessageCircleQuestion, end: false },
+];
+
+// Gestor numa marca automotiva: painel + espiar como o time vê + notícias.
+const GESTOR_AUTO_TABS = [
+  { to: '/eleva/gestor', label: 'Painel', icon: LayoutDashboard, end: false },
+  { to: '/eleva/catalogo', label: 'Ver como time', icon: Eye, end: false },
+  { to: '/eleva/noticias', label: 'Notícias', icon: Newspaper, end: false },
+  { to: '/eleva/assistente', label: 'Tira-dúvida', icon: MessageCircleQuestion, end: false },
+];
+
 // Modo balcão (farmácia): o foco é preparar o atendimento. Sem postar, ranking
 // nem ofertas — só assistir os produtos, as objeções e a formação.
 const BALCAO_TABS = [
@@ -51,7 +70,9 @@ export default function BottomNav() {
   const { user } = useAuth();
   const { brandId } = useBrand();
   const balcao = isBalcao(brandId);
+  const auto = isAuto(brandId);
   const tabs =
+    auto ? (user?.role === 'gestor' ? GESTOR_AUTO_TABS : AUTO_TABS) :
     user?.role === 'gestor' ? (balcao ? GESTOR_BALCAO_TABS : GESTOR_TABS) :
     balcao ? BALCAO_TABS : // farmácia: enxuto, independe do papel
     user?.role === 'afiliado' ? AFILIADO_TABS :

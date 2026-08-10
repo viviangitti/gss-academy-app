@@ -276,6 +276,8 @@ const GRADIENT: Record<Category, [string, string]> = {
   respiratorio: ['#0ea5e9', '#075985'],
   cosmeticos: ['#f7b733', '#d96d2b'],
   perfumaria: ['#ff5fa2', '#9b2c63'],
+  suv: ['#1e6fd9', '#0f3a75'],
+  eletrificado: ['#12b5a5', '#0b5563'],
 };
 
 function ProductForm({ brand, onDone }: { brand: string; onDone: (name: string) => void }) {
@@ -371,6 +373,10 @@ const OFFER_KINDS: { value: OfferKind; label: string }[] = [
   { value: 'combo', label: 'Combo' },
   { value: 'frete', label: 'Frete grátis' },
   { value: 'brinde', label: 'Brinde' },
+  // Automotivo
+  { value: 'taxa', label: 'Taxa / financiamento' },
+  { value: 'bonus', label: 'Bônus de troca' },
+  { value: 'estoque', label: 'Estoque / pronta entrega' },
 ];
 
 function OfferForm({ brand, onDone }: { brand: string; onDone: (t: string) => void }) {

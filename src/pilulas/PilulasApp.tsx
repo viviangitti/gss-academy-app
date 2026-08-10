@@ -148,6 +148,9 @@ function Shell() {
   const [onboarded, setOnboarded] = useState<boolean>(() => {
     try { return !!localStorage.getItem('wp_onboarded'); } catch { return true; }
   });
+  // Um endereço só: gsseleva.com.br. Clicar em "Entrar" troca a vitrine pela
+  // tela de login SEM mudar o endereço na barra do navegador.
+  const [verLogin, setVerLogin] = useState(false);
   // Marca/papel/nome viajam junto com os stats que vão pro Sistema de Gestão
   useEffect(() => {
     setStatsMeta({ brand: brand.id, role: user?.role, name: user?.name });
@@ -234,12 +237,12 @@ function Shell() {
     // Quem NÃO está logado vê a vitrine — é a porta de entrada do gsseleva.com.br,
     // como em qualquer site. Duas exceções vão direto pro login/cadastro:
     // quem chegou por link de convite (?marca=), que já foi convidado por alguém,
-    // e quem pediu a tela de entrar (/eleva/entrar — o botão da vitrine, e o
-    // endereço que a equipe pode salvar nos favoritos pra pular a vitrine).
+    // e quem salvou /eleva/entrar nos favoritos. O botão "Entrar" da vitrine
+    // não muda o endereço: troca a tela ali mesmo, em gsseleva.com.br.
     // Fora do .wp-app de propósito: o app tem largura de celular (480px) e a
     // vitrine precisa da tela inteira no computador.
-    if (!invitedBrand() && !location.pathname.startsWith('/eleva/entrar')) {
-      return <Landing onEntrar={() => navigate('/eleva/entrar')} />;
+    if (!verLogin && !invitedBrand() && !location.pathname.startsWith('/eleva/entrar')) {
+      return <Landing onEntrar={() => setVerLogin(true)} />;
     }
     veioDoLogin.current = true; // entrou pela tela de login: ao logar, vai pra home
     return (

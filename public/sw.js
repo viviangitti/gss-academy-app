@@ -1,5 +1,5 @@
 // Service Worker — network first, sem cache de JS/CSS (evita versões travadas)
-const CACHE_NAME = 'gss-academy-v155';
+const CACHE_NAME = 'gss-academy-v156';
 const STATIC_CACHE = ['/', '/manifest.json'];
 
 self.addEventListener('install', (event) => {
@@ -24,9 +24,22 @@ self.addEventListener('fetch', (event) => {
 
   const url = event.request.url;
 
-  // JS e CSS: sempre da rede, nunca do cache
+  // JS e CSS: rede primeiro, com CÓPIA de segurança.
+  // O nome do arquivo tem hash (index-AbC123.js), então build novo gera nome
+  // novo — guardar cópia nunca serve versão velha. Antes não havia plano B: se
+  // a rede oscilasse, o JS não carregava e a tela ficava branca.
   if (url.includes('/assets/')) {
-    event.respondWith(fetch(event.request));
+    event.respondWith(
+      fetch(event.request)
+        .then((r) => {
+          if (r.ok) {
+            const copia = r.clone();
+            caches.open(CACHE_NAME).then((c) => c.put(event.request, copia));
+          }
+          return r;
+        })
+        .catch(() => caches.match(event.request))
+    );
     return;
   }
 
@@ -39,7 +52,24 @@ self.addEventListener('fetch', (event) => {
     url.includes('/pilulas') ||
     url.includes('/api/')
   ) {
-    event.respondWith(fetch(event.request));
+    // Rede primeiro. Se falhar, tenta o que estiver guardado — melhor uma
+    // versão de segundos atrás do que a página não abrir. /api/ nunca é
+    // guardado (resposta de API não pode ser reaproveitada).
+    const ehApi = url.includes('/api/');
+    event.respondWith(
+      fetch(event.request)
+        .then((r) => {
+          if (r.ok && !ehApi) {
+            const copia = r.clone();
+            caches.open(CACHE_NAME).then((c) => c.put(event.request, copia));
+          }
+          return r;
+        })
+        .catch(() => {
+          if (ehApi) throw new Error('sem rede');
+          return caches.match(event.request).then((c) => c || caches.match('/'));
+        })
+    );
     return;
   }
 

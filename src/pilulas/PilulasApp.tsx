@@ -219,6 +219,14 @@ function Shell() {
     );
   }
 
+  // A VITRINE por endereço fixo: /eleva/vitrine mostra a landing sempre —
+  // logada ou não, tenha entrado antes ou não. Sem isso, quem usa o app todo
+  // dia nunca mais vê a própria vitrine (o app grava "já entrou" e pula), e
+  // não consegue mostrar numa reunião. É o link pra mandar pra uma marca.
+  if (location.pathname.startsWith('/eleva/vitrine')) {
+    return <Landing onEntrar={() => navigate('/eleva', { replace: true })} />;
+  }
+
   if (!user) {
     // A política de privacidade tem que abrir SEM login: o link dela fica no
     // rodapé da tela de entrada e na caixa de aceite do cadastro — quem ainda

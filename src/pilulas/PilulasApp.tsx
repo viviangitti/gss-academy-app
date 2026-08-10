@@ -148,11 +148,6 @@ function Shell() {
   const [onboarded, setOnboarded] = useState<boolean>(() => {
     try { return !!localStorage.getItem('wp_onboarded'); } catch { return true; }
   });
-  // Vitrine pública. Quem já entrou alguma vez neste aparelho pula direto pro
-  // login — a landing é pra quem está chegando, não pra quem usa todo dia.
-  const [mostrarLanding, setMostrarLanding] = useState<boolean>(() => {
-    try { return !localStorage.getItem('wp_ja_entrou'); } catch { return true; }
-  });
   // Marca/papel/nome viajam junto com os stats que vão pro Sistema de Gestão
   useEffect(() => {
     setStatsMeta({ brand: brand.id, role: user?.role, name: user?.name });
@@ -162,8 +157,6 @@ function Shell() {
   useEffect(() => {
     if (!user) return;
     loadAudienceReels();
-    // Entrou uma vez neste aparelho: nas próximas, abre direto no login/app.
-    try { localStorage.setItem('wp_ja_entrou', '1'); } catch { /* ignore */ }
   }, [user]);
   // Depois de entrar, cai na HOME — não na tela em que o navegador tinha
   // parado da última vez (era isso que fazia o login abrir direto no Perfil).
@@ -219,10 +212,10 @@ function Shell() {
     );
   }
 
-  // A VITRINE por endereço fixo: /eleva/vitrine mostra a landing sempre —
-  // logada ou não, tenha entrado antes ou não. Sem isso, quem usa o app todo
-  // dia nunca mais vê a própria vitrine (o app grava "já entrou" e pula), e
-  // não consegue mostrar numa reunião. É o link pra mandar pra uma marca.
+  // A VITRINE por endereço fixo. gsseleva.com.br já mostra a vitrine pra quem
+  // não está logado, mas quem USA o app fica logado e cairia direto no app —
+  // sem isso a Vivian não conseguiria abrir a própria vitrine numa reunião.
+  // É também o link pra mandar pra uma marca interessada.
   if (location.pathname.startsWith('/eleva/vitrine')) {
     return <Landing onEntrar={() => navigate('/eleva', { replace: true })} />;
   }
@@ -238,12 +231,15 @@ function Shell() {
         </div>
       );
     }
-    // Quem chega por link de convite (?marca=) já foi convidado por alguém —
-    // vitrine não faz sentido: vai direto pro cadastro.
+    // Quem NÃO está logado vê a vitrine — é a porta de entrada do gsseleva.com.br,
+    // como em qualquer site. Duas exceções vão direto pro login/cadastro:
+    // quem chegou por link de convite (?marca=), que já foi convidado por alguém,
+    // e quem pediu a tela de entrar (/eleva/entrar — o botão da vitrine, e o
+    // endereço que a equipe pode salvar nos favoritos pra pular a vitrine).
     // Fora do .wp-app de propósito: o app tem largura de celular (480px) e a
     // vitrine precisa da tela inteira no computador.
-    if (mostrarLanding && !invitedBrand()) {
-      return <Landing onEntrar={() => setMostrarLanding(false)} />;
+    if (!invitedBrand() && !location.pathname.startsWith('/eleva/entrar')) {
+      return <Landing onEntrar={() => navigate('/eleva/entrar')} />;
     }
     veioDoLogin.current = true; // entrou pela tela de login: ao logar, vai pra home
     return (

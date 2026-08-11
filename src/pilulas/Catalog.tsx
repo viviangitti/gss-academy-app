@@ -9,7 +9,7 @@ import { useAuth } from './AuthContext';
 
 // Ordem em que as categorias aparecem. Categoria fora desta lista NÃO é
 // renderizada — foi o que sumiu com o catálogo da Ramasa quando 'suv' entrou.
-const ORDER: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria', 'suv', 'eletrificado', 'acessorio'];
+const ORDER: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria', 'jaecoo', 'omoda', 'acessorio'];
 
 export default function Catalog() {
   useStore(); // re-renderiza quando o gestor cadastra produto

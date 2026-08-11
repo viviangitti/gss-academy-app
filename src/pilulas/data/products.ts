@@ -16,11 +16,11 @@ import type { Audience } from '../AuthContext';
 // categoria que tem produto da marca aberta, então nenhuma marca vê a
 // categoria da outra.
 //
-// No automotivo o catálogo tem duas partes separadas de propósito: os MODELOS
-// (o carro, onde mora a objeção e o test drive) e os ACESSÓRIOS (engate,
-// película, som, proteção) — que é onde a concessionária ganha margem e o
-// vendedor costuma esquecer de oferecer.
-export type Category = 'performance' | 'capsulas' | 'respiratorio' | 'cosmeticos' | 'perfumaria' | 'suv' | 'eletrificado' | 'acessorio';
+// No automotivo o catálogo separa por MARCA (a Ramasa vende duas: Jaecoo e
+// Omoda — e é assim que o showroom pensa e que o cliente pergunta) e mais uma
+// parte de ACESSÓRIOS (engate, película, som, proteção), que é onde a
+// concessionária ganha margem e o vendedor mais esquece de oferecer.
+export type Category = 'performance' | 'capsulas' | 'respiratorio' | 'cosmeticos' | 'perfumaria' | 'jaecoo' | 'omoda' | 'acessorio';
 
 export interface Objection {
   trigger: string; // o que a cliente fala
@@ -96,14 +96,14 @@ export const CATEGORIES: Record<Category, { label: string; Icon: LucideIcon }> =
   respiratorio: { label: 'Vias Respiratórias', Icon: Wind },
   cosmeticos: { label: 'Cosméticos & Skincare', Icon: Sparkles },
   perfumaria: { label: 'Perfumaria', Icon: Flower2 },
-  suv: { label: 'SUV', Icon: Car },
-  eletrificado: { label: 'Híbrido & Elétrico', Icon: Zap },
+  jaecoo: { label: 'Jaecoo', Icon: Car },
+  omoda: { label: 'Omoda', Icon: Zap },
   acessorio: { label: 'Acessórios', Icon: Wrench },
 };
 
 // Quais categorias o gestor pode escolher, por vertical. Sem isso a Ramasa via
 // "Performance & Massa Magra" e "Vias Respiratórias" no cadastro do carro.
-export const CATEGORIAS_AUTO: Category[] = ['suv', 'eletrificado', 'acessorio'];
+export const CATEGORIAS_AUTO: Category[] = ['jaecoo', 'omoda', 'acessorio'];
 export const CATEGORIAS_SAUDE: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria'];
 
 export const PRODUCTS: Product[] = [
@@ -825,29 +825,38 @@ export const PRODUCTS: Product[] = [
   },
 
   // ===================== VERTICAL AUTOMOTIVO — Ramasa =====================
-  // EXEMPLO DE ESTRUTURA. As objeções abaixo são reais do mercado (é o que a
-  // Ramasa vai usar de verdade); a ficha técnica está com os RÓTULOS certos e
-  // os valores marcados "a confirmar" de propósito — dado de carro (motor,
-  // consumo, garantia, preço) tem que vir da concessionária, não de estimativa.
+  // A Ramasa vende as DUAS marcas do grupo: Jaecoo e Omoda. Os quatro modelos
+  // abaixo são a linha oficial no Brasil (omodajaecoo.com.br, consultada em
+  // 11/08/2026) — nome, versões, motorização, itens de série e preço público
+  // "a partir de" vieram do site da marca, não de estimativa.
+  //
+  // Onde eu NÃO tinha o dado oficial (autonomia, consumo, garantia), está
+  // escrito "confirmar" de propósito. Número de carro inventado vira promessa
+  // que a concessionária não cumpre.
+  //
+  // As objeções são as reais do mercado — cada modelo trava numa diferente:
+  // o Jaecoo trava em "é chinês", o híbrido em "preciso de tomada?", o elétrico
+  // em "onde eu carrego?" e o topo de linha em "por esse preço eu pego outro".
   {
-    id: 'jaecoo-j7',
+    id: 'jaecoo-7',
     brand: 'ramasa',
-    category: 'suv',
-    name: 'Jaecoo J7',
-    tagline: 'SUV da Jaecoo, marca do grupo Chery — desenho robusto e pacote de série cheio para a faixa.',
+    category: 'jaecoo',
+    family: 'jaecoo7',
+    name: 'Jaecoo 7',
+    tagline: 'O SUV que abre a Jaecoo no Brasil: versão a combustão e versões SHS híbridas plug-in, com pacote de série cheio para a faixa.',
     hook: 'O cliente gostou do carro, mas trava numa frase: "é chinês, né?"',
     whatItIs:
-      'O Jaecoo J7 é o SUV que abre a marca Jaecoo no Brasil. A Jaecoo faz parte do grupo Chery, que está no país desde 2009 — não é marca que chegou ontem. O apelo do J7 é entregar, no preço de um SUV médio, um pacote de itens de série que a concorrência costuma cobrar à parte.',
+      'O Jaecoo 7 é o SUV que abre a marca Jaecoo no Brasil. A Jaecoo faz parte do grupo Chery, que está no país desde 2009. Chega em três versões: ELITE e as SHS Luxury e Prestige, que usam o sistema híbrido plug-in — motor 1.5 TGDI de 135 cv somado a um motor elétrico de 204 cv, com transmissão DHT de 3ª geração e bateria de lítio-ferro-fosfato de 18,3 kWh.',
     benefits: [
-      'Pacote de série cheio para a faixa de preço — o argumento principal na comparação',
-      'Marca do grupo Chery, presente no Brasil desde 2009 (rede e peça já existem no país)',
-      'Desenho de SUV robusto, que agrada quem quer presença sem pagar de importado premium',
-      'Garantia de fábrica — confirmar o prazo vigente com a Ramasa',
+      'Sistema SHS: 1.5 TGDI de 135 cv + elétrico de 204 cv, com 44,5% de eficiência térmica declarada',
+      'Pacote de série cheio para a faixa — teto solar panorâmico de 1,1 m², multimídia de 13,2", painel digital de 10,25" e maçanetas retráteis',
+      'Carroceria com 80% de aço de alta resistência e pacote ADAS completo (AEB, ACC, LDW, TJA, FCW, CSA)',
+      'Marca do grupo Chery, no Brasil desde 2009 — rede e peça já existem no país',
     ],
     howToUse:
-      'Na abordagem: leve o cliente para o test drive antes de falar de preço. O J7 vende no rodar e no acabamento — argumento de ficha isolado perde para a experiência.',
+      'Na abordagem: leve o cliente para o test drive antes de falar de preço. O 7 vende no rodar e no acabamento — ficha isolada perde para a experiência. Se ele veio pelo preço, comece pela lista de série: é aí que a comparação vira a seu favor.',
     forWho:
-      'Cliente que busca SUV médio, compara preço x itens de série, e está aberto a marca nova desde que a assistência esteja resolvida.',
+      'Cliente que busca SUV médio, compara preço contra itens de série, e está aberto a marca nova desde que a assistência esteja resolvida.',
     salesLine: 'Vale sentir o carro antes de comparar tabela. Quer que eu separe um horário para o test drive?',
     objections: [
       {
@@ -868,7 +877,7 @@ export const PRODUCTS: Product[] = [
       {
         trigger: '"Achei caro."',
         answer:
-          'Vamos comparar do jeito justo: pegue um SUV da mesma faixa e liste o que vem de série em cada um. A conversa muda quando a comparação é item a item, não só preço de tabela. Quer que eu monte esse comparativo com o modelo que você está considerando?',
+          'Vamos comparar do jeito justo: pegue um SUV da mesma faixa e liste o que vem de série em cada um. Teto solar panorâmico, ADAS completo, multimídia de 13,2", bancos elétricos — na concorrência isso costuma ser pacote opcional. A conversa muda quando a comparação é item a item.',
       },
       {
         trigger: '"Vou pesquisar e volto."',
@@ -882,20 +891,235 @@ export const PRODUCTS: Product[] = [
     gradient: ['#1e6fd9', '#0f3a75'],
     ficha: [
       { label: 'Marca', value: 'Jaecoo (grupo Chery)' },
-      { label: 'Categoria', value: 'SUV' },
-      { label: 'Versões', value: 'a confirmar com a Ramasa' },
-      { label: 'Motorização', value: 'a confirmar com a Ramasa' },
-      { label: 'Câmbio', value: 'a confirmar com a Ramasa' },
-      { label: 'Consumo', value: 'a confirmar (Inmetro)' },
-      { label: 'Garantia', value: 'a confirmar com a Ramasa' },
-      { label: 'Preço', value: 'consultar a tabela vigente' },
+      { label: 'Versões', value: 'ELITE · SHS Luxury · SHS Prestige' },
+      { label: 'Motor a combustão', value: '1.5 TGDI — 135 cv e 200 Nm' },
+      { label: 'Motor elétrico (SHS)', value: '204 cv e 310 Nm' },
+      { label: 'Transmissão', value: 'DHT de 3ª geração' },
+      { label: 'Bateria (SHS)', value: 'Lítio-ferro-fosfato de 18,3 kWh, proteção IP68' },
+      { label: 'Rodas', value: 'Liga leve de 19"' },
+      { label: 'Telas', value: 'Multimídia 13,2" e painel digital 10,25"' },
+      { label: 'Segurança', value: 'Airbags e itens variam por versão · 80% de aço de alta resistência · ADAS (IHC, FCW, AEB, LDW, ACC, DAI, TJA, CSA)' },
+      { label: 'Preço público', value: 'A partir de R$ 189.990 (site da marca, ago/2026) — confirmar a condição vigente' },
+      { label: 'Autonomia e consumo', value: 'confirmar na ficha técnica oficial' },
+      { label: 'Garantia', value: 'confirmar com a Ramasa' },
     ],
     storyboard: [
-      { t: '0-5s', label: 'GANCHO', line: 'O cliente gostou do carro. Aí ele fala: "mas e a revenda?"' },
+      { t: '0-5s', label: 'GANCHO', line: 'O cliente gostou do carro. Aí ele fala: "mas é chinês, né?"' },
       { t: '5-15s', label: 'A CAUSA', line: 'Marca nova assusta porque o cliente não tem referência. Ele não está negando o carro — está pedindo segurança.' },
-      { t: '15-30s', label: 'O ARGUMENTO', line: 'Jaecoo é do grupo Chery, no Brasil desde 2009. Rede e peça existem aqui. E o preço de entrada compensa a curva.' },
-      { t: '30-40s', label: 'A VIRADA', line: 'Compare item a item, não só tabela. E leve pro test drive: é ele que decide.' },
+      { t: '15-30s', label: 'O ARGUMENTO', line: 'Jaecoo é do grupo Chery, no Brasil desde 2009. Rede e peça existem aqui. E o SHS entrega 135 cv de motor a combustão mais 204 cv de elétrico.' },
+      { t: '30-40s', label: 'A VIRADA', line: 'Compare item a item: teto panorâmico, ADAS completo, tela de 13,2". Na concorrência isso é opcional.' },
       { t: '40-45s', label: 'CTA', line: 'Agende o test drive e mande a condição por escrito — ela tem validade.' },
+    ],
+  },
+
+  {
+    id: 'omoda-5-shs-h',
+    brand: 'ramasa',
+    category: 'omoda',
+    family: 'omoda5',
+    name: 'Omoda 5 SHS-H',
+    tagline: 'SUV híbrido que não precisa de tomada: se recarrega sozinho, rodando. É a porta de entrada da Omoda.',
+    hook: 'O cliente quer economizar combustível, mas acha que híbrido dá trabalho.',
+    whatItIs:
+      'O Omoda 5 SHS-H é o SUV híbrido de entrada da marca. Usa o motor 1.5 TGDI HEV: o sistema alterna sozinho entre elétrico e combustão, e a bateria se recarrega rodando — o cliente não precisa de tomada nem de instalação em casa. Por dentro traz painel digital flutuante de 24,6", som Sony de 8 alto-falantes e bancos dianteiros elétricos com ventilação e aquecimento.',
+    benefits: [
+      'Híbrido que NÃO precisa de tomada: recarrega sozinho enquanto roda — zero mudança na rotina do cliente',
+      'Painel digital flutuante de 24,6" e som Sony de 8 alto-falantes de série',
+      'Bancos dianteiros elétricos, ventilados e aquecidos — item que costuma ser opcional caro na concorrência',
+      '7 airbags e carroceria com 78% de aço de alta resistência',
+    ],
+    howToUse:
+      'A dúvida número um deste carro é "preciso de tomada?". Responda isso nos primeiros trinta segundos: não precisa. Depois disso a conversa flui, porque o resto é conforto — e conforto se vende no test drive, não na ficha.',
+    forWho:
+      'Cliente urbano que roda muito na cidade, quer cortar combustível e não quer obra em casa nem depender de eletroposto.',
+    salesLine: 'Ele se recarrega sozinho, rodando — você não muda nada na sua rotina. Quer sentir a diferença num test drive?',
+    objections: [
+      {
+        trigger: '"Híbrido não precisa de tomada em casa?"',
+        answer:
+          'Este não. O SHS-H é híbrido autorrecarregável: a bateria se carrega sozinha enquanto você roda, no freio e no motor. Você abastece no posto, como sempre. Quem precisa de tomada é o plug-in — que é outra versão, e aí é escolha sua, não obrigação.',
+      },
+      {
+        trigger: '"E se a bateria pifar? Deve custar uma fortuna."',
+        answer:
+          'É a preocupação certa. A bateria é de lítio-ferro-fosfato, que é a química mais durável do mercado, com sistema de gerenciamento monitorando temperatura e carga o tempo todo. A cobertura de bateria tem garantia própria, separada da do carro — posso confirmar o prazo vigente com a gerência e te passar por escrito.',
+      },
+      {
+        trigger: '"Manutenção de híbrido é mais cara, né?"',
+        answer:
+          'Na prática costuma ser o contrário no dia a dia: como o elétrico assume boa parte do trabalho, freio e motor sofrem menos. As revisões são na nossa rede, com plano de manutenção. Posso te mostrar a tabela de revisão para você comparar com o que você paga hoje.',
+      },
+      {
+        trigger: '"Prefiro um Corolla Cross ou um HR-V, que já conheço."',
+        answer:
+          'São carros bons, sem discussão. A comparação justa é item a item na mesma faixa de preço: veja o que vem de série aqui — painel de 24,6", som Sony, bancos ventilados e aquecidos, 7 airbags. Depois disso, dirija os dois. Se o outro te convencer mais rodando, é a escolha certa; só não decida sem sentir este.',
+      },
+    ],
+    compliance:
+      'Consumo, autonomia, itens de série e garantia variam por versão e por campanha. Confirme na ficha técnica oficial e na condição vigente antes de falar número com o cliente.',
+    durationSec: 45,
+    gradient: ['#3f8f8a', '#123a3c'],
+    ficha: [
+      { label: 'Marca', value: 'Omoda (grupo Chery)' },
+      { label: 'Versões', value: 'SHS-H Luxury · SHS-H Prestige' },
+      { label: 'Tipo', value: 'Híbrido autorrecarregável (HEV) — não precisa de tomada' },
+      { label: 'Motor', value: '1.5 TGDI HEV' },
+      { label: 'Telas', value: 'Painel digital flutuante de 24,6"' },
+      { label: 'Som', value: 'Sony com 8 alto-falantes' },
+      { label: 'Conforto', value: 'Bancos dianteiros elétricos, ventilados e aquecidos · teto solar' },
+      { label: 'Rodas', value: 'Liga leve de 18"' },
+      { label: 'Segurança', value: '7 airbags · 78% de aço de alta resistência · FCW e AEB' },
+      { label: 'Preço público', value: 'A partir de R$ 164.990 (site da marca, ago/2026) — confirmar a condição vigente' },
+      { label: 'Consumo e autonomia', value: 'confirmar na ficha técnica oficial' },
+      { label: 'Garantia', value: 'confirmar com a Ramasa (bateria tem garantia própria)' },
+    ],
+    storyboard: [
+      { t: '0-5s', label: 'GANCHO', line: '"Híbrido eu preciso ligar na tomada?" — é a primeira pergunta que você vai ouvir.' },
+      { t: '5-15s', label: 'A RESPOSTA', line: 'Não precisa. O SHS-H se recarrega sozinho enquanto roda. O cliente abastece no posto, como sempre.' },
+      { t: '15-30s', label: 'O ARGUMENTO', line: 'Resolvida a tomada, mostre o resto: painel de 24,6", som Sony, bancos ventilados e aquecidos, 7 airbags.' },
+      { t: '30-40s', label: 'A VIRADA', line: 'Contra Corolla Cross e HR-V, compare item a item na mesma faixa. Aqui o pacote vem de série.' },
+      { t: '40-45s', label: 'CTA', line: 'Leve pro test drive: economia de combustível se sente rodando, não na tabela.' },
+    ],
+  },
+
+  {
+    id: 'omoda-e5',
+    brand: 'ramasa',
+    category: 'omoda',
+    family: 'omodae5',
+    name: 'Omoda E5',
+    tagline: 'SUV 100% elétrico da Omoda: silêncio total, tecnologia de topo e a conta de combustível que sai da vida do cliente.',
+    hook: 'O cliente quer o elétrico, mas a primeira coisa que ele pergunta é: "e onde eu carrego?"',
+    whatItIs:
+      'O Omoda E5 é o SUV 100% elétrico da marca. Bateria de lítio-ferro-fosfato com sistema de gerenciamento que controla temperatura e carga, display de 24,6", head-up display colorido, carregador wireless de 50 W com refrigeração e pacote ADAS 2.5. O desenho é aerodinâmico de propósito — rodas de 18" fechadas e aerofólio traseiro duplo existem para render mais autonomia.',
+    benefits: [
+      '100% elétrico: zero combustível, zero troca de óleo, e silêncio que o cliente sente já na primeira arrancada',
+      'Display de 24,6", head-up display colorido, comando de voz e carregador wireless de 50 W com refrigeração',
+      'Bateria de lítio-ferro-fosfato — a química mais resistente a temperatura e com maior vida útil',
+      'Pacote ADAS 2.5, 6 airbags e 78% de aço de alta resistência na estrutura',
+    ],
+    howToUse:
+      'Não comece pela tecnologia: comece pela rotina dele. Pergunte quantos quilômetros ele roda por dia e se ele estaciona em casa ou em prédio. Com essas duas respostas você já sabe se o carro serve — e o cliente percebe que você não está empurrando.',
+    forWho:
+      'Cliente que roda o previsível na cidade, tem onde carregar (casa, prédio ou trabalho) e valoriza tecnologia e silêncio mais do que autonomia de estrada.',
+    salesLine: 'Me conta sua rotina: quantos quilômetros por dia e onde o carro dorme? Com isso eu te digo, na hora, se ele serve pra você.',
+    objections: [
+      {
+        trigger: '"E onde eu carrego? Não tenho posto perto."',
+        answer:
+          'A conta real é outra: quem tem elétrico carrega em casa, de noite, e sai todo dia com o carro cheio. Eletroposto é para viagem, não para o dia a dia. Me diz quantos quilômetros você roda por dia e onde o carro dorme — com isso eu te digo se ele serve pra você, sem enrolação.',
+      },
+      {
+        trigger: '"E se acabar a bateria na estrada?"',
+        answer:
+          'É a mesma lógica de acabar a gasolina: você acompanha pelo painel e o carro avisa com antecedência, indicando os pontos de recarga da rota. Para viagem longa e frequente, sendo honesto, o híbrido pode encaixar melhor — temos o Omoda 5 e o 7 justamente para esse perfil. O que eu não faço é te vender o carro errado.',
+      },
+      {
+        trigger: '"Trocar a bateria depois deve custar o preço do carro."',
+        answer:
+          'A bateria é de lítio-ferro-fosfato, que é a química de maior vida útil, com gerenciamento térmico monitorando o tempo todo. Ela tem garantia própria, separada da garantia do veículo — posso confirmar o prazo vigente com a gerência e te passar por escrito, junto da proposta.',
+      },
+      {
+        trigger: '"Elétrico desvaloriza mais rápido."',
+        answer:
+          'O mercado de elétrico ainda está formando referência de revenda, isso é verdade. Em compensação, a conta do uso muda: sem combustível, sem óleo, com menos peça de desgaste. Vale fazer o cálculo dos anos que você pretende ficar com o carro — se quiser, eu monto essa conta com o seu quilômetro real.',
+      },
+    ],
+    compliance:
+      'Autonomia depende de uso, clima e carga. Use sempre o número do Inmetro e nunca prometa autonomia de estrada com base no número de ciclo urbano. Preço e condição saem da tabela vigente.',
+    durationSec: 45,
+    gradient: ['#6ea8ff', '#1b2a63'],
+    ficha: [
+      { label: 'Marca', value: 'Omoda (grupo Chery)' },
+      { label: 'Tipo', value: '100% elétrico' },
+      { label: 'Bateria', value: 'Lítio-ferro-fosfato com sistema de gerenciamento térmico (BMS)' },
+      { label: 'Telas', value: 'Display de 24,6" (O-System) e head-up display colorido' },
+      { label: 'Tecnologia', value: 'Carregador wireless de 50 W com refrigeração · comando de voz · ADAS 2.5' },
+      { label: 'Conforto', value: 'Bancos elétricos e ventilados · teto solar elétrico · porta-malas smart tailgate' },
+      { label: 'Rodas', value: 'Aerodinâmicas de 18"' },
+      { label: 'Segurança', value: '6 airbags · 78% de aço de alta resistência · FCW e AEB' },
+      { label: 'Preço público', value: 'A partir de R$ 209.990 (site da marca, ago/2026) — confirmar a condição vigente' },
+      { label: 'Autonomia (E-Range)', value: 'usar o número do Inmetro da ficha técnica oficial' },
+      { label: 'Garantia', value: 'confirmar com a Ramasa (bateria tem garantia própria)' },
+    ],
+    storyboard: [
+      { t: '0-5s', label: 'GANCHO', line: 'Ele quer o elétrico. E aí pergunta: "onde eu carrego?"' },
+      { t: '5-15s', label: 'A VIRADA DE CHAVE', line: 'Quem tem elétrico carrega em casa, de noite, e sai todo dia cheio. Eletroposto é para viagem.' },
+      { t: '15-30s', label: 'AS DUAS PERGUNTAS', line: 'Pergunte quantos km por dia e onde o carro dorme. Com isso você já sabe se serve — e ele vê que você não está empurrando.' },
+      { t: '30-40s', label: 'O ARGUMENTO', line: 'Aí sim: 24,6", head-up display, comando de voz, ADAS 2.5. E a conta de combustível saindo da vida dele.' },
+      { t: '40-45s', label: 'CTA', line: 'Se o perfil não bater, ofereça o híbrido. Vender o carro errado volta como reclamação.' },
+    ],
+  },
+
+  {
+    id: 'omoda-7-shs-p',
+    brand: 'ramasa',
+    category: 'omoda',
+    family: 'omoda7',
+    name: 'Omoda 7 SHS-P',
+    tagline: 'O topo da linha: SUV híbrido plug-in, com 8 airbags, tela deslizante de 15,6" e som Sony de 12 alto-falantes.',
+    hook: 'O cliente tem o dinheiro — mas nessa faixa ele acha que só marca conhecida entrega.',
+    whatItIs:
+      'O Omoda 7 SHS-P é o topo da linha da marca no Brasil. É híbrido plug-in: motor 1.5 TGDI de 135 cv somado a um elétrico de 204 cv, transmissão DHT de 3ª geração e bateria de lítio-ferro-fosfato de 18,4 kWh, que pode ser carregada na tomada para rodar em modo elétrico no dia a dia. Traz multimídia de 15,6" Ultra HD 2.5K com sistema Sliding, som Sony de 12 alto-falantes e o L’Essence, sistema de difusão de aromas da cabine.',
+    benefits: [
+      'Híbrido plug-in: roda no elétrico no dia a dia e usa a gasolina na estrada — sem ansiedade de autonomia',
+      'Multimídia de 15,6" Ultra HD 2.5K com função Sliding, som Sony de 12 alto-falantes e o L’Essence de aromas',
+      '8 airbags e estrutura com 70% de aço de alta resistência mais 30% de ultra resistência',
+      'ADAS avançado: evasão inteligente (IES), frenagem de emergência de 4 a 150 km/h e assistente de congestionamento',
+    ],
+    howToUse:
+      'Nessa faixa o cliente não compra ficha, compra sensação de acerto. Coloque ele sentado antes de falar qualquer número: a tela deslizante, o som Sony e o L’Essence fazem o trabalho. Só depois abra a comparação de preço — e aí compare equipado contra equipado.',
+    forWho:
+      'Cliente de SUV médio premium que quer tecnologia e conforto de topo, tem onde carregar em casa e não quer abrir mão da liberdade de pegar estrada.',
+    salesLine: 'Senta aqui dentro um minuto antes da gente falar de número — é essa parte que decide. Posso separar um test drive?',
+    objections: [
+      {
+        trigger: '"Por esse preço eu compro uma marca que todo mundo conhece."',
+        answer:
+          'Pode, e é uma escolha legítima. Só que a comparação tem que ser equipado contra equipado: coloque o concorrente com 8 airbags, tela de 15,6", som Sony de 12 alto-falantes, bancos ventilados e ADAS completo e veja onde o preço dele para. Depois disso, dirija os dois. É a única comparação honesta.',
+      },
+      {
+        trigger: '"Plug-in eu preciso instalar tomada em casa?"',
+        answer:
+          'Para aproveitar o melhor dele, sim — a instalação em casa é o que faz o custo por quilômetro despencar. Mas não é obrigatório: se você nunca carregar, o carro roda normalmente como híbrido. É liberdade a mais, não uma amarra.',
+      },
+      {
+        trigger: '"É grande demais para a cidade."',
+        answer:
+          'Ele tem porte, sim — e por isso vem com assistente de congestionamento, que assume aceleração, freio e direção abaixo de 60 km/h, além de evasão inteligente na ultrapassagem. Na prática, dirigir na cidade cansa menos que num carro menor sem esses recursos. Faça o test drive num horário de trânsito e você sente na hora.',
+      },
+      {
+        trigger: '"Vou esperar sair o modelo do ano que vem."',
+        answer:
+          'Entendo. Só considere duas coisas: a condição de hoje não se repete no lançamento — no lançamento o preço entra mais alto — e a entrega da versão nova costuma demorar. Se você quer o carro para usar este ano, a conta pende para agora. Posso te mandar a condição vigente por escrito para você comparar com calma.',
+      },
+    ],
+    compliance:
+      'Autonomia em modo elétrico, consumo, itens de série e garantia variam por versão. Confirme na ficha técnica oficial e na condição vigente antes de falar número com o cliente.',
+    durationSec: 45,
+    gradient: ['#8b6cf0', '#2a1f5c'],
+    ficha: [
+      { label: 'Marca', value: 'Omoda (grupo Chery)' },
+      { label: 'Versões', value: 'SHS-P Luxury · SHS-P Prestige' },
+      { label: 'Tipo', value: 'Híbrido plug-in (PHEV)' },
+      { label: 'Motor a combustão', value: '1.5 TGDI — 135 cv e 200 Nm' },
+      { label: 'Motor elétrico', value: '204 cv e 310 Nm' },
+      { label: 'Transmissão', value: 'DHT de 3ª geração' },
+      { label: 'Bateria', value: 'Lítio-ferro-fosfato de 18,4 kWh, proteção IP68' },
+      { label: 'Telas', value: 'Multimídia de 15,6" Ultra HD 2.5K com função Sliding' },
+      { label: 'Som', value: 'Sony com 12 alto-falantes' },
+      { label: 'Exclusivo', value: 'L’Essence — difusão inteligente de aromas na cabine' },
+      { label: 'Segurança', value: '8 airbags · 70% aço de alta e 30% de ultra resistência · IES, AEB (4–150 km/h) e TJA (abaixo de 60 km/h)' },
+      { label: 'Preço público', value: 'A partir de R$ 254.990 (site da marca, ago/2026) — confirmar a condição vigente' },
+      { label: 'Autonomia e consumo', value: 'confirmar na ficha técnica oficial' },
+      { label: 'Garantia', value: 'confirmar com a Ramasa (bateria tem garantia própria)' },
+    ],
+    storyboard: [
+      { t: '0-5s', label: 'GANCHO', line: 'Ele tem o dinheiro. Mas acha que nessa faixa só marca conhecida entrega.' },
+      { t: '5-15s', label: 'A ORDEM CERTA', line: 'Não comece pelo número. Sente ele dentro: tela deslizante de 15,6", som Sony de 12, o aroma do L’Essence.' },
+      { t: '15-30s', label: 'O ARGUMENTO', line: 'Compare equipado contra equipado: 8 airbags, ADAS com evasão inteligente, plug-in com 18,4 kWh. Veja onde o preço do concorrente para.' },
+      { t: '30-40s', label: 'A OBJEÇÃO', line: '"Preciso de tomada em casa?" — para aproveitar o melhor dele, sim. Mas sem carregar ele roda como híbrido normal.' },
+      { t: '40-45s', label: 'CTA', line: 'Test drive em horário de trânsito: o assistente de congestionamento vende sozinho.' },
     ],
   },
 

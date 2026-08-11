@@ -280,8 +280,8 @@ const GRADIENT: Record<Category, [string, string]> = {
   respiratorio: ['#0ea5e9', '#075985'],
   cosmeticos: ['#f7b733', '#d96d2b'],
   perfumaria: ['#ff5fa2', '#9b2c63'],
-  suv: ['#1e6fd9', '#0f3a75'],
-  eletrificado: ['#12b5a5', '#0b5563'],
+  jaecoo: ['#1e6fd9', '#0f3a75'],
+  omoda: ['#5f6fd6', '#221f52'],
   acessorio: ['#64748b', '#27303f'],
 };
 
@@ -293,7 +293,7 @@ function ProductForm({ brand, onDone }: { brand: BrandId; onDone: (name: string)
   const v = vocab(brand);
   const cats = auto ? CATEGORIAS_AUTO : CATEGORIAS_SAUDE;
   const [name, setName] = useState('');
-  const [category, setCategory] = useState<Category>(auto ? 'suv' : 'performance');
+  const [category, setCategory] = useState<Category>(auto ? 'jaecoo' : 'performance');
   const [hook, setHook] = useState('');
   const [whatItIs, setWhatItIs] = useState('');
   const [benefits, setBenefits] = useState('');

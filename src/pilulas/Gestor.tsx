@@ -893,10 +893,13 @@ export default function Gestor() {
         </div>
       )}
 
-      {/* Ofertas */}
+      {/* Ofertas — no automotivo NÃO existe: a condição comercial é a tabela que
+          a gerência sobe, no bloco acima. Manter os dois criava dois lugares
+          pra mesma informação, e o time acabaria olhando o desatualizado. */}
+      {!auto && (
       <div className="wp-gz-block">
         <div className="wp-gz-block-head">
-          <span className="wp-gz-block-title"><Tag size={17} className="wp-ico" /> {auto ? 'Avisos rápidos' : 'Ofertas'} ({offers.length})</span>
+          <span className="wp-gz-block-title"><Tag size={17} className="wp-ico" /> Ofertas ({offers.length})</span>
           <button className="wp-gz-add" onClick={() => setOpenForm(openForm === 'oferta' ? null : 'oferta')}>
             <Plus size={15} className="wp-ico" /> Nova oferta
           </button>
@@ -911,8 +914,12 @@ export default function Gestor() {
           ))}
         </div>
       </div>
+      )}
 
-      {/* Calendário de conteúdo */}
+      {/* Calendário e Tendências são de CREATOR (Reels, status, caixinha do
+          Instagram): fazem sentido pra afiliada e revendedora, não pra
+          concessionária — quem posta pela Ramasa é o marketing, não o vendedor. */}
+      {!auto && (<>
       <div className="wp-gz-block">
         <div className="wp-gz-block-head">
           <span className="wp-gz-block-title"><CalendarDays size={17} className="wp-ico" /> Calendário ({calendar.length})</span>
@@ -949,6 +956,7 @@ export default function Gestor() {
           ))}
         </div>
       </div>
+      </>)}
       </>)}
     </div>
   );

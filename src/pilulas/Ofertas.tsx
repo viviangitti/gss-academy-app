@@ -50,9 +50,14 @@ export default function Ofertas() {
 
   const seg = user?.segment;
   // Oferta segmentada só aparece pro canal certo; sem etiqueta, vê tudo.
-  const offers = allOffers().filter(
-    (o) => o.brand === brandId && (!o.segment || o.segment === 'todos' || !seg || o.segment === seg)
-  );
+  // No automotivo não há cards de oferta: a condição é a tabela que a gerência
+  // publica. Dois lugares pra mesma informação garante que alguém vai olhar o
+  // desatualizado e prometer o que não vale mais.
+  const offers = auto
+    ? []
+    : allOffers().filter(
+        (o) => o.brand === brandId && (!o.segment || o.segment === 'todos' || !seg || o.segment === seg)
+      );
   const condicoes = condicoesDaMarca(brandId);
 
   return (

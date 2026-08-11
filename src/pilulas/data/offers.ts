@@ -1,7 +1,9 @@
 import type { BrandId } from './brands';
 
-// Tipos de oferta. Os quatro primeiros são de varejo (saúde); os de baixo são
-// do automotivo, onde "condição comercial" é taxa, bônus de troca e estoque.
+// Tipos de oferta — varejo (saúde). O automotivo NÃO usa oferta em card: lá a
+// condição comercial é a tabela que a gerência sobe em print/PDF (ver
+// data/condicoes.ts). Os tipos 'taxa', 'bonus' e 'estoque' seguem existindo
+// porque uma marca de saúde pode querer usá-los.
 export type OfferKind = 'desconto' | 'combo' | 'frete' | 'brinde' | 'taxa' | 'bonus' | 'estoque';
 
 export interface Offer {
@@ -17,26 +19,6 @@ export interface Offer {
 
 // Ofertas "de fábrica" (seed). O gestor cria novas pelo Painel (ficam no store).
 export const SEED_OFFERS: Offer[] = [
-  // ---- Ramasa (automotivo). EXEMPLO de estrutura: os números reais mudam por
-  // campanha e têm validade curta — quem publica é o gestor, pelo Painel. ----
-  {
-    brand: 'ramasa',
-    tag: 'TAXA',
-    tagKind: 'taxa',
-    title: 'Taxa promocional na linha Jaecoo',
-    desc: 'Condição de financiamento da campanha vigente. Confirme a taxa e o prazo do dia antes de passar ao cliente — muda por lote e por banco.',
-    until: 'a confirmar com a gerência',
-    share: 'Oi! Consegui uma condição especial de financiamento para o Jaecoo J7 nesta semana. Posso simular com a sua entrada e te mandar por escrito? A condição tem validade.',
-  },
-  {
-    brand: 'ramasa',
-    tag: 'BÔNUS DE TROCA',
-    tagKind: 'bonus',
-    title: 'Bônus na avaliação do usado',
-    desc: 'Valor adicional na troca dentro da campanha. Depende da avaliação do veículo — nunca prometa o valor antes de avaliar.',
-    until: 'enquanto durar a campanha',
-    share: 'Oi! Estamos com bônus na avaliação de usados nesta campanha. Quer trazer o seu para eu avaliar? Aí te passo o número real da troca.',
-  },
   {
     brand: 'meraki',
     tag: 'FRETE GRÁTIS',

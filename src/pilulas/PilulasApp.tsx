@@ -101,8 +101,26 @@ function Header() {
   const navigate = useNavigate();
   const onProduct = location.pathname.includes('/produto/');
   const { user } = useAuth();
-  // Voltar = volta pra tela de onde a pessoa veio (Hoje, busca, catálogo, painel).
-  // Se caiu direto no produto (link/QR, sem histórico), cai no catálogo.
+  // Voltar = volta pra tela de onde a pessoa veio DENTRO do app (Hoje, busca,
+  // catálogo, painel).
+  //
+  // Antes isso era window.history.back(). O problema: history.length conta o
+  // histórico da ABA INTEIRA, incluindo páginas de antes do Eleva. Quem abria o
+  // produto por link, ou recarregava a página, tinha length > 1 sem ter tela
+  // nenhuma do app pra trás — e o "voltar" ou saía do app ou não fazia nada.
+  // Era o "clico e não vai" que voltou pela terceira vez.
+  //
+  // Agora o app guarda ele mesmo a última tela visitada. Nunca depende do
+  // histórico do navegador, e sempre muda de tela.
+  const telaAnterior = useRef<string | null>(null);
+  const telaAtual = useRef(location.pathname);
+  useEffect(() => {
+    if (location.pathname === telaAtual.current) return;
+    // De produto pra produto não conta: voltar tem que sair da pílula.
+    if (!telaAtual.current.includes('/produto/')) telaAnterior.current = telaAtual.current;
+    telaAtual.current = location.pathname;
+  }, [location.pathname]);
+
   // Guarda contra voltar DUAS telas: o toque dispara 'pointerdown' e, logo
   // depois, o 'click' — e os dois chamam goBack.
   const ultimoVoltar = useRef(0);
@@ -110,8 +128,11 @@ function Header() {
     const agora = Date.now();
     if (agora - ultimoVoltar.current < 700) return;
     ultimoVoltar.current = agora;
-    if (window.history.length > 1) navigate(-1);
-    else navigate('/eleva/catalogo');
+    const anterior = telaAnterior.current;
+    // Sem tela anterior (link direto, QR, recarregou): cai no lugar onde este
+    // conteúdo mora — painel pra quem é gestor, catálogo pro resto.
+    const padrao = user?.role === 'gestor' ? '/eleva/gestor' : '/eleva/catalogo';
+    navigate(anterior && !anterior.includes('/produto/') ? anterior : padrao);
   };
   // Dispara no TOQUE, não no clique. Com vídeo tocando o iOS às vezes engolia o
   // 'click' (a camada do vídeo fica por cima na hora de decidir quem recebeu o

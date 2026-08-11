@@ -857,7 +857,7 @@ export const PRODUCTS: Product[] = [
       'Na abordagem: leve o cliente para o test drive antes de falar de preço. O 7 vende no rodar e no acabamento — ficha isolada perde para a experiência. Se ele veio pelo preço, comece pela lista de série: é aí que a comparação vira a seu favor.',
     forWho:
       'Cliente que busca SUV médio, compara preço contra itens de série, e está aberto a marca nova desde que a assistência esteja resolvida.',
-    salesLine: 'Vale sentir o carro antes de comparar tabela. Quer que eu separe um horário para o test drive?',
+    salesLine: 'Me diz com quais carros você está comparando, que eu monto o item a item pra você levar e decidir com calma.',
     objections: [
       {
         trigger: '"É chinês, né?"',
@@ -932,7 +932,7 @@ export const PRODUCTS: Product[] = [
       'A dúvida número um deste carro é "preciso de tomada?". Responda isso nos primeiros trinta segundos: não precisa. Depois disso a conversa flui, porque o resto é conforto — e conforto se vende no test drive, não na ficha.',
     forWho:
       'Cliente urbano que roda muito na cidade, quer cortar combustível e não quer obra em casa nem depender de eletroposto.',
-    salesLine: 'Ele se recarrega sozinho, rodando — você não muda nada na sua rotina. Quer sentir a diferença num test drive?',
+    salesLine: 'Ele se recarrega sozinho enquanto roda — nada de tomada em casa. Quer dar uma volta pra sentir a diferença?',
     objections: [
       {
         trigger: '"Híbrido não precisa de tomada em casa?"',
@@ -1002,7 +1002,7 @@ export const PRODUCTS: Product[] = [
       'Não comece pela tecnologia: comece pela rotina dele. Pergunte quantos quilômetros ele roda por dia e se ele estaciona em casa ou em prédio. Com essas duas respostas você já sabe se o carro serve — e o cliente percebe que você não está empurrando.',
     forWho:
       'Cliente que roda o previsível na cidade, tem onde carregar (casa, prédio ou trabalho) e valoriza tecnologia e silêncio mais do que autonomia de estrada.',
-    salesLine: 'Me conta sua rotina: quantos quilômetros por dia e onde o carro dorme? Com isso eu te digo, na hora, se ele serve pra você.',
+    salesLine: 'Me conta sua rotina: quantos quilômetros por dia e onde o carro dorme? Com isso eu já te digo se ele serve — ou se é melhor você olhar o híbrido.',
     objections: [
       {
         trigger: '"E onde eu carrego? Não tenho posto perto."',
@@ -1068,10 +1068,10 @@ export const PRODUCTS: Product[] = [
       'ADAS avançado: evasão inteligente (IES), frenagem de emergência de 4 a 150 km/h e assistente de congestionamento',
     ],
     howToUse:
-      'Nessa faixa o cliente não compra ficha, compra sensação de acerto. Coloque ele sentado antes de falar qualquer número: a tela deslizante, o som Sony e o L’Essence fazem o trabalho. Só depois abra a comparação de preço — e aí compare equipado contra equipado.',
+      'Nessa faixa o cliente não compra ficha, compra a sensação de ter acertado. Convide para sentar dentro antes de falar número — a tela deslizante, o som Sony e o L’Essence fazem o trabalho sozinhos. Só depois abra a comparação de preço, e aí compare equipado contra equipado.',
     forWho:
       'Cliente de SUV médio premium que quer tecnologia e conforto de topo, tem onde carregar em casa e não quer abrir mão da liberdade de pegar estrada.',
-    salesLine: 'Senta aqui dentro um minuto antes da gente falar de número — é essa parte que decide. Posso separar um test drive?',
+    salesLine: 'Quer conhecer por dentro, sem compromisso? Te mostro o que vem de série e, se fizer sentido pra você, a gente marca o test drive.',
     objections: [
       {
         trigger: '"Por esse preço eu compro uma marca que todo mundo conhece."',

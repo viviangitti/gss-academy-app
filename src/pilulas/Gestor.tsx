@@ -308,7 +308,7 @@ function ProductForm({ brand, onDone }: { brand: BrandId; onDone: (name: string)
     const id = 'p-' + Date.now();
     const bens = benefits.split('\n').map((s) => s.trim()).filter(Boolean);
     const cta = salesLine.trim()
-      || (auto ? 'Quer que eu separe um horário para o test drive?' : 'Me chama que eu te explico.');
+      || (auto ? 'Quer dar uma volta com ele pra sentir?' : 'Me chama que eu te explico.');
     const storyboard = [
       { t: '0-5s', label: 'GANCHO', line: hook.trim() },
       ...(bens[0] ? [{ t: '5-15s', label: 'BENEFÍCIO', line: bens[0] }] : []),
@@ -360,7 +360,7 @@ function ProductForm({ brand, onDone }: { brand: BrandId; onDone: (name: string)
       <textarea value={benefits} onChange={(e) => setBenefits(e.target.value)} rows={3} placeholder={auto ? 'Pacote de série cheio para a faixa...\nRede de assistência no Brasil...' : 'Auxilia na...\nContribui para...'} />
 
       <label className="wp-gz-label">Frase de venda / CTA</label>
-      <input value={salesLine} onChange={(e) => setSalesLine(e.target.value)} placeholder={auto ? 'Quer que eu separe um horário para o test drive?' : 'Me chama que eu te explico.'} />
+      <input value={salesLine} onChange={(e) => setSalesLine(e.target.value)} placeholder={auto ? 'Quer dar uma volta com ele pra sentir?' : 'Me chama que eu te explico.'} />
 
       <label className="wp-gz-label">Vídeo {auto ? '' : 'da pílula '}— escolha UMA opção</label>
       <label className="wp-gz-upload">

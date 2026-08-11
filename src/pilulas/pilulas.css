@@ -2741,3 +2741,19 @@
   font-size: 12.5px; line-height: 1.55; color: var(--wp-soft);
   border: 1px dashed var(--wp-line); border-radius: 14px; padding: 14px; margin: 0;
 }
+
+/* Microfone do Tira-dúvida: falar em vez de digitar */
+.wp-ia-mic {
+  flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--wp-line); background: var(--wp-card); color: var(--wp-soft);
+  display: flex; align-items: center; justify-content: center;
+}
+.wp-ia-mic.on {
+  background: #d93b3b; border-color: #d93b3b; color: #fff;
+  animation: wp-mic-pulsa 1.3s ease-in-out infinite;
+}
+@keyframes wp-mic-pulsa {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 59, 59, .45); }
+  50% { box-shadow: 0 0 0 7px rgba(217, 59, 59, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .wp-ia-mic.on { animation: none; } }

@@ -1,12 +1,14 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, Send, Sparkles } from 'lucide-react';
+import { ChevronLeft, Send, Sparkles, Mic, Square } from 'lucide-react';
 import { allProducts } from './data/store';
 import { visibleProducts, productKnowledge } from './data/products';
 import { useBrand } from './BrandContext';
 import { useAuth } from './AuthContext';
 import { getBrand, isAuto, isBalcao } from './data/brands';
 import { aiAuthHeaders } from '../lib/aiProxy';
+import { saberDeVenda } from './data/vendaSaber';
+import { criarDitado, ditadoDisponivel } from './data/ditado';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -45,13 +47,23 @@ export default function AssistenteBalcao() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
+  const [gravando, setGravando] = useState(false);
   const fimRef = useRef<HTMLDivElement | null>(null);
+  const ditadoRef = useRef<ReturnType<typeof criarDitado> | null>(null);
 
   const produtos = useMemo(
     () => visibleProducts(allProducts().filter((p) => p.brand === brandId), user?.role),
     [brandId, user?.role]
   );
-  const contexto = useMemo(() => productKnowledge(produtos), [produtos]);
+  // No automotivo a IA recebe DUAS coisas: o conteúdo do produto e o arsenal de
+  // venda do MAESTR.IA (objeções já testadas, o erro comum que queima a venda,
+  // técnicas de condução e roteiros). Sem isso ela sabia o carro e não sabia
+  // vender — e quem está no showroom trava na objeção, não na ficha técnica.
+  const contexto = useMemo(() => {
+    const produto = productKnowledge(produtos);
+    if (!isAuto(brandId)) return produto;
+    return `${produto}\n\n${saberDeVenda('automotivo')}`;
+  }, [produtos, brandId]);
   const marca = getBrand(brandId).name;
   // Três realidades diferentes: balcão de farmácia atende, revenda (Meraki)
   // fala com a cliente, concessionária negocia carro. O aviso de rodapé muda
@@ -99,6 +111,31 @@ export default function AssistenteBalcao() {
     }
   };
 
+  // Falar em vez de digitar. No showroom a pessoa está de pé, com o cliente ao
+  // lado — digitar a objeção inteira não acontece. A transcrição é a do próprio
+  // navegador (grátis, ao vivo): não passa pela nossa IA e não gasta crédito.
+  const alternarGravacao = () => {
+    if (gravando) {
+      ditadoRef.current?.parar();
+      return;
+    }
+    setErro('');
+    const d = criarDitado({
+      aoTexto: (t) => setInput(t),
+      aoFim: () => setGravando(false),
+      aoErro: (m) => { setErro(m); setGravando(false); },
+    });
+    if (!d) {
+      setErro('Este navegador não transcreve áudio. No celular, use o microfone do teclado.');
+      return;
+    }
+    ditadoRef.current = d;
+    setGravando(true);
+    d.iniciar();
+  };
+
+  useEffect(() => () => ditadoRef.current?.parar(), []);
+
   return (
     <div className="wp-ia">
       <Link to="/eleva" className="wp-ia-back"><ChevronLeft size={16} className="wp-ico" /> Voltar</Link>
@@ -135,12 +172,23 @@ export default function AssistenteBalcao() {
       </div>
 
       <div className="wp-ia-bar">
+        {ditadoDisponivel() && (
+          <button
+            type="button"
+            className={`wp-ia-mic ${gravando ? 'on' : ''}`}
+            onClick={alternarGravacao}
+            aria-label={gravando ? 'Parar de gravar' : 'Falar em vez de digitar'}
+            title={gravando ? 'Parar' : 'Falar em vez de digitar'}
+          >
+            {gravando ? <Square size={16} className="wp-ico" /> : <Mic size={18} className="wp-ico" />}
+          </button>
+        )}
         <input
           className="wp-ia-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && enviar(input)}
-          placeholder="Escreva sua dúvida…"
+          placeholder={gravando ? 'Ouvindo… pode falar' : 'Escreva ou toque no microfone'}
           aria-label="Sua dúvida"
         />
         <button type="button" className="wp-ia-send" onClick={() => enviar(input)} disabled={!input.trim() || loading} aria-label="Enviar">

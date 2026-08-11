@@ -12,15 +12,32 @@ import { getObjections, getScripts, TECHNIQUES } from '../../services/content';
 import type { Objection } from '../../services/content';
 
 // Junta as objeções gerais (valem pra qualquer venda) com as do segmento.
-// getObjections já devolve geral + segmento, sem repetir.
+//
+// A base do MAESTR.IA tem a MESMA objeção escrita mais de uma vez ("Está muito
+// caro" aparece três vezes, "Vou pensar" duas) — lá isso é bom, são ângulos
+// diferentes pra pessoa ler. No contexto da IA vira repetição que gasta espaço
+// e não ensina nada, então aqui a gente funde: uma entrada por objeção, com as
+// respostas de todas as versões juntas.
 function objecoesDe(segmento: string): Objection[] {
-  return getObjections(segmento as Parameters<typeof getObjections>[0]);
+  const porTexto = new Map<string, Objection>();
+  for (const o of getObjections(segmento as Parameters<typeof getObjections>[0])) {
+    const chave = o.objection.trim().toLowerCase();
+    const ja = porTexto.get(chave);
+    if (!ja) {
+      porTexto.set(chave, { ...o });
+      continue;
+    }
+    ja.quickResponses = [...(ja.quickResponses || []), ...(o.quickResponses || [])];
+    ja.responses = [...(ja.responses || []), ...(o.responses || [])];
+    ja.commonMistake = ja.commonMistake || o.commonMistake;
+  }
+  return [...porTexto.values()];
 }
 
 function blocoObjecoes(segmento: string): string {
   const linhas = objecoesDe(segmento).map((o) => {
     const partes = [`- OBJEÇÃO ${o.objection}`];
-    const rapidas = (o.quickResponses || []).slice(0, 2);
+    const rapidas = [...new Set(o.quickResponses || [])].slice(0, 3);
     if (rapidas.length) partes.push(`  Resposta curta: ${rapidas.join(' / ')}`);
     if (o.responses?.[0]) partes.push(`  Resposta completa: ${o.responses[0]}`);
     if (o.commonMistake) partes.push(`  ERRO COMUM (não faça): ${o.commonMistake}`);

@@ -7,8 +7,9 @@ import { useBrand } from './BrandContext';
 import { useAuth } from './AuthContext';
 import { getBrand, isAuto, isBalcao } from './data/brands';
 import { aiAuthHeaders } from '../lib/aiProxy';
-import { saberDeVenda } from './data/vendaSaber';
 import { criarDitado, ditadoDisponivel } from './data/ditado';
+import { montarMemoria, type MemoriaCoach } from './data/memoriaCoach';
+import { carregarCondicoes } from './data/condicoes';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -55,15 +56,10 @@ export default function AssistenteBalcao() {
     () => visibleProducts(allProducts().filter((p) => p.brand === brandId), user?.role),
     [brandId, user?.role]
   );
-  // No automotivo a IA recebe DUAS coisas: o conteúdo do produto e o arsenal de
-  // venda do MAESTR.IA (objeções já testadas, o erro comum que queima a venda,
-  // técnicas de condução e roteiros). Sem isso ela sabia o carro e não sabia
-  // vender — e quem está no showroom trava na objeção, não na ficha técnica.
-  const contexto = useMemo(() => {
-    const produto = productKnowledge(produtos);
-    if (!isAuto(brandId)) return produto;
-    return `${produto}\n\n${saberDeVenda('automotivo')}`;
-  }, [produtos, brandId]);
+  // Daqui pro servidor vai só o CONTEÚDO DOS PRODUTOS. O arsenal de venda
+  // (objeções testadas, técnicas, roteiros) e o método GSS ficam em api/_coach.js
+  // — é propriedade intelectual e não pode viajar no pacote do navegador.
+  const contexto = useMemo(() => productKnowledge(produtos), [produtos]);
   const marca = getBrand(brandId).name;
   // Três realidades diferentes: balcão de farmácia atende, revenda (Meraki)
   // fala com a cliente, concessionária negocia carro. O aviso de rodapé muda
@@ -87,6 +83,20 @@ export default function AssistenteBalcao() {
     fimRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [msgs, loading]);
 
+  // A memória (quem é a pessoa, o que ela viu, o que ouviu do cliente, a
+  // condição vigente) é o que faz o coach parecer que conhece quem pergunta.
+  // Busca uma vez por marca; se falhar, a conversa segue sem ela.
+  const [memoria, setMemoria] = useState<MemoriaCoach | null>(null);
+  useEffect(() => {
+    let vivo = true;
+    carregarCondicoes(brandId).finally(() => {
+      montarMemoria({ brandId, nome: user?.name, email: user?.email, role: user?.role, segmento: user?.segment })
+        .then((m) => { if (vivo) setMemoria(m); })
+        .catch(() => {});
+    });
+    return () => { vivo = false; };
+  }, [brandId, user?.name, user?.email, user?.role, user?.segment]);
+
   const enviar = async (texto: string) => {
     const pergunta = texto.trim();
     if (!pergunta || loading) return;
@@ -99,7 +109,15 @@ export default function AssistenteBalcao() {
       const r = await fetch(API_URL, {
         method: 'POST',
         headers: await aiAuthHeaders(),
-        body: JSON.stringify({ message: pergunta, history: historico, context: contexto, perfil: perfilIA }),
+        body: JSON.stringify({
+          message: pergunta,
+          history: historico,
+          context: contexto,
+          perfil: perfilIA,
+          gestor: user?.role === 'gestor',
+          memoria: memoria || {},
+          app: 'Eleva',
+        }),
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data?.error || 'falhou');

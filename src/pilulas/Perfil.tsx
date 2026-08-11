@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, Trophy, GraduationCap, Bell, BellOff, LogOut, Check, Tag, ChevronRight, Trash2, ShieldCheck } from 'lucide-react';
+import { Flame, Trophy, GraduationCap, Bell, BellOff, LogOut, Check, Tag, ChevronRight, Trash2, ShieldCheck, MessageCircle } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { vocab } from './data/vocabulario';
+import { getTom, setTom, type Tom } from './data/memoriaCoach';
 import { roleLabel } from './data/roles';
 import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
@@ -35,6 +36,8 @@ export default function Perfil() {
   const [code, setCode] = useState(() => getAfiliadoCode(user?.email));
   const [codeSaved, setCodeSaved] = useState(false);
   const [notifOn, setNotifOn] = useState(() => notifState() === 'granted' && notifPref());
+  // Como o Tira-dúvida fala com você. Muda o jeito, não o conteúdo.
+  const [tom, setTomLocal] = useState<Tom>(getTom);
   const [nome, setNome] = useState(user?.name || '');
   const [nomeBusy, setNomeBusy] = useState(false);
 
@@ -160,6 +163,30 @@ export default function Perfil() {
           </button>
         </div>
       )}
+
+      <div className="wp-perfil-row wp-perfil-tom">
+        <MessageCircle size={16} className="wp-ico" />
+        <span>
+          Como o Tira-dúvida fala com você
+          <i>Muda o jeito da resposta, não o conteúdo.</i>
+        </span>
+        <div className="wp-tom-opts">
+          {([
+            ['direto', 'Direto'],
+            ['motivador', 'Motivador'],
+            ['tecnico', 'Técnico'],
+          ] as [Tom, string][]).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              className={`wp-tom-opt ${tom === id ? 'on' : ''}`}
+              onClick={() => { setTom(id); setTomLocal(id); }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {user.role !== 'gestor' && (
         <button className="wp-perfil-row" onClick={toggleNotif}>

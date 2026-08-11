@@ -32,3 +32,4 @@ dist-ssr
 # Backups de .env — nunca versionar (contêm segredos)
 .env.bak
 .env.*.bak
+narration-manifest.json

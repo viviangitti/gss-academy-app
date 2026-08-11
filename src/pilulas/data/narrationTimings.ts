@@ -1,6 +1,7 @@
-// GERADO por scripts (edge-tts + ffmpeg). Marcas de início de cada cena (s)
-// no MP3 único da pílula (public/audio/narration/{id}.mp3). Regerar junto
-// com os áudios quando o texto muda.
+// GERADO por scripts/gen-narration.py (edge-tts + ffmpeg). Marcas de início
+// de cada cena (s) no MP3 único da pílula (public/audio/narration/{id}.mp3).
+// Regerar junto com os áudios quando o texto do roteiro muda — se as marcas
+// ficarem defasadas, o slide troca fora da hora da fala.
 export const NARRATION_TIMINGS: Record<string, number[]> = {
   "glpen-nutri-muscle": [
     0.0,
@@ -105,5 +106,33 @@ export const NARRATION_TIMINGS: Record<string, number[]> = {
     4.61,
     10.56,
     15.65
+  ],
+  "jaecoo-7": [
+    0.0,
+    5.27,
+    12.27,
+    24.76,
+    33.85
+  ],
+  "omoda-5-shs-h": [
+    0.0,
+    5.27,
+    13.13,
+    21.86,
+    28.71
+  ],
+  "omoda-e5": [
+    0.0,
+    4.43,
+    11.04,
+    18.79,
+    28.42
+  ],
+  "omoda-7-shs-p": [
+    0.0,
+    4.96,
+    13.54,
+    24.11,
+    31.83
   ]
 };

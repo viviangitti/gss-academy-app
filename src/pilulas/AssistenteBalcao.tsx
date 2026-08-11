@@ -136,6 +136,10 @@ export default function AssistenteBalcao() {
 
   useEffect(() => () => ditadoRef.current?.parar(), []);
 
+  const podeFalar = ditadoDisponivel();
+  // Campo vazio → microfone. Digitou → avião. Gravando → parar.
+  const mostrarMic = podeFalar && (gravando || !input.trim());
+
   return (
     <div className="wp-ia">
       <Link to="/eleva" className="wp-ia-back"><ChevronLeft size={16} className="wp-ico" /> Voltar</Link>
@@ -172,28 +176,32 @@ export default function AssistenteBalcao() {
       </div>
 
       <div className="wp-ia-bar">
-        {ditadoDisponivel() && (
-          <button
-            type="button"
-            className={`wp-ia-mic ${gravando ? 'on' : ''}`}
-            onClick={alternarGravacao}
-            aria-label={gravando ? 'Parar de gravar' : 'Falar em vez de digitar'}
-            title={gravando ? 'Parar' : 'Falar em vez de digitar'}
-          >
-            {gravando ? <Square size={16} className="wp-ico" /> : <Mic size={18} className="wp-ico" />}
-          </button>
-        )}
         <input
           className="wp-ia-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && enviar(input)}
-          placeholder={gravando ? 'Ouvindo… pode falar' : 'Escreva ou toque no microfone'}
+          placeholder={gravando ? 'Ouvindo… pode falar' : podeFalar ? 'Escreva ou toque no microfone' : 'Escreva sua dúvida…'}
           aria-label="Sua dúvida"
         />
-        <button type="button" className="wp-ia-send" onClick={() => enviar(input)} disabled={!input.trim() || loading} aria-label="Enviar">
-          <Send size={18} className="wp-ico" />
-        </button>
+        {/* Um botão só, na direita, como no WhatsApp: microfone enquanto o campo
+            está vazio, avião assim que tem texto. Enquanto grava vira o quadrado
+            de parar. Dois botões lado a lado faziam a pessoa procurar qual é. */}
+        {mostrarMic ? (
+          <button
+            type="button"
+            className={`wp-ia-send wp-ia-mic ${gravando ? 'on' : ''}`}
+            onClick={alternarGravacao}
+            aria-label={gravando ? 'Parar de gravar' : 'Falar em vez de digitar'}
+            title={gravando ? 'Parar' : 'Falar em vez de digitar'}
+          >
+            {gravando ? <Square size={16} className="wp-ico" /> : <Mic size={19} className="wp-ico" />}
+          </button>
+        ) : (
+          <button type="button" className="wp-ia-send" onClick={() => enviar(input)} disabled={!input.trim() || loading} aria-label="Enviar">
+            <Send size={18} className="wp-ico" />
+          </button>
+        )}
       </div>
     </div>
   );

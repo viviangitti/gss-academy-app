@@ -2742,12 +2742,9 @@
   border: 1px dashed var(--wp-line); border-radius: 14px; padding: 14px; margin: 0;
 }
 
-/* Microfone do Tira-dúvida: falar em vez de digitar */
-.wp-ia-mic {
-  flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
-  border: 1px solid var(--wp-line); background: var(--wp-card); color: var(--wp-soft);
-  display: flex; align-items: center; justify-content: center;
-}
+/* Microfone do Tira-dúvida: mesmo botão do enviar, na direita (como no
+   WhatsApp) — troca de cara conforme o campo está vazio, escrito ou gravando. */
+.wp-ia-mic { opacity: 1; }
 .wp-ia-mic.on {
   background: #d93b3b; border-color: #d93b3b; color: #fff;
   animation: wp-mic-pulsa 1.3s ease-in-out infinite;

@@ -1,20 +1,32 @@
 {
-  "redirects": [
+  "rewrites": [
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "gsseleva.com.br" }],
-      "destination": "/eleva",
-      "permanent": false
+      "has": [
+        {
+          "type": "host",
+          "value": "gsseleva.com.br"
+        }
+      ],
+      "destination": "/index.html"
     },
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "www.gsseleva.com.br" }],
-      "destination": "/eleva",
-      "permanent": false
+      "has": [
+        {
+          "type": "host",
+          "value": "www.gsseleva.com.br"
+        }
+      ],
+      "destination": "/index.html"
+    },
+    {
+      "source": "/eleva",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/eleva/(.*)",
+      "destination": "/index.html"
     }
-  ],
-  "rewrites": [
-    { "source": "/eleva", "destination": "/index.html" },
-    { "source": "/eleva/(.*)", "destination": "/index.html" }
   ]
 }

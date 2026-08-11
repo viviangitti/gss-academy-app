@@ -101,6 +101,11 @@ export const CATEGORIES: Record<Category, { label: string; Icon: LucideIcon }> =
   acessorio: { label: 'Acessórios', Icon: Wrench },
 };
 
+// Quais categorias o gestor pode escolher, por vertical. Sem isso a Ramasa via
+// "Performance & Massa Magra" e "Vias Respiratórias" no cadastro do carro.
+export const CATEGORIAS_AUTO: Category[] = ['suv', 'eletrificado', 'acessorio'];
+export const CATEGORIAS_SAUDE: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria'];
+
 export const PRODUCTS: Product[] = [
   // ───────────────────────── CARRO-CHEFE (MERAKI) ─────────────────────────
   {

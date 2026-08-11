@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { BookOpen, Sparkles, Trophy, ArrowRight, Check } from 'lucide-react';
+import { BookOpen, Sparkles, Trophy, ArrowRight, Check, Tag, Newspaper } from 'lucide-react';
 
-const STEPS = [
+const STEPS_SAUDE = [
   {
     Icon: BookOpen,
     title: 'Um produto por vez, em minutos',
@@ -19,8 +19,29 @@ const STEPS = [
   },
 ];
 
-export default function Onboarding({ onFinish }: { onFinish: () => void }) {
+// Concessionária: as três telas que decidem o atendimento são outras. Não existe
+// creator nem publicação — quem posta pela marca é o marketing.
+const STEPS_AUTO = [
+  {
+    Icon: BookOpen,
+    title: 'Um carro por vez, em minutos',
+    text: 'Em Carros, toque no modelo e assista ao vídeo. Você aprende o que destacar e a resposta para cada objeção — inclusive "é chinês, né?" e "e a revenda?".',
+  },
+  {
+    Icon: Tag,
+    title: 'A condição do dia, sempre a mesma',
+    text: 'Em Condições você vê a tabela que a gerência publicou, do jeito que ela chegou. Confira a validade antes de falar número com o cliente.',
+  },
+  {
+    Icon: Newspaper,
+    title: 'Chegue sabendo antes do cliente',
+    text: 'Em Notícias você acompanha o que os concorrentes anunciaram e o que saiu do mercado. É o que o cliente leu antes de entrar no showroom.',
+  },
+];
+
+export default function Onboarding({ onFinish, auto }: { onFinish: () => void; auto?: boolean }) {
   const [i, setI] = useState(0);
+  const STEPS = auto ? STEPS_AUTO : STEPS_SAUDE;
   const last = i === STEPS.length - 1;
   const s = STEPS[i];
   const S = s.Icon;
@@ -35,7 +56,7 @@ export default function Onboarding({ onFinish }: { onFinish: () => void }) {
           {STEPS.map((_, k) => <span key={k} className={k === i ? 'on' : ''} />)}
         </div>
         <button className="wp-ob-next" onClick={() => (last ? onFinish() : setI(i + 1))}>
-          {last ? <>Assistir minha 1ª pílula <Check size={16} className="wp-ico" /></> : <>Próximo <ArrowRight size={16} className="wp-ico" /></>}
+          {last ? <>{auto ? 'Ver os carros' : 'Assistir minha 1ª pílula'} <Check size={16} className="wp-ico" /></> : <>Próximo <ArrowRight size={16} className="wp-ico" /></>}
         </button>
         <button className="wp-ob-skip" onClick={onFinish}>pular</button>
       </div>

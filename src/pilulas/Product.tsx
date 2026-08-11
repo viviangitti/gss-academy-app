@@ -18,7 +18,8 @@ import { getAfiliadoCode } from './data/afiliadoCode';
 import { recordView } from './data/tracking';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
 import { useBrand } from './BrandContext';
-import { isBalcao } from './data/brands';
+import { isAuto, isBalcao } from './data/brands';
+import { vocab } from './data/vocabulario';
 
 // Duração de cada cena a partir da marcação de tempo do roteiro ("0-4s" → 4s).
 function sceneMs(t: string): number {
@@ -425,6 +426,7 @@ function AudiencePreview({ product, value, onChange }: {
 // (ele ouve objeção em visita/treinamento) — o histórico completo fica no Painel.
 function ObjectionSubmit({ product }: { product: ProductT }) {
   const { brandId } = useBrand();
+  const auto = isAuto(brandId);
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [text, setText] = useState('');
@@ -463,13 +465,25 @@ function ObjectionSubmit({ product }: { product: ProductT }) {
       {open && (
         <div className="wp-objadd">
           <p className="wp-objadd-hint">Ouviu do cliente uma objeção que não está aqui em cima? Registre — chega direto pra gestão.</p>
-          {/* LGPD: o campo é texto livre e convida a escrever o caso da cliente.
-              Relato de saúde de terceiro é dado sensível — e a cliente não
-              consentiu. O aviso vem ANTES do campo, não depois. */}
+          {/* LGPD: o campo é texto livre e convida a escrever o caso da pessoa
+              que foi atendida. Na saúde o risco é grande — relato de saúde de
+              terceiro é dado sensível e ninguém consentiu. Na concessionária o
+              risco é outro (nome, telefone, situação financeira), então o aviso
+              muda junto. Ele vem ANTES do campo, não depois. */}
           <p className="wp-objadd-aviso">
-            Escreva só a objeção, sem nome da cliente e sem dado de saúde dela.
+            {auto
+              ? 'Escreva só a objeção, sem o nome do cliente e sem dado pessoal dele.'
+              : 'Escreva só a objeção, sem nome da cliente e sem dado de saúde dela.'}
           </p>
-          <textarea className="wp-objadd-in" value={text} onChange={(e) => setText(e.target.value)} placeholder={'O que a cliente falou? Ex.: "tenho medo de misturar com remédio"'} rows={2} />
+          <textarea
+            className="wp-objadd-in"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={auto
+              ? 'O que o cliente falou? Ex.: "meu cunhado disse que chinês não tem revenda"'
+              : 'O que a cliente falou? Ex.: "tenho medo de misturar com remédio"'}
+            rows={2}
+          />
           <textarea className="wp-objadd-in" value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder="Como você respondeu? (opcional)" rows={2} />
           <button type="button" className="wp-objadd-btn" onClick={enviar} disabled={busy || !text.trim()}>
             {sent ? <><Check size={15} className="wp-ico" /> Registrada! Valeu 👏</> : busy ? 'Enviando…' : 'Registrar objeção'}
@@ -580,7 +594,7 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
   return (
     <div className="wp-videdit">
       <button className="wp-videdit-toggle" onClick={() => setOpen((o) => !o)}>
-        <Pencil size={14} className="wp-ico" /> Trocar o vídeo desta pílula
+        <Pencil size={14} className="wp-ico" /> Trocar o vídeo daqui
         <ChevronDown size={16} className={`wp-ico wp-videdit-chev ${open ? 'open' : ''}`} />
       </button>
       {open && (
@@ -615,7 +629,7 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
 
           <div className="wp-videdit-divider" />
           <p className="wp-videdit-now">Foto de capa <span className="wp-videdit-cap">— aparece no card do catálogo</span></p>
-          {temCapa && <img src={capaUrl} alt="capa do produto" className="wp-videdit-preview" />}
+          {temCapa && <img src={capaUrl} alt="capa" className="wp-videdit-preview" />}
           <label className="wp-videdit-mp4">
             <ImageIcon size={16} className="wp-ico" />
             {temCapa ? 'Trocar a foto de capa' : 'Subir uma foto de capa'}
@@ -635,6 +649,8 @@ export default function Product() {
   const { user } = useAuth();
   const { brandId } = useBrand();
   const balcao = isBalcao(brandId); // farmácia: sem compartilhar/enviar pra cliente
+  const auto = isAuto(brandId);
+  const v = vocab(brandId);
   // Quem está mandando — vira o rastreio na URL de compra (Shopify lê UTM).
   const buyCtx: BuyContext = {
     medium: audienceOf(user) ?? user?.role,
@@ -659,7 +675,7 @@ export default function Product() {
   if (!product) {
     return (
       <div className="wp-empty">
-        <p>Produto não encontrado.</p>
+        <p>Não encontrei este item.</p>
         <Link to="/eleva/catalogo" className="wp-btn wp-btn-outline">Voltar ao catálogo</Link>
       </div>
     );
@@ -720,7 +736,7 @@ export default function Product() {
       </div>
 
       <div className="wp-block">
-        <span className="wp-block-label"><BadgeCheck size={14} className="wp-ico" /> Benefícios para destacar</span>
+        <span className="wp-block-label"><BadgeCheck size={14} className="wp-ico" /> {auto ? 'Pontos fortes para destacar' : 'Benefícios para destacar'}</span>
         <ul className="wp-benefits">
           {product.benefits.map((b, idx) => (
             <li key={idx}>{b}</li>
@@ -733,7 +749,7 @@ export default function Product() {
       {product.ficha && product.ficha.length > 0 && (
         <div className="wp-ficha">
           <button className="wp-ficha-toggle" onClick={() => setOpenFicha((o) => !o)}>
-            <ClipboardList size={15} className="wp-ico" /> Ficha do produto
+            <ClipboardList size={15} className="wp-ico" /> Ficha {auto ? 'técnica' : 'do produto'}
             <ChevronDown size={16} className={`wp-ico wp-ficha-chev ${openFicha ? 'open' : ''}`} />
           </button>
           {openFicha && (
@@ -765,7 +781,7 @@ export default function Product() {
         <div className="wp-row">
           {product.howToUse.trim() && (
             <div className="wp-block wp-half">
-              <span className="wp-block-label"><Clock size={14} className="wp-ico" /> Como usar</span>
+              <span className="wp-block-label"><Clock size={14} className="wp-ico" /> {auto ? 'Como abordar' : 'Como usar'}</span>
               <p>{product.howToUse}</p>
             </div>
           )}
@@ -825,7 +841,7 @@ export default function Product() {
         <>
           <p className="wp-share-hint">A cada toque, o botão envia uma mensagem diferente — assim você não repete o mesmo texto com clientes diferentes.</p>
           <button className="wp-share" onClick={share}>
-            <ArrowUpRight size={18} className="wp-ico" /> Compartilhar com a cliente
+            <ArrowUpRight size={18} className="wp-ico" /> Compartilhar com {v.aCliente}
           </button>
         </>
       )}

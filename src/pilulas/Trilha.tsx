@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Flag, Clock, GraduationCap, Check, Play, Circle, ArrowRight, Lock, Trophy } from 'lucide-react';
 import { useStore } from './data/store';
 import { useBrand } from './BrandContext';
+import { vocab } from './data/vocabulario';
 import { useAuth } from './AuthContext';
 import { getTrilha, ensureCertDate, formatCertDate, type TrilhaStep } from './data/trilha';
 import { campanhaPara, prazoLabel, ateLabel, diasRestantes, encerrada } from './data/campanha';
@@ -32,19 +33,20 @@ function StepRow({ step, isNext }: { step: TrilhaStep; isNext: boolean }) {
 export default function Trilha() {
   useStore();
   const { brandId, brand } = useBrand();
+  const v = vocab(brandId);
   const { user } = useAuth();
   const trilha = useMemo(() => getTrilha(brandId, user?.role), [brandId, user?.role]);
   const campanha = campanhaPara(user?.role);
   const { steps, total, mastered, pct, complete, next } = trilha;
 
   const certDate = complete ? ensureCertDate(brandId) : null;
-  const nome = (user?.name || '').trim() || 'Vendedora';
+  const nome = (user?.name || '').trim() || (v.vendedor === 'vendedor' ? 'Vendedor' : 'Vendedora');
 
   return (
     <div className="wp-trilha">
       <div className="wp-tr-hero">
         <h1 className="wp-tr-title"><GraduationCap size={20} className="wp-ico" /> Sua trilha</h1>
-        <p className="wp-tr-sub">Aprenda os produtos da {brand.name}, um de cada vez. Acertar o quiz marca o produto como dominado.</p>
+        <p className="wp-tr-sub">Aprenda os {v.itens} da {brand.name}, um de cada vez. Acertar o quiz marca {v.oItem} como dominado.</p>
       </div>
 
       {/* Campanha: o prazo é o que tira a trilha do "faço qualquer dia" */}
@@ -68,7 +70,7 @@ export default function Trilha() {
       <div className="wp-tr-prog">
         <div className="wp-tr-prog-top">
           <span className="wp-tr-prog-num">{mastered}<span>/{total}</span></span>
-          <span className="wp-tr-prog-lbl">produtos dominados</span>
+          <span className="wp-tr-prog-lbl">{v.itens} dominados</span>
         </div>
         <div className="wp-tr-bar"><span style={{ width: `${pct}%`, background: brand.accent }} /></div>
         <span className="wp-tr-prog-pct">{pct}% da trilha</span>
@@ -95,7 +97,7 @@ export default function Trilha() {
       ) : (
         <div className="wp-tr-cert-lock">
           <Lock size={16} className="wp-ico" />
-          <span>Domine os {total} produtos para liberar seu <b>certificado da {brand.name}</b> — faltam {total - mastered}.</span>
+          <span>Domine os {total} {v.itens} para liberar seu <b>certificado da {brand.name}</b> — faltam {total - mastered}.</span>
         </div>
       )}
 

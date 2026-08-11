@@ -23,7 +23,7 @@ import Perfil from './Perfil';
 import Ficha from './Ficha';
 import { stageSegmentFromUrl } from './data/segments';
 import { stageBrandFromUrl, invitedBrand } from './data/brandInvite';
-import { isBalcao, type BrandId } from './data/brands';
+import { isAuto, isBalcao, type BrandId } from './data/brands';
 import { setStatsMeta } from './data/statsSync';
 import { loadAudienceReels } from './data/audienceVideos';
 import { prepararVideo, videoDoProduto } from './data/videoGesture';
@@ -257,7 +257,7 @@ function Shell() {
   return (
     <div className={`wp-app ${onProduct ? 'is-product' : ''}`} style={themeStyle}>
       {showOnboarding && (
-        <Onboarding onFinish={() => { try { localStorage.setItem('wp_onboarded', '1'); } catch { /* ignore */ } setOnboarded(true); }} />
+        <Onboarding auto={isAuto(brand.id)} onFinish={() => { try { localStorage.setItem('wp_onboarded', '1'); } catch { /* ignore */ } setOnboarded(true); }} />
       )}
       <Header />
       <main className="wp-main">

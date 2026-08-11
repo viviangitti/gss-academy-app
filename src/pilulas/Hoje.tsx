@@ -8,7 +8,8 @@ import { audienceOf } from './AuthContext';
 import { CALENDAR, CHANNELS } from './data/creatorContent';
 import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
-import { isBalcao } from './data/brands';
+import { isAuto, isBalcao } from './data/brands';
+import { vocab } from './data/vocabulario';
 import { campanhaPara, prazoLabel, diasRestantes } from './data/campanha';
 import { getAbout } from './data/about';
 import { watchedToday, notifState, enableNotif, maybeNotify } from './data/lembrete';
@@ -105,7 +106,7 @@ function HitCard({ hit }: { hit: Hit }) {
             {copied ? <><Check size={14} className="wp-ico" /> Copiado</> : <><Copy size={14} className="wp-ico" /> Copiar resposta</>}
           </button>
           <Link to={`/eleva/produto/${hit.product.id}`} className="wp-td-hit-open">
-            ver pílula <ChevronRight size={14} className="wp-ico" />
+            ver {vocab(hit.product.brand).pilula} <ChevronRight size={14} className="wp-ico" />
           </Link>
         </div>
       </div>
@@ -119,7 +120,7 @@ function HitCard({ hit }: { hit: Hit }) {
           <li key={i}><Check size={13} className="wp-ico" /> {b}</li>
         ))}
       </ul>
-      <span className="wp-td-hit-open">ver pílula <ChevronRight size={14} className="wp-ico" /></span>
+      <span className="wp-td-hit-open">ver {vocab(hit.product.brand).pilula} <ChevronRight size={14} className="wp-ico" /></span>
     </Link>
   );
 }
@@ -165,6 +166,8 @@ export default function Hoje() {
   const trilha = getTrilha(brandId, user?.role);
   const campanha = campanhaPara(user?.role);
   const balcao = isBalcao(brandId); // farmácia: sem postar/enviar/venda
+  const auto = isAuto(brandId);     // concessionária: sem postar; a língua muda
+  const v = vocab(brandId);
   const didToday = watchedToday();
   const firstName = (user?.name || '').split(' ')[0] || 'Você';
 
@@ -204,14 +207,14 @@ export default function Hoje() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="O que a cliente falou? Ex.: joelho, caro"
+          placeholder={auto ? 'O que o cliente falou? Ex.: revenda, caro' : 'O que a cliente falou? Ex.: joelho, caro'}
           aria-label="Buscar resposta pronta"
         />
       </div>
       {q.trim().length >= 2 && (
         <div className="wp-td-hits">
           {hits.length ? hits.map((h, i) => <HitCard key={i} hit={h} />) : (
-            <p className="wp-td-nohit">Nada encontrado. Tente outra palavra (ex.: "sono", "ferro", "caro").</p>
+            <p className="wp-td-nohit">Nada encontrado. Tente outra palavra {auto ? '(ex.: "revenda", "garantia", "caro")' : '(ex.: "sono", "ferro", "caro")'}.</p>
           )}
         </div>
       )}
@@ -223,7 +226,7 @@ export default function Hoje() {
             <span className="wp-td-lb-flame"><Flame size={18} className="wp-ico" /> {stats.streak}</span>
             <div className="wp-td-lb-txt">
               <b>{didToday ? 'Dia garantido!' : 'Mantenha sua sequência'}</b>
-              <span>{didToday ? 'Volte amanhã para somar mais um dia.' : 'Assista a uma pílula hoje para manter a sequência.'}</span>
+              <span>{didToday ? 'Volte amanhã para somar mais um dia.' : `Assista a um ${v.pilula} hoje para manter a sequência.`}</span>
             </div>
             {notif !== 'granted' && notif !== 'unsupported' && (
               <button className="wp-td-lb-bell" onClick={ligarLembrete}>
@@ -264,7 +267,7 @@ export default function Hoje() {
           {/* Pílula do dia */}
           {pill && (
             <div className="wp-td-card">
-              <span className="wp-td-card-label"><Play size={13} className="wp-ico" /> Sua pílula de hoje · {duracaoLabel(pill)}</span>
+              <span className="wp-td-card-label"><Play size={13} className="wp-ico" /> {auto ? 'Seu vídeo de hoje' : 'Sua pílula de hoje'} · {duracaoLabel(pill)}</span>
               <div
                 className="wp-td-pill"
                 data-produto={pill.id}
@@ -283,15 +286,16 @@ export default function Hoje() {
                 </Link>
                 {!balcao && (
                   <button className="wp-td-btn" onClick={sharePill}>
-                    <Send size={15} className="wp-ico" /> Enviar à cliente
+                    <Send size={15} className="wp-ico" /> {auto ? 'Enviar ao cliente' : 'Enviar à cliente'}
                   </button>
                 )}
               </div>
             </div>
           )}
 
-          {/* O que postar hoje — não aparece no balcão (não posta) */}
-          {!balcao && (
+          {/* O que postar hoje — não aparece no balcão nem na concessionária:
+              nos dois quem posta pela marca é outra área, não quem atende. */}
+          {!balcao && !auto && (
           <div className="wp-td-card">
             <span className="wp-td-card-label"><CalendarDays size={13} className="wp-ico" /> O que postar hoje ({post.day})</span>
             <div className="wp-td-post">
@@ -319,7 +323,7 @@ export default function Hoje() {
           )}
 
           <Link to="/eleva/catalogo" className="wp-td-all">
-            Ver todos os produtos <ChevronRight size={14} className="wp-ico" />
+            Ver todos os {v.itens} <ChevronRight size={14} className="wp-ico" />
           </Link>
         </>
       )}

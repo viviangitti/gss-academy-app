@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Flame, Trophy, GraduationCap, Bell, BellOff, LogOut, Check, Tag, ChevronRight, Trash2, ShieldCheck } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
+import { vocab } from './data/vocabulario';
 import { roleLabel } from './data/roles';
 import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
@@ -27,6 +28,7 @@ export default function Perfil() {
   const [excluindo, setExcluindo] = useState(false);
   const [erroExcluir, setErroExcluir] = useState('');
   const { brandId, brand } = useBrand();
+  const v = vocab(brandId);
   const stats = getStats();
   const trilha = getTrilha(brandId, user?.role);
 
@@ -131,7 +133,7 @@ export default function Perfil() {
             <GraduationCap size={16} className="wp-ico" />
             <span>
               {trilha.complete ? 'Ver seu certificado' : 'Continuar a formação'}
-              <i>{trilha.complete ? `Você dominou os ${trilha.total} produtos` : `Faltam ${trilha.total - trilha.mastered} para o certificado`}</i>
+              <i>{trilha.complete ? `Você dominou os ${trilha.total} ${v.itens}` : `Faltam ${trilha.total - trilha.mastered} para o certificado`}</i>
             </span>
             <ChevronRight size={16} className="wp-ico" />
           </Link>
@@ -164,7 +166,7 @@ export default function Perfil() {
           {notifOn ? <Bell size={16} className="wp-ico" /> : <BellOff size={16} className="wp-ico" />}
           <span>
             Aviso diário
-            <i>{notifOn ? 'Ligado — te lembramos de assistir a pílula do dia' : 'Desligado'}</i>
+            <i>{notifOn ? `Ligado — te lembramos de assistir ${v.pilula === 'vídeo' ? 'o vídeo' : 'a pílula'} do dia` : 'Desligado'}</i>
           </span>
           <span className={`wp-perfil-toggle ${notifOn ? 'on' : ''}`} />
         </button>
@@ -191,7 +193,7 @@ export default function Perfil() {
         <div className="wp-perfil-excluir">
           <b>Tem certeza?</b>
           <p>
-            Isso apaga sua conta, seu histórico de pílulas, seus pontos e sua ofensiva.
+            Isso apaga sua conta, seu histórico de {v.pilulas}, seus pontos e sua ofensiva.
             As objeções que você registrou continuam para a marca, mas <b>sem o seu nome</b>.
             Não dá para desfazer.
           </p>

@@ -5,6 +5,7 @@ import { buyLinkFor, type BuyContext } from './data/products';
 import { getAfiliadoCode } from './data/afiliadoCode';
 import { useAuth, audienceOf } from './AuthContext';
 import { useBrand } from './BrandContext';
+import { isAuto } from './data/brands';
 import { useEffect } from 'react';
 
 // Ficha do produto como DOCUMENTO — feita pra virar PDF (Imprimir > Salvar em PDF).
@@ -24,7 +25,7 @@ export default function Ficha() {
   if (!product || !product.ficha?.length) {
     return (
       <div className="wp-empty">
-        <p>Este produto ainda não tem ficha.</p>
+        <p>Este item ainda não tem ficha.</p>
         <Link to="/eleva/catalogo" className="wp-btn wp-btn-outline">Voltar ao catálogo</Link>
       </div>
     );
@@ -50,7 +51,7 @@ export default function Ficha() {
       </div>
       <p className="wp-fk-hint">
         Toque em <b>Salvar em PDF</b>. No celular, escolha "Imprimir" e depois "Salvar em PDF" — aí é só
-        enviar o arquivo pra cliente.
+        enviar o arquivo pro cliente.
       </p>
 
       {/* O documento */}
@@ -58,7 +59,7 @@ export default function Ficha() {
         <header className="wp-fk-head">
           <div>
             <span className="wp-fk-brand">{brand.name}</span>
-            <span className="wp-fk-kind">Ficha do produto</span>
+            <span className="wp-fk-kind">{isAuto(product.brand) ? 'Ficha técnica' : 'Ficha do produto'}</span>
           </div>
           <span className="wp-fk-logo">eleva</span>
         </header>

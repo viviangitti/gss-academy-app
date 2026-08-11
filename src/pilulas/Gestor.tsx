@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
+import { vocab } from './data/vocabulario';
 import { useAuth } from './AuthContext';
-import { CATEGORIES, type Category, type Product } from './data/products';
+import { CATEGORIES, CATEGORIAS_AUTO, CATEGORIAS_SAUDE, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
 import { CHANNELS, type Channel } from './data/creatorContent';
 import { SEGMENTS, segmentLabel } from './data/segments';
@@ -43,6 +44,7 @@ function resumo(s: string, max: number): string {
 }
 
 function Resultados({ brandId, products, buscas }: { brandId: string; products: Product[]; buscas: { term: string; count: number }[] }) {
+  const v = vocab(brandId as BrandId);
   const [rep, setRep] = useState<TeamReport | null>(null);
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(true);
@@ -67,7 +69,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
       <div className="wp-gz-metrics">
         <div className="wp-gz-metrics-head"><TrendingUp size={16} className="wp-ico" /> Resultados</div>
         <p className="wp-gz-help" style={{ margin: 0 }}>
-          Ainda não há uso registrado. Assim que o time começar a assistir as pílulas, os números aparecem aqui —
+          Ainda não há uso registrado. Assim que o time começar a assistir os vídeos, os números aparecem aqui —
           de verdade, sem exemplo.
         </p>
       </div>
@@ -98,7 +100,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
         </div>
         <div className="wp-gz-kpi">
           <Eye size={15} className="wp-ico" />
-          <b>{mesAtual.views}</b><span>pílulas assistidas</span>
+          <b>{mesAtual.views}</b><span>{v.pilulas} assistid{v.pilula === 'vídeo' ? 'os' : 'as'}</span>
         </div>
         <div className="wp-gz-kpi">
           <Send size={15} className="wp-ico" />
@@ -109,7 +111,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
       {/* Mês a mês — sai dos eventos, que têm data */}
       <div className="wp-gz-top">
         <div className="wp-gz-top-head">
-          <CalendarDays size={12} className="wp-ico" /> Mês a mês (pílulas assistidas)
+          <CalendarDays size={12} className="wp-ico" /> Mês a mês ({v.pilulas} assistid{v.pilula === 'vídeo' ? 'os' : 'as'})
           {delta !== null && (
             <span className={`wp-gz-delta ${delta >= 0 ? 'up' : 'down'}`}>
               {delta >= 0 ? '+' : ''}{delta}% vs {mesAnterior.label}
@@ -149,7 +151,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
             <div key={r.name + i} className="wp-gz-rk">
               <span className="wp-gz-rk-pos">{i + 1}</span>
               <span className="wp-gz-rk-name">{r.name}<i>{ROLE_LB1[r.role] || r.role}</i></span>
-              <span className="wp-gz-rk-val">{r.points} pts<i>{r.views} pílulas · {r.quiz} dominados</i></span>
+              <span className="wp-gz-rk-val">{r.points} pts<i>{r.views} {v.pilulas} · {r.quiz} dominados</i></span>
             </div>
           ))}
         </div>
@@ -158,7 +160,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
       {/* Produtos realmente assistidos */}
       {rep.topProducts.length > 0 && (
         <div className="wp-gz-top">
-          <div className="wp-gz-top-head"><Eye size={12} className="wp-ico" /> Produtos mais assistidos</div>
+          <div className="wp-gz-top-head"><Eye size={12} className="wp-ico" /> {v.item === 'carro' ? 'Carros' : 'Produtos'} mais assistidos</div>
           {rep.topProducts.map((t) => (
             <div key={t.id} className="wp-gz-bar-row">
               <span className="wp-gz-bar-name">{nome(t.id)}</span>
@@ -234,7 +236,7 @@ function ObjectionsPanel({ brandId }: { brandId: string }) {
           </span>
         </div>
       )) : (
-        <p className="wp-gz-help" style={{ margin: 0 }}>Ninguém registrou objeção nova ainda. Quando o time registrar na pílula (“Recebeu uma objeção nova?”), aparece aqui.</p>
+        <p className="wp-gz-help" style={{ margin: 0 }}>Ninguém registrou objeção nova ainda. Quando o time registrar (“Recebeu uma objeção nova?”), aparece aqui.</p>
       )}
     </div>
   );
@@ -251,8 +253,8 @@ function CobrarPessoa({ p, campanhaNome, prazo }: { p: TeamPerson; campanhaNome?
   // Aspas no nome da campanha de propósito: sem artigo, funciona pra qualquer
   // nome ("Lançamento GLPEN" é masculino, "Campanha X" é feminino).
   const msg = campanhaNome
-    ? `Oi, ${primeiro}! Tudo bem? Vi que você ainda não começou a formação “${campanhaNome}” no Eleva — ${prazo}. São só 3 pílulas curtas e você já sai com o certificado. Qualquer dúvida me chama!`
-    : `Oi, ${primeiro}! Tudo bem? Vi que você ainda não assistiu nenhuma pílula no Eleva. São vídeos curtos que ajudam muito na hora de vender. Dá uma olhada quando puder — qualquer dúvida me chama!`;
+    ? `Oi, ${primeiro}! Tudo bem? Vi que você ainda não começou a formação “${campanhaNome}” no Eleva — ${prazo}. São só 3 vídeos curtos e você já sai com o certificado. Qualquer dúvida me chama!`
+    : `Oi, ${primeiro}! Tudo bem? Vi que você ainda não assistiu nenhum vídeo no Eleva. São vídeos curtos que ajudam muito na hora de vender. Dá uma olhada quando puder — qualquer dúvida me chama!`;
   const copiar = () => {
     navigator.clipboard?.writeText(msg).then(
       () => { setCopiado(true); setTimeout(() => setCopiado(false), 1800); },
@@ -283,9 +285,15 @@ const GRADIENT: Record<Category, [string, string]> = {
   acessorio: ['#64748b', '#27303f'],
 };
 
-function ProductForm({ brand, onDone }: { brand: string; onDone: (name: string) => void }) {
+function ProductForm({ brand, onDone }: { brand: BrandId; onDone: (name: string) => void }) {
+  // A concessionária cadastra CARRO e ACESSÓRIO, não suplemento: rótulo,
+  // exemplo e lista de categorias mudam junto. O formulário é o mesmo — o que
+  // muda é a língua que ele fala.
+  const auto = isAuto(brand);
+  const v = vocab(brand);
+  const cats = auto ? CATEGORIAS_AUTO : CATEGORIAS_SAUDE;
   const [name, setName] = useState('');
-  const [category, setCategory] = useState<Category>('performance');
+  const [category, setCategory] = useState<Category>(auto ? 'suv' : 'performance');
   const [hook, setHook] = useState('');
   const [whatItIs, setWhatItIs] = useState('');
   const [benefits, setBenefits] = useState('');
@@ -299,7 +307,8 @@ function ProductForm({ brand, onDone }: { brand: string; onDone: (name: string) 
     if (!valid) return;
     const id = 'p-' + Date.now();
     const bens = benefits.split('\n').map((s) => s.trim()).filter(Boolean);
-    const cta = salesLine.trim() || 'Me chama que eu te explico.';
+    const cta = salesLine.trim()
+      || (auto ? 'Quer que eu separe um horário para o test drive?' : 'Me chama que eu te explico.');
     const storyboard = [
       { t: '0-5s', label: 'GANCHO', line: hook.trim() },
       ...(bens[0] ? [{ t: '5-15s', label: 'BENEFÍCIO', line: bens[0] }] : []),
@@ -331,32 +340,32 @@ function ProductForm({ brand, onDone }: { brand: string; onDone: (name: string) 
 
   return (
     <div className="wp-gz-form">
-      <label className="wp-gz-label">Nome do produto</label>
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex.: GLPEN Nutri Muscle" />
+      <label className="wp-gz-label">Nome {auto ? 'do modelo ou acessório' : 'do produto'}</label>
+      <input value={name} onChange={(e) => setName(e.target.value)} placeholder={auto ? 'Ex.: Omoda 5 ou Engate removível' : 'Ex.: GLPEN Nutri Muscle'} />
 
       <label className="wp-gz-label">Categoria</label>
       <select value={category} onChange={(e) => setCategory(e.target.value as Category)}>
-        {Object.entries(CATEGORIES).map(([k, v]) => (
-          <option key={k} value={k}>{v.label}</option>
+        {cats.map((k) => (
+          <option key={k} value={k}>{CATEGORIES[k].label}</option>
         ))}
       </select>
 
-      <label className="wp-gz-label">Gancho (a dor/desejo da cliente)</label>
-      <input value={hook} onChange={(e) => setHook(e.target.value)} placeholder="Ex.: Cabelo caindo e unha que não cresce?" />
+      <label className="wp-gz-label">Gancho {auto ? '(o que trava a venda)' : '(a dor/desejo da cliente)'}</label>
+      <input value={hook} onChange={(e) => setHook(e.target.value)} placeholder={auto ? 'Ex.: O cliente gostou, mas trava em "e a revenda?"' : 'Ex.: Cabelo caindo e unha que não cresce?'} />
 
       <label className="wp-gz-label">O que é (1–2 frases)</label>
-      <textarea value={whatItIs} onChange={(e) => setWhatItIs(e.target.value)} rows={3} placeholder="O essencial do produto, sem bula." />
+      <textarea value={whatItIs} onChange={(e) => setWhatItIs(e.target.value)} rows={3} placeholder={auto ? 'O essencial do modelo, sem ficha técnica.' : 'O essencial do produto, sem bula.'} />
 
-      <label className="wp-gz-label">Benefícios (um por linha)</label>
-      <textarea value={benefits} onChange={(e) => setBenefits(e.target.value)} rows={3} placeholder={'Auxilia na...\nContribui para...'} />
+      <label className="wp-gz-label">{auto ? 'Pontos fortes (um por linha)' : 'Benefícios (um por linha)'}</label>
+      <textarea value={benefits} onChange={(e) => setBenefits(e.target.value)} rows={3} placeholder={auto ? 'Pacote de série cheio para a faixa...\nRede de assistência no Brasil...' : 'Auxilia na...\nContribui para...'} />
 
       <label className="wp-gz-label">Frase de venda / CTA</label>
-      <input value={salesLine} onChange={(e) => setSalesLine(e.target.value)} placeholder="Me chama que eu te explico." />
+      <input value={salesLine} onChange={(e) => setSalesLine(e.target.value)} placeholder={auto ? 'Quer que eu separe um horário para o test drive?' : 'Me chama que eu te explico.'} />
 
-      <label className="wp-gz-label">Vídeo da pílula — escolha UMA opção</label>
+      <label className="wp-gz-label">Vídeo {auto ? '' : 'da pílula '}— escolha UMA opção</label>
       <label className="wp-gz-upload">
         <UploadCloud size={18} className="wp-ico" />
-        {video ? video.name : '1) Subir um vídeo MP4 do produto'}
+        {video ? video.name : `1) Subir um vídeo MP4 ${auto ? 'do modelo' : 'do produto'}`}
         <input type="file" accept="video/*" hidden onChange={(e) => setVideo(e.target.files?.[0] || null)} />
       </label>
       <p className="wp-gz-or">ou</p>
@@ -364,7 +373,7 @@ function ProductForm({ brand, onDone }: { brand: string; onDone: (name: string) 
       <p className="wp-gz-help">Se colar o reel do Instagram, ele vira o vídeo que a pessoa assiste. Se subir um MP4, o reel (se houver) aparece como prova social.</p>
 
       <button className="wp-gz-submit" disabled={!valid} onClick={submit}>
-        <Check size={16} className="wp-ico" /> Publicar produto
+        <Check size={16} className="wp-ico" /> Publicar {v.item}
       </button>
       {!valid && <p className="wp-gz-hint">Preencha nome, gancho e "o que é".</p>}
     </div>
@@ -764,7 +773,7 @@ function VideosPorPublico({ products: todos }: { products: Product[] }) {
         <span className={`wp-gz-vcount ${feitos === total ? 'full' : ''}`}>{feitos} de {total}</span>
       </div>
       <p className="wp-gz-help" style={{ marginTop: 0 }}>
-        Cada público vê o vídeo dele. Quem não tiver o do público assiste o vídeo padrão do produto.
+        Cada público vê o vídeo dele. Quem não tiver o do público assiste o vídeo padrão.
       </p>
       <div className="wp-gz-vbar"><span className="wp-gz-vbar-fill" style={{ width: `${pct}%` }} /></div>
       <div className="wp-gz-vlist">
@@ -824,7 +833,11 @@ export default function Gestor() {
       <div className="wp-gz-hero">
         <span className="wp-gz-hero-tag">PAINEL DO GESTOR</span>
         <h1 className="wp-gz-hero-title">Gestão da marca {brand.name}</h1>
-        <p className="wp-gz-hero-sub">Cadastre produtos, envie vídeos e crie ofertas. O que você publica aqui aparece na hora para o time.</p>
+        <p className="wp-gz-hero-sub">
+          {auto
+            ? 'Cadastre carros e acessórios, envie vídeos e publique a tabela vigente. O que você publica aqui aparece na hora para o time.'
+            : 'Cadastre produtos, envie vídeos e crie ofertas. O que você publica aqui aparece na hora para o time.'}
+        </p>
       </div>
 
       {toast && <div className="wp-gz-toast"><Check size={13} className="wp-ico" /> {toast} <Link to="/eleva/catalogo">ver no catálogo <ExternalLink size={12} className="wp-ico" /></Link></div>}
@@ -851,9 +864,9 @@ export default function Gestor() {
       {/* Produtos */}
       <div className="wp-gz-block">
         <div className="wp-gz-block-head">
-          <span className="wp-gz-block-title"><Package size={17} className="wp-ico" /> Produtos ({products.length})</span>
+          <span className="wp-gz-block-title"><Package size={17} className="wp-ico" /> {auto ? 'Carros e acessórios' : 'Produtos'} ({products.length})</span>
           <button className="wp-gz-add" onClick={() => setOpenForm(openForm === 'produto' ? null : 'produto')}>
-            <Plus size={15} className="wp-ico" /> Novo produto
+            <Plus size={15} className="wp-ico" /> {auto ? 'Novo item' : 'Novo produto'}
           </button>
         </div>
         {openForm === 'produto' && <ProductForm brand={brandId} onDone={(n) => done(n, 'Produto')} />}

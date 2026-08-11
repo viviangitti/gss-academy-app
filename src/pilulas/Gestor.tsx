@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList } from 'lucide-react';
 import { useBrand } from './BrandContext';
+import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 import { CATEGORIES, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
@@ -11,6 +12,7 @@ import { topSearches } from './data/insights';
 import { fetchTeam, buildReport, type TeamReport, type TeamPerson } from './data/teamStats';
 import { CAMPANHA, prazoLabel } from './data/campanha';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
+import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, type TeamObjection } from './data/objections';
 import { buscarLeads, type Lead } from './data/leads';
@@ -278,6 +280,7 @@ const GRADIENT: Record<Category, [string, string]> = {
   perfumaria: ['#ff5fa2', '#9b2c63'],
   suv: ['#1e6fd9', '#0f3a75'],
   eletrificado: ['#12b5a5', '#0b5563'],
+  acessorio: ['#64748b', '#27303f'],
 };
 
 function ProductForm({ brand, onDone }: { brand: string; onDone: (name: string) => void }) {
@@ -440,6 +443,92 @@ function OfferForm({ brand, onDone }: { brand: string; onDone: (t: string) => vo
 
       <button className="wp-gz-submit" disabled={!valid} onClick={submit}>
         <Check size={16} className="wp-ico" /> Publicar oferta
+      </button>
+    </div>
+  );
+}
+
+// CONDIÇÃO COMERCIAL: o gestor SOBE a tabela, não redigita.
+// Ele já recebe o print no grupo ou o PDF da campanha. Fazer ele traduzir
+// aquilo em "% de desconto" custa tempo e erra número — e número errado no
+// showroom vira promessa que a concessionária não cumpre.
+function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) => void }) {
+  const [titulo, setTitulo] = useState('');
+  const [validade, setValidade] = useState('');
+  const [observacao, setObservacao] = useState('');
+  const [arq, setArq] = useState<ArquivoPronto | null>(null);
+  const [erro, setErro] = useState('');
+  const [subindo, setSubindo] = useState(false);
+
+  const escolher = async (f: File | undefined) => {
+    if (!f) return;
+    setErro('');
+    try {
+      setArq(await prepararArquivo(f));
+    } catch (e) {
+      setArq(null);
+      setErro(e instanceof Error ? e.message : 'Não consegui ler o arquivo.');
+    }
+  };
+
+  const valid = titulo.trim().length > 2 && !!arq;
+
+  const submit = async () => {
+    if (!valid || !arq) return;
+    setSubindo(true);
+    setErro('');
+    try {
+      await publicarCondicao({
+        brand,
+        titulo: titulo.trim(),
+        validade: validade.trim() || 'confirmar validade com a gerência',
+        observacao: observacao.trim() || undefined,
+        arquivo: arq.arquivo,
+        tipo: arq.tipo,
+        nomeArquivo: arq.nomeArquivo,
+      });
+      onDone(titulo.trim());
+    } catch {
+      setErro('Não consegui publicar agora. Confira a internet e tente de novo.');
+    } finally {
+      setSubindo(false);
+    }
+  };
+
+  return (
+    <div className="wp-gz-form">
+      <label className="wp-gz-label">Print ou PDF da tabela</label>
+      <input
+        type="file"
+        accept="image/*,application/pdf"
+        onChange={(e) => escolher(e.target.files?.[0])}
+      />
+      <p className="wp-gz-hint">
+        Pode ser o print do grupo, a foto da planilha ou o PDF da campanha. A imagem é
+        reduzida automaticamente para abrir rápido no celular do time.
+      </p>
+      {arq && (
+        <div className="wp-gz-anexo">
+          {arq.tipo === 'imagem'
+            ? <img src={arq.arquivo} alt="Pré-visualização da tabela" />
+            : <span className="wp-gz-anexo-pdf"><FileText size={20} className="wp-ico" /> {arq.nomeArquivo}</span>}
+          <span className="wp-gz-anexo-meta">{Math.round(arq.bytes / 1024)} KB</span>
+        </div>
+      )}
+
+      <label className="wp-gz-label">Título</label>
+      <input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Ex.: Tabela Jaecoo — campanha de agosto" />
+
+      <label className="wp-gz-label">Validade</label>
+      <input value={validade} onChange={(e) => setValidade(e.target.value)} placeholder="Ex.: até 31/08 ou enquanto durar o estoque" />
+
+      <label className="wp-gz-label">Observação para o time (opcional)</label>
+      <textarea value={observacao} onChange={(e) => setObservacao(e.target.value)} rows={2} placeholder="Ex.: bônus de troca só com avaliação presencial." />
+
+      {erro && <p className="wp-gz-erro">{erro}</p>}
+
+      <button className="wp-gz-submit" disabled={!valid || subindo} onClick={submit}>
+        <Check size={16} className="wp-ico" /> {subindo ? 'Publicando…' : 'Publicar condição'}
       </button>
     </div>
   );
@@ -708,9 +797,14 @@ export default function Gestor() {
   const { user } = useAuth();
   useStore();
   const { brand, brandId } = useBrand();
-  const [openForm, setOpenForm] = useState<'produto' | 'oferta' | 'calendario' | 'tendencia' | null>(null);
+  const [openForm, setOpenForm] = useState<'produto' | 'oferta' | 'condicao' | 'calendario' | 'tendencia' | null>(null);
   const [toast, setToast] = useState('');
   const [tab, setTab] = useState<'resultados' | 'vendas' | 'conteudo'>('resultados');
+
+  useCondicoes();
+  useEffect(() => { carregarCondicoes(brandId); }, [brandId]);
+  const condicoes = condicoesDaMarca(brandId);
+  const auto = isAuto(brandId);
 
   const products = allProducts().filter((p) => p.brand === brandId);
   const vids = videoTotals(products);
@@ -768,10 +862,41 @@ export default function Gestor() {
         </div>
       </div>
 
+      {/* Condições comerciais (automotivo): a tabela sobe como print/PDF */}
+      {auto && (
+        <div className="wp-gz-block">
+          <div className="wp-gz-block-head">
+            <span className="wp-gz-block-title"><ClipboardList size={17} className="wp-ico" /> Condições comerciais ({condicoes.length})</span>
+            <button className="wp-gz-add" onClick={() => setOpenForm(openForm === 'condicao' ? null : 'condicao')}>
+              <UploadCloud size={15} className="wp-ico" /> Subir tabela
+            </button>
+          </div>
+          {openForm === 'condicao' && <CondicaoForm brand={brandId} onDone={(t) => done(t, 'Condição')} />}
+          <div className="wp-gz-list">
+            {condicoes.map((c) => (
+              <div key={c.id} className="wp-gz-item">
+                <span className="wp-gz-item-name">{c.titulo}</span>
+                <span className="wp-gz-item-meta">
+                  {c.validade}
+                  <button
+                    type="button"
+                    className="wp-gz-del"
+                    aria-label={`Apagar ${c.titulo}`}
+                    onClick={() => { if (confirm(`Apagar "${c.titulo}"? O time deixa de ver esta tabela.`)) apagarCondicao(c.id); }}
+                  >
+                    <Trash2 size={14} className="wp-ico" />
+                  </button>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Ofertas */}
       <div className="wp-gz-block">
         <div className="wp-gz-block-head">
-          <span className="wp-gz-block-title"><Tag size={17} className="wp-ico" /> Ofertas ({offers.length})</span>
+          <span className="wp-gz-block-title"><Tag size={17} className="wp-ico" /> {auto ? 'Avisos rápidos' : 'Ofertas'} ({offers.length})</span>
           <button className="wp-gz-add" onClick={() => setOpenForm(openForm === 'oferta' ? null : 'oferta')}>
             <Plus size={15} className="wp-ico" /> Nova oferta
           </button>

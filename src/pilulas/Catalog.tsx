@@ -9,7 +9,7 @@ import { useAuth } from './AuthContext';
 
 // Ordem em que as categorias aparecem. Categoria fora desta lista NÃO é
 // renderizada — foi o que sumiu com o catálogo da Ramasa quando 'suv' entrou.
-const ORDER: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria', 'suv', 'eletrificado'];
+const ORDER: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria', 'suv', 'eletrificado', 'acessorio'];
 
 export default function Catalog() {
   useStore(); // re-renderiza quando o gestor cadastra produto
@@ -32,7 +32,10 @@ export default function Catalog() {
 
       {ORDER.map((cat) => {
         const items = catalog.filter((p) => p.category === cat);
-        if (!items.length) return null;
+        // Acessório é a segunda venda da concessionária (engate, película, som,
+        // proteção) e some fácil da conversa. A seção aparece mesmo vazia, com o
+        // recado de onde cadastrar — senão ninguém descobre que ela existe.
+        if (!items.length && !(cat === 'acessorio' && isAuto(brandId))) return null;
         const CatIcon = CATEGORIES[cat].Icon;
         return (
           <section key={cat} className="wp-section">
@@ -40,6 +43,12 @@ export default function Catalog() {
               <CatIcon size={18} className="wp-section-emoji" />
               {CATEGORIES[cat].label}
             </h2>
+            {!items.length && (
+              <p className="wp-section-vazio">
+                Nenhum acessório cadastrado ainda. A gerência cadastra pelo Painel, em Conteúdo → Produtos,
+                escolhendo a categoria <b>Acessórios</b>.
+              </p>
+            )}
             <div className="wp-grid">
               {items.map((p) => {
                 const CardIcon = CATEGORIES[p.category].Icon;

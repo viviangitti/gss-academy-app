@@ -2,7 +2,7 @@
 // Cada produto vira uma "pílula": conteúdo curto, focado em BENEFÍCIO,
 // de uso duplo (treina a vendedora + ela compartilha com a cliente).
 //
-import { Dumbbell, Pill, Wind, Sparkles, Flower2, Car, Zap, type LucideIcon } from 'lucide-react';
+import { Dumbbell, Pill, Wind, Sparkles, Flower2, Car, Zap, Wrench, type LucideIcon } from 'lucide-react';
 import type { BrandId } from './brands';
 import type { Audience } from '../AuthContext';
 //
@@ -11,10 +11,16 @@ import type { Audience } from '../AuthContext';
 // Para MEDICAMENTOS (ex.: acetilcisteína, expectorantes): copy factual, sem
 // promessa, sempre remetendo à bula/rótulo e à orientação profissional.
 
-// Categorias dos dois verticais. As de saúde vieram primeiro; 'suv' e
-// 'eletrificado' são do automotivo. O catálogo só mostra a categoria que tem
-// produto da marca aberta, então nenhuma marca vê a categoria da outra.
-export type Category = 'performance' | 'capsulas' | 'respiratorio' | 'cosmeticos' | 'perfumaria' | 'suv' | 'eletrificado';
+// Categorias dos dois verticais. As de saúde vieram primeiro; 'suv',
+// 'eletrificado' e 'acessorio' são do automotivo. O catálogo só mostra a
+// categoria que tem produto da marca aberta, então nenhuma marca vê a
+// categoria da outra.
+//
+// No automotivo o catálogo tem duas partes separadas de propósito: os MODELOS
+// (o carro, onde mora a objeção e o test drive) e os ACESSÓRIOS (engate,
+// película, som, proteção) — que é onde a concessionária ganha margem e o
+// vendedor costuma esquecer de oferecer.
+export type Category = 'performance' | 'capsulas' | 'respiratorio' | 'cosmeticos' | 'perfumaria' | 'suv' | 'eletrificado' | 'acessorio';
 
 export interface Objection {
   trigger: string; // o que a cliente fala
@@ -92,6 +98,7 @@ export const CATEGORIES: Record<Category, { label: string; Icon: LucideIcon }> =
   perfumaria: { label: 'Perfumaria', Icon: Flower2 },
   suv: { label: 'SUV', Icon: Car },
   eletrificado: { label: 'Híbrido & Elétrico', Icon: Zap },
+  acessorio: { label: 'Acessórios', Icon: Wrench },
 };
 
 export const PRODUCTS: Product[] = [

@@ -2652,3 +2652,92 @@
 .wp-news-item i { font-style: normal; font-weight: 600; }
 .wp-news-ext { position: absolute; top: 13px; right: 12px; color: var(--wp-soft); }
 .wp-news-foot { margin-top: 18px; font-size: 11.5px; color: var(--wp-soft); line-height: 1.5; }
+
+/* ===== Notícias: frentes (concorrência, mercado, lançamentos…) ===== */
+.wp-news-frentes {
+  display: flex; gap: 7px; overflow-x: auto; padding: 2px 0 12px;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.wp-news-frentes::-webkit-scrollbar { display: none; }
+.wp-news-frente {
+  display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto;
+  padding: 7px 13px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--wp-line); background: var(--wp-card);
+  color: var(--wp-soft); font-size: 12.5px; font-weight: 600; white-space: nowrap;
+}
+.wp-news-frente.on {
+  background: var(--wp-pink); border-color: var(--wp-pink);
+  color: var(--wp-on-accent, #fff);
+}
+
+/* ===== Condições comerciais: tabela como print ou PDF ===== */
+.wp-cond-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
+.wp-cond-aviso {
+  display: flex; align-items: flex-start; gap: 7px;
+  font-size: 11.5px; line-height: 1.45; color: var(--wp-soft);
+  background: var(--wp-card); border: 1px solid var(--wp-line);
+  border-radius: 12px; padding: 9px 11px; margin: 0;
+}
+.wp-cond-aviso .wp-ico { flex: 0 0 auto; margin-top: 1px; }
+.wp-cond-card {
+  background: var(--wp-card); border: 1px solid var(--wp-line);
+  border-radius: 16px; padding: 13px; display: flex; flex-direction: column; gap: 9px;
+}
+.wp-cond-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.wp-cond-title { font-size: 15px; font-weight: 700; margin: 0; }
+.wp-cond-val { font-size: 11.5px; color: var(--wp-soft); flex: 0 0 auto; }
+.wp-cond-thumb {
+  position: relative; display: block; width: 100%; padding: 0; cursor: pointer;
+  border: 1px solid var(--wp-line); border-radius: 12px; overflow: hidden;
+  background: var(--wp-bg);
+}
+.wp-cond-thumb img { display: block; width: 100%; max-height: 260px; object-fit: cover; object-position: top; }
+.wp-cond-pdf {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  padding: 30px 14px; font-size: 13px; font-weight: 600; color: var(--wp-soft);
+}
+.wp-cond-zoom {
+  position: absolute; right: 8px; bottom: 8px;
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(12, 16, 28, .78); color: #fff;
+  font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 999px;
+}
+.wp-cond-obs { font-size: 12.5px; line-height: 1.5; color: var(--wp-soft); margin: 0; }
+.wp-cond-quando { font-size: 11px; color: var(--wp-soft); }
+.wp-cond-vazio {
+  font-size: 13px; line-height: 1.55; color: var(--wp-soft);
+  background: var(--wp-card); border: 1px dashed var(--wp-line);
+  border-radius: 14px; padding: 16px; margin-bottom: 18px;
+}
+.wp-cond-lb {
+  position: fixed; inset: 0; z-index: 90; background: rgba(8, 11, 20, .94);
+  display: flex; align-items: center; justify-content: center; padding: 46px 10px 14px;
+}
+.wp-cond-lb img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+.wp-cond-lb iframe { width: 100%; height: 100%; border: 0; border-radius: 8px; background: #fff; }
+.wp-cond-lb-x {
+  position: absolute; top: 10px; right: 12px; z-index: 1; cursor: pointer;
+  width: 34px; height: 34px; border-radius: 50%; border: 0;
+  background: rgba(255, 255, 255, .16); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ===== Painel: anexo da condição ===== */
+.wp-gz-anexo {
+  display: flex; align-items: center; gap: 10px; margin-top: 9px;
+  border: 1px solid var(--wp-line); border-radius: 12px; padding: 9px; background: var(--wp-bg);
+}
+.wp-gz-anexo img { width: 84px; height: 60px; object-fit: cover; border-radius: 8px; }
+.wp-gz-anexo-pdf { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; }
+.wp-gz-anexo-meta { margin-left: auto; font-size: 11px; color: var(--wp-soft); }
+.wp-gz-erro { font-size: 12.5px; line-height: 1.5; color: #d33b3b; margin: 9px 0 0; }
+.wp-gz-del {
+  border: 0; background: none; cursor: pointer; color: var(--wp-soft);
+  padding: 2px 0 2px 9px; display: inline-flex; align-items: center;
+}
+
+/* Seção de catálogo sem itens (Acessórios, antes do primeiro cadastro) */
+.wp-section-vazio {
+  font-size: 12.5px; line-height: 1.55; color: var(--wp-soft);
+  border: 1px dashed var(--wp-line); border-radius: 14px; padding: 14px; margin: 0;
+}

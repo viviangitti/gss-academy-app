@@ -5,7 +5,7 @@ import { allProducts } from './data/store';
 import { visibleProducts, productKnowledge } from './data/products';
 import { useBrand } from './BrandContext';
 import { useAuth } from './AuthContext';
-import { getBrand, isBalcao } from './data/brands';
+import { getBrand, isAuto, isBalcao } from './data/brands';
 import { aiAuthHeaders } from '../lib/aiProxy';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
@@ -29,6 +29,15 @@ const SUGESTOES_REVENDA = [
   'Pra que serve o Ultra AZ?',
 ];
 
+// Concessionária: quem pergunta está com o cliente na frente. As dúvidas são de
+// negociação e objeção, não de bula.
+const SUGESTOES_AUTO = [
+  'O cliente disse "é chinês, né?"',
+  'Como comparo com o concorrente item a item?',
+  'Ele falou que vai pesquisar e volta',
+  'Como conduzo pro test drive?',
+];
+
 export default function AssistenteBalcao() {
   const { brandId } = useBrand();
   const { user } = useAuth();
@@ -44,14 +53,23 @@ export default function AssistenteBalcao() {
   );
   const contexto = useMemo(() => productKnowledge(produtos), [produtos]);
   const marca = getBrand(brandId).name;
-  // Balcão (farmácia) atende no balcão; revenda (Meraki) fala com a cliente.
+  // Três realidades diferentes: balcão de farmácia atende, revenda (Meraki)
+  // fala com a cliente, concessionária negocia carro. O aviso de rodapé muda
+  // junto — falar de rótulo e farmacêutico pra quem vende carro é ruído.
   const ehBalcao = isBalcao(brandId);
-  const SUGESTOES = ehBalcao ? SUGESTOES_BALCAO : SUGESTOES_REVENDA;
+  const ehAuto = isAuto(brandId);
+  const SUGESTOES = ehAuto ? SUGESTOES_AUTO : ehBalcao ? SUGESTOES_BALCAO : SUGESTOES_REVENDA;
   const titulo = ehBalcao ? 'Tira-dúvida do balcão' : 'Tira-dúvida';
-  const subtitulo = ehBalcao
+  const subtitulo = ehAuto
+    ? `Pergunte sobre os modelos e acessórios ${marca}, e sobre como conduzir a negociação. Responde só com o conteúdo aprovado.`
+    : ehBalcao
     ? `Pergunte sobre os produtos ${marca}. Responde só com o conteúdo aprovado — pra você atender rápido.`
     : `Pergunte sobre os produtos ${marca}. Responde só com o conteúdo aprovado — pra você vender com segurança.`;
-  const vazioTitulo = ehBalcao ? 'Como posso ajudar no atendimento?' : 'O que a cliente perguntou?';
+  const vazioTitulo = ehAuto ? 'O que o cliente perguntou?' : ehBalcao ? 'Como posso ajudar no atendimento?' : 'O que a cliente perguntou?';
+  const aviso = ehAuto
+    ? 'Uso interno de apoio. Preço, taxa, bônus de troca e prazo de entrega saem da tabela vigente em Condições comerciais — nunca desta tela.'
+    : 'Uso interno de apoio. Não é orientação médica: dose, uso com remédios e doença ficam com o rótulo e o farmacêutico.';
+  const perfilIA = ehAuto ? 'auto' : ehBalcao ? 'balcao' : 'revenda';
 
   useEffect(() => {
     fimRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -69,7 +87,7 @@ export default function AssistenteBalcao() {
       const r = await fetch(API_URL, {
         method: 'POST',
         headers: await aiAuthHeaders(),
-        body: JSON.stringify({ message: pergunta, history: historico, context: contexto, perfil: ehBalcao ? 'balcao' : 'revenda' }),
+        body: JSON.stringify({ message: pergunta, history: historico, context: contexto, perfil: perfilIA }),
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data?.error || 'falhou');
@@ -93,9 +111,7 @@ export default function AssistenteBalcao() {
         </div>
       </div>
 
-      <div className="wp-ia-disc">
-        Uso interno de apoio. Não é orientação médica: dose, uso com remédios e doença ficam com o rótulo e o farmacêutico.
-      </div>
+      <div className="wp-ia-disc">{aviso}</div>
 
       <div className="wp-ia-thread">
         {msgs.length === 0 && (

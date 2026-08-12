@@ -50,9 +50,13 @@ const AUTO_TABS = [
 ];
 
 // Gestor numa marca automotiva: painel + espiar como o time vê + notícias.
+// 'Condições' está aqui porque quem PUBLICA a tabela precisa conferir como ela
+// chegou no celular do vendedor — abrir, dar zoom, ver se o número está legível.
+// Sem essa aba, a gerência subia o print e nunca via o resultado.
 const GESTOR_AUTO_TABS = [
   { to: '/eleva/gestor', label: 'Painel', icon: LayoutDashboard, end: false },
   { to: '/eleva/catalogo', label: 'Ver como time', icon: Eye, end: false },
+  { to: '/eleva/ofertas', label: 'Condições', icon: Tag, end: false },
   { to: '/eleva/noticias', label: 'Notícias', icon: Newspaper, end: false },
   { to: '/eleva/assistente', label: 'Tira-dúvida', icon: MessageCircleQuestion, end: false },
 ];

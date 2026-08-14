@@ -84,12 +84,17 @@ export interface Product {
   /** Galeria do modelo. A 1ª é a capa do material que vai pro cliente. */
   fotos?: string[];
   /**
-   * DESTAQUES — as 5 razões de compra, do jeito que o cliente lê: curtas.
-   * Não confundir com `benefits`, que são frases inteiras para o VENDEDOR
-   * estudar. Material que vai pro cliente é imagem e palavra curta; parágrafo
-   * ele não lê no WhatsApp.
+   * DESTAQUES — as 5 razões de compra, do jeito que o cliente lê.
+   *
+   * Cada uma tem duas partes de propósito: `titulo` é o BENEFÍCIO (o que muda
+   * na vida de quem compra) e `prova` é a ficha que sustenta (o que o carro
+   * tem). Ficha sozinha não vende: "som Sony de 12 alto-falantes" é o que ele
+   * TEM; "ninguém mais briga pelo som" é o que ele FAZ. O cliente decide pela
+   * segunda e confere na primeira.
+   *
+   * Não confundir com `benefits`, que são frases inteiras pro VENDEDOR estudar.
    */
-  destaques?: string[];
+  destaques?: { titulo: string; prova?: string }[];
   buyUrl?: string; // e-commerce oficial — a cliente compra direto
   ficha?: FichaRow[]; // ficha técnica p/ consulta rápida no balcão
 }
@@ -913,11 +918,11 @@ export const PRODUCTS: Product[] = [
       'Itens de série, garantia, prazo de entrega e condições variam por versão e por campanha vigente. Confirme sempre na tabela e na condição do dia antes de prometer ao cliente.',
     fotos: ['/carros/jaecoo-7-1.jpg', '/carros/jaecoo-7-2.jpg', '/carros/jaecoo-7-3.jpg', '/carros/jaecoo-7-4.jpg'],
     destaques: [
-      'Teto solar panorâmico de 1,1 m²',
-      'Central multimídia de 13,2 polegadas',
-      'Motor híbrido de 135 cv + elétrico de 204 cv',
-      'Rodas de liga leve de 19 polegadas',
-      'Piloto automático adaptativo e frenagem autônoma',
+      { titulo: 'Céu aberto sobre a família inteira', prova: 'Teto solar panorâmico de 1,1 m²' },
+      { titulo: 'Ultrapassagem sem pensar duas vezes', prova: '135 cv a combustão somados a 204 cv elétricos' },
+      { titulo: 'A estrada longa cansa menos', prova: 'Piloto adaptativo, frenagem automática e assistente de faixa' },
+      { titulo: 'Aço reforçado em volta de quem vai dentro', prova: 'Carroceria com 80% de aço de alta resistência' },
+      { titulo: 'Menos parada no posto', prova: 'Sistema híbrido com 44,5% de eficiência térmica' },
     ],
     durationSec: 45,
     gradient: ['#1e6fd9', '#0f3a75'],
@@ -1017,11 +1022,11 @@ export const PRODUCTS: Product[] = [
       'Consumo, autonomia, itens de série e garantia variam por versão e por campanha. Confirme na ficha técnica oficial e na condição vigente antes de falar número com o cliente.',
     fotos: ['/carros/omoda-5-shs-h-1.jpg', '/carros/omoda-5-shs-h-2.jpg', '/carros/omoda-5-shs-h-3.jpg', '/carros/omoda-5-shs-h-4.jpg'],
     destaques: [
-      'Híbrido que dispensa tomada em casa',
-      'Painel digital flutuante de 24,6 polegadas',
-      'Som Sony com 8 alto-falantes',
-      'Bancos ventilados e aquecidos',
-      '7 airbags e estrutura reforçada',
+      { titulo: 'Você não muda nada na sua rotina', prova: 'Híbrido que se recarrega sozinho, rodando' },
+      { titulo: 'O posto vira exceção, não hábito', prova: 'Motor 1.5 turbo com apoio elétrico permanente' },
+      { titulo: 'Verão e inverno resolvidos no banco', prova: 'Bancos dianteiros ventilados e aquecidos' },
+      { titulo: 'Tudo na sua frente, sem tirar o olho da rua', prova: 'Painel digital flutuante de 24,6 polegadas' },
+      { titulo: 'Sete airbags em volta de todo mundo', prova: 'Estrutura com 78% de aço de alta resistência' },
     ],
     durationSec: 45,
     gradient: ['#3f8f8a', '#123a3c'],
@@ -1121,11 +1126,11 @@ export const PRODUCTS: Product[] = [
       'Autonomia depende de uso, clima e carga. Use sempre o número do Inmetro e nunca prometa autonomia de estrada com base no número de ciclo urbano. Preço e condição saem da tabela vigente.',
     fotos: ['/carros/omoda-e5-1.jpg', '/carros/omoda-e5-2.jpg', '/carros/omoda-e5-3.jpg', '/carros/omoda-e5-4.jpg'],
     destaques: [
-      '100% elétrico, silêncio absoluto',
-      'Zero combustível, zero troca de óleo',
-      'Display panorâmico de 24,6 polegadas',
-      'Projeção colorida no para-brisa',
-      'Carregador por indução refrigerado',
+      { titulo: 'A conta do combustível sai da sua vida', prova: '100% elétrico, sem uma gota de gasolina' },
+      { titulo: 'Um silêncio que muda o jeito de dirigir', prova: 'Motor elétrico, sem ruído nem trepidação' },
+      { titulo: 'Ele amanhece cheio todo dia', prova: 'Carrega em casa enquanto você dorme' },
+      { titulo: 'Sem troca de óleo, sem revisão de motor', prova: 'Muito menos peça sujeita a desgaste' },
+      { titulo: 'A informação no para-brisa, o olho na rua', prova: 'Projeção colorida e comando de voz' },
     ],
     durationSec: 45,
     gradient: ['#6ea8ff', '#1b2a63'],
@@ -1224,11 +1229,11 @@ export const PRODUCTS: Product[] = [
       'Autonomia em modo elétrico, consumo, itens de série e garantia variam por versão. Confirme na ficha técnica oficial e na condição vigente antes de falar número com o cliente.',
     fotos: ['/carros/omoda-7-shs-p-1.jpg', '/carros/omoda-7-shs-p-2.jpg', '/carros/omoda-7-shs-p-3.jpg', '/carros/omoda-7-shs-p-4.jpg'],
     destaques: [
-      'Tela deslizante de 15,6 polegadas em 2.5K',
-      'Som Sony com 12 alto-falantes',
-      'Perfume de cabine com difusão inteligente',
-      'Elétrico na cidade, gasolina na estrada',
-      '8 airbags e assistente de congestionamento',
+      { titulo: 'Ele chega antes de você falar', prova: 'Design premiado, presença de topo de linha' },
+      { titulo: 'Cidade no elétrico, estrada na gasolina', prova: 'Híbrido plug-in com bateria de 18,4 kWh' },
+      { titulo: 'Trânsito parado cansa muito menos', prova: 'Assistente que acelera, freia e mantém na faixa' },
+      { titulo: 'Uma cabine de outra categoria', prova: 'Som Sony de 12 alto-falantes e perfume próprio' },
+      { titulo: 'Oito airbags, inclusive pra quem vai atrás', prova: 'Aço de alta e de ultra resistência na estrutura' },
     ],
     durationSec: 45,
     gradient: ['#8b6cf0', '#2a1f5c'],

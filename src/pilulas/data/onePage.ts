@@ -157,7 +157,10 @@ function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: H
   const { product: p } = d;
 
   // ---- capa: o carro ocupando a folha inteira em cima ----
-  const hCapa = 790;
+  // 700 e não 790: com benefício + ficha embaixo, cada razão precisa de ~100px
+  // pra respirar. Foto grande demais espremia a lista e ela virava letra miúda —
+  // que é justamente o que a gente quis tirar daqui.
+  const hCapa = 700;
   if (fotos[0]) cobre(ctx, fotos[0], 0, 0, L, hCapa);
   else {
     const gg = ctx.createLinearGradient(0, 0, L, hCapa);
@@ -186,7 +189,7 @@ function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: H
 
   // ---- galeria: o que ele vai ver por dentro ----
   const yGal = hCapa;
-  const hGal = 250;
+  const hGal = 196;
   const resto = fotos.slice(1, 4);
   if (resto.length) {
     const gap = 6;
@@ -194,14 +197,22 @@ function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: H
     resto.forEach((f, i) => cobre(ctx, f, i * (larg + gap), yGal, larg, hGal));
   }
 
-  // ---- as razões de compra, curtas ----
-  let y = yGal + (resto.length ? hGal : 0) + 92;
-  const itens = (p.destaques && p.destaques.length ? p.destaques : p.benefits).slice(0, 5);
-  const espaco = (yRodape - 40 - y) / Math.max(itens.length, 1);
-  const alturaItem = Math.min(96, Math.max(66, espaco));
+  // ---- as razões de compra ----
+  // Benefício em cima, ficha embaixo. Quem recebe no WhatsApp decide pelo que
+  // muda na vida dele; a ficha é o que dá segurança pra ele repetir o argumento
+  // pra mulher, pro marido, pro cunhado. Uma sem a outra não fecha.
+  let y = yGal + (resto.length ? hGal : 0) + 88;
+  const itens = (p.destaques && p.destaques.length
+    ? p.destaques
+    : p.benefits.map((b) => ({ titulo: b, prova: undefined }))
+  ).slice(0, 5);
 
-  itens.forEach((t, i) => {
+  const sobra = yRodape - 44 - y;
+  const alturaItem = Math.min(112, Math.max(78, sobra / Math.max(itens.length, 1)));
+
+  itens.forEach((item, i) => {
     const yi = y + i * alturaItem;
+
     // marca de conferido — dá ritmo à lista sem virar numeração (numerar
     // sugeriria ordem de importância, que não existe aqui)
     ctx.strokeStyle = d.accent;
@@ -214,15 +225,25 @@ function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: H
     ctx.stroke();
 
     ctx.fillStyle = '#15152a';
-    ctx.font = `600 34px ${SANS}`;
-    escreve(ctx, t, M + 56, yi, L - M * 2 - 56, 42, 2);
+    ctx.font = `700 35px ${SANS}`;
+    const fim = escreve(ctx, item.titulo, M + 56, yi, L - M * 2 - 56, 43, 2);
 
+    if (item.prova) {
+      ctx.fillStyle = '#77778e';
+      ctx.font = `400 25px ${SANS}`;
+      escreve(ctx, item.prova, M + 56, fim + 12, L - M * 2 - 56, 32, 1);
+    }
+
+    // O traço separa um benefício do próximo — tem que ficar DEPOIS da ficha
+    // deste item, senão a ficha parece pertencer ao de baixo. Estava caindo
+    // exatamente em cima dela.
     if (i < itens.length - 1) {
+      const yTraco = Math.min(yi + alturaItem - 26, (item.prova ? fim + 12 : fim) + 24);
       ctx.strokeStyle = '#ececf3';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(M, yi + alturaItem - 44);
-      ctx.lineTo(L - M, yi + alturaItem - 44);
+      ctx.moveTo(M, yTraco);
+      ctx.lineTo(L - M, yTraco);
       ctx.stroke();
     }
   });

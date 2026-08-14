@@ -4,7 +4,7 @@ import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
-  Volume2, FileDown, BookOpen, Users } from 'lucide-react';
+  Volume2, FileDown, BookOpen, Users, Lock } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
 import { submitObjection, fetchMyObjections, fetchPublicadas, objectionDate, type TeamObjection } from './data/objections';
@@ -14,7 +14,7 @@ import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProduct
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { pegarVideoPreparado, adotarVideo } from './data/videoGesture';
 import { getAfiliadoCode } from './data/afiliadoCode';
-import { recordView } from './data/tracking';
+import { recordView, isQuizDone } from './data/tracking';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { getBrand, isAuto, isBalcao } from './data/brands';
@@ -145,7 +145,11 @@ function VideoMp4({ url }: { url: string }) {
   );
 }
 
-function Reel({ product, previewAudience }: { product: ProductT; previewAudience?: Audience | null }) {
+function Reel({ product, previewAudience, nivel }: { product: ProductT; previewAudience?: Audience | null; nivel: number }) {
+  // Nível 1 é o storyboard do produto; do 2 em diante vem de `niveis`.
+  const roteiro = nivel === 1 ? product.storyboard : (product.niveis?.[nivel - 2]?.storyboard ?? product.storyboard);
+  // Cada nível tem o seu MP3: {id}.mp3 pro 1, {id}-n2.mp3 pro 2, e assim por diante.
+  const audioId = nivel === 1 ? product.id : `${product.id}-n${nivel}`;
   useStore(); // re-renderiza quando o vídeo do IndexedDB termina de carregar
   useAudienceReels(); // ...e quando os links do gestor chegam da nuvem
   const { user } = useAuth();
@@ -179,9 +183,9 @@ function Reel({ product, previewAudience }: { product: ProductT; previewAudience
   const staticAudienceVid = audience ? product.audienceVideos?.[audience] : undefined;
   const baseMp4 = getVideoObjectUrl(product.id) || product.videoUrl;
 
-  const scene = product.storyboard[i];
+  const scene = roteiro[i];
   const ms = sceneMs(scene.t);
-  const len = product.storyboard.length;
+  const len = roteiro.length;
 
   // Mantém os refs em dia com o estado (usados dentro dos callbacks).
   useEffect(() => { iRef.current = i; }, [i]);
@@ -200,7 +204,7 @@ function Reel({ product, previewAudience }: { product: ProductT; previewAudience
   }, [i, playing, ms, narrate, len]);
 
   // Marcas de início de cada cena no MP3 único da pílula (voz Francisca).
-  const timings = NARRATION_TIMINGS[product.id];
+  const timings = NARRATION_TIMINGS[audioId];
 
   // Para a locução de vez: pausa o áudio, tira os listeners, cala a voz de
   // reserva e mata o timer.
@@ -227,7 +231,7 @@ function Reel({ product, previewAudience }: { product: ProductT; previewAudience
     if (!narrateRef.current || !playRef.current) return;
     iRef.current = idx;
     setI(idx);
-    const line = product.storyboard[idx].line;
+    const line = roteiro[idx].line;
     let advanced = false;
     const next = () => {
       if (advanced) return;
@@ -249,7 +253,7 @@ function Reel({ product, previewAudience }: { product: ProductT; previewAudience
     a.ontimeupdate = syncSlide;
     a.onended = () => { narrateRef.current = false; setNarrate(false); haltNarration(); };
     a.onerror = () => { a.onerror = null; speakFrom(iRef.current); };
-    if (!a.src.endsWith(`${product.id}.mp3`)) a.src = `/audio/narration/${product.id}.mp3`;
+    if (!a.src.endsWith(`${audioId}.mp3`)) a.src = `/audio/narration/${audioId}.mp3`;
     const pr = a.play();
     if (pr && typeof pr.catch === 'function') pr.catch(() => speakFrom(iRef.current));
   };
@@ -328,7 +332,7 @@ function Reel({ product, previewAudience }: { product: ProductT; previewAudience
 
         <div className="wp-reel-bottom">
           <div className="wp-reel-bars">
-            {product.storyboard.map((_, idx) => (
+            {roteiro.map((_, idx) => (
               <span key={idx} className={`wp-reel-bar ${idx < i ? 'done' : ''}`}>
                 {idx === i && (
                   <span
@@ -666,6 +670,9 @@ export default function Product() {
   // Gestor: qual público ele está ASSISTINDO (null = o vídeo padrão).
   const [previewAud, setPreviewAud] = useState<Audience | null>(null);
   // One-page: qual versão está sendo montada, e o WhatsApp que vai nela.
+  const [nivel, setNivel] = useState(1);
+  const temNiveis = !!product?.niveis?.length;
+  const quizFeito = product ? isQuizDone(product.id) : false;
   const [gerando, setGerando] = useState<'cliente' | 'estudo' | null>(null);
   const [avisoOp, setAvisoOp] = useState('');
   const [whats, setWhats] = useState<string>('');
@@ -775,7 +782,38 @@ export default function Product() {
   return (
     <div className="wp-product">
       {user?.role === 'gestor' && <AudiencePreview product={product} value={previewAud} onChange={setPreviewAud} />}
-      <Reel product={product} previewAudience={previewAud} />
+      {/* NÍVEIS: mesma pílula curta, em camadas. O seguinte só abre depois do
+          quiz — quem não domina o básico não avança, e o gestor consegue ver
+          em que camada cada pessoa está. */}
+      {temNiveis && (
+        <div className="wp-niveis">
+          {[1, ...(product.niveis || []).map((_, k) => k + 2)].map((n) => {
+            const bloqueado = n > 1 && !quizFeito;
+            const info = n === 1 ? null : product.niveis?.[n - 2];
+            return (
+              <button
+                key={n}
+                type="button"
+                className={`wp-nivel ${nivel === n ? 'on' : ''} ${bloqueado ? 'lock' : ''}`}
+                onClick={() => !bloqueado && setNivel(n)}
+                title={bloqueado ? 'Acerte o quiz do nível 1 para abrir' : info?.foco}
+              >
+                {bloqueado && <Lock size={12} className="wp-ico" />}
+                <b>Nível {n}</b>
+                <i>{n === 1 ? 'O essencial' : info?.titulo}</i>
+              </button>
+            );
+          })}
+        </div>
+      )}
+      {temNiveis && nivel > 1 && (
+        <p className="wp-nivel-foco">{product.niveis?.[nivel - 2]?.foco}</p>
+      )}
+      {temNiveis && !quizFeito && (
+        <p className="wp-nivel-aviso">Acerte o quiz aqui embaixo para abrir os próximos níveis.</p>
+      )}
+
+      <Reel key={nivel} product={product} previewAudience={previewAud} nivel={nivel} />
       <GestorVideoEditor product={product} />
 
       <h1 className="wp-prod-name">{product.name}</h1>

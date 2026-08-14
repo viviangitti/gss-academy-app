@@ -40,6 +40,19 @@ export interface FichaRow {
   value: string;
 }
 
+// NÍVEL — a profundidade que faltava, sem virar curso.
+//
+// Trinta segundos não formam ninguém; uma aula de 20 minutos ninguém termina.
+// A saída é o mesmo formato curto, em camadas: o nível 1 é o que a pessoa
+// precisa HOJE pra atender; o 2 é a comparação com o concorrente; o 3 é a
+// negociação difícil. Cada um continua com menos de um minuto, e o seguinte só
+// abre depois do quiz — quem não domina o básico não avança.
+export interface Nivel {
+  titulo: string;   // ex.: "Contra o concorrente"
+  foco: string;     // o que a pessoa sai sabendo
+  storyboard: Scene[];
+}
+
 export interface Product {
   id: string;
   brand: BrandId;
@@ -61,7 +74,9 @@ export interface Product {
   compliance?: string; // aviso de enquadramento (suplementos)
   durationSec: number;
   gradient: [string, string]; // capa da "reel"
-  storyboard: Scene[]; // roteiro do vídeo de 30s
+  storyboard: Scene[]; // roteiro do vídeo de 30s — é o NÍVEL 1
+  /** Níveis 2 em diante. O nível 1 é o `storyboard` acima. */
+  niveis?: Nivel[];
   videoUrl?: string; // MP4 real da pílula (quando o gestor sobe um vídeo)
   audienceVideos?: Partial<Record<Audience, string>>; // MP4 pronto POR PÚBLICO (bundled em /public/videos) — ex.: vídeos da Mari
   instagramUrl?: string; // link de um reel/post público do IG — prova social (só o gestor cadastra)
@@ -910,6 +925,32 @@ export const PRODUCTS: Product[] = [
       { t: '30-40s', label: 'A VIRADA', line: 'Compare item a item: teto panorâmico, ADAS completo, tela de 13,2". Na concorrência isso é opcional.' },
       { t: '40-45s', label: 'CTA', line: 'Agende o test drive e mande a condição por escrito — ela tem validade.' },
     ],
+    niveis: [
+      {
+        titulo: 'Contra o concorrente',
+        foco: 'Comparar item a item sem falar mal de ninguém — e sair com o comparativo na mão.',
+        storyboard: [
+          { t: '0-6s', label: 'A SITUAÇÃO', line: 'O cliente chega dizendo que viu um SUV da mesma faixa por menos. E ele viu mesmo.' },
+          { t: '6-16s', label: 'O ERRO', line: 'O erro é defender o preço. Quem defende preço já aceitou que o carro vale menos.' },
+          { t: '16-30s', label: 'O MÉTODO', line: 'Peça o modelo e a versão exata que ele comparou. Sem isso, a conversa é entre um carro real e um genérico.' },
+          { t: '30-44s', label: 'ITEM A ITEM', line: 'Liste o que vem de série nos dois: teto panorâmico, ADAS completo, tela de 13,2 polegadas, bancos elétricos. Na concorrência isso costuma ser pacote pago à parte.' },
+          { t: '44-52s', label: 'A REGRA', line: 'Nunca deprecie a outra marca. O cliente que gosta dela se sente burro — e cliente que se sente burro não compra.' },
+          { t: '52-58s', label: 'CTA', line: 'Monte o comparativo por escrito e mande. É o documento que ele mostra em casa.' },
+        ],
+      },
+      {
+        titulo: 'Negociação difícil',
+        foco: 'O que fazer quando ele diz que vai pensar, e como conduzir sem prometer o que a loja não cumpre.',
+        storyboard: [
+          { t: '0-6s', label: 'A FRASE', line: 'Vou pensar e te falo. Nove em cada dez vezes, isso não é dúvida sobre o carro.' },
+          { t: '6-18s', label: 'O QUE É', line: 'É dúvida sobre a decisão: preço, cônjuge, medo de errar. Se você não descobrir qual das três, não tem o que responder.' },
+          { t: '18-32s', label: 'A PERGUNTA', line: 'Pergunte: se fosse só por você, você levaria? A resposta separa objeção de produto de objeção de contexto.' },
+          { t: '32-44s', label: 'A TRAVA', line: 'Nunca invente taxa, bônus ou prazo pra segurar o cliente. O que você prometer, a loja tem que entregar — e quem paga o vexame é você.' },
+          { t: '44-54s', label: 'O QUE FAZER', line: 'Ofereça o que é seu pra dar: test drive, avaliação do usado e a condição vigente por escrito, com a validade nela.' },
+          { t: '54-60s', label: 'CTA', line: 'Combine o próximo contato com dia e hora. Sem isso, você não fez follow-up: você ficou esperando.' },
+        ],
+      },
+    ],
   },
 
   {
@@ -980,6 +1021,32 @@ export const PRODUCTS: Product[] = [
       { t: '30-40s', label: 'A VIRADA', line: 'Contra Corolla Cross e HR-V, compare item a item na mesma faixa. Aqui o pacote vem de série.' },
       { t: '40-45s', label: 'CTA', line: 'Leve pro test drive: economia de combustível se sente rodando, não na tabela.' },
     ],
+    niveis: [
+      {
+        titulo: 'Contra o concorrente',
+        foco: 'Onde o híbrido ganha do carro a combustão que o cliente já conhece.',
+        storyboard: [
+          { t: '0-6s', label: 'A SITUAÇÃO', line: 'Ele está comparando com um SUV a combustão que todo mundo conhece. E gosta do que conhece.' },
+          { t: '6-18s', label: 'A CONTA CERTA', line: 'Não compare preço de tabela: compare o custo do mês. Combustível é a parcela que ninguém coloca na planilha e todo mundo paga.' },
+          { t: '18-32s', label: 'A PERGUNTA', line: 'Pergunte quanto ele gasta de combustível por mês hoje. O número sai da boca dele, não da sua — e aí ele acredita.' },
+          { t: '32-44s', label: 'O CUIDADO', line: 'Não prometa consumo. Use o número do Inmetro e diga que depende do uso. Prometer consumo é a reclamação mais comum do pós-venda.' },
+          { t: '44-52s', label: 'O RESTO', line: 'Depois da conta, mostre o pacote: painel de 24,6 polegadas, som Sony, bancos ventilados e aquecidos, 7 airbags.' },
+          { t: '52-58s', label: 'CTA', line: 'Test drive no trânsito da tarde — é onde o híbrido mais aparece.' },
+        ],
+      },
+      {
+        titulo: 'A dúvida técnica',
+        foco: 'Bateria, manutenção e revenda: as três perguntas que travam o híbrido.',
+        storyboard: [
+          { t: '0-6s', label: 'A DÚVIDA', line: 'E se a bateria pifar? Quanto custa? É a pergunta que mata a venda se você hesitar.' },
+          { t: '6-18s', label: 'O QUE DIZER', line: 'A bateria é de lítio-ferro-fosfato, a química mais durável, com gerenciamento monitorando carga e temperatura o tempo todo.' },
+          { t: '18-30s', label: 'O QUE NÃO DIZER', line: 'Não invente prazo de garantia. Confirme o vigente com a gerência e mande por escrito. Número errado aqui vira processo.' },
+          { t: '30-42s', label: 'MANUTENÇÃO', line: 'No dia a dia costuma custar menos: o motor elétrico assume boa parte do trabalho, então freio e motor sofrem menos.' },
+          { t: '42-54s', label: 'REVENDA', line: 'Seja honesto: o mercado de híbrido ainda está formando referência. Em compensação, ele entra pagando menos e gasta menos no uso.' },
+          { t: '54-60s', label: 'CTA', line: 'Ofereça a tabela de revisão. Cliente que vê o custo de manutenção decide mais rápido.' },
+        ],
+      },
+    ],
   },
 
   {
@@ -1048,6 +1115,32 @@ export const PRODUCTS: Product[] = [
       { t: '15-30s', label: 'AS DUAS PERGUNTAS', line: 'Pergunte quantos km por dia e onde o carro dorme. Com isso você já sabe se serve — e ele vê que você não está empurrando.' },
       { t: '30-40s', label: 'O ARGUMENTO', line: 'Aí sim: 24,6", head-up display, comando de voz, ADAS 2.5. E a conta de combustível saindo da vida dele.' },
       { t: '40-45s', label: 'CTA', line: 'Se o perfil não bater, ofereça o híbrido. Vender o carro errado volta como reclamação.' },
+    ],
+    niveis: [
+      {
+        titulo: 'Recarga na vida real',
+        foco: 'Como descobrir em duas perguntas se o elétrico serve — e ter coragem de dizer que não serve.',
+        storyboard: [
+          { t: '0-6s', label: 'O MEDO', line: 'E se eu ficar sem bateria? É sempre a primeira pergunta, e ela não é sobre o carro.' },
+          { t: '6-18s', label: 'A VIRADA', line: 'Quem tem elétrico carrega em casa, de noite, e sai todo dia com o carro cheio. Eletroposto é coisa de viagem, não de rotina.' },
+          { t: '18-30s', label: 'AS DUAS PERGUNTAS', line: 'Quantos quilômetros você roda por dia? E onde o carro dorme? Com essas duas respostas você já sabe se ele serve.' },
+          { t: '30-42s', label: 'A HONESTIDADE', line: 'Se ele roda estrada toda semana ou mora em prédio sem tomada, diga que o híbrido encaixa melhor. Vender o carro errado volta como reclamação.' },
+          { t: '42-52s', label: 'O CUIDADO', line: 'Autonomia só com o número do Inmetro. Nunca prometa autonomia de estrada com o número de cidade.' },
+          { t: '52-58s', label: 'CTA', line: 'Test drive no fim do dia: o silêncio no trânsito é o que vende esse carro.' },
+        ],
+      },
+      {
+        titulo: 'A conta do custo total',
+        foco: 'Montar com o cliente a conta que faz o preço mais alto virar mais barato.',
+        storyboard: [
+          { t: '0-6s', label: 'A OBJEÇÃO', line: 'Ele fecha na tabela: é mais caro que o similar a combustão. E é mesmo, na tabela.' },
+          { t: '6-18s', label: 'O QUE MUDA', line: 'A conta do elétrico não está no preço, está no uso: sem combustível, sem troca de óleo, com menos peça de desgaste.' },
+          { t: '18-32s', label: 'COMO FAZER', line: 'Pegue o gasto mensal de combustível que ele te falou e multiplique pelos anos que ele pretende ficar com o carro. Esse é o número da conversa.' },
+          { t: '32-44s', label: 'O CUIDADO', line: 'Não prometa economia exata: energia varia por região e por horário. Fale em ordem de grandeza, não em centavos.' },
+          { t: '44-54s', label: 'O CONTRAPONTO', line: 'Reconheça a revenda: o mercado ainda está formando referência. Cliente confia em quem diz o lado ruim antes de ser perguntado.' },
+          { t: '54-60s', label: 'CTA', line: 'Monte a conta com ele, por escrito. Quem faz a conta junto não esquece o número.' },
+        ],
+      },
     ],
   },
 
@@ -1120,6 +1213,32 @@ export const PRODUCTS: Product[] = [
       { t: '15-30s', label: 'O ARGUMENTO', line: 'Compare equipado contra equipado: 8 airbags, ADAS com evasão inteligente, plug-in com 18,4 kWh. Veja onde o preço do concorrente para.' },
       { t: '30-40s', label: 'A OBJEÇÃO', line: '"Preciso de tomada em casa?" — para aproveitar o melhor dele, sim. Mas sem carregar ele roda como híbrido normal.' },
       { t: '40-45s', label: 'CTA', line: 'Test drive em horário de trânsito: o assistente de congestionamento vende sozinho.' },
+    ],
+    niveis: [
+      {
+        titulo: 'Vender o topo de linha',
+        foco: 'Como conduzir na faixa em que o cliente compara com marca premium estabelecida.',
+        storyboard: [
+          { t: '0-6s', label: 'A SITUAÇÃO', line: 'Ele tem o dinheiro. E acha que nessa faixa só marca conhecida entrega.' },
+          { t: '6-18s', label: 'A ORDEM', line: 'Não comece pelo número. Sente ele dentro: tela deslizante de 15,6 polegadas, som Sony de 12 alto-falantes, o aroma do L Essence.' },
+          { t: '18-30s', label: 'POR QUÊ', line: 'Nessa faixa ninguém compra ficha técnica. Compra a sensação de ter acertado — e essa sensação acontece sentado, não em pé olhando tabela.' },
+          { t: '30-44s', label: 'A COMPARAÇÃO', line: 'Só depois abra o preço, e compare equipado contra equipado: coloque o concorrente com 8 airbags, ADAS completo e som premium, e veja onde o preço dele para.' },
+          { t: '44-54s', label: 'A REGRA', line: 'Nunca deprecie a marca que ele admira. Reconheça que é boa e mostre a conta. Respeito abre; deboche fecha.' },
+          { t: '54-60s', label: 'CTA', line: 'Test drive em horário de trânsito: o assistente de congestionamento vende sozinho.' },
+        ],
+      },
+      {
+        titulo: 'Plug-in sem enrolação',
+        foco: 'Explicar tomada, autonomia elétrica e uso real sem prometer o que não se cumpre.',
+        storyboard: [
+          { t: '0-6s', label: 'A DÚVIDA', line: 'Plug-in eu preciso instalar tomada em casa? É a pergunta que decide esse carro.' },
+          { t: '6-18s', label: 'A RESPOSTA HONESTA', line: 'Pra aproveitar o melhor dele, sim: é a instalação em casa que faz o custo por quilômetro despencar.' },
+          { t: '18-30s', label: 'O ALÍVIO', line: 'Mas não é obrigação. Se ele nunca carregar, o carro roda normalmente como híbrido. É liberdade a mais, não amarra.' },
+          { t: '30-42s', label: 'O USO REAL', line: 'O desenho é esse: elétrico no dia a dia da cidade, gasolina quando pegar estrada. Sem ansiedade de autonomia.' },
+          { t: '42-54s', label: 'O CUIDADO', line: 'Não prometa autonomia em modo elétrico nem tempo de recarga sem conferir a ficha da versão. Varia, e o cliente cobra.' },
+          { t: '54-60s', label: 'CTA', line: 'Pergunte se ele tem garagem própria. A resposta muda a proposta inteira.' },
+        ],
+      },
     ],
   },
 

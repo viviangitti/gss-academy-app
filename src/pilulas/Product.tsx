@@ -4,10 +4,10 @@ import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
-  Volume2, FileDown, BookOpen } from 'lucide-react';
+  Volume2, FileDown, BookOpen, Users } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
-import { submitObjection, fetchMyObjections, objectionDate, type TeamObjection } from './data/objections';
+import { submitObjection, fetchMyObjections, fetchPublicadas, objectionDate, type TeamObjection } from './data/objections';
 import { buildShareVariants, buildFichaMessage, buyLinkFor, type BuyContext, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
@@ -675,6 +675,15 @@ export default function Product() {
     getElevaProfile(uid).then((pf) => setWhats(pf?.whatsapp || '')).catch(() => {});
   }, [user?.email]);
   const semContato = !whats.trim();
+  // As objeções que o gestor respondeu e publicou, deste produto.
+  const [publicadas, setPublicadas] = useState<TeamObjection[]>([]);
+  useEffect(() => {
+    let vivo = true;
+    fetchPublicadas(brandId)
+      .then((r) => { if (vivo) setPublicadas(r.filter((o) => o.productId === id)); })
+      .catch(() => {});
+    return () => { vivo = false; };
+  }, [brandId, id]);
   // Se tem MP4, o Instagram vira "prova social" (bônus). Se não tem MP4, o
   // reel do Instagram já é o vídeo principal lá em cima — não repete aqui.
   const mp4 = product ? getVideoObjectUrl(product.id) || product.videoUrl : undefined;
@@ -861,6 +870,23 @@ export default function Product() {
         <div className="wp-block">
           <span className="wp-block-label"><Camera size={14} className="wp-ico" /> Prova social</span>
           <InstagramEmbed url={product.instagramUrl} />
+        </div>
+      )}
+
+      {/* O que veio DA RUA e o gestor respondeu. Fica logo depois das objeções
+          de fábrica de propósito: pro vendedor, as duas coisas são a mesma —
+          "o cliente falou isso, o que eu respondo?". A diferença é que estas
+          aqui vieram do time dele, nesta loja, neste mês. */}
+      {publicadas.length > 0 && (
+        <div className="wp-block">
+          <span className="wp-block-label"><Users size={14} className="wp-ico" /> Veio do time — respondido pela gestão</span>
+          {publicadas.map((o) => (
+            <div key={o.id} className="wp-time-obj">
+              <p className="wp-time-obj-q">“{o.text}”</p>
+              <p className="wp-time-obj-a">{o.resposta}</p>
+              {o.byName && <span className="wp-time-obj-meta">trazida por {o.byName.split(' ')[0]}</span>}
+            </div>
+          ))}
         </div>
       )}
 

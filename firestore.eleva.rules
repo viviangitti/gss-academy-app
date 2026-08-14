@@ -53,8 +53,21 @@ service cloud.firestore {
     match /elevaObjections/{id} {
       allow create: if request.auth != null
         && request.resource.data.byEmail == request.auth.token.email;
+      // Três casos de leitura:
+      //  - o gestor lê tudo (é o trabalho dele);
+      //  - cada um lê o que registrou (a confirmação "recebidas de você");
+      //  - QUALQUER pessoa logada lê as que o gestor REVISOU E PUBLICOU. É o
+      //    retorno pro time: a objeção que veio da rua volta respondida, dentro
+      //    do produto. Só entra aqui o que o gestor liberou de propósito — o
+      //    texto cru de quem registrou continua restrito.
       allow read: if isGestor()
-        || (request.auth != null && resource.data.byEmail == request.auth.token.email);
+        || (request.auth != null && resource.data.byEmail == request.auth.token.email)
+        || (request.auth != null && resource.data.publicada == true);
+      // NÃO existe 'allow list' aberto aqui de propósito. Um list liberado é
+      // avaliado contra a CONSULTA, não documento a documento — bastaria pedir
+      // a coleção inteira pra levar junto as objeções que ninguém revisou, com
+      // relato de cliente dentro. Do jeito acima, a consulta só passa se vier
+      // filtrada por publicada==true ou pelo próprio e-mail.
       // O gestor modera. A própria pessoa só pode ANONIMIZAR a sua objeção —
       // é o que roda quando ela exclui a conta (LGPD): tira o nome e o e-mail
       // e deixa o conteúdo, que é aprendizado da marca. Não pode reescrever o

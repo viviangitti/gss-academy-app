@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon } from 'lucide-react';
+import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon, Sparkles } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
 import { buildShareMessage, visibleProducts, duracaoLabel, type Product } from './data/products';
 import { getAfiliadoCode } from './data/afiliadoCode';
@@ -10,6 +10,7 @@ import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
 import { isAuto, isBalcao } from './data/brands';
 import { vocab } from './data/vocabulario';
+import { naoVistos } from './data/novidades';
 import { campanhaPara, prazoLabel, diasRestantes } from './data/campanha';
 import { getAbout } from './data/about';
 import { watchedToday, notifState, enableNotif, maybeNotify } from './data/lembrete';
@@ -168,6 +169,7 @@ export default function Hoje() {
   const balcao = isBalcao(brandId); // farmácia: sem postar/enviar/venda
   const auto = isAuto(brandId);     // concessionária: sem postar; a língua muda
   const v = vocab(brandId);
+  const novos = naoVistos(products);
   const didToday = watchedToday();
   const firstName = (user?.name || '').split(' ')[0] || 'Você';
 
@@ -235,6 +237,20 @@ export default function Hoje() {
             )}
             {notif === 'granted' && <span className="wp-td-lb-on"><Check size={14} className="wp-ico" /> Ativo</span>}
           </div>
+
+          {/* Novidade = o que ESTA pessoa ainda não abriu. Some sozinho quando
+              ela assiste, e reaparece quando o gestor publica conteúdo novo —
+              sem ninguém ter que marcar nada. */}
+          {novos.length > 0 && (
+            <Link to="/eleva/catalogo" className="wp-td-novos">
+              <Sparkles size={16} className="wp-ico" />
+              <span>
+                <b>{novos.length === 1 ? `1 ${v.item} novo pra você` : `${novos.length} ${v.itens} novos pra você`}</b>
+                <i>{novos.slice(0, 3).map((p) => p.name).join(' · ')}{novos.length > 3 ? '…' : ''}</i>
+              </span>
+              <ChevronRight size={16} className="wp-ico" />
+            </Link>
+          )}
 
           <PrimeirosPassos />
 

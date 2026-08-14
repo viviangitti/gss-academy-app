@@ -2787,3 +2787,66 @@
   font-size: 12.5px; line-height: 1.5; margin: 0;
   color: var(--wp-pink-deep); font-weight: 600;
 }
+
+/* Selo "novo" e aviso de novidade */
+.wp-novo {
+  display: inline-block; margin-left: 7px; vertical-align: 1px;
+  font-size: 9.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 5px;
+  background: var(--wp-pink); color: var(--wp-on-accent, #fff);
+}
+.wp-td-novos {
+  display: flex; align-items: center; gap: 11px; text-decoration: none;
+  background: var(--wp-card, #fff); border: 1px solid var(--wp-pink);
+  border-radius: 14px; padding: 13px 14px; color: var(--wp-text);
+}
+.wp-td-novos > span { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.wp-td-novos b { font-size: 14px; }
+.wp-td-novos i {
+  font-style: normal; font-size: 12px; color: var(--wp-soft);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Objeção que veio do time e a gestão respondeu */
+.wp-time-obj {
+  border: 1px solid var(--wp-line, #e6e6ee); border-radius: 12px;
+  padding: 12px 13px; margin-top: 9px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.wp-time-obj-q { margin: 0; font-size: 14.5px; font-weight: 700; }
+.wp-time-obj-a { margin: 0; font-size: 14px; line-height: 1.55; color: var(--wp-soft); }
+.wp-time-obj-meta { font-size: 11.5px; color: var(--wp-soft); }
+
+/* Painel: responder a objeção */
+.wp-gz-obj-responder {
+  align-self: flex-start; margin-top: 8px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--wp-line); background: var(--wp-bg);
+  border-radius: 9px; padding: 7px 11px; font-size: 12.5px; font-weight: 700;
+  color: var(--wp-text);
+}
+.wp-gz-obj-form { margin-top: 9px; display: flex; flex-direction: column; gap: 8px; }
+.wp-gz-obj-form textarea {
+  width: 100%; border: 1px solid var(--wp-line); border-radius: 10px;
+  padding: 10px; font: inherit; font-size: 13.5px; resize: vertical;
+}
+.wp-gz-obj-acoes { display: flex; gap: 8px; }
+.wp-gz-obj-acoes button {
+  cursor: pointer; border: 1px solid var(--wp-line); background: var(--wp-bg);
+  border-radius: 9px; padding: 8px 12px; font-size: 12.5px; font-weight: 700;
+  color: var(--wp-text);
+}
+.wp-gz-obj-acoes button.on {
+  background: var(--wp-pink); border-color: var(--wp-pink); color: var(--wp-on-accent, #fff);
+}
+.wp-gz-obj-acoes button:disabled { opacity: .5; cursor: default; }
+.wp-gz-obj-pub {
+  margin-top: 9px; padding: 10px 11px; border-radius: 10px;
+  background: var(--wp-bg); display: flex; flex-direction: column; gap: 7px;
+}
+.wp-gz-obj-pub p { margin: 0; font-size: 13px; line-height: 1.5; }
+.wp-gz-obj-selo {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--wp-pink-deep);
+}

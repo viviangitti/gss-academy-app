@@ -15,7 +15,7 @@ import { CAMPANHA, prazoLabel } from './data/campanha';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
 import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
-import { fetchObjections, objectionDate, type TeamObjection } from './data/objections';
+import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
 import { buscarLeads, type Lead } from './data/leads';
 import type { BrandId } from './data/brands';
 import type { Audience } from './AuthContext';
@@ -208,6 +208,87 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
   );
 }
 
+// Uma objeção da ponta, com o campo de RESPOSTA do gestor.
+//
+// É aqui que o ciclo fecha. Antes o gestor lia a objeção e não tinha o que
+// fazer com ela dentro do app: respondia no grupo do WhatsApp, e sumia. Agora
+// ele escreve a resposta e publica — ela aparece dentro do produto, pra todo o
+// time, e o próximo vendedor que ouvir a mesma frase já acha pronto.
+function ObjecaoLinha({ o }: { o: TeamObjection }) {
+  const [aberto, setAberto] = useState(false);
+  const [texto, setTexto] = useState(o.resposta || '');
+  const [salvando, setSalvando] = useState(false);
+  const [publicada, setPublicada] = useState(!!o.publicada);
+
+  const publicar = async () => {
+    if (!texto.trim() || salvando) return;
+    setSalvando(true);
+    try {
+      await responderObjecao(o.id, texto, true);
+      setPublicada(true);
+      setAberto(false);
+    } catch { /* offline: o gestor tenta de novo */ }
+    setSalvando(false);
+  };
+
+  const tirarDoAr = async () => {
+    setSalvando(true);
+    try {
+      await responderObjecao(o.id, texto, false);
+      setPublicada(false);
+    } catch { /* ignore */ }
+    setSalvando(false);
+  };
+
+  return (
+    <div className="wp-gz-obj">
+      <p className="wp-gz-obj-q">“{o.text}”</p>
+      {o.answer && <p className="wp-gz-obj-a">Respondeu na hora: {o.answer}</p>}
+      <span className="wp-gz-obj-meta">
+        {objectionDate(o.at)} · {o.productName} · {o.byName}{o.byRole ? ` (${o.byRole})` : ''}
+      </span>
+
+      {publicada && !aberto && (
+        <div className="wp-gz-obj-pub">
+          <span className="wp-gz-obj-selo"><Check size={12} className="wp-ico" /> No app do time</span>
+          <p>{texto}</p>
+          <div className="wp-gz-obj-acoes">
+            <button type="button" onClick={() => setAberto(true)}>Editar</button>
+            <button type="button" onClick={tirarDoAr} disabled={salvando}>Tirar do ar</button>
+          </div>
+        </div>
+      )}
+
+      {!publicada && !aberto && (
+        <button type="button" className="wp-gz-obj-responder" onClick={() => setAberto(true)}>
+          <MessageCircle size={13} className="wp-ico" /> Responder e mandar pro time
+        </button>
+      )}
+
+      {aberto && (
+        <div className="wp-gz-obj-form">
+          <textarea
+            value={texto}
+            onChange={(e) => setTexto(e.target.value)}
+            rows={3}
+            placeholder="A resposta que você quer que o time use quando ouvir isso."
+          />
+          <p className="wp-gz-help" style={{ margin: 0 }}>
+            Ao publicar, esta resposta aparece dentro do produto para todo o time. Escreva do jeito
+            que você quer ouvir no showroom.
+          </p>
+          <div className="wp-gz-obj-acoes">
+            <button type="button" className="on" onClick={publicar} disabled={!texto.trim() || salvando}>
+              {salvando ? 'Publicando…' : 'Publicar pro time'}
+            </button>
+            <button type="button" onClick={() => setAberto(false)}>Cancelar</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Objeções que a PONTA registrou na pílula (ponto de contato). Dado da nuvem.
 function ObjectionsPanel({ brandId }: { brandId: string }) {
   const [objs, setObjs] = useState<TeamObjection[]>([]);
@@ -228,13 +309,7 @@ function ObjectionsPanel({ brandId }: { brandId: string }) {
         {objs.length > 0 && <span className="wp-gz-obj-count">{objs.length}</span>}
       </div>
       {objs.length ? objs.map((o) => (
-        <div key={o.id} className="wp-gz-obj">
-          <p className="wp-gz-obj-q">“{o.text}”</p>
-          {o.answer && <p className="wp-gz-obj-a">Respondeu: {o.answer}</p>}
-          <span className="wp-gz-obj-meta">
-            {objectionDate(o.at)} · {o.productName} · {o.byName}{o.byRole ? ` (${o.byRole})` : ''}
-          </span>
-        </div>
+        <ObjecaoLinha key={o.id} o={o} />
       )) : (
         <p className="wp-gz-help" style={{ margin: 0 }}>Ninguém registrou objeção nova ainda. Quando o time registrar (“Recebeu uma objeção nova?”), aparece aqui.</p>
       )}

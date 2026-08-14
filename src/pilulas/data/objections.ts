@@ -4,7 +4,7 @@
 //
 // Coleção: elevaObjections/{auto}. Qualquer pessoa logada cria; só gestor lê a
 // lista (ver firestore.eleva.rules).
-import { collection, addDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../../services/firebase';
 import type { BrandId } from './brands';
 
@@ -22,11 +22,15 @@ export interface TeamObjection {
   productId: string;
   productName: string;
   text: string;
-  answer: string;
+  answer: string;   // como a PESSOA respondeu na hora (o que ela contou)
   byName: string;
   byEmail: string;
   byRole: string;
   at?: Date;
+  /** A resposta oficial que o gestor escreveu. É o que volta pro time. */
+  resposta?: string;
+  /** Publicada = todo o time vê dentro do produto. Só o gestor liga isso. */
+  publicada?: boolean;
 }
 
 // Doc do Firestore -> objeto do app (usado nas duas leituras).
@@ -42,6 +46,8 @@ function toObjection(id: string, x: Record<string, unknown>): TeamObjection {
     byName: String(x.byName || '') || String(x.byEmail || '').split('@')[0] || 'Alguém',
     byRole: String(x.byRole || ''),
     at: (x.createdAt as { toDate?: () => Date })?.toDate?.(),
+    resposta: String(x.resposta || '') || undefined,
+    publicada: x.publicada === true,
   };
 }
 const maisNovoPrimeiro = (a: TeamObjection, b: TeamObjection) =>
@@ -111,4 +117,40 @@ export async function fetchMyObjections(productId: string, email?: string): Prom
 export function objectionDate(d?: Date): string {
   if (!d) return '';
   return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+
+/**
+ * O gestor responde e publica — é o que fecha o ciclo.
+ *
+ * Sem isto, a objeção que o vendedor traz da rua morre no painel: ele registra,
+ * o gestor lê, e o time nunca fica sabendo. Com isto, a resposta volta pra
+ * dentro do produto e o próximo vendedor que ouvir a mesma frase já acha pronto.
+ */
+export async function responderObjecao(id: string, resposta: string, publicar: boolean): Promise<void> {
+  if (!db) return;
+  await updateDoc(doc(db, 'elevaObjections', id), {
+    resposta: resposta.trim(),
+    publicada: publicar && !!resposta.trim(),
+    respondidaEm: serverTimestamp(),
+  });
+}
+
+/**
+ * As objeções que o gestor já respondeu e publicou, para o time inteiro ver
+ * dentro do produto. Todo mundo logado lê estas — e SÓ estas: a objeção que
+ * ninguém revisou continua visível apenas para quem escreveu e para o gestor.
+ */
+export async function fetchPublicadas(brand: BrandId): Promise<TeamObjection[]> {
+  if (!db) return [];
+  try {
+    const q = query(
+      collection(db, 'elevaObjections'),
+      where('brand', '==', brand),
+      where('publicada', '==', true),
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => toObjection(d.id, d.data() as Record<string, unknown>)).sort(maisNovoPrimeiro);
+  } catch {
+    return [];
+  }
 }

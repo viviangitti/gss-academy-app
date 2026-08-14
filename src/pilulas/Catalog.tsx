@@ -4,6 +4,7 @@ import { Play } from 'lucide-react';
 import { CATEGORIES, visibleProducts, duracaoLabel, type Category } from './data/products';
 import { allProducts, hasImage, getProductImageUrl, ensureImageLoaded, useStore } from './data/store';
 import { useBrand } from './BrandContext';
+import { ehNovo } from './data/novidades';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 
@@ -64,7 +65,10 @@ export default function Catalog() {
                       {!capa && <CardIcon size={44} strokeWidth={1.5} className="wp-card-emoji" />}
                     </div>
                     <div className="wp-card-body">
-                      <h3 className="wp-card-name">{p.name}</h3>
+                      <h3 className="wp-card-name">
+                        {p.name}
+                        {ehNovo(p.id) && <span className="wp-novo">novo</span>}
+                      </h3>
                       <p className="wp-card-tag">{p.hook}</p>
                     </div>
                   </Link>

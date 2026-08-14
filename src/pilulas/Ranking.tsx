@@ -4,6 +4,8 @@ import { getStats, WEEKLY_GOAL } from './data/tracking';
 import { getDesafio } from './data/desafio';
 import { RIVALS } from './data/leaderboard';
 import { useAuth } from './AuthContext';
+import { useBrand } from './BrandContext';
+import { vocab } from './data/vocabulario';
 import { segmentLabel } from './data/segments';
 
 const MEDAL_COLOR = ['#c9a84c', '#9ca3af', '#b8763e']; // ouro, prata, bronze
@@ -20,6 +22,10 @@ export default function Ranking() {
   const stats = getStats();
   const { user } = useAuth();
   const myCompany = user?.segment ? segmentLabel(user.segment) : 'seu ponto de venda';
+  const { brandId } = useBrand();
+  const v = vocab(brandId);
+  // Só a gestão vê quem é quem. Pra quem vende, o ranking é posição e distância.
+  const verNomes = user?.role === 'gestor';
 
   const rows: Row[] = [
     ...RIVALS.map((r) => ({ ...r })),
@@ -28,6 +34,7 @@ export default function Ranking() {
 
   const myIndex = rows.findIndex((r) => r.me);
   const myRank = myIndex + 1;
+  const minhaPos = myRank;
   const above = rows[myIndex - 1];
   const gap = above ? above.points - rows[myIndex].points : 0;
 
@@ -92,6 +99,11 @@ export default function Ranking() {
       </div>
 
       {/* Pódio */}
+      {/* Ranking com nome expõe quem está na lanterna na frente dos colegas, e
+          num showroom isso azeda rápido. Mas tirar tudo mata o incentivo:
+          ninguém corre sozinho no escuro. O meio: a pessoa vê a POSIÇÃO de
+          todo mundo e o quanto falta pra passar da frente — sem saber quem é.
+          O gestor continua vendo os nomes: sem isso ele não consegue gerir. */}
       <div className="wp-podium">
         {[1, 0, 2].map((slot) => {
           const r = podium[slot];
@@ -100,8 +112,8 @@ export default function Ranking() {
           return (
             <div key={slot} className={`wp-pod wp-pod-${place} ${r.me ? 'me' : ''}`}>
               <div className="wp-pod-medal"><Medal size={24} color={MEDAL_COLOR[slot]} /></div>
-              <div className="wp-pod-av">{r.me ? <User size={18} /> : r.name[0]}</div>
-              <div className="wp-pod-name">{r.me ? 'Você' : r.name}</div>
+              <div className="wp-pod-av">{r.me ? <User size={18} /> : verNomes ? r.name[0] : <User size={16} />}</div>
+              <div className="wp-pod-name">{r.me ? 'Você' : verNomes ? r.name : `${place}º lugar`}</div>
               <div className="wp-pod-pts">{r.points} pts</div>
               <div className="wp-pod-base">{place}º</div>
             </div>
@@ -112,7 +124,8 @@ export default function Ranking() {
       {/* Linha de motivação */}
       {above && (
         <div className="wp-gap">
-          Faltam <b>{gap} pts</b> ({Math.ceil(gap / 10)} pílulas) para ultrapassar <b>{above.me ? 'Você' : above.name}</b> <Rocket size={14} className="wp-ico" />
+          Faltam <b>{gap} pts</b> ({Math.ceil(gap / 10)} {v.pilulas}) para passar para a <b>{minhaPos - 1}ª posição</b>
+          {verNomes && !above.me && <> — hoje de <b>{above.name}</b></>} <Rocket size={14} className="wp-ico" />
         </div>
       )}
 
@@ -121,10 +134,10 @@ export default function Ranking() {
         {rest.map((r, i) => (
           <div key={i} className={`wp-rk-row ${r.me ? 'me' : ''}`}>
             <span className="wp-rk-pos">{i + 4}º</span>
-            <span className="wp-rk-av">{r.me ? <User size={15} /> : r.name[0]}</span>
+            <span className="wp-rk-av">{r.me ? <User size={15} /> : verNomes ? r.name[0] : <User size={14} />}</span>
             <span className="wp-rk-info">
-              <b>{r.me ? 'Você' : r.name}</b>
-              <small>{r.company}</small>
+              <b>{r.me ? 'Você' : verNomes ? r.name : 'Colega de time'}</b>
+              {verNomes && <small>{r.company}</small>}
             </span>
             <span className="wp-rk-streak"><Flame size={12} className="wp-ico" />{r.streak}</span>
             <span className="wp-rk-pts">{r.points}</span>
@@ -133,7 +146,7 @@ export default function Ranking() {
       </div>
 
       <Link to="/eleva/catalogo" className="wp-rk-cta">
-        Assistir pílulas e subir no ranking <ArrowRight size={15} className="wp-ico" />
+        Assistir {v.pilulas} e subir no ranking <ArrowRight size={15} className="wp-ico" />
       </Link>
     </div>
   );

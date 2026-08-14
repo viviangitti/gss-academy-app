@@ -98,6 +98,18 @@ export default function Ranking() {
         </p>
       </div>
 
+      {/* Os colegas ainda são DE EXEMPLO — e a tela diz isso.
+          Ranking real exige ler o desempenho de todo o time, e a regra do
+          Firestore (com razão) só deixa o gestor listar isso: se liberasse pro
+          vendedor, o nome e o número do colega chegariam no navegador dele — o
+          oposto do ranking sem nome que a gente decidiu. O caminho certo é o
+          servidor devolver só a escada anonimizada, e isso depende da chave de
+          serviço do projeto. Até lá, mentir de número seria pior. */}
+      <p className="wp-rk-exemplo">
+        Sua pontuação é real. As posições dos colegas ainda são de exemplo —
+        viram o desempenho de verdade do time quando a gestão ligar o placar da loja.
+      </p>
+
       {/* Pódio */}
       {/* Ranking com nome expõe quem está na lanterna na frente dos colegas, e
           num showroom isso azeda rápido. Mas tirar tudo mata o incentivo:

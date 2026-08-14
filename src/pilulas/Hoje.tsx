@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon, Sparkles } from 'lucide-react';
+import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon, Sparkles, Trophy } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
 import { buildShareMessage, visibleProducts, duracaoLabel, type Product } from './data/products';
 import { getAfiliadoCode } from './data/afiliadoCode';
@@ -247,6 +247,20 @@ export default function Hoje() {
               <span>
                 <b>{novos.length === 1 ? `1 ${v.item} novo pra você` : `${novos.length} ${v.itens} novos pra você`}</b>
                 <i>{novos.slice(0, 3).map((p) => p.name).join(' · ')}{novos.length > 3 ? '…' : ''}</i>
+              </span>
+              <ChevronRight size={16} className="wp-ico" />
+            </Link>
+          )}
+
+          {/* O ranking não tem aba no automotivo (a barra já tem cinco), e ficava
+              inalcançável — existia e ninguém chegava nele. Este cartão é a
+              porta: mostra o essencial (pontos e ofensiva) e leva pra tela. */}
+          {!balcao && (
+            <Link to="/eleva/ranking" className="wp-td-rank">
+              <Trophy size={16} className="wp-ico" />
+              <span>
+                <b>Seu lugar no ranking</b>
+                <i>{stats.weekPoints} pontos no mês · {stats.streak} {stats.streak === 1 ? 'dia seguido' : 'dias seguidos'}</i>
               </span>
               <ChevronRight size={16} className="wp-ico" />
             </Link>

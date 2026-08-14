@@ -14,6 +14,7 @@ export interface ElevaProfile {
   segment?: SegmentId | '';
   affiliateType?: AffiliateType | ''; // só quando role === 'afiliado'
   brands?: BrandId[]; // marca(s) que a pessoa vê — ex.: ['dsp'] p/ Drogaria São Paulo
+  whatsapp?: string;  // vai no material que ela manda pro cliente (só dela, nunca de terceiro)
 }
 
 export async function getElevaProfile(uid: string): Promise<ElevaProfile | null> {
@@ -31,6 +32,7 @@ export async function getElevaProfile(uid: string): Promise<ElevaProfile | null>
       name: typeof d.name === 'string' ? d.name : undefined,
       segment: typeof d.segment === 'string' ? (d.segment as SegmentId | '') : undefined,
       affiliateType: at === 'geral' || at === 'saude' ? at : undefined,
+      whatsapp: typeof d.whatsapp === 'string' ? d.whatsapp : undefined,
       brands: brands && brands.length ? brands : undefined,
     };
   } catch {
@@ -46,6 +48,16 @@ export async function updateElevaName(uid: string, name: string): Promise<void> 
   } catch { /* offline / sem permissão */ }
 }
 
+// WhatsApp que sai no material enviado ao cliente. Guardado na CONTA, não no
+// aparelho: quem troca de celular não perde, e o material continua com o
+// contato certo. Só a própria pessoa lê e grava o dela (regra do Firestore).
+export async function updateElevaWhatsapp(uid: string, whatsapp: string): Promise<void> {
+  if (!db) return;
+  try {
+    await setDoc(doc(db, 'elevaUsers', uid), { whatsapp: whatsapp.trim(), updatedAt: serverTimestamp() }, { merge: true });
+  } catch { /* offline / sem permissão */ }
+}
+
 export async function setElevaProfile(uid: string, p: ElevaProfile): Promise<void> {
   if (!db) return;
   try {
@@ -58,6 +70,7 @@ export async function setElevaProfile(uid: string, p: ElevaProfile): Promise<voi
         segment: p.segment || '',
         affiliateType: p.affiliateType || '',
         brands: p.brands || [],
+        whatsapp: p.whatsapp || '',
         updatedAt: serverTimestamp(),
       },
       { merge: true }

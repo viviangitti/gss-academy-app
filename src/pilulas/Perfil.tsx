@@ -1,16 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Flame, Trophy, GraduationCap, Bell, BellOff, LogOut, Check, Tag, ChevronRight, Trash2, ShieldCheck, MessageCircle } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { vocab } from './data/vocabulario';
+import { isAuto } from './data/brands';
 import { getTom, setTom, type Tom } from './data/memoriaCoach';
 import { roleLabel } from './data/roles';
 import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
 import { getAfiliadoCode, setAfiliadoCode } from './data/afiliadoCode';
 import { notifState, notifPref, enableNotif, disableNotif } from './data/lembrete';
-import { updateElevaName } from './data/profile';
+import { updateElevaName, updateElevaWhatsapp, getElevaProfile } from './data/profile';
 import { auth } from '../services/firebase';
 import { excluirConta } from './data/excluirConta';
 
@@ -30,6 +31,7 @@ export default function Perfil() {
   const [erroExcluir, setErroExcluir] = useState('');
   const { brandId, brand } = useBrand();
   const v = vocab(brandId);
+  const auto = isAuto(brandId);
   const stats = getStats();
   const trilha = getTrilha(brandId, user?.role);
 
@@ -40,6 +42,25 @@ export default function Perfil() {
   const [tom, setTomLocal] = useState<Tom>(getTom);
   const [nome, setNome] = useState(user?.name || '');
   const [nomeBusy, setNomeBusy] = useState(false);
+  // WhatsApp que sai no one-page mandado ao cliente.
+  const [zap, setZap] = useState('');
+  const [zapBusy, setZapBusy] = useState(false);
+  const [zapOk, setZapOk] = useState(false);
+  useEffect(() => {
+    const uid = auth?.currentUser?.uid;
+    if (!uid) return;
+    getElevaProfile(uid).then((pf) => setZap(pf?.whatsapp || '')).catch(() => {});
+  }, []);
+
+  const salvarZap = async () => {
+    const uid = auth?.currentUser?.uid;
+    if (!uid) return;
+    setZapBusy(true);
+    await updateElevaWhatsapp(uid, zap);
+    setZapBusy(false);
+    setZapOk(true);
+    setTimeout(() => setZapOk(false), 2500);
+  };
 
   const salvarNome = async () => {
     const uid = auth?.currentUser?.uid;
@@ -97,6 +118,28 @@ export default function Perfil() {
           <span className="wp-perfil-brand">{brand.name}</span>
         </div>
       </div>
+
+      {/* O contato que sai no material mandado ao cliente. Sem isso o one-page
+          vira panfleto da loja — com ele, vira o cartão de visita do vendedor. */}
+      {auto && (
+        <div className="wp-perfil-card">
+          <span className="wp-perfil-label">Seu WhatsApp</span>
+          <input
+            className="wp-perfil-input"
+            value={zap}
+            onChange={(e) => setZap(e.target.value)}
+            placeholder="(11) 90000-0000"
+            inputMode="tel"
+          />
+          <p className="wp-perfil-hint">
+            É o número que sai no material que você manda pro cliente. É por ele que o cliente te responde —
+            e não pra loja.
+          </p>
+          <button className="wp-perfil-save" onClick={salvarZap} disabled={zapBusy}>
+            {zapBusy ? 'Salvando…' : zapOk ? 'Salvo!' : 'Salvar WhatsApp'}
+          </button>
+        </div>
+      )}
 
       {/* Editar o nome — antes não dava, e o ranking mostrava o e-mail de quem não preencheu */}
       <div className="wp-perfil-card">

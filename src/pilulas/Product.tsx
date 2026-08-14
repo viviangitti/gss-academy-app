@@ -4,8 +4,7 @@ import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
-  Volume2,
-} from 'lucide-react';
+  Volume2, FileDown, BookOpen } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
 import { submitObjection, fetchMyObjections, objectionDate, type TeamObjection } from './data/objections';
@@ -18,8 +17,11 @@ import { getAfiliadoCode } from './data/afiliadoCode';
 import { recordView } from './data/tracking';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
 import { useBrand } from './BrandContext';
-import { isAuto, isBalcao } from './data/brands';
+import { getBrand, isAuto, isBalcao } from './data/brands';
 import { vocab } from './data/vocabulario';
+import { gerarMaterial, compartilharMaterial } from './data/onePage';
+import { getElevaProfile } from './data/profile';
+import { auth } from '../services/firebase';
 
 // Duração de cada cena a partir da marcação de tempo do roteiro ("0-4s" → 4s).
 function sceneMs(t: string): number {
@@ -663,6 +665,16 @@ export default function Product() {
   const [shareIdx, setShareIdx] = useState(0);
   // Gestor: qual público ele está ASSISTINDO (null = o vídeo padrão).
   const [previewAud, setPreviewAud] = useState<Audience | null>(null);
+  // One-page: qual versão está sendo montada, e o WhatsApp que vai nela.
+  const [gerando, setGerando] = useState<'cliente' | 'estudo' | null>(null);
+  const [avisoOp, setAvisoOp] = useState('');
+  const [whats, setWhats] = useState<string>('');
+  useEffect(() => {
+    const uid = auth?.currentUser?.uid;
+    if (!uid) return;
+    getElevaProfile(uid).then((pf) => setWhats(pf?.whatsapp || '')).catch(() => {});
+  }, [user?.email]);
+  const semContato = !whats.trim();
   // Se tem MP4, o Instagram vira "prova social" (bônus). Se não tem MP4, o
   // reel do Instagram já é o vídeo principal lá em cima — não repete aqui.
   const mp4 = product ? getVideoObjectUrl(product.id) || product.videoUrl : undefined;
@@ -692,6 +704,36 @@ export default function Product() {
       return;
     }
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  // Monta o one-page e manda. A foto usada é a capa que o gestor subiu; sem
+  // capa, o desenho cai numa versão tipográfica (feia é não ter arquivo nenhum).
+  const material = async (variante: 'cliente' | 'estudo') => {
+    if (!product || gerando) return;
+    setGerando(variante);
+    setAvisoOp('');
+    try {
+      const marca = getBrand(brandId);
+      const m = await gerarMaterial({
+        product,
+        variante,
+        marca: marca.name,
+        vendedor: user?.name,
+        whatsapp: whats,
+        capa: getProductImageUrl(product.id) || product.imageUrl,
+        accent: marca.accent,
+        accentDeep: marca.accentDeep,
+      });
+      const texto = variante === 'cliente'
+        ? `${product.name} — ${product.tagline}\n\n${product.salesLine}`
+        : `${product.name} — material de estudo (uso interno).`;
+      const r = await compartilharMaterial(m, texto);
+      if (r === 'baixou') setAvisoOp('Arquivos baixados: a imagem e o PDF estão na sua pasta de downloads.');
+    } catch {
+      setAvisoOp('Não consegui montar o material agora. Tenta de novo em instantes.');
+    } finally {
+      setGerando(null);
+    }
   };
 
   const share = async () => {
@@ -835,6 +877,28 @@ export default function Product() {
         <a className="wp-buy" href={buyLinkFor(product, buyCtx)} target="_blank" rel="noreferrer">
           <ShoppingBag size={17} className="wp-ico" /> Comprar no site oficial
         </a>
+      )}
+
+      {/* O ONE-PAGE. No automotivo é o material que o vendedor manda de verdade:
+          sai com o nome e o WhatsApp DELE, então ele quer mandar. */}
+      {auto && (
+        <div className="wp-op">
+          <span className="wp-block-label"><FileDown size={14} className="wp-ico" /> Material pronto</span>
+          <button className="wp-op-btn wp-op-btn--main" onClick={() => material('cliente')} disabled={!!gerando}>
+            <Send size={17} className="wp-ico" />
+            {gerando === 'cliente' ? 'Preparando…' : 'Mandar one-page pro cliente'}
+          </button>
+          <button className="wp-op-btn" onClick={() => material('estudo')} disabled={!!gerando}>
+            <BookOpen size={16} className="wp-ico" />
+            {gerando === 'estudo' ? 'Preparando…' : 'Versão de estudo (uso interno)'}
+          </button>
+          <p className="wp-op-hint">
+            {semContato
+              ? 'Coloque seu WhatsApp no Perfil — o material sai com o seu contato, e é assim que o cliente te responde.'
+              : 'A imagem abre direto na conversa; o PDF é o que o cliente imprime e leva pra casa.'}
+          </p>
+          {avisoOp && <p className="wp-op-aviso">{avisoOp}</p>}
+        </div>
       )}
 
       {!balcao && (

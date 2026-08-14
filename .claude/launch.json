@@ -4,8 +4,14 @@
     {
       "name": "eleva-preview",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "preview", "--port", "4173"],
-      "port": 4173
+      "runtimeArgs": [
+        "vite",
+        "preview",
+        "--port",
+        "4180",
+        "--strictPort"
+      ],
+      "port": 4180
     }
   ]
 }

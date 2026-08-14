@@ -2764,3 +2764,26 @@
   color: var(--wp-soft); font-size: 12.5px; font-weight: 600;
 }
 .wp-tom-opt.on { background: var(--wp-pink); border-color: var(--wp-pink); color: var(--wp-on-accent, #fff); }
+
+/* ===== One-page: o material que o vendedor manda pro cliente ===== */
+.wp-op {
+  background: var(--wp-card, #fff); border: 1px solid var(--wp-line, #e6e6ee);
+  border-radius: 16px; padding: 15px; margin-bottom: 16px;
+  display: flex; flex-direction: column; gap: 9px;
+}
+.wp-op-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 14px 16px; border-radius: 12px; cursor: pointer;
+  border: 1px solid var(--wp-line, #e6e6ee); background: var(--wp-bg, #f6f6f9);
+  color: var(--wp-text, #1a1a2e); font-size: 14.5px; font-weight: 700;
+}
+.wp-op-btn--main {
+  background: var(--wp-pink); border-color: var(--wp-pink);
+  color: var(--wp-on-accent, #fff);
+}
+.wp-op-btn:disabled { opacity: .6; cursor: default; }
+.wp-op-hint { font-size: 12px; line-height: 1.5; color: var(--wp-soft); margin: 0; }
+.wp-op-aviso {
+  font-size: 12.5px; line-height: 1.5; margin: 0;
+  color: var(--wp-pink-deep); font-weight: 600;
+}

@@ -2910,3 +2910,11 @@
   background: var(--wp-card, #fff); border: 1px dashed var(--wp-line, #e6e6ee);
   border-radius: 12px; padding: 10px 12px; margin: 0 0 14px;
 }
+
+/* Produto: atalho pra completar o cartão do vendedor */
+.wp-op-falta {
+  display: flex; flex-direction: column; gap: 7px; text-decoration: none;
+  border: 1px dashed var(--wp-pink); border-radius: 12px; padding: 11px 12px;
+  color: var(--wp-text); font-size: 12.5px; line-height: 1.5;
+}
+.wp-op-falta b { color: var(--wp-pink-deep); font-size: 13px; display: inline-flex; align-items: center; gap: 4px; }

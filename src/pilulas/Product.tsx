@@ -4,7 +4,7 @@ import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
-  Volume2, FileDown, BookOpen, Users, Lock } from 'lucide-react';
+  Volume2, FileDown, BookOpen, Users, Lock, ChevronRight } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
 import { submitObjection, fetchMyObjections, fetchPublicadas, objectionDate, type TeamObjection } from './data/objections';
@@ -959,11 +959,18 @@ export default function Product() {
             <BookOpen size={16} className="wp-ico" />
             {gerando === 'estudo' ? 'Preparando…' : 'Versão de estudo (uso interno)'}
           </button>
-          <p className="wp-op-hint">
-            {semContato
-              ? 'Coloque seu WhatsApp no Perfil — o material sai com o seu contato, e é assim que o cliente te responde.'
-              : 'A imagem abre direto na conversa; o PDF é o que o cliente imprime e leva pra casa.'}
-          </p>
+          {semContato ? (
+            // Texto solto não resolve: a pessoa lê, concorda e não vai. O caminho
+            // tem que estar aqui, no momento em que ela quer mandar o material.
+            <Link to="/eleva/perfil" className="wp-op-falta">
+              <span>Seu material vai sair sem contato. Preencha uma vez e vale pra todos os carros.</span>
+              <b>Completar meu cartão <ChevronRight size={14} className="wp-ico" /></b>
+            </Link>
+          ) : (
+            <p className="wp-op-hint">
+              A imagem abre direto na conversa; o PDF é o que o cliente imprime e leva pra casa.
+            </p>
+          )}
           {avisoOp && <p className="wp-op-aviso">{avisoOp}</p>}
         </div>
       )}

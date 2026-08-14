@@ -45,6 +45,7 @@ function resumo(s: string, max: number): string {
 
 function Resultados({ brandId, products, buscas }: { brandId: string; products: Product[]; buscas: { term: string; count: number }[] }) {
   const v = vocab(brandId as BrandId);
+  const auto = isAuto(brandId as BrandId);
   // Denominador: quantos itens têm nível pra destravar. Sem isso a barra
   // mediria contra o catálogo inteiro e ninguém chegaria a 100%.
   const niveis = { total: products.filter((p) => p.niveis?.length).length };
@@ -145,6 +146,28 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
           </div>
         ))}
       </div>
+
+      {/* QUEM AINDA NÃO MONTOU O CARTÃO.
+          O material que vai pro cliente sai com o contato do vendedor, e cada
+          um preenche o seu — a gerência não digita isso por ninguém. O que a
+          gerência precisa é saber quem ainda não fez, pra cobrar. */}
+      {auto && rep.semCartao.length > 0 && (
+        <div className="wp-gz-top">
+          <div className="wp-gz-top-head">
+            <Send size={12} className="wp-ico" /> Ainda sem contato no material do cliente
+          </div>
+          <p className="wp-gz-help" style={{ margin: '0 0 8px' }}>
+            O material que essas pessoas mandam sai sem WhatsApp — o cliente encaminha pra
+            família e ninguém sabe pra quem responder. Cada uma preenche o seu em Perfil.
+          </p>
+          {rep.semCartao.map((n) => (
+            <div key={n} className="wp-gz-item">
+              <span className="wp-gz-item-name">{n}</span>
+              <span className="wp-gz-item-meta">falta preencher</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* EM QUE NÍVEL CADA PESSOA ESTÁ.
           Prometi isso quando propus os níveis e tinha ficado de fora: sem esta

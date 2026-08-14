@@ -18,6 +18,15 @@ interface SyncMeta {
   brand?: string;
   role?: string;
   name?: string;
+  /**
+   * A pessoa já preencheu o contato que sai no material do cliente?
+   *
+   * Vai junto com os stats de propósito: a regra do Firestore deixa o gestor
+   * ler elevaStats do time, mas NÃO deixa ler o perfil de ninguém (e nem deve —
+   * lá tem dado pessoal). Assim a gerência consegue ver quem ainda não montou
+   * o cartão, sem ver o telefone de ninguém.
+   */
+  cartaoPronto?: boolean;
 }
 
 let meta: SyncMeta = {};
@@ -41,6 +50,7 @@ export function syncStats(stats: Stats, event: { type: ElevaEventType; id: strin
     email: auth?.currentUser?.email || '',
     role: meta.role || '',
     brand: meta.brand || '',
+    cartaoPronto: meta.cartaoPronto === true,
     totals: {
       views: stats.totalViews,
       missions: stats.totalMissions,

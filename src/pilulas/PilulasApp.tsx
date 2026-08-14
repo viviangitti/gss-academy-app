@@ -25,6 +25,8 @@ import { stageSegmentFromUrl } from './data/segments';
 import { stageBrandFromUrl, invitedBrand } from './data/brandInvite';
 import { isAuto, isBalcao, type BrandId } from './data/brands';
 import { setStatsMeta } from './data/statsSync';
+import { getElevaProfile } from './data/profile';
+import { auth } from '../services/firebase';
 import { loadAudienceReels } from './data/audienceVideos';
 import { prepararVideo, videoDoProduto } from './data/videoGesture';
 import './pilulas.css';
@@ -175,6 +177,11 @@ function Shell() {
   // Marca/papel/nome viajam junto com os stats que vão pro Sistema de Gestão
   useEffect(() => {
     setStatsMeta({ brand: brand.id, role: user?.role, name: user?.name });
+    // "Cartão pronto" = tem WhatsApp preenchido. É o que o material do cliente
+    // precisa pra sair com o contato certo, e o que a gerência precisa saber
+    // pra cobrar quem ainda não fez.
+    const uid = auth?.currentUser?.uid;
+    if (uid) getElevaProfile(uid).then((pf) => setStatsMeta({ cartaoPronto: !!pf?.whatsapp?.trim() })).catch(() => {});
   }, [brand.id, user?.role, user?.name]);
   // Puxa da nuvem os vídeos que o gestor configurou por público — é o que faz o
   // link chegar no celular do time, e não só no aparelho de quem cadastrou.

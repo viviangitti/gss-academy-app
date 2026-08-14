@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { vocab } from './data/vocabulario';
@@ -45,6 +45,9 @@ function resumo(s: string, max: number): string {
 
 function Resultados({ brandId, products, buscas }: { brandId: string; products: Product[]; buscas: { term: string; count: number }[] }) {
   const v = vocab(brandId as BrandId);
+  // Denominador: quantos itens têm nível pra destravar. Sem isso a barra
+  // mediria contra o catálogo inteiro e ninguém chegaria a 100%.
+  const niveis = { total: products.filter((p) => p.niveis?.length).length };
   const [rep, setRep] = useState<TeamReport | null>(null);
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(true);
@@ -142,6 +145,37 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
           </div>
         ))}
       </div>
+
+      {/* EM QUE NÍVEL CADA PESSOA ESTÁ.
+          Prometi isso quando propus os níveis e tinha ficado de fora: sem esta
+          visão o gestor sabe quantos vídeos o time viu, mas não sabe quem já
+          consegue enfrentar o concorrente e quem ainda trava no básico — que é
+          a informação que muda o treino da semana. */}
+      {niveis.total > 0 && rep.ranking.length > 0 && (
+        <div className="wp-gz-top">
+          <div className="wp-gz-top-head">
+            <GraduationCap size={12} className="wp-ico" /> Em que nível cada um está
+          </div>
+          <p className="wp-gz-help" style={{ margin: '0 0 8px' }}>
+            O nível 2 só abre depois do quiz do nível 1. Quem está em 1 ainda não domina o básico —
+            é com esse que vale sentar.
+          </p>
+          {rep.ranking.map((r, i) => {
+            const dominados = Math.min(r.quiz, niveis.total);
+            const pct = Math.round((dominados / niveis.total) * 100);
+            return (
+              <div key={`n${r.name}${i}`} className="wp-gz-niv">
+                <span className="wp-gz-niv-nome">{r.name}</span>
+                <span className="wp-gz-niv-barra"><i style={{ width: `${pct}%` }} /></span>
+                <span className="wp-gz-niv-val">
+                  {dominados}/{niveis.total}
+                  <i>{dominados === 0 ? 'no básico' : dominados >= niveis.total ? 'tudo destravado' : 'avançando'}</i>
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Ranking real */}
       {rep.ranking.length > 0 && (

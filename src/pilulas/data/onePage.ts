@@ -30,6 +30,7 @@ export interface DadosOnePage {
   marca: string;          // "Ramasa · Jaecoo e Omoda"
   vendedor?: string;
   whatsapp?: string;
+  fotoVendedor?: string;  // retrato: material com rosto é do vendedor, não da loja
   capa?: string;          // foto de capa (blob: do upload, ou http)
   fotos?: string[];       // galeria do modelo — a 1ª manda na capa
   accent: string;
@@ -118,7 +119,8 @@ export async function desenharOnePage(d: DadosOnePage): Promise<HTMLCanvasElemen
     desenhaEstudo(ctx, d, fotos[0] || null, yRodape);
   }
 
-  rodape(ctx, d, yRodape, hRodape);
+  const retrato = d.fotoVendedor ? await carregaImagem(d.fotoVendedor) : null;
+  rodape(ctx, d, yRodape, hRodape, retrato);
 
   // moldura para separar do fundo branco do WhatsApp
   ctx.strokeStyle = '#e6e6ee';
@@ -285,7 +287,7 @@ function desenhaEstudo(ctx: CanvasRenderingContext2D, d: DadosOnePage, foto: HTM
 }
 
 /** O rodapé — na versão do cliente é o cartão de visita do vendedor. */
-function rodape(ctx: CanvasRenderingContext2D, d: DadosOnePage, yRodape: number, hRodape: number) {
+function rodape(ctx: CanvasRenderingContext2D, d: DadosOnePage, yRodape: number, hRodape: number, retrato: HTMLImageElement | null) {
   const { product: p, variante } = d;
   ctx.fillStyle = '#f4f4f8';
   ctx.fillRect(0, yRodape, L, hRodape);
@@ -293,18 +295,40 @@ function rodape(ctx: CanvasRenderingContext2D, d: DadosOnePage, yRodape: number,
   ctx.fillRect(0, yRodape, L, 6);
 
   if (variante === 'cliente') {
+    // O retrato é o que transforma isto no material DELE. Material com rosto o
+    // cliente associa a uma pessoa; sem rosto, associa à loja — e aí ele liga
+    // pra recepção, não pra quem atendeu.
+    const temRosto = !!retrato;
+    const x = temRosto ? M + 168 : M;
+    if (retrato) {
+      const dRosto = 132;
+      const cx = M + dRosto / 2;
+      const cy = yRodape + 118;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, dRosto / 2, 0, Math.PI * 2);
+      ctx.clip();
+      cobre(ctx, retrato, cx - dRosto / 2, cy - dRosto / 2, dRosto, dRosto);
+      ctx.restore();
+      ctx.strokeStyle = d.accent;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(cx, cy, dRosto / 2, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
     ctx.fillStyle = '#8a8a9e';
     ctx.font = `600 22px ${SANS}`;
-    ctx.fillText('FALE COMIGO', M, yRodape + 62);
+    ctx.fillText('FALE COMIGO', x, yRodape + 62);
 
     ctx.fillStyle = '#12121f';
     ctx.font = `800 44px ${SANS}`;
-    ctx.fillText(d.vendedor || 'Sua consultoria', M, yRodape + 118);
+    ctx.fillText(d.vendedor || 'Sua consultoria', x, yRodape + 118);
 
     if (d.whatsapp) {
       ctx.fillStyle = d.accentDeep;
       ctx.font = `600 34px ${SANS}`;
-      ctx.fillText(d.whatsapp, M, yRodape + 168);
+      ctx.fillText(d.whatsapp, x, yRodape + 168);
     }
 
     // Sem preço, sem taxa, sem prazo: isso sai da tabela vigente, na loja.

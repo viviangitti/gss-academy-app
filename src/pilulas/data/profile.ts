@@ -15,6 +15,7 @@ export interface ElevaProfile {
   affiliateType?: AffiliateType | ''; // só quando role === 'afiliado'
   brands?: BrandId[]; // marca(s) que a pessoa vê — ex.: ['dsp'] p/ Drogaria São Paulo
   whatsapp?: string;  // vai no material que ela manda pro cliente (só dela, nunca de terceiro)
+  foto?: string;      // retrato do vendedor no material (data URL pequena)
 }
 
 export async function getElevaProfile(uid: string): Promise<ElevaProfile | null> {
@@ -33,6 +34,7 @@ export async function getElevaProfile(uid: string): Promise<ElevaProfile | null>
       segment: typeof d.segment === 'string' ? (d.segment as SegmentId | '') : undefined,
       affiliateType: at === 'geral' || at === 'saude' ? at : undefined,
       whatsapp: typeof d.whatsapp === 'string' ? d.whatsapp : undefined,
+      foto: typeof d.foto === 'string' ? d.foto : undefined,
       brands: brands && brands.length ? brands : undefined,
     };
   } catch {
@@ -58,6 +60,44 @@ export async function updateElevaWhatsapp(uid: string, whatsapp: string): Promis
   } catch { /* offline / sem permissão */ }
 }
 
+/**
+ * Retrato do vendedor, guardado na conta.
+ *
+ * Vem como data URL já reduzida (ver `retratoParaDataUrl`): documento do
+ * Firestore tem teto de 1 MB, e selfie de celular chega com 4 MB. Reduzir aqui
+ * também faz o material montar rápido no 4G do showroom.
+ */
+export async function updateElevaFoto(uid: string, foto: string): Promise<void> {
+  if (!db) return;
+  try {
+    await setDoc(doc(db, 'elevaUsers', uid), { foto, updatedAt: serverTimestamp() }, { merge: true });
+  } catch { /* offline / sem permissão */ }
+}
+
+/** Recorta no quadrado do meio e reduz pra 320px — é o tamanho que o material usa. */
+export function retratoParaDataUrl(f: File): Promise<string> {
+  return new Promise((ok, falhou) => {
+    const leitor = new FileReader();
+    leitor.onerror = () => falhou(new Error('leitura'));
+    leitor.onload = () => {
+      const img = new Image();
+      img.onerror = () => falhou(new Error('imagem'));
+      img.onload = () => {
+        const lado = Math.min(img.width, img.height);
+        const c = document.createElement('canvas');
+        c.width = 320;
+        c.height = 320;
+        const ctx = c.getContext('2d');
+        if (!ctx) return falhou(new Error('canvas'));
+        ctx.drawImage(img, (img.width - lado) / 2, (img.height - lado) / 2, lado, lado, 0, 0, 320, 320);
+        ok(c.toDataURL('image/jpeg', 0.82));
+      };
+      img.src = String(leitor.result || '');
+    };
+    leitor.readAsDataURL(f);
+  });
+}
+
 export async function setElevaProfile(uid: string, p: ElevaProfile): Promise<void> {
   if (!db) return;
   try {
@@ -71,6 +111,7 @@ export async function setElevaProfile(uid: string, p: ElevaProfile): Promise<voi
         affiliateType: p.affiliateType || '',
         brands: p.brands || [],
         whatsapp: p.whatsapp || '',
+        foto: p.foto || '',
         updatedAt: serverTimestamp(),
       },
       { merge: true }

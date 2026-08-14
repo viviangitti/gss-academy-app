@@ -676,10 +676,11 @@ export default function Product() {
   const [gerando, setGerando] = useState<'cliente' | 'estudo' | null>(null);
   const [avisoOp, setAvisoOp] = useState('');
   const [whats, setWhats] = useState<string>('');
+  const [fotoVend, setFotoVend] = useState<string>('');
   useEffect(() => {
     const uid = auth?.currentUser?.uid;
     if (!uid) return;
-    getElevaProfile(uid).then((pf) => setWhats(pf?.whatsapp || '')).catch(() => {});
+    getElevaProfile(uid).then((pf) => { setWhats(pf?.whatsapp || ''); setFotoVend(pf?.foto || ''); }).catch(() => {});
   }, [user?.email]);
   const semContato = !whats.trim();
   // As objeções que o gestor respondeu e publicou, deste produto.
@@ -736,6 +737,7 @@ export default function Product() {
         marca: marca.name,
         vendedor: user?.name,
         whatsapp: whats,
+        fotoVendedor: fotoVend,
         capa: getProductImageUrl(product.id) || product.imageUrl,
         fotos: product.fotos,
         accent: marca.accent,

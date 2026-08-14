@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, Trophy, GraduationCap, Bell, BellOff, LogOut, Check, Tag, ChevronRight, Trash2, ShieldCheck, MessageCircle } from 'lucide-react';
+import { Flame, Trophy, GraduationCap, Bell, BellOff, LogOut, Check, Tag, ChevronRight, Trash2, ShieldCheck, MessageCircle, Camera } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { vocab } from './data/vocabulario';
@@ -11,7 +11,7 @@ import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
 import { getAfiliadoCode, setAfiliadoCode } from './data/afiliadoCode';
 import { notifState, notifPref, enableNotif, disableNotif } from './data/lembrete';
-import { updateElevaName, updateElevaWhatsapp, getElevaProfile } from './data/profile';
+import { updateElevaName, updateElevaWhatsapp, updateElevaFoto, retratoParaDataUrl, getElevaProfile } from './data/profile';
 import { auth } from '../services/firebase';
 import { excluirConta } from './data/excluirConta';
 
@@ -46,11 +46,26 @@ export default function Perfil() {
   const [zap, setZap] = useState('');
   const [zapBusy, setZapBusy] = useState(false);
   const [zapOk, setZapOk] = useState(false);
+  const [foto, setFoto] = useState('');
+  const [fotoErro, setFotoErro] = useState('');
   useEffect(() => {
     const uid = auth?.currentUser?.uid;
     if (!uid) return;
-    getElevaProfile(uid).then((pf) => setZap(pf?.whatsapp || '')).catch(() => {});
+    getElevaProfile(uid).then((pf) => { setZap(pf?.whatsapp || ''); setFoto(pf?.foto || ''); }).catch(() => {});
   }, []);
+
+  const escolherFoto = async (f?: File) => {
+    const uid = auth?.currentUser?.uid;
+    if (!f || !uid) return;
+    setFotoErro('');
+    try {
+      const url = await retratoParaDataUrl(f);
+      setFoto(url);
+      await updateElevaFoto(uid, url);
+    } catch {
+      setFotoErro('Não consegui usar essa imagem. Tente outra foto.');
+    }
+  };
 
   const salvarZap = async () => {
     const uid = auth?.currentUser?.uid;
@@ -135,6 +150,17 @@ export default function Perfil() {
             É o número que sai no material que você manda pro cliente. É por ele que o cliente te responde —
             e não pra loja.
           </p>
+
+          <span className="wp-perfil-label" style={{ marginTop: 14 }}>Sua foto</span>
+          <label className="wp-perfil-foto">
+            {foto ? <img src={foto} alt="Sua foto" /> : <span className="wp-perfil-foto-vazia"><Camera size={20} className="wp-ico" /></span>}
+            <span>{foto ? 'Trocar foto' : 'Escolher foto'}</span>
+            <input type="file" accept="image/*" hidden onChange={(e) => escolherFoto(e.target.files?.[0])} />
+          </label>
+          <p className="wp-perfil-hint">
+            Vai junto no material. Cliente que vê o rosto liga pra você; sem rosto, ele liga pra recepção.
+          </p>
+          {fotoErro && <p className="wp-perfil-hint" style={{ color: '#d33b3b' }}>{fotoErro}</p>}
           <button className="wp-perfil-save" onClick={salvarZap} disabled={zapBusy}>
             {zapBusy ? 'Salvando…' : zapOk ? 'Salvo!' : 'Salvar WhatsApp'}
           </button>

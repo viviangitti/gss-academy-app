@@ -203,7 +203,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
         )}
       </div>
 
-      <ObjectionsPanel brandId={brandId} />
+
     </div>
   );
 }
@@ -930,7 +930,18 @@ export default function Gestor() {
         </button>
       </div>
 
-      {tab === 'resultados' && <><Interessados email={user?.email} /><Resultados brandId={brandId} products={products} buscas={buscas} /></>}
+      {/* As objeções ficam FORA do <Resultados> de propósito: são outra fonte de
+          dados. Estavam dentro, e quando a leitura dos números do time falhava
+          (sem internet no showroom, ou uma soluçada do Firestore) o bloco
+          inteiro sumia — o gestor perdia as objeções junto, sem entender por
+          quê. Cada bloco cai sozinho agora. */}
+      {tab === 'resultados' && (
+        <>
+          <Interessados email={user?.email} />
+          <Resultados brandId={brandId} products={products} buscas={buscas} />
+          <ObjectionsPanel brandId={brandId} />
+        </>
+      )}
 
       {tab === 'conteudo' && (<>
       {/* Vídeos por público vem PRIMEIRO — é a principal função do gestor */}

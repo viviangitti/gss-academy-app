@@ -121,7 +121,7 @@ export async function montarMemoria(opts: {
     .filter((c): c is { rotulo: string; texto: string } => !!c)
     .slice(0, 20);
 
-  const campanha = campanhaPara(role);
+  const campanha = campanhaPara(role, brandId);
 
   return {
     nome,

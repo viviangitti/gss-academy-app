@@ -36,7 +36,7 @@ export default function Trilha() {
   const v = vocab(brandId);
   const { user } = useAuth();
   const trilha = useMemo(() => getTrilha(brandId, user?.role), [brandId, user?.role]);
-  const campanha = campanhaPara(user?.role);
+  const campanha = campanhaPara(user?.role, brandId);
   const { steps, total, mastered, pct, complete, next } = trilha;
 
   const certDate = complete ? ensureCertDate(brandId) : null;

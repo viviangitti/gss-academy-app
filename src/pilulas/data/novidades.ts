@@ -10,11 +10,20 @@
 import { getStats } from './tracking';
 import type { Product } from './products';
 
+// ATENÇÃO à chave: em perProduct ela é `{id}@{AAAA-MM-DD}`, não o id puro — é
+// assim que o contador evita pontuar a mesma pílula duas vezes no mesmo dia.
+// Comparar com o id direto dava sempre "não visto", e o selo "novo" ficaria
+// grudado em todo carro pra sempre.
+function jaViu(perProduct: Record<string, number>, id: string): boolean {
+  const prefixo = `${id}@`;
+  return Object.keys(perProduct).some((k) => k === id || k.startsWith(prefixo));
+}
+
 export function naoVistos(produtos: Product[]): Product[] {
   const { perProduct } = getStats();
-  return produtos.filter((p) => !perProduct[p.id]);
+  return produtos.filter((p) => !jaViu(perProduct, p.id));
 }
 
 export function ehNovo(id: string): boolean {
-  return !getStats().perProduct[id];
+  return !jaViu(getStats().perProduct, id);
 }

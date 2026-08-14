@@ -165,7 +165,7 @@ export default function Hoje() {
 
   const stats = getStats();
   const trilha = getTrilha(brandId, user?.role);
-  const campanha = campanhaPara(user?.role);
+  const campanha = campanhaPara(user?.role, brandId);
   const balcao = isBalcao(brandId); // farmácia: sem postar/enviar/venda
   const auto = isAuto(brandId);     // concessionária: sem postar; a língua muda
   const v = vocab(brandId);

@@ -1,3 +1,4 @@
+import type { BrandId } from './brands';
 // Campanha com prazo — o padrão que a Rallyware/ENDVR usam e que a trilha
 // "sempre aberta" não tem: data pra acabar.
 //
@@ -10,6 +11,7 @@
 
 export interface Campanha {
   id: string;
+  brand: BrandId; // de QUEM é a campanha — sem isso ela vaza pra outra marca
   nome: string; // como aparece pro time
   desc: string;
   line: string; // qual linha conta (bate com Product.line)
@@ -20,6 +22,7 @@ export interface Campanha {
 
 export const CAMPANHA: Campanha | null = {
   id: 'glpen-lancamento-2026-08',
+  brand: 'meraki',
   nome: 'Lançamento GLPEN',
   desc: 'Domine os 3 produtos da linha GLPEN e garanta seu certificado.',
   line: 'glpen',
@@ -55,7 +58,14 @@ export function ateLabel(c: Campanha): string {
 }
 
 /** A campanha vale pra este papel? Gestor não faz trilha. */
-export function campanhaPara(role?: string): Campanha | null {
+/**
+ * A campanha vale pra UMA marca. Antes esta função só olhava o papel, e o
+ * "Lançamento GLPEN" — que é suplemento da Meraki — aparecia na tela do
+ * vendedor da concessionária. Marca errada na tela de quem vende é pior que
+ * tela vazia: quebra a confiança no resto do conteúdo.
+ */
+export function campanhaPara(role?: string, brand?: BrandId): Campanha | null {
   if (!CAMPANHA || role === 'gestor') return null;
+  if (brand && CAMPANHA.brand !== brand) return null;
   return CAMPANHA;
 }

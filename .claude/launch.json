@@ -2,15 +2,16 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "eleva-dev",
+      "name": "eleva-preview",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
         "vite",
+        "preview",
         "--port",
-        "4181",
+        "4182",
         "--strictPort"
       ],
-      "port": 4181
+      "port": 4182
     }
   ]
 }

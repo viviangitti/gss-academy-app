@@ -737,6 +737,7 @@ export default function Product() {
         vendedor: user?.name,
         whatsapp: whats,
         capa: getProductImageUrl(product.id) || product.imageUrl,
+        fotos: product.fotos,
         accent: marca.accent,
         accentDeep: marca.accentDeep,
       });

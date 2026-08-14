@@ -81,6 +81,15 @@ export interface Product {
   audienceVideos?: Partial<Record<Audience, string>>; // MP4 pronto POR PÚBLICO (bundled em /public/videos) — ex.: vídeos da Mari
   instagramUrl?: string; // link de um reel/post público do IG — prova social (só o gestor cadastra)
   imageUrl?: string; // foto de capa (URL hospedada; upload local fica no IndexedDB)
+  /** Galeria do modelo. A 1ª é a capa do material que vai pro cliente. */
+  fotos?: string[];
+  /**
+   * DESTAQUES — as 5 razões de compra, do jeito que o cliente lê: curtas.
+   * Não confundir com `benefits`, que são frases inteiras para o VENDEDOR
+   * estudar. Material que vai pro cliente é imagem e palavra curta; parágrafo
+   * ele não lê no WhatsApp.
+   */
+  destaques?: string[];
   buyUrl?: string; // e-commerce oficial — a cliente compra direto
   ficha?: FichaRow[]; // ficha técnica p/ consulta rápida no balcão
 }
@@ -902,6 +911,14 @@ export const PRODUCTS: Product[] = [
     ],
     compliance:
       'Itens de série, garantia, prazo de entrega e condições variam por versão e por campanha vigente. Confirme sempre na tabela e na condição do dia antes de prometer ao cliente.',
+    fotos: ['/carros/jaecoo-7-1.jpg', '/carros/jaecoo-7-2.jpg', '/carros/jaecoo-7-3.jpg', '/carros/jaecoo-7-4.jpg'],
+    destaques: [
+      'Teto solar panorâmico de 1,1 m²',
+      'Central multimídia de 13,2 polegadas',
+      'Motor híbrido de 135 cv + elétrico de 204 cv',
+      'Rodas de liga leve de 19 polegadas',
+      'Piloto automático adaptativo e frenagem autônoma',
+    ],
     durationSec: 45,
     gradient: ['#1e6fd9', '#0f3a75'],
     ficha: [
@@ -998,6 +1015,14 @@ export const PRODUCTS: Product[] = [
     ],
     compliance:
       'Consumo, autonomia, itens de série e garantia variam por versão e por campanha. Confirme na ficha técnica oficial e na condição vigente antes de falar número com o cliente.',
+    fotos: ['/carros/omoda-5-shs-h-1.jpg', '/carros/omoda-5-shs-h-2.jpg', '/carros/omoda-5-shs-h-3.jpg', '/carros/omoda-5-shs-h-4.jpg'],
+    destaques: [
+      'Híbrido que dispensa tomada em casa',
+      'Painel digital flutuante de 24,6 polegadas',
+      'Som Sony com 8 alto-falantes',
+      'Bancos ventilados e aquecidos',
+      '7 airbags e estrutura reforçada',
+    ],
     durationSec: 45,
     gradient: ['#3f8f8a', '#123a3c'],
     ficha: [
@@ -1094,6 +1119,14 @@ export const PRODUCTS: Product[] = [
     ],
     compliance:
       'Autonomia depende de uso, clima e carga. Use sempre o número do Inmetro e nunca prometa autonomia de estrada com base no número de ciclo urbano. Preço e condição saem da tabela vigente.',
+    fotos: ['/carros/omoda-e5-1.jpg', '/carros/omoda-e5-2.jpg', '/carros/omoda-e5-3.jpg', '/carros/omoda-e5-4.jpg'],
+    destaques: [
+      '100% elétrico, silêncio absoluto',
+      'Zero combustível, zero troca de óleo',
+      'Display panorâmico de 24,6 polegadas',
+      'Projeção colorida no para-brisa',
+      'Carregador por indução refrigerado',
+    ],
     durationSec: 45,
     gradient: ['#6ea8ff', '#1b2a63'],
     ficha: [
@@ -1189,6 +1222,14 @@ export const PRODUCTS: Product[] = [
     ],
     compliance:
       'Autonomia em modo elétrico, consumo, itens de série e garantia variam por versão. Confirme na ficha técnica oficial e na condição vigente antes de falar número com o cliente.',
+    fotos: ['/carros/omoda-7-shs-p-1.jpg', '/carros/omoda-7-shs-p-2.jpg', '/carros/omoda-7-shs-p-3.jpg', '/carros/omoda-7-shs-p-4.jpg'],
+    destaques: [
+      'Tela deslizante de 15,6 polegadas em 2.5K',
+      'Som Sony com 12 alto-falantes',
+      'Perfume de cabine com difusão inteligente',
+      'Elétrico na cidade, gasolina na estrada',
+      '8 airbags e assistente de congestionamento',
+    ],
     durationSec: 45,
     gradient: ['#8b6cf0', '#2a1f5c'],
     ficha: [

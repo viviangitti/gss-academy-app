@@ -30,7 +30,8 @@ export interface DadosOnePage {
   marca: string;          // "Ramasa · Jaecoo e Omoda"
   vendedor?: string;
   whatsapp?: string;
-  capa?: string;          // URL da foto (blob: do upload, ou http)
+  capa?: string;          // foto de capa (blob: do upload, ou http)
+  fotos?: string[];       // galeria do modelo — a 1ª manda na capa
   accent: string;
   accentDeep: string;
 }
@@ -93,7 +94,7 @@ function retanguloArredondado(ctx: CanvasRenderingContext2D, x: number, y: numbe
 const SANS = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 
 export async function desenharOnePage(d: DadosOnePage): Promise<HTMLCanvasElement> {
-  const { product: p, variante } = d;
+  const { variante } = d;
   const c = document.createElement('canvas');
   c.width = L;
   c.height = A;
@@ -103,7 +104,131 @@ export async function desenharOnePage(d: DadosOnePage): Promise<HTMLCanvasElemen
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, L, A);
 
-  // ---- topo: faixa da marca ----
+  // Carrega a galeria de uma vez. A capa do gestor, se existir, entra na frente:
+  // foto do pátio da loja vale mais que foto de estúdio da montadora.
+  const urls = [d.capa, ...(d.fotos || [])].filter(Boolean) as string[];
+  const fotos = (await Promise.all(urls.slice(0, 4).map(carregaImagem))).filter(Boolean) as HTMLImageElement[];
+
+  const hRodape = 236;
+  const yRodape = A - hRodape;
+
+  if (variante === 'cliente') {
+    desenhaCliente(ctx, d, fotos, yRodape);
+  } else {
+    desenhaEstudo(ctx, d, fotos[0] || null, yRodape);
+  }
+
+  rodape(ctx, d, yRodape, hRodape);
+
+  // moldura para separar do fundo branco do WhatsApp
+  ctx.strokeStyle = '#e6e6ee';
+  ctx.lineWidth = 2;
+  retanguloArredondado(ctx, 1, 1, L - 2, A - 2, 4);
+  ctx.stroke();
+
+  return c;
+}
+
+// Preenche a área cortando o excesso — nada de carro esticado.
+function cobre(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number) {
+  const escala = Math.max(w / img.width, h / img.height);
+  const iw = img.width * escala;
+  const ih = img.height * escala;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+  ctx.drawImage(img, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih);
+  ctx.restore();
+}
+
+/**
+ * A folha que vai PRO CLIENTE.
+ *
+ * Aqui vale o oposto do material de estudo: pouca palavra e muita imagem. Quem
+ * recebe isso no WhatsApp está decidindo com o olho, não estudando ficha — e
+ * parágrafo grande faz ele fechar antes de ler. Por isso o carro ocupa metade
+ * da folha, vêm três fotos do que ele vai ver por dentro, e as razões de compra
+ * são frases de quatro ou cinco palavras.
+ */
+function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: HTMLImageElement[], yRodape: number) {
+  const { product: p } = d;
+
+  // ---- capa: o carro ocupando a folha inteira em cima ----
+  const hCapa = 790;
+  if (fotos[0]) cobre(ctx, fotos[0], 0, 0, L, hCapa);
+  else {
+    const gg = ctx.createLinearGradient(0, 0, L, hCapa);
+    gg.addColorStop(0, p.gradient[0]);
+    gg.addColorStop(1, p.gradient[1]);
+    ctx.fillStyle = gg;
+    ctx.fillRect(0, 0, L, hCapa);
+  }
+
+  // Véu escuro embaixo: sem ele o nome branco some numa foto clara.
+  const veu = ctx.createLinearGradient(0, hCapa - 420, 0, hCapa);
+  veu.addColorStop(0, 'rgba(10,12,22,0)');
+  veu.addColorStop(1, 'rgba(10,12,22,.86)');
+  ctx.fillStyle = veu;
+  ctx.fillRect(0, hCapa - 420, L, 420);
+
+  // marca da concessionária, discreta no topo
+  ctx.fillStyle = 'rgba(255,255,255,.9)';
+  ctx.font = `700 24px ${SANS}`;
+  ctx.fillText(d.marca.toUpperCase(), M, 74);
+
+  // o nome do modelo, grande
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `800 92px ${SANS}`;
+  escreve(ctx, p.name, M, hCapa - 74, L - M * 2, 96, 1);
+
+  // ---- galeria: o que ele vai ver por dentro ----
+  const yGal = hCapa;
+  const hGal = 250;
+  const resto = fotos.slice(1, 4);
+  if (resto.length) {
+    const gap = 6;
+    const larg = (L - gap * (resto.length - 1)) / resto.length;
+    resto.forEach((f, i) => cobre(ctx, f, i * (larg + gap), yGal, larg, hGal));
+  }
+
+  // ---- as razões de compra, curtas ----
+  let y = yGal + (resto.length ? hGal : 0) + 92;
+  const itens = (p.destaques && p.destaques.length ? p.destaques : p.benefits).slice(0, 5);
+  const espaco = (yRodape - 40 - y) / Math.max(itens.length, 1);
+  const alturaItem = Math.min(96, Math.max(66, espaco));
+
+  itens.forEach((t, i) => {
+    const yi = y + i * alturaItem;
+    // marca de conferido — dá ritmo à lista sem virar numeração (numerar
+    // sugeriria ordem de importância, que não existe aqui)
+    ctx.strokeStyle = d.accent;
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(M + 3, yi - 12);
+    ctx.lineTo(M + 13, yi - 2);
+    ctx.lineTo(M + 32, yi - 26);
+    ctx.stroke();
+
+    ctx.fillStyle = '#15152a';
+    ctx.font = `600 34px ${SANS}`;
+    escreve(ctx, t, M + 56, yi, L - M * 2 - 56, 42, 2);
+
+    if (i < itens.length - 1) {
+      ctx.strokeStyle = '#ececf3';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(M, yi + alturaItem - 44);
+      ctx.lineTo(L - M, yi + alturaItem - 44);
+      ctx.stroke();
+    }
+  });
+}
+
+/** A folha de ESTUDO — interna, com o que trava a venda e a resposta. */
+function desenhaEstudo(ctx: CanvasRenderingContext2D, d: DadosOnePage, foto: HTMLImageElement | null, yRodape: number) {
+  const { product: p } = d;
   const alturaTopo = 132;
   const g = ctx.createLinearGradient(0, 0, L, alturaTopo);
   g.addColorStop(0, d.accentDeep);
@@ -111,100 +236,57 @@ export async function desenharOnePage(d: DadosOnePage): Promise<HTMLCanvasElemen
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, L, alturaTopo);
 
+  ctx.textBaseline = 'middle';
   ctx.fillStyle = 'rgba(255,255,255,.92)';
   ctx.font = `600 26px ${SANS}`;
-  ctx.textBaseline = 'middle';
   ctx.fillText(d.marca.toUpperCase(), M, alturaTopo / 2);
-
-  if (variante === 'estudo') {
-    ctx.font = `700 22px ${SANS}`;
-    ctx.textAlign = 'right';
-    ctx.fillText('USO INTERNO', L - M, alturaTopo / 2);
-    ctx.textAlign = 'left';
-  }
+  ctx.font = `700 22px ${SANS}`;
+  ctx.textAlign = 'right';
+  ctx.fillText('USO INTERNO', L - M, alturaTopo / 2);
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
 
-  // ---- foto do carro ----
-  // Sem foto a faixa fica MENOR: um bloco gigante de gradiente vazio só empurra
-  // o conteúdo pro rodapé. O nome do modelo aparece uma vez só, embaixo — antes
-  // saía dentro da faixa E no título, e ficava repetido.
-  const yFoto = alturaTopo;
-  const img = d.capa ? await carregaImagem(d.capa) : null;
-  // A foto grande é da versão do CLIENTE — é ela que precisa ser bonita. Na de
-  // estudo a foto vira uma tarja: o espaço vale mais com objeção do que com
-  // paisagem, e com a foto grande só cabia UMA objeção na folha.
-  const hFoto = !img ? 210 : variante === 'estudo' ? 260 : 620;
-  if (img) {
-    // cobre a área toda mantendo a proporção (nada de carro esticado)
-    const escala = Math.max(L / img.width, hFoto / img.height);
-    const w = img.width * escala;
-    const h = img.height * escala;
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(0, yFoto, L, hFoto);
-    ctx.clip();
-    ctx.drawImage(img, (L - w) / 2, yFoto + (hFoto - h) / 2, w, h);
-    ctx.restore();
-  } else {
-    const gg = ctx.createLinearGradient(0, yFoto, L, yFoto + hFoto);
+  // Foto é tarja aqui: o espaço vale mais com objeção do que com paisagem.
+  const hFoto = foto ? 260 : 150;
+  if (foto) cobre(ctx, foto, 0, alturaTopo, L, hFoto);
+  else {
+    const gg = ctx.createLinearGradient(0, alturaTopo, L, alturaTopo + hFoto);
     gg.addColorStop(0, p.gradient[0]);
     gg.addColorStop(1, p.gradient[1]);
     ctx.fillStyle = gg;
-    ctx.fillRect(0, yFoto, L, hFoto);
+    ctx.fillRect(0, alturaTopo, L, hFoto);
   }
 
-  // ---- nome + posicionamento ----
-  const hRodape = 236;
-  const yRodape = A - hRodape;
-  const limite = yRodape - 60; // nada é desenhado depois daqui: nunca invade o rodapé
-  let y = yFoto + hFoto + 92;
+  const limite = yRodape - 60;
+  let y = alturaTopo + hFoto + 92;
   ctx.fillStyle = '#12121f';
   ctx.font = `800 68px ${SANS}`;
   y = escreve(ctx, p.name, M, y, L - M * 2, 76, 2);
 
   ctx.fillStyle = '#5b5b70';
   ctx.font = `400 30px ${SANS}`;
-  y = escreve(ctx, variante === 'estudo' ? p.hook : p.tagline, M, y + 34, L - M * 2, 42, 3);
+  y = escreve(ctx, p.hook, M, y + 34, L - M * 2, 42, 3);
 
-  // ---- miolo ----
   y += 56;
-  if (variante === 'cliente') {
-    ctx.fillStyle = d.accentDeep;
-    ctx.font = `700 22px ${SANS}`;
-    ctx.fillText('POR QUE ELE', M, y);
-    y += 46;
+  ctx.fillStyle = d.accentDeep;
+  ctx.font = `700 22px ${SANS}`;
+  ctx.fillText('O QUE TRAVA A VENDA — E A RESPOSTA', M, y);
+  y += 46;
 
-    for (const b of p.benefits.slice(0, 4)) {
-      // Cabe? Se não couber inteiro, para — melhor três benefícios completos do
-      // que quatro com o último cortado pela metade.
-      if (y + 84 > limite) break;
-      ctx.fillStyle = d.accent;
-      ctx.beginPath();
-      ctx.arc(M + 9, y - 10, 9, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#25253a';
-      ctx.font = `500 30px ${SANS}`;
-      y = escreve(ctx, b, M + 38, y, L - M * 2 - 38, 42, 3) + 26;
-    }
-  } else {
-    // Versão de estudo: o que trava a venda e como responder.
-    ctx.fillStyle = d.accentDeep;
-    ctx.font = `700 22px ${SANS}`;
-    ctx.fillText('O QUE TRAVA A VENDA — E A RESPOSTA', M, y);
-    y += 46;
-
-    for (const o of p.objections.slice(0, 3)) {
-      if (y + 150 > limite) break;
-      ctx.fillStyle = '#12121f';
-      ctx.font = `700 28px ${SANS}`;
-      y = escreve(ctx, o.trigger, M, y, L - M * 2, 38, 2) + 10;
-      ctx.fillStyle = '#5b5b70';
-      ctx.font = `400 26px ${SANS}`;
-      y = escreve(ctx, o.answer, M, y, L - M * 2, 36, 4) + 34;
-    }
+  for (const o of p.objections.slice(0, 3)) {
+    if (y + 150 > limite) break;
+    ctx.fillStyle = '#12121f';
+    ctx.font = `700 28px ${SANS}`;
+    y = escreve(ctx, o.trigger, M, y, L - M * 2, 38, 2) + 10;
+    ctx.fillStyle = '#5b5b70';
+    ctx.font = `400 26px ${SANS}`;
+    y = escreve(ctx, o.answer, M, y, L - M * 2, 36, 4) + 34;
   }
+}
 
-  // ---- rodapé: o vendedor ----
+/** O rodapé — na versão do cliente é o cartão de visita do vendedor. */
+function rodape(ctx: CanvasRenderingContext2D, d: DadosOnePage, yRodape: number, hRodape: number) {
+  const { product: p, variante } = d;
   ctx.fillStyle = '#f4f4f8';
   ctx.fillRect(0, yRodape, L, hRodape);
   ctx.fillStyle = d.accent;
@@ -228,7 +310,7 @@ export async function desenharOnePage(d: DadosOnePage): Promise<HTMLCanvasElemen
     // Sem preço, sem taxa, sem prazo: isso sai da tabela vigente, na loja.
     ctx.fillStyle = '#8a8a9e';
     ctx.font = `400 21px ${SANS}`;
-    escreve(ctx, 'Condições, versões e disponibilidade sujeitas à campanha vigente. Consulte-me para a proposta atualizada.', M, yRodape + 210, L - M * 2, 26, 1);
+    escreve(ctx, 'Imagens ilustrativas. Versões, itens e disponibilidade sujeitos à campanha vigente.', M, yRodape + 210, L - M * 2, 26, 1);
   } else {
     ctx.fillStyle = '#12121f';
     ctx.font = `700 30px ${SANS}`;
@@ -238,20 +320,11 @@ export async function desenharOnePage(d: DadosOnePage): Promise<HTMLCanvasElemen
     escreve(ctx, p.compliance || 'Confirme ficha, condição e prazo antes de falar número com o cliente.', M, yRodape + 178, L - M * 2, 28, 2);
   }
 
-  // marca do app, discreta
   ctx.fillStyle = '#b9b9c8';
   ctx.font = `700 20px ${SANS}`;
   ctx.textAlign = 'right';
   ctx.fillText('eleva', L - M, yRodape + 62);
   ctx.textAlign = 'left';
-
-  // moldura para separar do fundo branco do WhatsApp
-  ctx.strokeStyle = '#e6e6ee';
-  ctx.lineWidth = 2;
-  retanguloArredondado(ctx, 1, 1, L - 2, A - 2, 4);
-  ctx.stroke();
-
-  return c;
 }
 
 // -------------------------------------------------------------------- PDF ---

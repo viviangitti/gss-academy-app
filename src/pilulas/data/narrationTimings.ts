@@ -137,11 +137,11 @@ export const NARRATION_TIMINGS: Record<string, number[]> = {
   ],
   "jaecoo-7-n2": [
     0.0,
-    6.09,
-    11.4,
-    18.4,
-    29.53,
-    36.43
+    6.16,
+    22.25,
+    36.98,
+    47.77,
+    57.62
   ],
   "jaecoo-7-n3": [
     0.0,
@@ -169,11 +169,11 @@ export const NARRATION_TIMINGS: Record<string, number[]> = {
   ],
   "omoda-e5-n2": [
     0.0,
-    5.32,
-    13.44,
-    20.61,
-    29.58,
-    36.05
+    11.97,
+    21.72,
+    36.07,
+    46.57,
+    54.96
   ],
   "omoda-e5-n3": [
     0.0,
@@ -185,11 +185,11 @@ export const NARRATION_TIMINGS: Record<string, number[]> = {
   ],
   "omoda-7-shs-p-n2": [
     0.0,
-    4.91,
-    14.69,
-    23.2,
-    32.48,
-    40.13
+    8.85,
+    16.44,
+    26.85,
+    33.9,
+    41.54
   ],
   "omoda-7-shs-p-n3": [
     0.0,

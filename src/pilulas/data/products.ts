@@ -889,56 +889,69 @@ export const PRODUCTS: Product[] = [
     salesLine: 'Me diz com quais carros você está comparando, que eu monto o item a item pra você levar e decidir com calma.',
     objections: [
       {
-        trigger: '"É chinês, né?"',
+        trigger: '"Nunca ouvi falar dessa marca."',
         answer:
-          'Entendo a dúvida — mas vale separar o carimbo do fato. A Jaecoo é do grupo Chery, que está no Brasil desde 2009, com fábrica e rede aqui. Carro chinês de hoje não é o de dez anos atrás: a mesma indústria fornece para montadoras europeias. O que eu sugiro é você dirigir e julgar pelo carro.',
+          'Justo — e é bom você perguntar. A Omoda e a Jaecoo são do grupo Chery, que está em 44 países e já vendeu mais de 570 mil veículos. No Reino Unido a marca fez 1,5% do mercado em menos de um ano; na Espanha, 20 mil carros em 17 meses. No Brasil passamos de mil unidades em menos de três meses. Não é aposta: é marca que já provou em mercado exigente.',
+      },
+      {
+        trigger: '"Não tenho onde carregar o carro."',
+        answer:
+          'Então não carregue. Esse é o ponto do sistema SHS: você pode usar o Jaecoo 7 como um híbrido comum, só abastecendo no posto, e ele faz 15,1 km/L assim mesmo. A tomada é opção, não obrigação. Quem carrega ganha 79 km só no elétrico — e, somando os dois, dá até 1.200 km sem parar.',
+      },
+      {
+        trigger: '"O carro é menor que o concorrente."',
+        answer:
+          'Por fora, um pouco. Por dentro é onde importa: entre-eixos de 2,67 m e porta-malas de 500 litros, que passa de 1.300 rebatendo os bancos. E o assoalho é plano, então cabe de verdade — não é número de folheto. Quer conferir? Vamos até o carro e você põe a mala de vocês dentro agora.',
+      },
+      {
+        trigger: '"Tenho medo do pós-venda."',
+        answer:
+          'É a preocupação certa numa marca nova. O centro de distribuição de peças fica em Cajamar, São Paulo, com os itens essenciais em estoque — não depende de importar peça a peça. A assistência 24h é da Allianz, e a revisão é aqui, com a gente. A primeira sai por R$ 699, e cinco anos de revisão dão R$ 3.216 — abaixo do que a concorrência cobra.',
+      },
+      {
+        trigger: '"A garantia tem limite de quilometragem."',
+        answer:
+          'Tem, e vale fazer a conta: o brasileiro roda em média 10 mil km por ano, e a garantia é de 8 anos. Me diz uma coisa — quanto tempo você costuma ficar com um carro? Se for como a maioria, entre três e cinco anos, você troca bem antes de o limite virar assunto.',
       },
       {
         trigger: '"E a revenda? Vou perder muito."',
         answer:
-          'É a pergunta certa a fazer. Toda marca em entrada de mercado deprecia mais nos primeiros anos — isso é verdade e não vou dizer o contrário. O que muda a conta é o preço de compra: você entra pagando menos por um pacote que, na concorrência estabelecida, custa bem mais. Posso levantar a tabela de referência atual para a gente ver o número real.',
-      },
-      {
-        trigger: '"Se quebrar, tem peça? Onde faço revisão?"',
-        answer:
-          'Assistência aqui é nossa, na Ramasa, e a rede é a do grupo Chery no Brasil — não depende de importar peça a peça. Posso te mostrar a cobertura da rede e o prazo médio de peça para o modelo.',
-      },
-      {
-        trigger: '"Achei caro."',
-        answer:
-          'Vamos comparar do jeito justo: pegue um SUV da mesma faixa e liste o que vem de série em cada um. Teto solar panorâmico, ADAS completo, multimídia de 13,2", bancos elétricos — na concorrência isso costuma ser pacote opcional. A conversa muda quando a comparação é item a item.',
-      },
-      {
-        trigger: '"Vou pesquisar e volto."',
-        answer:
-          'Perfeito, é uma decisão grande mesmo. Só me deixa fazer duas coisas antes: agendar o test drive, porque é o que costuma decidir, e te mandar a condição vigente por escrito — ela tem validade, e não quero que você perca por prazo.',
+          'Toda marca em entrada deprecia mais no começo, isso é verdade e não vou dizer o contrário. Só que a conta é dos dois lados: um concorrente chinês estabelecido depreciou 17,2% em 2025, o que deu quarenta mil reais. Some a isso o que você economiza de combustível e de revisão e a diferença muda de lado. Posso montar essa conta com o seu quilômetro real.',
       },
     ],
     compliance:
       'Itens de série, garantia, prazo de entrega e condições variam por versão e por campanha vigente. Confirme sempre na tabela e na condição do dia antes de prometer ao cliente.',
     fotos: ['/carros/jaecoo-7-1.jpg', '/carros/jaecoo-7-2.jpg', '/carros/jaecoo-7-3.jpg', '/carros/jaecoo-7-4.jpg'],
     destaques: [
+      { titulo: 'São Paulo a Salvador sem parar no posto', prova: 'Até 1.200 km de autonomia somando tanque e bateria' },
+      { titulo: 'A semana inteira sem gastar gasolina', prova: '79 km só no elétrico — mais que o trajeto diário da maioria' },
+      { titulo: 'Anda como esportivo quando você pede', prova: 'De 0 a 100 km/h em 8,4 segundos' },
       { titulo: 'Céu aberto sobre a família inteira', prova: 'Teto solar panorâmico de 1,1 m²' },
-      { titulo: 'Ultrapassagem sem pensar duas vezes', prova: '135 cv a combustão somados a 204 cv elétricos' },
-      { titulo: 'A estrada longa cansa menos', prova: 'Piloto adaptativo, frenagem automática e assistente de faixa' },
-      { titulo: 'Aço reforçado em volta de quem vai dentro', prova: 'Carroceria com 80% de aço de alta resistência' },
-      { titulo: 'Menos parada no posto', prova: 'Sistema híbrido com 44,5% de eficiência térmica' },
+      { titulo: 'A rua fica do lado de fora', prova: 'Vidros dianteiros duplos e som Sony de 8 alto-falantes' },
     ],
     durationSec: 45,
     gradient: ['#1e6fd9', '#0f3a75'],
     ficha: [
       { label: 'Marca', value: 'Jaecoo (grupo Chery)' },
-      { label: 'Versões', value: 'ELITE · SHS Luxury · SHS Prestige' },
-      { label: 'Motor a combustão', value: '1.5 TGDI — 135 cv e 200 Nm' },
-      { label: 'Motor elétrico (SHS)', value: '204 cv e 310 Nm' },
-      { label: 'Transmissão', value: 'DHT de 3ª geração' },
-      { label: 'Bateria (SHS)', value: 'Lítio-ferro-fosfato de 18,3 kWh, proteção IP68' },
-      { label: 'Rodas', value: 'Liga leve de 19"' },
-      { label: 'Telas', value: 'Multimídia 13,2" e painel digital 10,25"' },
-      { label: 'Segurança', value: 'Airbags e itens variam por versão · 80% de aço de alta resistência · ADAS (IHC, FCW, AEB, LDW, ACC, DAI, TJA, CSA)' },
-      { label: 'Preço público', value: 'A partir de R$ 189.990 (site da marca, ago/2026) — confirmar a condição vigente' },
-      { label: 'Autonomia e consumo', value: 'confirmar na ficha técnica oficial' },
-      { label: 'Garantia', value: 'confirmar com a Ramasa' },
+      { label: 'Versões', value: 'SHS-H Luxury · SHS-P Prestige' },
+      { label: 'Tipo', value: 'Híbrido plug-in (SHS de 3ª geração) — roda como híbrido só abastecendo' },
+      { label: 'Motor a combustão', value: '1.5 TGDI — 135 cv e 20,4 kgfm' },
+      { label: 'Motor elétrico', value: '204 cv e 31,6 kgfm' },
+      { label: '0 a 100 km/h', value: '8,4 segundos' },
+      { label: 'Autonomia só no elétrico', value: '79 km' },
+      { label: 'Autonomia total', value: 'até 1.200 km' },
+      { label: 'Consumo sem carregar', value: '15,1 km/L' },
+      { label: 'Eficiência térmica', value: '44,5% — um dos motores mais eficientes do mercado' },
+      { label: 'Bateria', value: '18,3 kWh de lítio-ferro-fosfato (LFP) — mais durável e com menor risco de incêndio' },
+      { label: 'Recarga', value: 'até 6,6 kW na tomada (AC) e até 40 kW na rápida (DC)' },
+      { label: 'Dimensões', value: '4.500 mm de comprimento · 1.865 de largura · 1.670 de altura' },
+      { label: 'Entre-eixos', value: '2.672 mm' },
+      { label: 'Porta-malas', value: '500 L — mais de 1.300 L com os bancos rebatidos' },
+      { label: 'Altura do solo', value: '17,4 cm' },
+      { label: 'Telas', value: 'Multimídia J-PAD de 14,8" e painel digital de 10,25"' },
+      { label: 'Segurança', value: '7 airbags · câmera 540° · pacote ADAS 2.5 (Prestige)' },
+      { label: 'Garantia', value: '8 anos — confirmar limite de km vigente com a Ramasa' },
+      { label: '1ª revisão', value: 'R$ 699 · 5 anos de revisão: R$ 3.216 (valores da marca, confirmar o vigente)' },
     ],
     storyboard: [
       { t: '0-5s', label: 'GANCHO', line: 'O cliente gostou do carro. Aí ele fala: "mas é chinês, né?"' },
@@ -950,14 +963,14 @@ export const PRODUCTS: Product[] = [
     niveis: [
       {
         titulo: 'Contra o concorrente',
-        foco: 'Comparar item a item sem falar mal de ninguém — e sair com o comparativo na mão.',
+        foco: 'Os números que ganham do Haval, do Song Plus, do Corolla Cross e do Compass.',
         storyboard: [
-          { t: '0-6s', label: 'A SITUAÇÃO', line: 'O cliente chega dizendo que viu um SUV da mesma faixa por menos. E ele viu mesmo.' },
-          { t: '6-16s', label: 'O ERRO', line: 'O erro é defender o preço. Quem defende preço já aceitou que o carro vale menos.' },
-          { t: '16-30s', label: 'O MÉTODO', line: 'Peça o modelo e a versão exata que ele comparou. Sem isso, a conversa é entre um carro real e um genérico.' },
-          { t: '30-44s', label: 'ITEM A ITEM', line: 'Liste o que vem de série nos dois: teto panorâmico, ADAS completo, tela de 13,2 polegadas, bancos elétricos. Na concorrência isso costuma ser pacote pago à parte.' },
-          { t: '44-52s', label: 'A REGRA', line: 'Nunca deprecie a outra marca. O cliente que gosta dela se sente burro — e cliente que se sente burro não compra.' },
-          { t: '52-58s', label: 'CTA', line: 'Monte o comparativo por escrito e mande. É o documento que ele mostra em casa.' },
+          { t: '0-8s', label: 'A REGRA', line: 'Nunca fale mal do concorrente. Compare com número, que é o que o cliente consegue repetir em casa.' },
+          { t: '8-20s', label: 'CONTRA O HAVAL', line: 'O porta-malas dele é maior, admita. Mas o nosso faz 15,1 km por litro contra 13,5, e cinco anos de revisão custam 3.216 contra 3.890. Mais som Sony e aquecimento de banco, que ele não tem.' },
+          { t: '20-32s', label: 'CONTRA O SONG PLUS', line: 'Ele é mais espaçoso no entre-eixos. Nós temos um ano a mais de garantia e 17,4 centímetros de altura do solo contra 15. E ele depreciou 17,2% em 2025 — quarenta mil reais.' },
+          { t: '32-42s', label: 'CONTRA O COROLLA CROSS', line: 'A garantia dele de dez anos é real, reconheça. Depois compare potência, autonomia e porta-malas: ganhamos nos três, e o acabamento fala por si no test drive.' },
+          { t: '42-52s', label: 'CONTRA O COMPASS', line: 'Dois anos a mais de garantia, mais espaço, mais porta-malas. E ele faz 10,1 km por litro no urbano contra os nossos 15,1.' },
+          { t: '52-58s', label: 'CTA', line: 'Pergunte qual ele está comparando e monte o item a item por escrito. É o papel que ele leva pra casa.' },
         ],
       },
       {
@@ -1000,33 +1013,38 @@ export const PRODUCTS: Product[] = [
       {
         trigger: '"Híbrido não precisa de tomada em casa?"',
         answer:
-          'Este não. O SHS-H é híbrido autorrecarregável: a bateria se carrega sozinha enquanto você roda, no freio e no motor. Você abastece no posto, como sempre. Quem precisa de tomada é o plug-in — que é outra versão, e aí é escolha sua, não obrigação.',
+          'Este não. O SHS-H se recarrega sozinho enquanto você roda, no freio e no motor. Você abastece no posto, como sempre. Quem precisa de tomada é o plug-in, que é outra versão — e aí vira escolha sua, não obrigação.',
       },
       {
         trigger: '"E se a bateria pifar? Deve custar uma fortuna."',
         answer:
-          'É a preocupação certa. A bateria é de lítio-ferro-fosfato, que é a química mais durável do mercado, com sistema de gerenciamento monitorando temperatura e carga o tempo todo. A cobertura de bateria tem garantia própria, separada da do carro — posso confirmar o prazo vigente com a gerência e te passar por escrito.',
+          'É a pergunta certa. A bateria é de lítio-ferro-fosfato, a química mais durável do mercado e com menor risco de incêndio, com sistema monitorando carga e temperatura o tempo todo. A garantia dela é própria, separada da do carro — confirmo o prazo vigente com a gerência e te passo por escrito.',
       },
       {
         trigger: '"Manutenção de híbrido é mais cara, né?"',
         answer:
-          'Na prática costuma ser o contrário no dia a dia: como o elétrico assume boa parte do trabalho, freio e motor sofrem menos. As revisões são na nossa rede, com plano de manutenção. Posso te mostrar a tabela de revisão para você comparar com o que você paga hoje.',
+          'Na prática costuma ser o contrário: o motor elétrico assume boa parte do trabalho, então freio e motor sofrem menos. E a marca trabalha com revisão de preço baixo — no Jaecoo a primeira sai por 699 reais. Posso levantar a tabela deste modelo pra você comparar com o que paga hoje.',
+      },
+      {
+        trigger: '"Nunca ouvi falar dessa marca."',
+        answer:
+          'A Omoda é do grupo Chery: 44 países e mais de 570 mil veículos vendidos. No Reino Unido, 1,5% do mercado em menos de um ano. No Brasil passamos de mil unidades em menos de três meses, e a assistência é nossa, com centro de peças em Cajamar e apoio 24h da Allianz.',
       },
       {
         trigger: '"Prefiro um Corolla Cross ou um HR-V, que já conheço."',
         answer:
-          'São carros bons, sem discussão. A comparação justa é item a item na mesma faixa de preço: veja o que vem de série aqui — painel de 24,6", som Sony, bancos ventilados e aquecidos, 7 airbags. Depois disso, dirija os dois. Se o outro te convencer mais rodando, é a escolha certa; só não decida sem sentir este.',
+          'São carros bons, sem discussão. A comparação justa é item a item na mesma faixa: veja o que vem de série aqui — painel de 24,6 polegadas, som Sony, bancos ventilados e aquecidos, sete airbags com o central dianteiro, câmera 360. Depois dirija os dois. Se o outro te convencer rodando, é a escolha certa; só não decida sem sentir este.',
       },
     ],
     compliance:
       'Consumo, autonomia, itens de série e garantia variam por versão e por campanha. Confirme na ficha técnica oficial e na condição vigente antes de falar número com o cliente.',
     fotos: ['/carros/omoda-5-shs-h-1.jpg', '/carros/omoda-5-shs-h-2.jpg', '/carros/omoda-5-shs-h-3.jpg', '/carros/omoda-5-shs-h-4.jpg'],
     destaques: [
-      { titulo: 'Você não muda nada na sua rotina', prova: 'Híbrido que se recarrega sozinho, rodando' },
-      { titulo: 'O posto vira exceção, não hábito', prova: 'Motor 1.5 turbo com apoio elétrico permanente' },
-      { titulo: 'Verão e inverno resolvidos no banco', prova: 'Bancos dianteiros ventilados e aquecidos' },
-      { titulo: 'Tudo na sua frente, sem tirar o olho da rua', prova: 'Painel digital flutuante de 24,6 polegadas' },
-      { titulo: 'Sete airbags em volta de todo mundo', prova: 'Estrutura com 78% de aço de alta resistência' },
+      { titulo: 'De São Paulo a Vitória com um tanque', prova: 'Híbrido que se recarrega sozinho, sem tomada' },
+      { titulo: 'Você não muda nada na sua rotina', prova: 'Abastece no posto, como sempre fez' },
+      { titulo: 'Sete airbags, incluindo um entre os da frente', prova: 'Airbag central dianteiro, item que a concorrência não traz' },
+      { titulo: 'Verão e inverno resolvidos no banco', prova: 'Bancos ventilados e aquecidos, com ajuste elétrico' },
+      { titulo: 'Enxerga o que você não vê ao manobrar', prova: 'Câmera 360° e porta-malas elétrico com sensor de presença' },
     ],
     durationSec: 45,
     gradient: ['#3f8f8a', '#123a3c'],
@@ -1104,48 +1122,54 @@ export const PRODUCTS: Product[] = [
       {
         trigger: '"E onde eu carrego? Não tenho posto perto."',
         answer:
-          'A conta real é outra: quem tem elétrico carrega em casa, de noite, e sai todo dia com o carro cheio. Eletroposto é para viagem, não para o dia a dia. Me diz quantos quilômetros você roda por dia e onde o carro dorme — com isso eu te digo se ele serve pra você, sem enrolação.',
+          'A conta real é outra: quem tem elétrico carrega em casa, de noite, e sai todo dia com o carro cheio. E ele roda 345 km com uma carga — o brasileiro faz em média 10 mil km por ano, ou seja, uns 30 por dia. Você recarregaria uma vez por semana. Me diz quantos quilômetros você roda e onde o carro dorme, que eu te digo na hora se ele serve.',
+      },
+      {
+        trigger: '"Autonomia de elétrico é pouca."',
+        answer:
+          'Vamos comparar então. São 345 km pelo Inmetro, contra 330, 319, 294 e 250 dos concorrentes diretos. É a maior da faixa. E não é por acaso: o coeficiente aerodinâmico de 0,281 é melhor que o deles — o carro corta o ar gastando menos.',
       },
       {
         trigger: '"E se acabar a bateria na estrada?"',
         answer:
-          'É a mesma lógica de acabar a gasolina: você acompanha pelo painel e o carro avisa com antecedência, indicando os pontos de recarga da rota. Para viagem longa e frequente, sendo honesto, o híbrido pode encaixar melhor — temos o Omoda 5 e o 7 justamente para esse perfil. O que eu não faço é te vender o carro errado.',
+          'A mesma lógica de acabar a gasolina: o painel avisa com antecedência e mostra os pontos de recarga da rota. Sendo honesto com você: se estrada longa e frequente for a sua rotina, o híbrido encaixa melhor, e eu tenho o Omoda 5 e o 7 aqui. O que eu não faço é te vender o carro errado.',
       },
       {
-        trigger: '"Trocar a bateria depois deve custar o preço do carro."',
+        trigger: '"Manutenção de elétrico deve ser cara."',
         answer:
-          'A bateria é de lítio-ferro-fosfato, que é a química de maior vida útil, com gerenciamento térmico monitorando o tempo todo. Ela tem garantia própria, separada da garantia do veículo — posso confirmar o prazo vigente com a gerência e te passar por escrito, junto da proposta.',
+          'É o contrário, e dá pra provar com número: a primeira revisão sai por R$ 459, aos 20 mil km ou 2 anos. Cinco anos de revisão dão R$ 1.852 no total. Não tem óleo, não tem filtro, não tem correia. Compare com o que você paga hoje.',
       },
       {
         trigger: '"Elétrico desvaloriza mais rápido."',
         answer:
-          'O mercado de elétrico ainda está formando referência de revenda, isso é verdade. Em compensação, a conta do uso muda: sem combustível, sem óleo, com menos peça de desgaste. Vale fazer o cálculo dos anos que você pretende ficar com o carro — se quiser, eu monto essa conta com o seu quilômetro real.',
+          'O mercado de elétrico ainda está formando referência, é verdade. Em compensação a conta do uso muda tudo: sem combustível, sem óleo, com revisão de 1.852 reais em cinco anos. Vale calcular pelos anos que você pretende ficar com ele — se quiser, monto essa conta com o seu quilômetro real.',
       },
     ],
     compliance:
       'Autonomia depende de uso, clima e carga. Use sempre o número do Inmetro e nunca prometa autonomia de estrada com base no número de ciclo urbano. Preço e condição saem da tabela vigente.',
     fotos: ['/carros/omoda-e5-1.jpg', '/carros/omoda-e5-2.jpg', '/carros/omoda-e5-3.jpg', '/carros/omoda-e5-4.jpg'],
     destaques: [
-      { titulo: 'A conta do combustível sai da sua vida', prova: '100% elétrico, sem uma gota de gasolina' },
-      { titulo: 'Um silêncio que muda o jeito de dirigir', prova: 'Motor elétrico, sem ruído nem trepidação' },
-      { titulo: 'Ele amanhece cheio todo dia', prova: 'Carrega em casa enquanto você dorme' },
-      { titulo: 'Sem troca de óleo, sem revisão de motor', prova: 'Muito menos peça sujeita a desgaste' },
-      { titulo: 'A informação no para-brisa, o olho na rua', prova: 'Projeção colorida e comando de voz' },
+      { titulo: 'Roda a semana toda sem recarregar', prova: '345 km de autonomia Inmetro — a maior entre os elétricos da faixa' },
+      { titulo: 'Some a gasolina e a troca de óleo da sua vida', prova: '100% elétrico, sem motor a combustão pra revisar' },
+      { titulo: 'Cinco anos de revisão custam menos que uma', prova: 'R$ 1.852 no total — a primeira sai por R$ 459' },
+      { titulo: 'Arranca na frente de todo mundo no semáforo', prova: 'De 0 a 100 km/h em 7,6 segundos' },
+      { titulo: 'A informação no para-brisa, o olho na rua', prova: 'Projeção colorida, comando de voz e 7 airbags' },
     ],
     durationSec: 45,
     gradient: ['#6ea8ff', '#1b2a63'],
     ficha: [
       { label: 'Marca', value: 'Omoda (grupo Chery)' },
       { label: 'Tipo', value: '100% elétrico' },
-      { label: 'Bateria', value: 'Lítio-ferro-fosfato com sistema de gerenciamento térmico (BMS)' },
-      { label: 'Telas', value: 'Display de 24,6" (O-System) e head-up display colorido' },
-      { label: 'Tecnologia', value: 'Carregador wireless de 50 W com refrigeração · comando de voz · ADAS 2.5' },
-      { label: 'Conforto', value: 'Bancos elétricos e ventilados · teto solar elétrico · porta-malas smart tailgate' },
-      { label: 'Rodas', value: 'Aerodinâmicas de 18"' },
-      { label: 'Segurança', value: '6 airbags · 78% de aço de alta resistência · FCW e AEB' },
+      { label: 'Bateria', value: '61,1 kWh de lítio-ferro-fosfato (LFP)' },
+      { label: 'Autonomia', value: '345 km (Inmetro) — a maior da faixa: concorrentes fazem 294, 330, 319 e 250 km' },
+      { label: '0 a 100 km/h', value: '7,6 segundos' },
+      { label: 'Aerodinâmica', value: 'Coeficiente de 0,281 — melhor que o dos concorrentes' },
+      { label: 'Telas', value: 'Display de 24,6" e head-up display colorido' },
+      { label: 'Tecnologia', value: 'Carregador por indução refrigerado · comando de voz · ADAS 2.5' },
+      { label: 'Segurança', value: '7 airbags · 78% de aço de alta resistência' },
+      { label: 'Garantia', value: '8 anos — confirmar limite de km vigente com a Ramasa' },
+      { label: 'Revisão', value: '1ª por R$ 459 aos 20.000 km ou 2 anos · R$ 1.852 em 5 anos' },
       { label: 'Preço público', value: 'A partir de R$ 209.990 (site da marca, ago/2026) — confirmar a condição vigente' },
-      { label: 'Autonomia (E-Range)', value: 'usar o número do Inmetro da ficha técnica oficial' },
-      { label: 'Garantia', value: 'confirmar com a Ramasa (bateria tem garantia própria)' },
     ],
     storyboard: [
       { t: '0-5s', label: 'GANCHO', line: 'Ele quer o elétrico. E aí pergunta: "onde eu carrego?"' },
@@ -1156,15 +1180,15 @@ export const PRODUCTS: Product[] = [
     ],
     niveis: [
       {
-        titulo: 'Recarga na vida real',
-        foco: 'Como descobrir em duas perguntas se o elétrico serve — e ter coragem de dizer que não serve.',
+        titulo: 'Contra o concorrente elétrico',
+        foco: 'O número que ganha de todos eles — e como usar sem parecer folheto.',
         storyboard: [
-          { t: '0-6s', label: 'O MEDO', line: 'E se eu ficar sem bateria? É sempre a primeira pergunta, e ela não é sobre o carro.' },
-          { t: '6-18s', label: 'A VIRADA', line: 'Quem tem elétrico carrega em casa, de noite, e sai todo dia com o carro cheio. Eletroposto é coisa de viagem, não de rotina.' },
-          { t: '18-30s', label: 'AS DUAS PERGUNTAS', line: 'Quantos quilômetros você roda por dia? E onde o carro dorme? Com essas duas respostas você já sabe se ele serve.' },
-          { t: '30-42s', label: 'A HONESTIDADE', line: 'Se ele roda estrada toda semana ou mora em prédio sem tomada, diga que o híbrido encaixa melhor. Vender o carro errado volta como reclamação.' },
-          { t: '42-52s', label: 'O CUIDADO', line: 'Autonomia só com o número do Inmetro. Nunca prometa autonomia de estrada com o número de cidade.' },
-          { t: '52-58s', label: 'CTA', line: 'Test drive no fim do dia: o silêncio no trânsito é o que vende esse carro.' },
+          { t: '0-8s', label: 'O NÚMERO', line: 'Guarde este: 345 km de autonomia pelo Inmetro. Os concorrentes diretos fazem 330, 319, 294 e 250.' },
+          { t: '8-18s', label: 'POR QUE GANHA', line: 'Não é bateria maior por força bruta: o coeficiente aerodinâmico é 0,281, melhor que o deles. O carro corta o ar gastando menos.' },
+          { t: '18-30s', label: 'A CONTA QUE FECHA', line: 'Primeira revisão: 459 reais. Cinco anos de revisão: 1.852. Sem óleo, sem filtro, sem correia. Peça pro cliente lembrar quanto pagou na última revisão dele.' },
+          { t: '30-42s', label: 'A RECARGA', line: '345 km é uma recarga por semana pra quem roda 30 km por dia, que é a média do brasileiro. Ele carrega em casa, de noite, e sai cheio.' },
+          { t: '42-52s', label: 'A HONESTIDADE', line: 'Se ele roda estrada toda semana, diga que o híbrido encaixa melhor e mostre o Omoda 5. Cliente sente quando você não está empurrando.' },
+          { t: '52-58s', label: 'CTA', line: 'Test drive no fim do dia: o silêncio no trânsito é o que fecha esse carro.' },
         ],
       },
       {
@@ -1207,51 +1231,61 @@ export const PRODUCTS: Product[] = [
       {
         trigger: '"Por esse preço eu compro uma marca que todo mundo conhece."',
         answer:
-          'Pode, e é uma escolha legítima. Só que a comparação tem que ser equipado contra equipado: coloque o concorrente com 8 airbags, tela de 15,6", som Sony de 12 alto-falantes, bancos ventilados e ADAS completo e veja onde o preço dele para. Depois disso, dirija os dois. É a única comparação honesta.',
+          'Pode, e é escolha legítima. Só que a comparação tem que ser equipado contra equipado: coloque o concorrente com 8 airbags, som Sony, bancos com massagem e tela de 15,6 e veja onde o preço dele para. E some a garantia de 8 anos e o consumo de 15,1 km por litro. Depois disso, dirija os dois.',
+      },
+      {
+        trigger: '"O carro é menor que o concorrente."',
+        answer:
+          'Por fora, um pouco. Por dentro ele tem 590 litros de porta-malas — um dos maiores da categoria — e passa de 1.300 rebatendo os bancos. O entre-eixos de 2,72 m dá espaço de sobra atrás. Vamos até o carro: senta no banco de trás e me diz se falta alguma coisa.',
       },
       {
         trigger: '"Plug-in eu preciso instalar tomada em casa?"',
         answer:
-          'Para aproveitar o melhor dele, sim — a instalação em casa é o que faz o custo por quilômetro despencar. Mas não é obrigatório: se você nunca carregar, o carro roda normalmente como híbrido. É liberdade a mais, não uma amarra.',
+          'Não precisa. O SHS deixa você rodar como híbrido comum, só abastecendo, e ele faz 15,1 km por litro assim. Quem instala a tomada ganha 60 km no elétrico e chega a 1.200 km somando os dois. É liberdade a mais, não amarra.',
+      },
+      {
+        trigger: '"Nunca ouvi falar dessa marca."',
+        answer:
+          'A Omoda é do grupo Chery: 44 países, mais de 570 mil veículos vendidos. No Reino Unido fez 1,5% do mercado em menos de um ano; na Espanha, 20 mil carros em 17 meses. Aqui passamos de mil unidades em menos de três meses. E a assistência é nossa, com centro de peças em Cajamar.',
       },
       {
         trigger: '"É grande demais para a cidade."',
         answer:
-          'Ele tem porte, sim — e por isso vem com assistente de congestionamento, que assume aceleração, freio e direção abaixo de 60 km/h, além de evasão inteligente na ultrapassagem. Na prática, dirigir na cidade cansa menos que num carro menor sem esses recursos. Faça o test drive num horário de trânsito e você sente na hora.',
-      },
-      {
-        trigger: '"Vou esperar sair o modelo do ano que vem."',
-        answer:
-          'Entendo. Só considere duas coisas: a condição de hoje não se repete no lançamento — no lançamento o preço entra mais alto — e a entrega da versão nova costuma demorar. Se você quer o carro para usar este ano, a conta pende para agora. Posso te mandar a condição vigente por escrito para você comparar com calma.',
+          'Ele tem porte, e por isso vem com assistente de congestionamento, que assume aceleração, freio e direção abaixo de 60 km/h, além de câmera 540°. Na prática cansa menos que um carro menor sem esses recursos. Faz o test drive num horário de trânsito que você sente na hora.',
       },
     ],
     compliance:
       'Autonomia em modo elétrico, consumo, itens de série e garantia variam por versão. Confirme na ficha técnica oficial e na condição vigente antes de falar número com o cliente.',
     fotos: ['/carros/omoda-7-shs-p-1.jpg', '/carros/omoda-7-shs-p-2.jpg', '/carros/omoda-7-shs-p-3.jpg', '/carros/omoda-7-shs-p-4.jpg'],
     destaques: [
-      { titulo: 'Ele chega antes de você falar', prova: 'Design premiado, presença de topo de linha' },
-      { titulo: 'Cidade no elétrico, estrada na gasolina', prova: 'Híbrido plug-in com bateria de 18,4 kWh' },
-      { titulo: 'Trânsito parado cansa muito menos', prova: 'Assistente que acelera, freia e mantém na faixa' },
-      { titulo: 'Uma cabine de outra categoria', prova: 'Som Sony de 12 alto-falantes e perfume próprio' },
-      { titulo: 'Oito airbags, inclusive pra quem vai atrás', prova: 'Aço de alta e de ultra resistência na estrutura' },
+      { titulo: 'São Paulo a Salvador sem parar no posto', prova: 'Até 1.200 km somando tanque e bateria' },
+      { titulo: 'O maior porta-malas da categoria', prova: '590 litros — mais de 1.300 com os bancos rebatidos' },
+      { titulo: 'Massagem no banco no meio do trânsito', prova: 'Bancos com massagem, ventilação e aquecimento' },
+      { titulo: 'A rua fica do lado de fora', prova: 'Vidros duplos, cancelamento ativo de ruído e som Sony de 390 W' },
+      { titulo: 'Oito airbags e o carro dirigindo com você', prova: '18 recursos de assistência ao motorista' },
     ],
     durationSec: 45,
     gradient: ['#8b6cf0', '#2a1f5c'],
     ficha: [
       { label: 'Marca', value: 'Omoda (grupo Chery)' },
       { label: 'Versões', value: 'SHS-P Luxury · SHS-P Prestige' },
-      { label: 'Tipo', value: 'Híbrido plug-in (PHEV)' },
-      { label: 'Motor a combustão', value: '1.5 TGDI — 135 cv e 200 Nm' },
-      { label: 'Motor elétrico', value: '204 cv e 310 Nm' },
-      { label: 'Transmissão', value: 'DHT de 3ª geração' },
-      { label: 'Bateria', value: 'Lítio-ferro-fosfato de 18,4 kWh, proteção IP68' },
-      { label: 'Telas', value: 'Multimídia de 15,6" Ultra HD 2.5K com função Sliding' },
-      { label: 'Som', value: 'Sony com 12 alto-falantes' },
-      { label: 'Exclusivo', value: 'L’Essence — difusão inteligente de aromas na cabine' },
-      { label: 'Segurança', value: '8 airbags · 70% aço de alta e 30% de ultra resistência · IES, AEB (4–150 km/h) e TJA (abaixo de 60 km/h)' },
+      { label: 'Tipo', value: 'Híbrido plug-in (SHS de 3ª geração) — roda como híbrido só abastecendo' },
+      { label: 'Motor a combustão', value: '1.5 TGDI — 135 cv' },
+      { label: 'Motor elétrico', value: '204 cv e 31,6 kgfm' },
+      { label: '0 a 100 km/h', value: '8,4 segundos' },
+      { label: 'Autonomia só no elétrico', value: '60 km' },
+      { label: 'Autonomia total', value: 'até 1.200 km' },
+      { label: 'Consumo sem carregar', value: '15,1 km/L' },
+      { label: 'Eficiência térmica', value: '44,5% — um dos motores mais eficientes do mercado' },
+      { label: 'Bateria', value: '18,4 kWh de lítio-ferro-fosfato (LFP)' },
+      { label: 'Entre-eixos', value: '2.720 mm' },
+      { label: 'Porta-malas', value: '590 L — um dos maiores da categoria; passa de 1.300 L rebatendo' },
+      { label: 'Tela', value: 'Multimídia de 15,6" Ultra HD com função Smart Sliding' },
+      { label: 'Som', value: 'Sony de 390 W, com cancelamento ativo de ruído' },
+      { label: 'Exclusivo', value: 'L’Essence — três fragrâncias para a cabine' },
+      { label: 'Segurança', value: '8 airbags · 18 recursos ADAS · estrutura reforçada' },
+      { label: 'Garantia', value: '8 anos — confirmar limite de km vigente com a Ramasa' },
       { label: 'Preço público', value: 'A partir de R$ 254.990 (site da marca, ago/2026) — confirmar a condição vigente' },
-      { label: 'Autonomia e consumo', value: 'confirmar na ficha técnica oficial' },
-      { label: 'Garantia', value: 'confirmar com a Ramasa (bateria tem garantia própria)' },
     ],
     storyboard: [
       { t: '0-5s', label: 'GANCHO', line: 'Ele tem o dinheiro. Mas acha que nessa faixa só marca conhecida entrega.' },
@@ -1263,14 +1297,14 @@ export const PRODUCTS: Product[] = [
     niveis: [
       {
         titulo: 'Vender o topo de linha',
-        foco: 'Como conduzir na faixa em que o cliente compara com marca premium estabelecida.',
+        foco: 'A ordem certa da apresentação e os números que sustentam o preço.',
         storyboard: [
-          { t: '0-6s', label: 'A SITUAÇÃO', line: 'Ele tem o dinheiro. E acha que nessa faixa só marca conhecida entrega.' },
-          { t: '6-18s', label: 'A ORDEM', line: 'Não comece pelo número. Sente ele dentro: tela deslizante de 15,6 polegadas, som Sony de 12 alto-falantes, o aroma do L Essence.' },
-          { t: '18-30s', label: 'POR QUÊ', line: 'Nessa faixa ninguém compra ficha técnica. Compra a sensação de ter acertado — e essa sensação acontece sentado, não em pé olhando tabela.' },
-          { t: '30-44s', label: 'A COMPARAÇÃO', line: 'Só depois abra o preço, e compare equipado contra equipado: coloque o concorrente com 8 airbags, ADAS completo e som premium, e veja onde o preço dele para.' },
-          { t: '44-54s', label: 'A REGRA', line: 'Nunca deprecie a marca que ele admira. Reconheça que é boa e mostre a conta. Respeito abre; deboche fecha.' },
-          { t: '54-60s', label: 'CTA', line: 'Test drive em horário de trânsito: o assistente de congestionamento vende sozinho.' },
+          { t: '0-8s', label: 'A ORDEM', line: 'Não comece pelo número. Sente o cliente dentro: tela de 15,6 deslizante, massagem no banco, o aroma do L Essence.' },
+          { t: '8-18s', label: 'POR QUÊ', line: 'Nessa faixa ninguém compra ficha. Compra a sensação de ter acertado — e ela acontece sentado, não em pé olhando tabela.' },
+          { t: '18-30s', label: 'AÍ SIM, O NÚMERO', line: '590 litros de porta-malas, um dos maiores da categoria. Oito airbags. Dezoito recursos de assistência. Garantia de oito anos.' },
+          { t: '30-42s', label: 'EQUIPADO x EQUIPADO', line: 'Monte o concorrente com tudo isso e veja onde o preço dele para. É a única comparação honesta — e é a que ganha.' },
+          { t: '42-52s', label: 'A REGRA', line: 'Nunca deprecie a marca que ele admira. Reconheça que é boa e mostre a conta. Respeito abre; deboche fecha.' },
+          { t: '52-60s', label: 'CTA', line: 'Test drive em horário de trânsito: o assistente de congestionamento vende sozinho.' },
         ],
       },
       {

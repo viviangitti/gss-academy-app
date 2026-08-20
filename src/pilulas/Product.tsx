@@ -4,7 +4,7 @@ import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
-  Volume2, FileDown, BookOpen, Users, Lock, ChevronRight } from 'lucide-react';
+  Volume2, FileDown, BookOpen, Users, Lock, ChevronRight, Package } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
 import { submitObjection, fetchMyObjections, fetchPublicadas, objectionDate, type TeamObjection } from './data/objections';
@@ -20,6 +20,7 @@ import { useBrand } from './BrandContext';
 import { getBrand, isAuto, isBalcao } from './data/brands';
 import { vocab } from './data/vocabulario';
 import { gerarMaterial, compartilharMaterial } from './data/onePage';
+import { acessoriosPara, precoLabel } from './data/acessorios';
 import { getElevaProfile } from './data/profile';
 import { auth } from '../services/firebase';
 
@@ -683,6 +684,7 @@ export default function Product() {
     getElevaProfile(uid).then((pf) => { setWhats(pf?.whatsapp || ''); setFotoVend(pf?.foto || ''); }).catch(() => {});
   }, [user?.email]);
   const semContato = !whats.trim();
+  const acessorios = product ? acessoriosPara(product.id) : [];
   // As objeções que o gestor respondeu e publicou, deste produto.
   const [publicadas, setPublicadas] = useState<TeamObjection[]>([]);
   useEffect(() => {
@@ -944,6 +946,36 @@ export default function Product() {
         <a className="wp-buy" href={buyLinkFor(product, buyCtx)} target="_blank" rel="noreferrer">
           <ShoppingBag size={17} className="wp-ico" /> Comprar no site oficial
         </a>
+      )}
+
+      {/* A SEGUNDA VENDA. O acessório aparece DENTRO do carro de propósito: lista
+          separada ninguém abre, mas com o cliente já decidido pelo modelo, ver
+          que existe estribo iluminado é o que faz o vendedor oferecer. Cada um
+          entra pelo benefício, não pela descrição da peça. */}
+      {auto && acessorios.length > 0 && (
+        <div className="wp-block">
+          <span className="wp-block-label"><Package size={14} className="wp-ico" /> Leve com ele</span>
+          <p className="wp-acess-intro">Ofereça no fechamento, com o carro já escolhido. O código é o que você usa pra pedir.</p>
+          {acessorios.map((a) => (
+            <div key={a.id} className="wp-acess">
+              <div className="wp-acess-topo">
+                <b>{a.nome}</b>
+                <span className="wp-acess-preco">{precoLabel(a)}</span>
+              </div>
+              <p className="wp-acess-benef">{a.beneficio}</p>
+              <details className="wp-acess-mais">
+                <summary>Como oferecer e o código</summary>
+                <p>{a.comoOferecer}</p>
+                {a.observacao && <p className="wp-acess-obs">{a.observacao}</p>}
+                <ul className="wp-acess-pns">
+                  {a.codigos.map((c) => (
+                    <li key={c.pn}><i>{c.modelo}</i> <code>{c.pn}</code></li>
+                  ))}
+                </ul>
+              </details>
+            </div>
+          ))}
+        </div>
       )}
 
       {/* O ONE-PAGE. No automotivo é o material que o vendedor manda de verdade:

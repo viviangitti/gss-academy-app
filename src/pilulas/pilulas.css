@@ -2918,3 +2918,67 @@
   color: var(--wp-text); font-size: 12.5px; line-height: 1.5;
 }
 .wp-op-falta b { color: var(--wp-pink-deep); font-size: 13px; display: inline-flex; align-items: center; gap: 4px; }
+
+/* ===== Acessórios — a segunda venda ===== */
+.wp-acess-intro { font-size: 12.5px; line-height: 1.5; color: var(--wp-soft); margin: 0 0 10px; }
+.wp-acess {
+  border: 1px solid var(--wp-line, #e6e6ee); border-radius: 12px;
+  padding: 12px 13px; margin-top: 9px;
+}
+.wp-acess-topo { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.wp-acess-topo b { font-size: 15px; }
+.wp-acess-preco { flex: 0 0 auto; font-size: 14px; font-weight: 800; color: var(--wp-pink-deep); }
+.wp-acess-benef { margin: 5px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--wp-soft); }
+.wp-acess-mais { margin-top: 8px; }
+.wp-acess-mais summary {
+  cursor: pointer; font-size: 12.5px; font-weight: 700; color: var(--wp-pink-deep);
+  list-style: none;
+}
+.wp-acess-mais summary::-webkit-details-marker { display: none; }
+.wp-acess-mais summary::after { content: ' ▾'; }
+.wp-acess-mais[open] summary::after { content: ' ▴'; }
+.wp-acess-mais p { margin: 8px 0 0; font-size: 13px; line-height: 1.55; }
+.wp-acess-obs { color: var(--wp-soft); font-style: italic; }
+.wp-acess-pns { list-style: none; padding: 0; margin: 9px 0 0; display: flex; flex-direction: column; gap: 4px; }
+.wp-acess-pns li { display: flex; align-items: baseline; gap: 8px; font-size: 12px; }
+.wp-acess-pns i { font-style: normal; color: var(--wp-soft); flex: 0 0 auto; }
+.wp-acess-pns code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px;
+  background: var(--wp-bg); padding: 2px 6px; border-radius: 5px; user-select: all;
+}
+.wp-acess-lista { display: flex; flex-direction: column; gap: 8px; }
+.wp-acess-linha {
+  display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--wp-text);
+  background: var(--wp-card, #fff); border: 1px solid var(--wp-line, #e6e6ee);
+  border-radius: 12px; padding: 12px 13px;
+}
+.wp-acess-linha-txt { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.wp-acess-linha-txt b { font-size: 14.5px; }
+.wp-acess-linha-txt i { font-style: normal; font-size: 12.5px; color: var(--wp-soft); }
+.wp-acess-linha-preco { flex: 0 0 auto; font-size: 14px; font-weight: 800; color: var(--wp-pink-deep); }
+
+/* ===== Repositório de documentos ===== */
+.wp-docs { padding: 14px 16px 96px; max-width: 480px; margin: 0 auto; }
+.wp-docs-sec { margin-bottom: 22px; }
+.wp-docs-sec-tit { font-size: 16px; font-weight: 800; margin: 0 0 3px; }
+.wp-docs-sec-sub { font-size: 12.5px; line-height: 1.5; color: var(--wp-soft); margin: 0 0 11px; }
+.wp-doc {
+  display: flex; align-items: flex-start; gap: 11px; text-decoration: none; color: var(--wp-text);
+  background: var(--wp-card, #fff); border: 1px solid var(--wp-line, #e6e6ee);
+  border-radius: 13px; padding: 12px 13px; margin-bottom: 8px;
+}
+.wp-doc-ic {
+  flex: 0 0 auto; width: 36px; height: 36px; border-radius: 10px;
+  background: var(--wp-bg); color: var(--wp-pink-deep);
+  display: flex; align-items: center; justify-content: center;
+}
+.wp-doc-txt { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.wp-doc-txt b { font-size: 14.5px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.wp-doc-txt i { font-style: normal; font-size: 12.5px; line-height: 1.45; color: var(--wp-soft); }
+.wp-doc-txt small { font-size: 11px; color: var(--wp-soft); }
+.wp-doc-selo {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em;
+  background: #f3e6e6; color: #9c3535; padding: 2px 6px; border-radius: 5px;
+}
+.wp-doc-ext { flex: 0 0 auto; color: var(--wp-soft); margin-top: 9px; }

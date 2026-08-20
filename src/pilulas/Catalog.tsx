@@ -5,6 +5,7 @@ import { CATEGORIES, visibleProducts, duracaoLabel, type Category } from './data
 import { allProducts, hasImage, getProductImageUrl, ensureImageLoaded, useStore } from './data/store';
 import { useBrand } from './BrandContext';
 import { ehNovo } from './data/novidades';
+import { acessoriosDaMarca, precoLabel } from './data/acessorios';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 
@@ -18,6 +19,7 @@ export default function Catalog() {
   const { user } = useAuth();
   // Afiliado só vê a linha GLPEN.
   const catalog = visibleProducts(allProducts().filter((p) => p.brand === brandId), user?.role);
+  const acessorios = acessoriosDaMarca(brandId);
   // carrega as fotos de capa (IndexedDB) pra usar no card
   useEffect(() => {
     catalog.forEach((p) => { if (hasImage(p.id)) ensureImageLoaded(p.id); });
@@ -36,7 +38,7 @@ export default function Catalog() {
         // Acessório é a segunda venda da concessionária (engate, película, som,
         // proteção) e some fácil da conversa. A seção aparece mesmo vazia, com o
         // recado de onde cadastrar — senão ninguém descobre que ela existe.
-        if (!items.length && !(cat === 'acessorio' && isAuto(brandId))) return null;
+        if (!items.length && !(cat === 'acessorio' && isAuto(brandId) && acessorios.length > 0)) return null;
         const CatIcon = CATEGORIES[cat].Icon;
         return (
           <section key={cat} className="wp-section">
@@ -44,10 +46,25 @@ export default function Catalog() {
               <CatIcon size={18} className="wp-section-emoji" />
               {CATEGORIES[cat].label}
             </h2>
-            {!items.length && (
+            {/* Acessório é outro tipo de item: tem código de peça, preço público
+                e vale pra vários modelos. Por isso não é um card de carro — é
+                uma linha com o benefício na frente e o código a um toque. */}
+            {cat === 'acessorio' && acessorios.length > 0 && (
+              <div className="wp-acess-lista">
+                {acessorios.map((a) => (
+                  <Link key={a.id} to={`/eleva/produto/${a.aplicaEm[0]}`} className="wp-acess-linha">
+                    <span className="wp-acess-linha-txt">
+                      <b>{a.nome}</b>
+                      <i>{a.beneficio}</i>
+                    </span>
+                    <span className="wp-acess-linha-preco">{precoLabel(a)}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+            {!items.length && cat !== 'acessorio' && (
               <p className="wp-section-vazio">
-                Nenhum acessório cadastrado ainda. A gerência cadastra pelo Painel, em Conteúdo → Produtos,
-                escolhendo a categoria <b>Acessórios</b>.
+                Nada cadastrado nesta seção ainda.
               </p>
             )}
             <div className="wp-grid">

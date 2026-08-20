@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon, Sparkles, Trophy } from 'lucide-react';
+import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon, Sparkles, Trophy, FolderOpen } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
 import { buildShareMessage, visibleProducts, duracaoLabel, type Product } from './data/products';
 import { getAfiliadoCode } from './data/afiliadoCode';
@@ -11,6 +11,7 @@ import { getTrilha } from './data/trilha';
 import { isAuto, isBalcao } from './data/brands';
 import { vocab } from './data/vocabulario';
 import { naoVistos } from './data/novidades';
+import { documentosDaMarca } from './data/documentos';
 import { campanhaPara, prazoLabel, diasRestantes } from './data/campanha';
 import { getAbout } from './data/about';
 import { watchedToday, notifState, enableNotif, maybeNotify } from './data/lembrete';
@@ -170,6 +171,7 @@ export default function Hoje() {
   const auto = isAuto(brandId);     // concessionária: sem postar; a língua muda
   const v = vocab(brandId);
   const novos = naoVistos(products);
+  const docs = documentosDaMarca(brandId).length;
   const didToday = watchedToday();
   const firstName = (user?.name || '').split(' ')[0] || 'Você';
 
@@ -339,6 +341,19 @@ export default function Hoje() {
               Ver o roteiro completo <ChevronRight size={15} className="wp-ico" />
             </Link>
           </div>
+          )}
+
+          {/* O repositório. Fica na Hoje e não na barra de baixo porque é consulta
+              de quem está sentado se preparando, não de quem está atendendo. */}
+          {docs > 0 && (
+            <Link to="/eleva/documentos" className="wp-td-rank">
+              <FolderOpen size={16} className="wp-ico" />
+              <span>
+                <b>Documentos da marca</b>
+                <i>{docs} materiais oficiais: fichas, guias de venda e acessórios</i>
+              </span>
+              <ChevronRight size={16} className="wp-ico" />
+            </Link>
           )}
 
           {/* Quem é a marca — contexto institucional pra vender com segurança */}

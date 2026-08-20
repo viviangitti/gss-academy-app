@@ -7,10 +7,10 @@
       "runtimeArgs": [
         "vite",
         "--port",
-        "4185",
+        "4186",
         "--strictPort"
       ],
-      "port": 4185
+      "port": 4186
     }
   ]
 }

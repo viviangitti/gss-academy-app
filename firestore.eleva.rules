@@ -98,6 +98,21 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Documentos do repositório. O arquivo vive partido em pedaços porque o
+    // teto do Firestore é 1 MB por documento e um guia de venda passa de 5 MB.
+    // A leitura é de quem está logado (é material de trabalho do time) e a
+    // escrita, só do gestor — inclusive nos pedaços, que é onde o arquivo
+    // realmente está: proteger só a ficha e deixar os pedaços abertos seria
+    // trancar a porta e deixar a janela aberta.
+    match /elevaDocs/{id} {
+      allow read: if request.auth != null;
+      allow write: if isGestor();
+      match /pedacos/{n} {
+        allow read: if request.auth != null;
+        allow write: if isGestor();
+      }
+    }
+
     // Conteúdo do Eleva: quem está logado LÊ; só o gestor ESCREVE.
     match /{document=**} {
       allow read: if request.auth != null;

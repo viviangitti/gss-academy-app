@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { vocab } from './data/vocabulario';
@@ -13,6 +13,8 @@ import { topSearches } from './data/insights';
 import { fetchTeam, buildReport, type TeamReport, type TeamPerson } from './data/teamStats';
 import { CAMPANHA, prazoLabel } from './data/campanha';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
+import { PRATELEIRAS, type PrateleiraId } from './data/documentos';
+import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, type DocNuvem } from './data/docsUpload';
 import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
@@ -675,6 +677,77 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
   );
 }
 
+// PUBLICAR DOCUMENTO — sem depender de mim e sem plano pago.
+//
+// O arquivo é partido em pedaços e guardado no Firestore (ver data/docsUpload).
+// Do lado de cá o que importa é a barra: um guia de 5 MB no 4G leva um tempo, e
+// gestor sem retorno na tela desiste no meio e sobe metade.
+function DocumentoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) => void }) {
+  const [titulo, setTitulo] = useState('');
+  const [paraQue, setParaQue] = useState('');
+  const [prateleira, setPrateleira] = useState<PrateleiraId>('venda');
+  const [interno, setInterno] = useState(false);
+  const [arquivo, setArquivo] = useState<File | null>(null);
+  const [pct, setPct] = useState<number | null>(null);
+  const [erro, setErro] = useState('');
+
+  const valid = titulo.trim().length > 2 && !!arquivo;
+
+  const enviar = async () => {
+    if (!valid || !arquivo || pct !== null) return;
+    setErro('');
+    setPct(0);
+    try {
+      await enviarDocNuvem({ brand, prateleira, titulo, paraQue, interno, arquivo }, setPct);
+      onDone(titulo.trim());
+    } catch {
+      setErro('Não consegui publicar. Confira a internet e tente de novo.');
+    } finally {
+      setPct(null);
+    }
+  };
+
+  return (
+    <div className="wp-gz-form">
+      <label className="wp-gz-label">Arquivo (PDF)</label>
+      <input type="file" accept="application/pdf,image/*" onChange={(e) => setArquivo(e.target.files?.[0] || null)} />
+      {arquivo && <p className="wp-gz-hint">{Math.round(arquivo.size / 1024 / 1024 * 10) / 10} MB</p>}
+
+      <label className="wp-gz-label">Título</label>
+      <input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Ex.: Guia de venda — Omoda 5" />
+
+      <label className="wp-gz-label">Para que serve</label>
+      <input
+        value={paraQue}
+        onChange={(e) => setParaQue(e.target.value)}
+        placeholder="Uma linha, do ponto de vista de quem vai abrir."
+      />
+
+      <label className="wp-gz-label">Prateleira</label>
+      <select value={prateleira} onChange={(e) => setPrateleira(e.target.value as PrateleiraId)}>
+        {PRATELEIRAS.map((pr) => <option key={pr.id} value={pr.id}>{pr.titulo}</option>)}
+      </select>
+
+      <label className="wp-gz-check">
+        <input type="checkbox" checked={interno} onChange={(e) => setInterno(e.target.checked)} />
+        <span>
+          Material interno — traz custo, margem ou política de preço.
+          <i>O app avisa o time pra não encaminhar ao cliente.</i>
+        </span>
+      </label>
+
+      {pct !== null && (
+        <div className="wp-gz-prog"><span style={{ width: `${pct}%` }} /><b>{pct}%</b></div>
+      )}
+      {erro && <p className="wp-gz-erro">{erro}</p>}
+
+      <button className="wp-gz-submit" disabled={!valid || pct !== null} onClick={enviar}>
+        <Check size={16} className="wp-ico" /> {pct !== null ? 'Publicando…' : 'Publicar documento'}
+      </button>
+    </div>
+  );
+}
+
 const DAYS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 
 function CalendarForm({ brand, onDone }: { brand: string; onDone: (t: string) => void }) {
@@ -938,13 +1011,15 @@ export default function Gestor() {
   const { user } = useAuth();
   useStore();
   const { brand, brandId } = useBrand();
-  const [openForm, setOpenForm] = useState<'produto' | 'oferta' | 'condicao' | 'calendario' | 'tendencia' | null>(null);
+  const [openForm, setOpenForm] = useState<'produto' | 'oferta' | 'condicao' | 'documento' | 'calendario' | 'tendencia' | null>(null);
   const [toast, setToast] = useState('');
   const [tab, setTab] = useState<'resultados' | 'vendas' | 'conteudo'>('resultados');
 
   useCondicoes();
   useEffect(() => { carregarCondicoes(brandId); }, [brandId]);
   const condicoes = condicoesDaMarca(brandId);
+  const [docsNuvem, setDocsNuvem] = useState<DocNuvem[]>([]);
+  useEffect(() => { carregarDocsNuvem(brandId).then(setDocsNuvem).catch(() => {}); }, [brandId]);
   const auto = isAuto(brandId);
 
   const products = allProducts().filter((p) => p.brand === brandId);
@@ -1048,6 +1123,45 @@ export default function Gestor() {
           </div>
         </div>
       )}
+
+      {/* Documentos — o repositório que o gestor alimenta sozinho */}
+      <div className="wp-gz-block">
+        <div className="wp-gz-block-head">
+          <span className="wp-gz-block-title"><FolderOpen size={17} className="wp-ico" /> Documentos ({docsNuvem.length})</span>
+          <button className="wp-gz-add" onClick={() => setOpenForm(openForm === 'documento' ? null : 'documento')}>
+            <UploadCloud size={15} className="wp-ico" /> Publicar
+          </button>
+        </div>
+        {openForm === 'documento' && (
+          <DocumentoForm brand={brandId} onDone={(t) => { done(t, 'Documento'); carregarDocsNuvem(brandId).then(setDocsNuvem); }} />
+        )}
+        <div className="wp-gz-list">
+          {docsNuvem.map((d) => (
+            <div key={d.id} className="wp-gz-item">
+              <span className="wp-gz-item-name">{d.titulo}</span>
+              <span className="wp-gz-item-meta">
+                {Math.round(d.bytes / 1024 / 1024 * 10) / 10} MB
+                <button
+                  type="button"
+                  className="wp-gz-del"
+                  aria-label={`Apagar ${d.titulo}`}
+                  onClick={() => {
+                    if (!confirm(`Apagar "${d.titulo}"? O time deixa de ver este documento.`)) return;
+                    apagarDocNuvem(d).then(() => setDocsNuvem(docsNuvemDaMarca(brandId)));
+                  }}
+                >
+                  <Trash2 size={14} className="wp-ico" />
+                </button>
+              </span>
+            </div>
+          ))}
+          {!docsNuvem.length && (
+            <p className="wp-gz-help" style={{ margin: 0 }}>
+              Ficha técnica, guia de venda, comunicado da montadora. O time abre pelo app, na tela Documentos.
+            </p>
+          )}
+        </div>
+      </div>
 
       {/* Ofertas — no automotivo NÃO existe: a condição comercial é a tabela que
           a gerência sobe, no bloco acima. Manter os dois criava dois lugares

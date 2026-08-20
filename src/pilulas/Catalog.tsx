@@ -52,7 +52,7 @@ export default function Catalog() {
             {cat === 'acessorio' && acessorios.length > 0 && (
               <div className="wp-acess-lista">
                 {acessorios.map((a) => (
-                  <Link key={a.id} to={`/eleva/produto/${a.aplicaEm[0]}`} className="wp-acess-linha">
+                  <Link key={a.id} to={`/eleva/acessorio/${a.id}`} className="wp-acess-linha">
                     <span className="wp-acess-linha-txt">
                       <b>{a.nome}</b>
                       <i>{a.beneficio}</i>

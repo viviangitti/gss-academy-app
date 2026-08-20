@@ -2995,3 +2995,34 @@
 .wp-gz-prog b { flex: 0 0 auto; font-size: 11.5px; margin-left: 4px; }
 /* botão de documento da nuvem tem que parecer o link estático */
 button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
+
+/* ===== Tela do acessório ===== */
+.wp-acp { padding: 14px 16px 96px; max-width: 480px; margin: 0 auto; }
+.wp-acp-hero { display: flex; flex-direction: column; gap: 5px; margin: 6px 0 16px; }
+.wp-acp-tag {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--wp-pink-deep); background: var(--wp-card); border: 1px solid var(--wp-line);
+  padding: 4px 9px; border-radius: 999px;
+}
+.wp-acp-nome { font-size: 25px; font-weight: 800; margin: 4px 0 0; line-height: 1.2; }
+.wp-acp-preco { font-size: 24px; font-weight: 800; color: var(--wp-pink-deep); }
+.wp-acp-preco-obs { font-size: 11.5px; color: var(--wp-soft); margin-top: -3px; }
+.wp-acp-benef { margin: 0; font-size: 16px; line-height: 1.5; font-weight: 600; }
+.wp-acp-texto { margin: 0; font-size: 14px; line-height: 1.6; color: var(--wp-soft); }
+.wp-acp-obs { margin: 9px 0 0; font-size: 13px; font-style: italic; color: var(--wp-soft); }
+.wp-acp-carros { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+.wp-acp-carro {
+  text-decoration: none; font-size: 13px; font-weight: 700; color: var(--wp-text);
+  background: var(--wp-bg); border: 1px solid var(--wp-line);
+  border-radius: 999px; padding: 7px 13px;
+}
+.wp-acp-pn {
+  display: inline-flex; align-items: center; gap: 7px; cursor: pointer;
+  border: 1px solid var(--wp-line); background: var(--wp-bg);
+  border-radius: 7px; padding: 4px 9px; color: var(--wp-text);
+}
+.wp-acess-nome {
+  font-size: 15px; font-weight: 700; color: var(--wp-text); text-decoration: none;
+  border-bottom: 1px solid var(--wp-line);
+}

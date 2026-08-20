@@ -15,6 +15,7 @@ import Login from './Login';
 import Privacidade from './Privacidade';
 import Noticias from './Noticias';
 import Documentos from './Documentos';
+import Acessorio from './Acessorio';
 import Landing from './Landing';
 import Onboarding from './Onboarding';
 import BottomNav from './BottomNav';
@@ -308,6 +309,7 @@ function Shell() {
           <Route path="/eleva/privacidade" element={<Privacidade />} />
           <Route path="/eleva/noticias" element={<Noticias />} />
           <Route path="/eleva/documentos" element={<Documentos />} />
+          <Route path="/eleva/acessorio/:id" element={<Acessorio />} />
           <Route path="/pilulas/*" element={<Navigate to="/eleva" replace />} />
           {/* Link antigo ou telas que saíram do ar (ex.: /eleva/venda) caem na
               home em vez de deixar a tela vazia. */}

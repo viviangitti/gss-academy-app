@@ -959,7 +959,7 @@ export default function Product() {
           {acessorios.map((a) => (
             <div key={a.id} className="wp-acess">
               <div className="wp-acess-topo">
-                <b>{a.nome}</b>
+                <Link to={`/eleva/acessorio/${a.id}`} className="wp-acess-nome">{a.nome}</Link>
                 <span className="wp-acess-preco">{precoLabel(a)}</span>
               </div>
               <p className="wp-acess-benef">{a.beneficio}</p>

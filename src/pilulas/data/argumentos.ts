@@ -1,4 +1,4 @@
-// "QUAL O SEU ARGUMENTO MATADOR?" — a pergunta que a gerência faz ao time.
+// "QUAL O SEU ARGUMENTO DECISIVO?" — a pergunta que a gerência faz ao time.
 //
 // A ideia é simples e a razão é forte: quem descobre o que fecha a venda é quem
 // está no showroom, não quem escreve o material. O vendedor que vendeu doze
@@ -26,7 +26,7 @@ export interface Argumento {
   brand: BrandId;
   productId: string;
   productName: string;
-  /** Os três pontos que a pessoa considera matadores, na ordem que ela escreveu. */
+  /** Os três argumentos que a pessoa considera decisivos, na ordem que escreveu. */
   pontos: string[];
   byName: string;
   byEmail: string;

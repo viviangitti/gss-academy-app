@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, X } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { vocab } from './data/vocabulario';
@@ -19,6 +19,7 @@ import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, c
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
 import { buscarArgumentos, destacarArgumento, apagarArgumento, palavrasQueSeRepetem, type Argumento } from './data/argumentos';
+import { carregarDestaques, salvarDestaques, useDestaquesTime, type DestaqueItem } from './data/destaquesTime';
 import { buscarLeads, type Lead } from './data/leads';
 import type { BrandId } from './data/brands';
 import type { Audience } from './AuthContext';
@@ -369,6 +370,30 @@ function ArgumentosPanel({ brandId, products }: { brandId: string; products: Pro
     return () => { vivo = false; };
   }, [brandId]);
 
+  useDestaquesTime();
+  const [usados, setUsados] = useState<Record<string, DestaqueItem[]>>({});
+  useEffect(() => {
+    products.forEach((p) => {
+      carregarDestaques(p.id).then((itens) => setUsados((u) => ({ ...u, [p.id]: itens }))).catch(() => {});
+    });
+  }, [products]);
+
+  // Promove uma frase do time a destaque do carro. É o "um toque": a resposta
+  // da rua vira o que o cliente lê, sem passar por código nem por mim.
+  const usar = async (produtoId: string, frase: string) => {
+    const atuais = usados[produtoId] || [];
+    if (atuais.length >= 5) return;
+    const novos = [...atuais, { titulo: frase.slice(0, 90) }];
+    setUsados((u) => ({ ...u, [produtoId]: novos }));
+    try { await salvarDestaques(produtoId, novos); } catch { /* offline */ }
+  };
+
+  const tirar = async (produtoId: string, i: number) => {
+    const novos = (usados[produtoId] || []).filter((_, k) => k !== i);
+    setUsados((u) => ({ ...u, [produtoId]: novos }));
+    try { await salvarDestaques(produtoId, novos); } catch { /* offline */ }
+  };
+
   const alternar = async (a: Argumento) => {
     const novo = !a.destacado;
     setArgs((lista) => lista.map((x) => (x.id === a.id ? { ...x, destacado: novo } : x)));
@@ -415,10 +440,40 @@ function ArgumentosPanel({ brandId, products }: { brandId: string; products: Pro
               </div>
             )}
 
+            {abertoAqui && (
+              <div className="wp-gz-destaq">
+                <b>Destaques deste carro ({usados[p.id]?.length || 0}/5)</b>
+                <p>
+                  É o que aparece na tela do carro E no material que o vendedor manda pro cliente.
+                  Toque em <i>usar</i> numa resposta abaixo pra incluir. Vazio = fica o texto de fábrica.
+                </p>
+                {(usados[p.id] || []).map((it, i) => (
+                  <span key={i} className="wp-gz-destaq-item">
+                    {it.titulo}
+                    <button type="button" onClick={() => tirar(p.id, i)} aria-label="Tirar">
+                      <X size={12} className="wp-ico" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+
             {abertoAqui && doCarro.map((a) => (
               <div key={a.id} className={`wp-gz-arg ${a.destacado ? 'on' : ''}`}>
                 <ol>
-                  {a.pontos.map((pt, i) => <li key={i}>{pt}</li>)}
+                  {a.pontos.map((pt, i) => (
+                    <li key={i}>
+                      {pt}
+                      <button
+                        type="button"
+                        className="wp-gz-usar"
+                        disabled={(usados[p.id]?.length || 0) >= 5 || (usados[p.id] || []).some((u) => u.titulo === pt.slice(0, 90))}
+                        onClick={() => usar(p.id, pt)}
+                      >
+                        usar
+                      </button>
+                    </li>
+                  ))}
                 </ol>
                 <div className="wp-gz-arg-pe">
                   <span>{a.byName}{a.byRole ? ` · ${a.byRole}` : ''}</span>

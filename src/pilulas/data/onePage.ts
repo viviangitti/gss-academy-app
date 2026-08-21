@@ -33,6 +33,9 @@ export interface DadosOnePage {
   fotoVendedor?: string;  // retrato: material com rosto é do vendedor, não da loja
   capa?: string;          // foto de capa (blob: do upload, ou http)
   fotos?: string[];       // galeria do modelo — a 1ª manda na capa
+  /** Destaques montados pela gerência a partir do que o time respondeu.
+   *  Quando vem, substitui os do código — a frase da rua ganha da de fábrica. */
+  destaques?: { titulo: string; prova?: string }[];
   accent: string;
   accentDeep: string;
 }
@@ -202,9 +205,11 @@ function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: H
   // muda na vida dele; a ficha é o que dá segurança pra ele repetir o argumento
   // pra mulher, pro marido, pro cunhado. Uma sem a outra não fecha.
   let y = yGal + (resto.length ? hGal : 0) + 88;
-  const itens = (p.destaques && p.destaques.length
-    ? p.destaques
-    : p.benefits.map((b) => ({ titulo: b, prova: undefined }))
+  const itens = (d.destaques?.length
+    ? d.destaques
+    : p.destaques?.length
+      ? p.destaques
+      : p.benefits.map((b) => ({ titulo: b, prova: undefined }))
   ).slice(0, 5);
 
   const sobra = yRodape - 44 - y;

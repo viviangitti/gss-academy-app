@@ -21,6 +21,7 @@ import { getBrand, isAuto, isBalcao } from './data/brands';
 import { vocab } from './data/vocabulario';
 import { gerarMaterial, compartilharMaterial } from './data/onePage';
 import { acessoriosPara, precoLabel, type Acessorio } from './data/acessorios';
+import { carregarDestaques, destaquesDoTime, useDestaquesTime } from './data/destaquesTime';
 import { getElevaProfile } from './data/profile';
 import { auth } from '../services/firebase';
 
@@ -685,6 +686,11 @@ export default function Product() {
   }, [user?.email]);
   const semContato = !whats.trim();
   const acessorios = product ? acessoriosPara(product.id) : [];
+  // Se a gerência montou os destaques a partir do que o time respondeu, é essa
+  // lista que vale — na tela e no material do cliente.
+  useDestaquesTime();
+  useEffect(() => { if (product) carregarDestaques(product.id).catch(() => {}); }, [product?.id]);
+  const doTime = product ? destaquesDoTime(product.id) : [];
   const [fotoAmpliada, setFotoAmpliada] = useState<Acessorio | null>(null);
   // As objeções que o gestor respondeu e publicou, deste produto.
   const [publicadas, setPublicadas] = useState<TeamObjection[]>([]);
@@ -743,6 +749,7 @@ export default function Product() {
         fotoVendedor: fotoVend,
         capa: getProductImageUrl(product.id) || product.imageUrl,
         fotos: product.fotos,
+        destaques: doTime.length ? doTime : undefined,
         accent: marca.accent,
         accentDeep: marca.accentDeep,
       });
@@ -831,9 +838,15 @@ export default function Product() {
       </div>
 
       <div className="wp-block">
-        <span className="wp-block-label"><BadgeCheck size={14} className="wp-ico" /> {auto ? 'Pontos fortes para destacar' : 'Benefícios para destacar'}</span>
+        <span className="wp-block-label">
+          <BadgeCheck size={14} className="wp-ico" />
+          {doTime.length ? 'O que o time diz que fecha' : auto ? 'Pontos fortes para destacar' : 'Benefícios para destacar'}
+        </span>
+        {/* A lista do TIME ganha da de fábrica quando existe — era só o rótulo
+            que mudava, e a lista continuava a do código: dizia "o que o time diz
+            que fecha" mostrando texto que o time nunca escreveu. */}
         <ul className="wp-benefits">
-          {product.benefits.map((b, idx) => (
+          {(doTime.length ? doTime.map((d) => d.titulo) : product.benefits).map((b, idx) => (
             <li key={idx}>{b}</li>
           ))}
         </ul>

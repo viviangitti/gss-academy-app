@@ -3151,3 +3151,28 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   margin: 0 0 10px; padding-left: 11px; border-left: 2px solid #c9a84c;
 }
 .wp-fa-pergunta b { color: #1a1a2e; }
+
+/* Painel: montar os destaques do carro a partir do que o time respondeu */
+.wp-gz-destaq {
+  margin-top: 9px; padding: 11px 12px; border-radius: 11px;
+  background: var(--wp-bg); border: 1px dashed var(--wp-pink);
+}
+.wp-gz-destaq b { display: block; font-size: 12.5px; }
+.wp-gz-destaq p { margin: 5px 0 9px; font-size: 11.5px; line-height: 1.5; color: var(--wp-soft); }
+.wp-gz-destaq-item {
+  display: inline-flex; align-items: center; gap: 6px; margin: 0 6px 6px 0;
+  background: var(--wp-pink); color: var(--wp-on-accent, #fff);
+  border-radius: 999px; padding: 5px 6px 5px 11px; font-size: 12px; font-weight: 600;
+}
+.wp-gz-destaq-item button {
+  border: 0; background: rgba(255,255,255,.25); color: inherit; cursor: pointer;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.wp-gz-arg li { display: flex; align-items: flex-start; gap: 8px; }
+.wp-gz-usar {
+  flex: 0 0 auto; cursor: pointer; margin-top: 1px;
+  border: 1px solid var(--wp-pink); background: transparent; color: var(--wp-pink-deep);
+  border-radius: 7px; padding: 2px 8px; font-size: 11px; font-weight: 800;
+}
+.wp-gz-usar:disabled { opacity: .35; cursor: default; border-color: var(--wp-line); color: var(--wp-soft); }

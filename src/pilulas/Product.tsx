@@ -4,7 +4,7 @@ import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
-  Volume2, FileDown, BookOpen, Users, Lock, ChevronRight, Package } from 'lucide-react';
+  Volume2, FileDown, BookOpen, Users, Lock, ChevronRight, Package, Maximize2, X } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
 import { submitObjection, fetchMyObjections, fetchPublicadas, objectionDate, type TeamObjection } from './data/objections';
@@ -20,7 +20,7 @@ import { useBrand } from './BrandContext';
 import { getBrand, isAuto, isBalcao } from './data/brands';
 import { vocab } from './data/vocabulario';
 import { gerarMaterial, compartilharMaterial } from './data/onePage';
-import { acessoriosPara, precoLabel } from './data/acessorios';
+import { acessoriosPara, precoLabel, type Acessorio } from './data/acessorios';
 import { getElevaProfile } from './data/profile';
 import { auth } from '../services/firebase';
 
@@ -685,6 +685,7 @@ export default function Product() {
   }, [user?.email]);
   const semContato = !whats.trim();
   const acessorios = product ? acessoriosPara(product.id) : [];
+  const [fotoAmpliada, setFotoAmpliada] = useState<Acessorio | null>(null);
   // As objeções que o gestor respondeu e publicou, deste produto.
   const [publicadas, setPublicadas] = useState<TeamObjection[]>([]);
   useEffect(() => {
@@ -958,6 +959,12 @@ export default function Product() {
           <p className="wp-acess-intro">Ofereça no fechamento, com o carro já escolhido. O código é o que você usa pra pedir.</p>
           {acessorios.map((a) => (
             <div key={a.id} className="wp-acess">
+              {a.foto && (
+                <button type="button" className="wp-acess-mini wp-acess-mini--card" onClick={() => setFotoAmpliada(a)} aria-label={`Ampliar foto de ${a.nome}`}>
+                  <img src={a.foto} alt={a.nome} loading="lazy" />
+                  <span className="wp-acess-lupa"><Maximize2 size={11} className="wp-ico" /></span>
+                </button>
+              )}
               <div className="wp-acess-topo">
                 <Link to={`/eleva/acessorio/${a.id}`} className="wp-acess-nome">{a.nome}</Link>
                 <span className="wp-acess-preco">{precoLabel(a)}</span>
@@ -1004,6 +1011,14 @@ export default function Product() {
             </p>
           )}
           {avisoOp && <p className="wp-op-aviso">{avisoOp}</p>}
+        </div>
+      )}
+
+      {fotoAmpliada?.foto && (
+        <div className="wp-foto-lb" onClick={() => setFotoAmpliada(null)} role="dialog" aria-label={fotoAmpliada.nome}>
+          <button type="button" className="wp-cond-lb-x" aria-label="Fechar"><X size={20} className="wp-ico" /></button>
+          <img src={fotoAmpliada.foto} alt={fotoAmpliada.nome} onClick={(e) => e.stopPropagation()} />
+          <span className="wp-foto-lb-cap">{fotoAmpliada.nome} · {precoLabel(fotoAmpliada)}</span>
         </div>
       )}
 

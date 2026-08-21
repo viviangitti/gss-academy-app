@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play } from 'lucide-react';
+import { Play, Maximize2, X } from 'lucide-react';
 import { CATEGORIES, visibleProducts, duracaoLabel, type Category } from './data/products';
 import { allProducts, hasImage, getProductImageUrl, ensureImageLoaded, useStore } from './data/store';
 import { useBrand } from './BrandContext';
 import { ehNovo } from './data/novidades';
-import { acessoriosDaMarca, precoLabel } from './data/acessorios';
+import { acessoriosDaMarca, precoLabel, type Acessorio } from './data/acessorios';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 
@@ -20,12 +20,20 @@ export default function Catalog() {
   // Afiliado só vê a linha GLPEN.
   const catalog = visibleProducts(allProducts().filter((p) => p.brand === brandId), user?.role);
   const acessorios = acessoriosDaMarca(brandId);
+  const [ampliada, setAmpliada] = useState<Acessorio | null>(null);
   // carrega as fotos de capa (IndexedDB) pra usar no card
   useEffect(() => {
     catalog.forEach((p) => { if (hasImage(p.id)) ensureImageLoaded(p.id); });
   }, [brandId]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className="wp-catalog">
+      {ampliada && (
+        <div className="wp-foto-lb" onClick={() => setAmpliada(null)} role="dialog" aria-label={ampliada.nome}>
+          <button type="button" className="wp-cond-lb-x" aria-label="Fechar"><X size={20} className="wp-ico" /></button>
+          <img src={ampliada.foto} alt={ampliada.nome} onClick={(e) => e.stopPropagation()} />
+          <span className="wp-foto-lb-cap">{ampliada.nome} · {precoLabel(ampliada)}</span>
+        </div>
+      )}
       <div className="wp-hero">
         <h1 className="wp-hero-title">{isAuto(brandId) ? 'Um carro por vez, em minutos.' : 'Um produto por vez, em minutos.'}</h1>
         <p className="wp-hero-sub">
@@ -52,13 +60,27 @@ export default function Catalog() {
             {cat === 'acessorio' && acessorios.length > 0 && (
               <div className="wp-acess-lista">
                 {acessorios.map((a) => (
-                  <Link key={a.id} to={`/eleva/acessorio/${a.id}`} className="wp-acess-linha">
-                    <span className="wp-acess-linha-txt">
+                  <div key={a.id} className="wp-acess-linha">
+                    {/* A miniatura é botão à parte: tocar nela AMPLIA a foto, tocar
+                        no resto abre o acessório. Acessório sem foto ninguém
+                        oferece — o vendedor não consegue imaginar a peça. */}
+                    {a.foto && (
+                      <button
+                        type="button"
+                        className="wp-acess-mini"
+                        onClick={(e) => { e.preventDefault(); setAmpliada(a); }}
+                        aria-label={`Ampliar foto de ${a.nome}`}
+                      >
+                        <img src={a.foto} alt={a.nome} loading="lazy" />
+                        <span className="wp-acess-lupa"><Maximize2 size={11} className="wp-ico" /></span>
+                      </button>
+                    )}
+                    <Link to={`/eleva/acessorio/${a.id}`} className="wp-acess-linha-txt">
                       <b>{a.nome}</b>
                       <i>{a.beneficio}</i>
-                    </span>
+                    </Link>
                     <span className="wp-acess-linha-preco">{precoLabel(a)}</span>
-                  </Link>
+                  </div>
                 ))}
               </div>
             )}

@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { ChevronLeft, Package, Copy, Check, Car } from 'lucide-react';
+import { ChevronLeft, Package, Copy, Check, Car, Maximize2, X } from 'lucide-react';
 import { useState } from 'react';
 import { ACESSORIOS, precoLabel } from './data/acessorios';
 import { findProduct } from './data/store';
@@ -13,6 +13,7 @@ export default function Acessorio() {
   const { id } = useParams();
   const a = ACESSORIOS.find((x) => x.id === id);
   const [copiado, setCopiado] = useState('');
+  const [ampliada, setAmpliada] = useState(false);
 
   if (!a) {
     return (
@@ -37,6 +38,20 @@ export default function Acessorio() {
       <Link to="/eleva/catalogo" className="wp-news-back">
         <ChevronLeft size={16} className="wp-ico" /> Voltar
       </Link>
+
+      {a.foto && (
+        <button type="button" className="wp-acp-foto" onClick={() => setAmpliada(true)} aria-label="Ampliar foto">
+          <img src={a.foto} alt={a.nome} />
+          <span className="wp-cond-zoom"><Maximize2 size={13} className="wp-ico" /> Ampliar</span>
+        </button>
+      )}
+      {ampliada && a.foto && (
+        <div className="wp-foto-lb" onClick={() => setAmpliada(false)} role="dialog" aria-label={a.nome}>
+          <button type="button" className="wp-cond-lb-x" aria-label="Fechar"><X size={20} className="wp-ico" /></button>
+          <img src={a.foto} alt={a.nome} onClick={(e) => e.stopPropagation()} />
+          <span className="wp-foto-lb-cap">{a.nome} · {precoLabel(a)}</span>
+        </div>
+      )}
 
       <div className="wp-acp-hero">
         <span className="wp-acp-tag"><Package size={13} className="wp-ico" /> Acessório original</span>

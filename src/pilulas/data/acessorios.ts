@@ -32,6 +32,8 @@ export interface Acessorio {
   /** Código de peça por modelo — o vendedor precisa disso pra pedir. */
   codigos: { modelo: string; pn: string }[];
   observacao?: string;
+  /** Foto do item. Acessório sem foto ninguém oferece: não dá pra imaginar. */
+  foto?: string;
 }
 
 const JAECOO = 'jaecoo-7';
@@ -54,6 +56,7 @@ export const ACESSORIOS: Acessorio[] = [
       { modelo: 'Jaecoo 7', pn: '08W01N30T1EJPY001' },
       { modelo: 'Omoda 7', pn: '08W01N30T1GCPY001' },
     ],
+    foto: '/acessorios/tapete-carpete-premium.jpg',
   },
   {
     id: 'estribo-iluminado',
@@ -65,6 +68,7 @@ export const ACESSORIOS: Acessorio[] = [
     preco: 9000,
     aplicaEm: [JAECOO],
     codigos: [{ modelo: 'Jaecoo 7', pn: '08CT1W20T1EJPHN001' }],
+    foto: '/acessorios/estribo-iluminado.jpg',
   },
   {
     id: 'rack-teto',
@@ -79,6 +83,7 @@ export const ACESSORIOS: Acessorio[] = [
       { modelo: 'Linha Jaecoo', pn: 'ZJP-CY3000362' },
       { modelo: 'Linha Omoda', pn: 'ZJP-CY3000361' },
     ],
+    foto: '/acessorios/rack-teto.jpg',
   },
   {
     id: 'bagageiro',
@@ -94,6 +99,7 @@ export const ACESSORIOS: Acessorio[] = [
       { modelo: 'Linha Omoda', pn: 'ZJP-CY3000365' },
     ],
     observacao: 'Precisa do rack de teto instalado.',
+    foto: '/acessorios/bagageiro.jpg',
   },
   {
     id: 'rack-bike',
@@ -106,6 +112,7 @@ export const ACESSORIOS: Acessorio[] = [
     aplicaEm: [JAECOO],
     codigos: [{ modelo: 'Linha Jaecoo', pn: '08Z01S2023TYY003' }],
     observacao: 'Precisa do rack de teto instalado.',
+    foto: '/acessorios/rack-bike.jpg',
   },
   {
     id: 'modification-kit-j7',
@@ -117,6 +124,7 @@ export const ACESSORIOS: Acessorio[] = [
     aplicaEm: [JAECOO],
     codigos: [{ modelo: 'Jaecoo 7', pn: 'ver comunicado PV033/2026' }],
     observacao: 'Preço inclui 4 horas de instalação. Confirme o valor vigente com a gerência.',
+    foto: '/acessorios/modification-kit-j7.jpg',
   },
 ];
 

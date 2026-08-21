@@ -18,6 +18,7 @@ import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, ty
 import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
+import { buscarArgumentos, destacarArgumento, apagarArgumento, palavrasQueSeRepetem, type Argumento } from './data/argumentos';
 import { buscarLeads, type Lead } from './data/leads';
 import type { BrandId } from './data/brands';
 import type { Audience } from './AuthContext';
@@ -344,6 +345,105 @@ function ObjecaoLinha({ o }: { o: TeamObjection }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// AS RESPOSTAS DO FORMULÁRIO "argumento matador", agrupadas por carro.
+//
+// Aqui não é lista de recado: é onde a opinião vira evidência. As palavras que
+// mais SE REPETEM aparecem em cima — se cinco de sete pessoas escreveram "teto
+// solar", isso não é gosto de ninguém, é o que funciona no showroom. O gestor
+// destaca as melhores e elas voltam pra dentro do carro.
+function ArgumentosPanel({ brandId, products }: { brandId: string; products: Product[] }) {
+  const [args, setArgs] = useState<Argumento[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  const [aberto, setAberto] = useState<string | null>(null);
+
+  useEffect(() => {
+    let vivo = true;
+    setCarregando(true);
+    buscarArgumentos(brandId as BrandId)
+      .then((r) => { if (vivo) setArgs(r); })
+      .finally(() => { if (vivo) setCarregando(false); });
+    return () => { vivo = false; };
+  }, [brandId]);
+
+  const alternar = async (a: Argumento) => {
+    const novo = !a.destacado;
+    setArgs((lista) => lista.map((x) => (x.id === a.id ? { ...x, destacado: novo } : x)));
+    try { await destacarArgumento(a.id, novo); } catch { /* offline: tenta de novo depois */ }
+  };
+
+  if (carregando) return null;
+
+  const comResposta = products.filter((p) => args.some((a) => a.productId === p.id));
+
+  return (
+    <div className="wp-gz-top">
+      <div className="wp-gz-top-head">
+        <MessageCircle size={12} className="wp-ico" /> Argumento matador — o que o time respondeu
+        {args.length > 0 && <span className="wp-gz-obj-count">{args.length}</span>}
+      </div>
+
+      {!args.length && (
+        <p className="wp-gz-help" style={{ margin: 0 }}>
+          Ninguém respondeu ainda. Mande o link no grupo: <b>gsseleva.com.br/argumentos</b> — abre
+          sem login, leva dois minutos e cai aqui.
+        </p>
+      )}
+
+      {comResposta.map((p) => {
+        const doCarro = args.filter((a) => a.productId === p.id);
+        const repetidas = palavrasQueSeRepetem(doCarro);
+        const abertoAqui = aberto === p.id;
+        return (
+          <div key={p.id} className="wp-gz-arg-carro">
+            <button type="button" className="wp-gz-arg-head" onClick={() => setAberto(abertoAqui ? null : p.id)}>
+              <b>{p.name}</b>
+              <span>{doCarro.length} {doCarro.length === 1 ? 'resposta' : 'respostas'}</span>
+              <ChevronDown size={15} className={`wp-ico ${abertoAqui ? 'wp-gz-arg-open' : ''}`} />
+            </button>
+
+            {repetidas.length > 0 && (
+              <div className="wp-gz-arg-nuvem">
+                {repetidas.map((r) => (
+                  <span key={r.termo} className="wp-gz-arg-termo">
+                    {r.termo} <i>{r.vezes}×</i>
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {abertoAqui && doCarro.map((a) => (
+              <div key={a.id} className={`wp-gz-arg ${a.destacado ? 'on' : ''}`}>
+                <ol>
+                  {a.pontos.map((pt, i) => <li key={i}>{pt}</li>)}
+                </ol>
+                <div className="wp-gz-arg-pe">
+                  <span>{a.byName}{a.byRole ? ` · ${a.byRole}` : ''}</span>
+                  <button
+                    type="button"
+                    className="wp-gz-del"
+                    aria-label="Apagar esta resposta"
+                    onClick={() => {
+                      if (!confirm(`Apagar a resposta de ${a.byName}?`)) return;
+                      apagarArgumento(a.id).then(() => setArgs((l) => l.filter((x) => x.id !== a.id)));
+                    }}
+                  >
+                    <Trash2 size={13} className="wp-ico" />
+                  </button>
+                  <button type="button" onClick={() => alternar(a)}>
+                    {a.destacado
+                      ? <><Check size={12} className="wp-ico" /> no app do time</>
+                      : 'Mandar pro time'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -1071,6 +1171,7 @@ export default function Gestor() {
         <>
           <Interessados email={user?.email} />
           <Resultados brandId={brandId} products={products} buscas={buscas} />
+          {auto && <ArgumentosPanel brandId={brandId} products={products} />}
           <ObjectionsPanel brandId={brandId} />
         </>
       )}

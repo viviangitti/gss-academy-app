@@ -98,6 +98,40 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Respostas do formulário aberto "seu argumento matador"
+    // (gsseleva.com.br/argumentos). Quem responde NÃO está logado — o time da
+    // concessionária ainda nem entrou no app, e exigir cadastro pra escrever
+    // três frases derrubaria a resposta pela metade.
+    //
+    // Como a criação é aberta, o FORMATO é a defesa: campos fixos, tamanho
+    // limitado, no máximo três pontos e a data tem que ser a do servidor. É o
+    // mesmo desenho dos contatos da vitrine, e é o que impede robô de spam de
+    // entupir a coleção.
+    //
+    // Ler, só o gestor. Ninguém edita nem apaga a resposta de ninguém — o
+    // gestor só liga/desliga o destaque.
+    match /elevaArgumentos/{id} {
+      allow create: if request.resource.data.keys().hasOnly(
+            ['brand', 'productId', 'productName', 'pontos', 'byName', 'byEmail', 'byRole', 'createdAt', 'destacado'])
+        && request.resource.data.brand is string && request.resource.data.brand.size() <= 40
+        && request.resource.data.productId is string && request.resource.data.productId.size() <= 60
+        && request.resource.data.productName is string && request.resource.data.productName.size() <= 80
+        && request.resource.data.pontos is list
+        && request.resource.data.pontos.size() >= 1 && request.resource.data.pontos.size() <= 3
+        && request.resource.data.byName is string
+        && request.resource.data.byName.size() >= 2 && request.resource.data.byName.size() <= 80
+        && request.resource.data.byEmail is string && request.resource.data.byEmail.size() <= 120
+        && request.resource.data.byRole is string && request.resource.data.byRole.size() <= 40
+        && request.resource.data.destacado == false
+        && request.resource.data.createdAt == request.time;
+      allow read: if isGestor()
+        || (request.auth != null && resource.data.destacado == true);
+      // O gestor só mexe no destaque — nem ele reescreve o que a pessoa disse.
+      allow update: if isGestor()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['destacado']);
+      allow delete: if isGestor();
+    }
+
     // Documentos do repositório. O arquivo vive partido em pedaços porque o
     // teto do Firestore é 1 MB por documento e um guia de venda passa de 5 MB.
     // A leitura é de quem está logado (é material de trabalho do time) e a

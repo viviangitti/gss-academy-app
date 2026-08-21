@@ -16,6 +16,7 @@ import Privacidade from './Privacidade';
 import Noticias from './Noticias';
 import Documentos from './Documentos';
 import Acessorio from './Acessorio';
+import FormArgumentos from './FormArgumentos';
 import Landing from './Landing';
 import Onboarding from './Onboarding';
 import BottomNav from './BottomNav';
@@ -249,6 +250,10 @@ function Shell() {
   // não está logado, mas quem USA o app fica logado e cairia direto no app —
   // sem isso a Vivian não conseguiria abrir a própria vitrine numa reunião.
   // É também o link pra mandar pra uma marca interessada.
+  if (location.pathname.startsWith('/argumentos') || location.pathname.startsWith('/eleva/argumentos')) {
+    return <FormArgumentos />;
+  }
+
   if (location.pathname.startsWith('/eleva/vitrine')) {
     return <Landing onEntrar={() => navigate('/eleva', { replace: true })} />;
   }
@@ -257,6 +262,12 @@ function Shell() {
     // A política de privacidade tem que abrir SEM login: o link dela fica no
     // rodapé da tela de entrada e na caixa de aceite do cadastro — quem ainda
     // não tem conta é justamente quem precisa lê-la antes de aceitar.
+    // O FORMULÁRIO ABERTO tem que abrir SEM login — é um link de WhatsApp pra
+    // quem ainda nem tem conta. Vale nos dois endereços: o curto, que é o que a
+    // gerência manda, e o de dentro do app.
+    if (location.pathname.startsWith('/argumentos') || location.pathname.startsWith('/eleva/argumentos')) {
+      return <FormArgumentos />;
+    }
     if (location.pathname.startsWith('/eleva/privacidade')) {
       return (
         <div className="wp-app" style={themeStyle}>

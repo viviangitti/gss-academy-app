@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Maximize2, X } from 'lucide-react';
+import { Play, Maximize2, X, Wrench } from 'lucide-react';
 import { CATEGORIES, visibleProducts, duracaoLabel, type Category } from './data/products';
 import { allProducts, hasImage, getProductImageUrl, ensureImageLoaded, useStore } from './data/store';
 import { useBrand } from './BrandContext';
@@ -54,33 +54,38 @@ export default function Catalog() {
               <CatIcon size={18} className="wp-section-emoji" />
               {CATEGORIES[cat].label}
             </h2>
-            {/* Acessório é outro tipo de item: tem código de peça, preço público
-                e vale pra vários modelos. Por isso não é um card de carro — é
-                uma linha com o benefício na frente e o código a um toque. */}
+            {/* Acessório usa o MESMO card do carro: mesma grade, mesma foto em
+                cima, mesmo nome e mesma linha de baixo. O que muda é o selo — no
+                carro é a duração do vídeo, aqui é o preço, que é o número que
+                importa no fechamento. Formato diferente fazia o acessório
+                parecer item de segunda categoria na mesma tela. */}
             {cat === 'acessorio' && acessorios.length > 0 && (
-              <div className="wp-acess-lista">
+              <div className="wp-grid">
                 {acessorios.map((a) => (
-                  <div key={a.id} className="wp-acess-linha">
-                    {/* A miniatura é botão à parte: tocar nela AMPLIA a foto, tocar
-                        no resto abre o acessório. Acessório sem foto ninguém
-                        oferece — o vendedor não consegue imaginar a peça. */}
-                    {a.foto && (
-                      <button
-                        type="button"
-                        className="wp-acess-mini"
-                        onClick={(e) => { e.preventDefault(); setAmpliada(a); }}
-                        aria-label={`Ampliar foto de ${a.nome}`}
-                      >
-                        <img src={a.foto} alt={a.nome} loading="lazy" />
-                        <span className="wp-acess-lupa"><Maximize2 size={11} className="wp-ico" /></span>
-                      </button>
-                    )}
-                    <Link to={`/eleva/acessorio/${a.id}`} className="wp-acess-linha-txt">
-                      <b>{a.nome}</b>
-                      <i>{a.beneficio}</i>
-                    </Link>
-                    <span className="wp-acess-linha-preco">{precoLabel(a)}</span>
-                  </div>
+                  <Link key={a.id} to={`/eleva/acessorio/${a.id}`} className="wp-card">
+                    <div className="wp-card-thumb wp-card-thumb--acess">
+                      {a.foto
+                        ? <img src={a.foto} alt={a.nome} className="wp-card-img wp-card-img--acess" loading="lazy" />
+                        : <Wrench size={40} strokeWidth={1.5} className="wp-card-emoji" />}
+                      <span className="wp-card-dur wp-card-dur--preco">{precoLabel(a)}</span>
+                      {/* A lupa amplia sem sair da tela: o vendedor quer conferir
+                          a peça, não abrir a ficha inteira. */}
+                      {a.foto && (
+                        <button
+                          type="button"
+                          className="wp-card-lupa"
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setAmpliada(a); }}
+                          aria-label={`Ampliar foto de ${a.nome}`}
+                        >
+                          <Maximize2 size={13} className="wp-ico" />
+                        </button>
+                      )}
+                    </div>
+                    <div className="wp-card-body">
+                      <h3 className="wp-card-name">{a.nome}</h3>
+                      <p className="wp-card-tag">{a.beneficio}</p>
+                    </div>
+                  </Link>
                 ))}
               </div>
             )}
@@ -92,7 +97,11 @@ export default function Catalog() {
             <div className="wp-grid">
               {items.map((p) => {
                 const CardIcon = CATEGORIES[p.category].Icon;
-                const capa = getProductImageUrl(p.id) || p.imageUrl;
+                // A galeria do modelo também serve de capa. Sem isto o carro
+                // aparecia como gradiente e ícone no catálogo, enquanto o
+                // acessório ao lado tinha foto — e o carro é o item principal.
+                // Ordem: capa que o gestor subiu > imageUrl > 1ª foto da galeria.
+                const capa = getProductImageUrl(p.id) || p.imageUrl || p.fotos?.[0];
                 return (
                   <Link key={p.id} to={`/eleva/produto/${p.id}`} className="wp-card">
                     <div

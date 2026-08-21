@@ -3176,3 +3176,18 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   border-radius: 7px; padding: 2px 8px; font-size: 11px; font-weight: 800;
 }
 .wp-gz-usar:disabled { opacity: .35; cursor: default; border-color: var(--wp-line); color: var(--wp-soft); }
+
+/* Acessório no card do carro: foto de produto pede fundo claro e "contain",
+   senão a peça no fundo branco aparece cortada dentro do quadro escuro. */
+.wp-card-thumb--acess { background: #fff; }
+.wp-card-img--acess { object-fit: contain; padding: 10px; }
+.wp-card-dur--preco {
+  background: var(--wp-pink); color: var(--wp-on-accent, #fff);
+  font-weight: 800; letter-spacing: 0;
+}
+.wp-card-lupa {
+  position: absolute; right: 7px; bottom: 7px; cursor: pointer;
+  width: 26px; height: 26px; border-radius: 8px; border: 0;
+  background: rgba(12, 16, 28, .72); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}

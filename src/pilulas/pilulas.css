@@ -3146,3 +3146,8 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-gz-arg.on .wp-gz-arg-pe button {
   background: var(--wp-pink); border-color: var(--wp-pink); color: var(--wp-on-accent, #fff);
 }
+.wp-fa-pergunta {
+  font-size: 13.5px; line-height: 1.5; color: #4b5563;
+  margin: 0 0 10px; padding-left: 11px; border-left: 2px solid #c9a84c;
+}
+.wp-fa-pergunta b { color: #1a1a2e; }

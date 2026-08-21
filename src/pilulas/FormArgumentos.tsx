@@ -3,7 +3,7 @@ import { ArrowUpRight, Check, Send } from 'lucide-react';
 import { PRODUCTS } from './data/products';
 import { enviarArgumento } from './data/argumentos';
 
-// O FORMULÁRIO ABERTO ("qual o seu argumento decisivo?") — o endereço que a
+// O FORMULÁRIO ABERTO ("quais os 3 argumentos matadores?") — o endereço que a
 // gerência manda no grupo do WhatsApp.
 //
 // Sem login de propósito: pedir cadastro pra responder três frases derruba a
@@ -82,10 +82,11 @@ export default function FormArgumentos() {
         <span className="wp-fa-loja">Ramasa · Jaecoo e Omoda</span>
       </header>
 
-      <h1 className="wp-fa-titulo">Qual o seu argumento decisivo?</h1>
+      <h1 className="wp-fa-titulo">Quais os 3 argumentos “matadores” na sua opinião?</h1>
       <p className="wp-fa-lead">
         Quem descobre o que fecha a venda é quem está no showroom — não quem escreve o material.
-        Em cada carro que você vende, escreva os <b>3 argumentos</b> que você usa e que fazem o cliente parar de comparar.
+        Para cada carro que você vende, escreva os <b>3 argumentos ou benefícios</b> que fazem o cliente
+        parar de comparar.
       </p>
       <p className="wp-fa-lead wp-fa-lead--pequeno">
         Responda só dos modelos que você atende. Leva dois minutos, e o que a gerência escolher
@@ -108,6 +109,12 @@ export default function FormArgumentos() {
               <i>{c.tagline.slice(0, 90)}</i>
             </div>
           </div>
+          {/* A pergunta se repete em cada carro de propósito: quem responde no
+              celular rola a tela e perde o enunciado do topo — e aí escreve
+              característica em vez de argumento. */}
+          <p className="wp-fa-pergunta">
+            Quais os 3 argumentos ou benefícios do <b>{c.name}</b> são “matadores” na sua opinião?
+          </p>
           {[0, 1, 2].map((i) => (
             <input
               key={i}
@@ -115,7 +122,7 @@ export default function FormArgumentos() {
               value={respostas[c.id]?.pontos[i] || ''}
               onChange={(e) => set(c.id, i, e.target.value)}
               placeholder={
-                i === 0 ? '1º argumento decisivo' : i === 1 ? '2º argumento' : '3º argumento'
+                i === 0 ? '1º argumento' : i === 1 ? '2º argumento' : '3º argumento'
               }
             />
           ))}

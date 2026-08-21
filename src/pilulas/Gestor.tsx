@@ -349,7 +349,7 @@ function ObjecaoLinha({ o }: { o: TeamObjection }) {
   );
 }
 
-// AS RESPOSTAS DO FORMULÁRIO "argumento decisivo", agrupadas por carro.
+// AS RESPOSTAS DO FORMULÁRIO "argumentos matadores", agrupadas por carro.
 //
 // Aqui não é lista de recado: é onde a opinião vira evidência. As palavras que
 // mais SE REPETEM aparecem em cima — se cinco de sete pessoas escreveram "teto
@@ -382,7 +382,7 @@ function ArgumentosPanel({ brandId, products }: { brandId: string; products: Pro
   return (
     <div className="wp-gz-top">
       <div className="wp-gz-top-head">
-        <MessageCircle size={12} className="wp-ico" /> Argumento decisivo — o que o time respondeu
+        <MessageCircle size={12} className="wp-ico" /> Argumentos “matadores” — o que o time respondeu
         {args.length > 0 && <span className="wp-gz-obj-count">{args.length}</span>}
       </div>
 

@@ -35,9 +35,18 @@ export default function Catalog() {
         </div>
       )}
       <div className="wp-hero">
-        <h1 className="wp-hero-title">{isAuto(brandId) ? 'Um carro por vez, em minutos.' : 'Um produto por vez, em minutos.'}</h1>
+        {/* A copy antiga falava do FORMATO do app ("um carro por vez, em
+            minutos") — e tinha vindo traduzida da versão de farmácia. Quem abre
+            esta tela não está pensando no formato: está com um cliente que
+            passou a noite pesquisando. É esse o problema que a frase precisa
+            reconhecer. */}
+        <h1 className="wp-hero-title">
+          {isAuto(brandId) ? 'O cliente já pesquisou. Você tem a resposta.' : 'Um produto por vez, em minutos.'}
+        </h1>
         <p className="wp-hero-sub">
-          {isAuto(brandId) ? 'Conheça o carro, quebre a objeção e mande a condição pro cliente — sem sair daqui.' : 'Aprenda o benefício, quebre a objeção e envie a resposta pronta à cliente — sem sair daqui.'}
+          {isAuto(brandId)
+            ? 'Em cada carro: o que destacar, o que responder na objeção e o material pronto pra mandar.'
+            : 'Aprenda o benefício, quebre a objeção e envie a resposta pronta à cliente — sem sair daqui.'}
         </p>
       </div>
 

@@ -878,7 +878,7 @@ export const PRODUCTS: Product[] = [
       'O Jaecoo 7 é o SUV que abre a marca Jaecoo no Brasil. A Jaecoo faz parte do grupo Chery, que está no país desde 2009. Chega em três versões: ELITE e as SHS Luxury e Prestige, que usam o sistema híbrido plug-in — motor 1.5 TGDI de 135 cv somado a um motor elétrico de 204 cv, com transmissão DHT de 3ª geração e bateria de lítio-ferro-fosfato de 18,3 kWh.',
     benefits: [
       'Sistema SHS: 1.5 TGDI de 135 cv + elétrico de 204 cv, com 44,5% de eficiência térmica declarada',
-      'Pacote de série cheio para a faixa — teto solar panorâmico de 1,1 m², multimídia J-PAD de 14,8", painel digital de 10,25" e maçanetas retráteis',
+      'Pacote de série cheio para a faixa — teto solar panorâmico de 1,1 m², multimídia de 13,2" (14,8" na Prestige), painel digital de 10,25" e maçanetas retráteis',
       'Carroceria com 80% de aço de alta resistência e pacote ADAS completo (AEB, ACC, LDW, TJA, FCW, CSA)',
       'Marca do grupo Chery, no Brasil desde 2009 — rede e peça já existem no país',
     ],
@@ -933,7 +933,7 @@ export const PRODUCTS: Product[] = [
     gradient: ['#1e6fd9', '#0f3a75'],
     ficha: [
       { label: 'Marca', value: 'Jaecoo (grupo Chery)' },
-      { label: 'Versões', value: 'SHS-H Luxury · SHS-P Prestige' },
+      { label: 'Versões', value: 'ELITE · LUXURY · PRESTIGE (line-up MY27)' },
       { label: 'Tipo', value: 'Híbrido plug-in (SHS de 3ª geração) — roda como híbrido só abastecendo' },
       { label: 'Motor a combustão', value: '1.5 TGDI — 135 cv e 20,4 kgfm' },
       { label: 'Motor elétrico', value: '204 cv e 31,6 kgfm' },
@@ -948,7 +948,7 @@ export const PRODUCTS: Product[] = [
       { label: 'Entre-eixos', value: '2.672 mm' },
       { label: 'Porta-malas', value: '500 L — mais de 1.300 L com os bancos rebatidos' },
       { label: 'Altura do solo', value: '17,4 cm' },
-      { label: 'Telas', value: 'Multimídia J-PAD de 14,8" e painel digital de 10,25"' },
+      { label: 'Telas', value: 'Multimídia de 13,2" na ELITE e LUXURY, 14,8" na PRESTIGE · painel digital de 10,25"' },
       { label: 'Segurança', value: '7 airbags · câmera 540° · pacote ADAS 2.5 (Prestige)' },
       { label: 'Garantia', value: '8 anos — confirmar limite de km vigente com a Ramasa' },
       { label: '1ª revisão', value: 'R$ 699 · 5 anos de revisão: R$ 3.216 (valores da marca, confirmar o vigente)' },
@@ -957,7 +957,7 @@ export const PRODUCTS: Product[] = [
       { t: '0-5s', label: 'GANCHO', line: 'O cliente gostou do carro. Aí ele fala: "mas é chinês, né?"' },
       { t: '5-15s', label: 'A CAUSA', line: 'Marca nova assusta porque o cliente não tem referência. Ele não está negando o carro — está pedindo segurança.' },
       { t: '15-30s', label: 'O ARGUMENTO', line: 'Jaecoo é do grupo Chery, no Brasil desde 2009. Rede e peça existem aqui. E o SHS entrega 135 cv de motor a combustão mais 204 cv de elétrico.' },
-      { t: '30-40s', label: 'A VIRADA', line: 'Compare item a item: teto panorâmico, ADAS completo, tela de 14,8". Na concorrência isso é opcional.' },
+      { t: '30-40s', label: 'A VIRADA', line: 'Compare item a item: teto panorâmico, ADAS completo, tela de até 14,8 polegadas. Na concorrência isso é opcional.' },
       { t: '40-45s', label: 'CTA', line: 'Agende o test drive e mande a condição por escrito — ela tem validade.' },
     ],
     niveis: [

@@ -83,7 +83,7 @@ export default function Catalog() {
                 <div className="wp-grid">
                 {daOrigem.map((a) => (
                   <Link key={a.id} to={`/eleva/acessorio/${a.id}`} className="wp-card">
-                    <div className="wp-card-thumb wp-card-thumb--acess">
+                    <div className={`wp-card-thumb wp-card-thumb--acess ${a.foto ? '' : 'wp-card-thumb--semfoto'}`}>
                       {a.foto
                         ? <img src={a.foto} alt={a.nome} className="wp-card-img wp-card-img--acess" loading="lazy" />
                         : <Wrench size={40} strokeWidth={1.5} className="wp-card-emoji" />}

@@ -3257,3 +3257,11 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   font-size: 12.5px; font-weight: 700; cursor: pointer;
 }
 .wp-acess-todos:hover { color: var(--wp-text); }
+
+/* Serviço da loja não tem foto de peça — PPF e vitrificação não são um objeto
+   numa caixa. Sem isso o card fica com um retângulo branco enorme em cima do
+   nome, e vinte e um deles em sequência viram um vazio na tela. A capa encolhe
+   pro tamanho do selo de preço e o nome sobe. */
+.wp-card-thumb--semfoto { aspect-ratio: auto; min-height: 0; height: 46px; }
+.wp-card-thumb--semfoto .wp-card-emoji { display: none; }
+.wp-card-thumb--semfoto .wp-card-dur--preco { top: 9px; left: 10px; right: auto; bottom: auto; }

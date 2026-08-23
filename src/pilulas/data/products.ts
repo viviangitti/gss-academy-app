@@ -53,6 +53,30 @@ export interface Nivel {
   storyboard: Scene[];
 }
 
+/**
+ * VERSÃO DO MODELO — o que muda de uma pra outra.
+ *
+ * Existe porque o carro não é um só. O Jaecoo 7 tem três versões e a diferença
+ * entre a de entrada e a de topo é head-up display, som Sony, dashcam e um
+ * pacote inteiro de assistência. Vendedor que decorou a ficha da versão de cima
+ * e mostra a de entrada promete o que o cliente não vai encontrar na entrega —
+ * e aí a conta não chega no showroom, chega no pós-vendas.
+ *
+ * A lista é CUMULATIVA de propósito: cada versão só carrega o que ELA acrescenta,
+ * e `herda` diz de onde vem o resto. É como a fábrica publica e é como o
+ * vendedor precisa falar — "tudo da Luxury, mais isso aqui" fecha mais rápido
+ * que repetir trinta itens.
+ */
+export interface Versao {
+  nome: string;
+  /** Uma linha: pra que cliente essa versão é. */
+  paraQuem: string;
+  /** Nome da versão de baixo, quando esta herda tudo dela. */
+  herda?: string;
+  /** O que ESTA versão traz a mais (ou tudo, quando é a de entrada). */
+  vemCom: string[];
+}
+
 export interface Product {
   id: string;
   brand: BrandId;
@@ -97,6 +121,8 @@ export interface Product {
   destaques?: { titulo: string; prova?: string }[];
   buyUrl?: string; // e-commerce oficial — a cliente compra direto
   ficha?: FichaRow[]; // ficha técnica p/ consulta rápida no balcão
+  /** Versões do modelo, da de entrada pra de topo. */
+  versoes?: Versao[];
 }
 
 // Linha que o AFILIADO enxerga. Hoje ele só trabalha a GLPEN — o resto do
@@ -931,6 +957,65 @@ export const PRODUCTS: Product[] = [
     ],
     durationSec: 45,
     gradient: ['#1e6fd9', '#0f3a75'],
+    versoes: [
+      {
+        nome: 'ELITE',
+        paraQuem: 'A porta de entrada — e já entrega o que a concorrência cobra à parte.',
+        vemCom: [
+          'Motor 1.5 TGDI de 135 cv com transmissão DHT e motor elétrico de 204 cv',
+          'Bateria de 18,3 kWh',
+          'Rodas de liga leve de 19"',
+          'Conjunto óptico dianteiro e traseiro Full LED, com DRL em LED',
+          'Maçanetas externas retráteis',
+          'Retrovisores elétricos, rebatíveis e aquecidos',
+          'Ar-condicionado automático digital dual zone',
+          'Bancos dianteiros elétricos',
+          'Iluminação ambiente',
+          'Porta-malas elétrico com sensor de presença',
+          'Carregador por indução com refrigeração',
+          'Freio de estacionamento eletrônico com Auto Hold',
+          'Sistema GPS nativo',
+          'Painel de instrumentos digital de 10,25"',
+          'Central multimídia de 13,2"',
+          'Partida do motor sem botão (contactless power-on)',
+          'Som com 6 alto-falantes',
+          '6 airbags — frontais, laterais e de cortina',
+          'Freio a disco nas 4 rodas, com ABS, EBD, BAS e BOS',
+          'Sensores de estacionamento dianteiros e traseiros, e câmera de ré',
+          'Espelho retrovisor interno eletrocrômico',
+          'Pacote ADAS de direção inteligente (IHC, FCW, AEB, LDW, ACC, DAI, TJA e CSA)',
+        ],
+      },
+      {
+        nome: 'LUXURY',
+        paraQuem: 'Pra quem quer o teto solar e o conforto do dia a dia sem ir pro topo.',
+        herda: 'ELITE',
+        vemCom: [
+          'Bancos dianteiros com ventilação',
+          'Teto solar panorâmico elétrico',
+          'Airbag de joelho para o motorista',
+          'Câmera 540º',
+          'IOV — o aplicativo do carro',
+          'Atualização remota OTA (Over-The-Air)',
+        ],
+      },
+      {
+        nome: 'PRESTIGE',
+        paraQuem: 'O topo: é aqui que entram HUD, som Sony, dashcam e o ADAS 2.5.',
+        herda: 'LUXURY',
+        vemCom: [
+          'Central multimídia de 14,8"',
+          'Cockpit digital colorido (head-up display)',
+          'Sistema de som Sony com 8 alto-falantes',
+          'Dashcam',
+          'Bancos dianteiros aquecidos',
+          'Banco do motorista com memória e sistema Welcome',
+          'Retrovisores com memória',
+          'Iluminação de projeção externa nas portas',
+          'Pacote ADAS 2.5 de proteção avançada (DOW, DMS, RCW, RCTB, BSD, ELK, LCA)',
+        ],
+      },
+    ],
     ficha: [
       { label: 'Marca', value: 'Jaecoo (grupo Chery)' },
       { label: 'Versões', value: 'ELITE · LUXURY · PRESTIGE (line-up MY27)' },
@@ -1048,6 +1133,46 @@ export const PRODUCTS: Product[] = [
     ],
     durationSec: 45,
     gradient: ['#3f8f8a', '#123a3c'],
+    versoes: [
+      {
+        nome: 'LUXURY',
+        paraQuem: 'A de entrada do Omoda 5 — já com teto solar e as duas telas de 12,3".',
+        vemCom: [
+          'Motor 1.5T HEV com transmissão DHT',
+          'Bateria de 1,8 kWh',
+          'Rodas de 18"',
+          'Faróis em LED com sensor crepuscular e lanternas em LED',
+          'Espelhos aquecidos e com rebatimento',
+          'Teto solar elétrico',
+          'Bancos em tecido + tecido premium',
+          'Volante multifuncional em couro',
+          'Painel digital de 12,3" e central multimídia de 12,3"',
+          'Som com 6 alto-falantes',
+          'Piloto automático',
+          'Ar-condicionado dual zone',
+          '7 airbags',
+          'ABS + VSC + TRC',
+          'Câmera 360º',
+          'Sensor de estacionamento dianteiro e traseiro',
+          'TPMS — monitoramento de pressão dos pneus',
+        ],
+      },
+      {
+        nome: 'PRESTIGE',
+        paraQuem: 'Pra quem senta no banco e decide: revestimento premium, ventilação e som Sony.',
+        herda: 'LUXURY',
+        vemCom: [
+          'Porta-malas elétrico',
+          'Bancos com revestimento premium',
+          'Bancos dianteiros elétricos, aquecidos e ventilados',
+          'Espelho interno eletrocrômico',
+          'Sistema de som Sony com 8 alto-falantes',
+          'Sensor de chuva',
+          'Carregador sem fio de 50 W com refrigeração',
+          'Pacote ADAS 2.5',
+        ],
+      },
+    ],
     ficha: [
       { label: 'Marca', value: 'Omoda (grupo Chery)' },
       { label: 'Versões', value: 'SHS-H Luxury · SHS-H Prestige' },
@@ -1266,6 +1391,55 @@ export const PRODUCTS: Product[] = [
     ],
     durationSec: 45,
     gradient: ['#8b6cf0', '#2a1f5c'],
+    versoes: [
+      {
+        nome: 'LUXURY',
+        paraQuem: 'A de entrada do Omoda 7 — e já vem com a tela de 15,6" e o ADAS 2.5.',
+        vemCom: [
+          'Motor 1.5 TGDI SHS com transmissão DHT',
+          'Bateria de 18,4 kWh',
+          'Rodas de 19"',
+          'Faróis em LED com função welcome e sensor crepuscular',
+          'Lanternas lightning LED',
+          'Espelhos aquecidos, com rebatimento e memória',
+          'Teto solar wide-panorama',
+          'Porta-malas elétrico',
+          'Bancos com revestimento premium',
+          'Bancos dianteiros elétricos e ventilados',
+          'Banco do motorista com memória',
+          'Volante multifuncional em couro',
+          'Painel digital de 8,8"',
+          'Central multimídia UHD 2.5K de 15,6"',
+          'Carregador sem fio de 50 W com refrigeração',
+          'Ar-condicionado dual zone',
+          'Partida sem botão (contactless power-on)',
+          '7 airbags — dianteiro, lateral, cortina e joelho',
+          'ABS + VSC + TRC',
+          'Câmera 540º',
+          'Sensor de estacionamento dianteiro e traseiro',
+          'TPMS — monitoramento de pressão dos pneus',
+          'Pacote ADAS 2.5',
+        ],
+      },
+      {
+        nome: 'PRESTIGE',
+        paraQuem: 'O banco do passageiro com massagem é o argumento — quem senta nele decide a compra.',
+        herda: 'LUXURY',
+        vemCom: [
+          'Rodas de 20"',
+          'Banco do passageiro VIP, com massagem e função relax',
+          'Banco do motorista com ajuste lombar elétrico',
+          'Aquecimento dos bancos dianteiros e do banco traseiro',
+          'Volante com aquecimento',
+          'Head-up display colorido',
+          'Central multimídia UHD 2.5K de 15,6" com smart sliding',
+          'Concert sound com 12 alto-falantes e 390 W RMS',
+          'Airbag central dianteiro',
+          'Charger indicator lights',
+          "Sistema de fragrâncias L'Essence",
+        ],
+      },
+    ],
     ficha: [
       { label: 'Marca', value: 'Omoda (grupo Chery)' },
       { label: 'Versões', value: 'SHS-P Luxury · SHS-P Prestige' },

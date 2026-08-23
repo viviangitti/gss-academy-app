@@ -5,7 +5,7 @@ import { CATEGORIES, visibleProducts, duracaoLabel, type Category } from './data
 import { allProducts, hasImage, getProductImageUrl, ensureImageLoaded, useStore } from './data/store';
 import { useBrand } from './BrandContext';
 import { ehNovo } from './data/novidades';
-import { acessoriosDaMarca, precoLabel, type Acessorio } from './data/acessorios';
+import { acessoriosDaMarca, acessoriosPorOrigem, ORIGENS, precoLabel, type Acessorio, type OrigemAcessorio } from './data/acessorios';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 
@@ -68,9 +68,20 @@ export default function Catalog() {
                 carro é a duração do vídeo, aqui é o preço, que é o número que
                 importa no fechamento. Formato diferente fazia o acessório
                 parecer item de segunda categoria na mesma tela. */}
-            {cat === 'acessorio' && acessorios.length > 0 && (
-              <div className="wp-grid">
-                {acessorios.map((a) => (
+            {/* Duas listas, e a separação não é organização: é o que evita o
+                vendedor prometer "sai hoje" numa peça que vem de pedido, ou
+                mandar o cliente colocar película na rua. */}
+            {cat === 'acessorio' && acessorios.length > 0 && (['loja', 'fabrica'] as OrigemAcessorio[]).map((origem) => {
+              const daOrigem = acessoriosPorOrigem(brandId, origem);
+              if (!daOrigem.length) return null;
+              return (
+              <div key={origem} className="wp-acess-grupo">
+                <div className="wp-acess-grupo-cab">
+                  <h3 className="wp-acess-grupo-nome">{ORIGENS[origem].label}</h3>
+                  <p className="wp-acess-grupo-nota">{ORIGENS[origem].nota}</p>
+                </div>
+                <div className="wp-grid">
+                {daOrigem.map((a) => (
                   <Link key={a.id} to={`/eleva/acessorio/${a.id}`} className="wp-card">
                     <div className="wp-card-thumb wp-card-thumb--acess">
                       {a.foto
@@ -96,8 +107,10 @@ export default function Catalog() {
                     </div>
                   </Link>
                 ))}
+                </div>
               </div>
-            )}
+              );
+            })}
             {!items.length && cat !== 'acessorio' && (
               <p className="wp-section-vazio">
                 Nada cadastrado nesta seção ainda.

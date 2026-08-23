@@ -4,7 +4,7 @@ import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
   ArrowUpRight, Play, Pause, Plus, Minus, Camera,
   Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
-  Volume2, FileDown, BookOpen, Users, Lock, ChevronRight, Package, Maximize2, X } from 'lucide-react';
+  Volume2, FileDown, BookOpen, Users, Lock, ChevronRight, Package, Maximize2, Layers, X } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
 import { submitObjection, fetchMyObjections, fetchPublicadas, objectionDate, type TeamObjection } from './data/objections';
@@ -668,6 +668,9 @@ export default function Product() {
   const product = id ? findProduct(id) : undefined;
   const [openObj, setOpenObj] = useState<number | null>(0);
   const [openFicha, setOpenFicha] = useState(false);
+  const [openVers, setOpenVers] = useState(false);
+  const [versAberta, setVersAberta] = useState<string | null>(null);
+  const [verTodosAcess, setVerTodosAcess] = useState(false);
   const [shareIdx, setShareIdx] = useState(0);
   // Gestor: qual público ele está ASSISTINDO (null = o vídeo padrão).
   const [previewAud, setPreviewAud] = useState<Audience | null>(null);
@@ -852,6 +855,56 @@ export default function Product() {
         </ul>
       </div>
 
+      {/* VERSÕES — fica ANTES da ficha técnica de propósito.
+          A primeira pergunta real do cliente no showroom não é quantos litros
+          tem o porta-malas, é "e a de cima, o que muda?". Quem responde isso na
+          hora, sem folhear catálogo, sobe o ticket sem empurrar nada. */}
+      {product.versoes && product.versoes.length > 0 && (
+        <div className="wp-vers">
+          <button className="wp-ficha-toggle" onClick={() => setOpenVers((o) => !o)}>
+            <Layers size={15} className="wp-ico" /> Versões — o que muda de uma pra outra
+            <ChevronDown size={16} className={`wp-ico wp-ficha-chev ${openVers ? 'open' : ''}`} />
+          </button>
+          {openVers && (
+            <div className="wp-vers-lista">
+              {/* Cada versão abre sozinha. A pergunta do showroom é "o que a de
+                  cima tem a mais" — nove itens. Abrir tudo de uma vez entrega
+                  trinta e sete e a pessoa fecha antes de achar a resposta. */}
+              {product.versoes.map((v) => {
+                const aberta = versAberta === v.nome;
+                return (
+                  <div className={`wp-vers-item ${aberta ? 'aberta' : ''}`} key={v.nome}>
+                    <button
+                      type="button"
+                      className="wp-vers-cab"
+                      onClick={() => setVersAberta(aberta ? null : v.nome)}
+                      aria-expanded={aberta}
+                    >
+                      <span className="wp-vers-cab-txt">
+                        <span className="wp-vers-nome">{v.nome}</span>
+                        <span className="wp-vers-quem">{v.paraQuem}</span>
+                      </span>
+                      <span className="wp-vers-conta">
+                        {v.herda ? `+${v.vemCom.length}` : `${v.vemCom.length} itens`}
+                        <ChevronDown size={15} className={`wp-ico wp-ficha-chev ${aberta ? 'open' : ''}`} />
+                      </span>
+                    </button>
+                    {aberta && (
+                      <>
+                        {v.herda && <p className="wp-vers-herda">Tudo da {v.herda}, mais:</p>}
+                        <ul className="wp-vers-itens">
+                          {v.vemCom.map((x, i) => <li key={i}>{x}</li>)}
+                        </ul>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Ficha técnica — consulta rápida no balcão. Fechada por padrão pra não
           competir com o conteúdo de venda; abre num toque. */}
       {product.ficha && product.ficha.length > 0 && (
@@ -970,7 +1023,12 @@ export default function Product() {
         <div className="wp-block">
           <span className="wp-block-label"><Package size={14} className="wp-ico" /> Leve com ele</span>
           <p className="wp-acess-intro">Ofereça no fechamento, com o carro já escolhido. O código é o que você usa pra pedir.</p>
-          {acessorios.map((a) => (
+          {/* Cortado em quatro de propósito. Este bloco aparece na hora do
+              fechamento, e vinte e um itens numa lista só não é oferta, é
+              catálogo — o vendedor rola, desiste e não oferece nenhum. Os
+              quatro primeiros são os de conversa mais fácil; o resto continua
+              a um toque. */}
+          {(verTodosAcess ? acessorios : acessorios.slice(0, 4)).map((a) => (
             <div key={a.id} className="wp-acess">
               {a.foto && (
                 <button type="button" className="wp-acess-mini wp-acess-mini--card" onClick={() => setFotoAmpliada(a)} aria-label={`Ampliar foto de ${a.nome}`}>
@@ -995,6 +1053,13 @@ export default function Product() {
               </details>
             </div>
           ))}
+          {acessorios.length > 4 && (
+            <button type="button" className="wp-acess-todos" onClick={() => setVerTodosAcess((v) => !v)}>
+              {verTodosAcess
+                ? 'Mostrar menos'
+                : `Ver os outros ${acessorios.length - 4} acessórios`}
+            </button>
+          )}
         </div>
       )}
 

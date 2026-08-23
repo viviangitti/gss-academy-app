@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, Package, Copy, Check, Car, Maximize2, X } from 'lucide-react';
 import { useState } from 'react';
-import { ACESSORIOS, precoLabel } from './data/acessorios';
+import { ACESSORIOS, ORIGENS, precoLabel } from './data/acessorios';
 import { findProduct } from './data/store';
 
 // A tela do ACESSÓRIO. Antes o card levava pro carro compatível — atalho meu
@@ -54,10 +54,13 @@ export default function Acessorio() {
       )}
 
       <div className="wp-acp-hero">
-        <span className="wp-acp-tag"><Package size={13} className="wp-ico" /> Acessório original</span>
+        <span className="wp-acp-tag"><Package size={13} className="wp-ico" /> {ORIGENS[a.origem].label}</span>
         <h1 className="wp-acp-nome">{a.nome}</h1>
         <span className="wp-acp-preco">{precoLabel(a)}</span>
         {a.preco && <span className="wp-acp-preco-obs">preço público sugerido</span>}
+        {/* Prazo e garantia mudam com a origem — dito aqui, antes de o vendedor
+            prometer data de entrega pro cliente. */}
+        <span className="wp-acp-origem">{ORIGENS[a.origem].nota}</span>
       </div>
 
       <div className="wp-block">

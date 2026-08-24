@@ -1,5 +1,11 @@
-/* ===== Pílulas de Produto — app isolado (escopo .wp-app) ===== */
-.wp-app {
+/* ===== Pílulas de Produto — app isolado (escopo .wp-app) =====
+   A PALETA fica separada do layout porque nem toda tela é o app.
+   O formulário aberto de argumentos (.wp-fa) roda fora do .wp-app — é uma
+   página pública, sem menu e sem login — e por isso ficava sem NENHUMA das
+   variáveis: toda regra com var(--wp-...) era descartada em silêncio pelo
+   navegador, e os botões saíam sem borda e sem fundo. Quem criar outra tela
+   fora do app precisa entrar nesta lista. */
+.wp-app, .wp-fa {
   /* Paleta GSS — dourado + navy */
   --wp-pink: #c9a84c;       /* acento da marca (fills, botões, bordas) — trocado por marca */
   --wp-pink-deep: #97741f;  /* acento escuro legível (texto de acento sobre branco) */
@@ -12,7 +18,9 @@
   --wp-text: #1a1a2e;
   --wp-soft: #6b7280;
   --wp-border: #ebedf1;
+}
 
+.wp-app {
   max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;

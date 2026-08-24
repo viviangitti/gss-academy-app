@@ -235,9 +235,17 @@ export default function Login() {
               </>
             )}
 
+          </>
+        )}
+
+        {/* O nome vale pra TODO cadastro, automotivo ou não: sem ele o botão
+            nunca habilita (`valid` exige nome) e o one-page sai sem quem
+            assina. Ficou dentro do ramo da farmácia quando separei os dois e
+            deixou a concessionária sem como criar conta. */}
+        {mode === 'criar' && !balcao && (
+          <>
             <label className="wp-login-label">Seu nome</label>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />
-
           </>
         )}
 

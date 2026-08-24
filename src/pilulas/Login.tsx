@@ -5,7 +5,8 @@ import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } f
 import { setStoredRole } from './data/roles';
 import { setElevaProfile } from './data/profile';
 import { invitedBrand } from './data/brandInvite';
-import { getBrand, isBalcao, BRANDS, type BrandId } from './data/brands';
+import { getBrand, isBalcao, isAuto, BRANDS, type BrandId } from './data/brands';
+import { CARGOS_AUTO, roleDoCargo, type CargoAuto } from './data/cargos';
 import type { Role, AffiliateType } from './AuthContext';
 
 type Mode = 'entrar' | 'criar';
@@ -43,6 +44,11 @@ export default function Login() {
   // Só é "balcão" se TODAS as marcas escolhidas forem de balcão (ex.: só Sorocaps).
   // Com a Meraki no meio, a pessoa escolhe o papel normalmente.
   const balcao = effBrands.length > 0 && effBrands.every((b) => isBalcao(b));
+  // Concessionária: o cadastro pergunta CARGO, não perfil de farmácia. Só quando
+  // TODAS as marcas escolhidas são automotivas — com a Meraki junto, a pessoa
+  // volta pra lista de sempre, senão sumiriam opções que ela precisa.
+  const auto = effBrands.length > 0 && effBrands.every((b) => isAuto(b));
+  const [cargo, setCargo] = useState<CargoAuto>('vendedor-veiculos');
   const toggleBrand = (id: BrandId) => {
     setError('');
     setBrands((cur) => (cur.includes(id)
@@ -65,7 +71,10 @@ export default function Login() {
         // Papel escolhido no cadastro é só o inicial: o poder real de gestor vem
         // do e-mail (override + regras do Firestore), não de um código na tela.
         // Balcão (Sorocaps): a pessoa é balconista, sem escolher papel.
-        const finalRoles: Role[] = balcao ? ['balconista'] : roles;
+        // Na concessionária o cargo é a origem do papel: vendedor vê o app,
+        // gerente cai no painel. Nos dois casos o poder de verdade continua
+        // vindo do e-mail autorizado — o cargo é declaração, não chave.
+        const finalRoles: Role[] = balcao ? ['balconista'] : auto ? [roleDoCargo(cargo)] : roles;
         const finalRole: Role = rolePrincipal(finalRoles);
         const at: AffiliateType | '' = finalRoles.includes('afiliado') ? affType : '';
         // Cache local (rápido) + conta cria.
@@ -76,6 +85,7 @@ export default function Login() {
         await setElevaProfile(fb.uid, {
           role: finalRole, roles: finalRoles, name: name.trim(),
           segment: '', affiliateType: at, brands: effBrands,
+          cargo: auto ? cargo : undefined,
         });
       } else {
         await signInWithEmail(email.trim(), password);
@@ -159,7 +169,32 @@ export default function Login() {
           </>
         )}
 
-        {mode === 'criar' && !balcao && (
+        {mode === 'criar' && !balcao && auto && (
+          <>
+            <label className="wp-login-label">Seu cargo na loja</label>
+            <div className="wp-login-cargos">
+              {CARGOS_AUTO.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  className={`wp-login-cargo ${cargo === c.id ? 'on' : ''}`}
+                  onClick={() => { setError(''); setCargo(c.id); }}
+                >
+                  <span className="wp-login-cargo-nome">
+                    {cargo === c.id && <Check size={13} className="wp-ico" />} {c.label}
+                  </span>
+                  <span className="wp-login-cargo-faz">{c.oQueFaz}</span>
+                </button>
+              ))}
+            </div>
+            <p className="wp-login-hint">
+              Vendedor de veículos e de acessórios veem o mesmo conteúdo — o cargo serve pra
+              gerência saber quem é quem.
+            </p>
+          </>
+        )}
+
+        {mode === 'criar' && !balcao && !auto && (
           <>
             <label className="wp-login-label">Você é...</label>
             <div className="wp-login-roles wp-login-roles--wrap">

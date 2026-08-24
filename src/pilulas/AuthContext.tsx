@@ -7,6 +7,7 @@ import { setStatsAccount } from './data/tracking';
 import { firebaseEnabled } from '../services/firebase';
 import { storedRole, setStoredRole, storedAffiliateType } from './data/roles';
 import { getElevaProfile, type ElevaProfile } from './data/profile';
+import type { CargoAuto } from './data/cargos';
 
 // Papéis de acesso. 'balconista' era chamado de 'vendedora' até 2026-07 — quem
 // tem o papel antigo salvo é migrado na leitura (ver normalizeRole em roles.ts).
@@ -27,6 +28,7 @@ export interface User {
   brands: BrandId[]; // empresas que a pessoa pode ver
   segment?: SegmentId; // canal de onde veio (etiqueta do link/QR de convite)
   affiliateType?: AffiliateType; // só para role === 'afiliado'
+  cargo?: CargoAuto; // concessionária: qual dos quatro cargos da loja
 }
 
 // De qual público essa pessoa faz parte (pra escolher o vídeo do produto).
@@ -107,6 +109,7 @@ function toUser(fb: AuthUser, profile: ElevaProfile | null): User {
     brands: brandsFor(email, profile),
     segment: profile?.segment || mySegment(),
     affiliateType: role === 'afiliado' ? (affiliateTypeFor(email, profile) ?? 'geral') : undefined,
+    cargo: profile?.cargo,
   };
 }
 

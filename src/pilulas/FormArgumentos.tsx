@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowUpRight, Check, Send } from 'lucide-react';
 import { PRODUCTS } from './data/products';
 import { enviarArgumento } from './data/argumentos';
+import { CARGOS_AUTO } from './data/cargos';
 
 // O FORMULÁRIO ABERTO ("quais os 3 argumentos matadores?") — o endereço que a
 // gerência manda no grupo do WhatsApp.
@@ -96,8 +97,24 @@ export default function FormArgumentos() {
       <div className="wp-fa-bloco">
         <label className="wp-fa-label">Seu nome</label>
         <input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Como o time te chama" />
-        <label className="wp-fa-label">Sua função (opcional)</label>
-        <input value={papel} onChange={(e) => setPapel(e.target.value)} placeholder="Vendedor, gerente, consultor…" />
+        {/* Era campo aberto e vinha "vendedor", "Vendedor", "vend." e vazio —
+            impossível de agrupar depois. Com os quatro cargos da loja, a
+            gerência consegue ler a resposta sabendo de onde ela veio: o que o
+            vendedor de acessórios acha matador raramente é o mesmo que o de
+            veículos. Continua opcional: ninguém trava por não marcar. */}
+        <label className="wp-fa-label">Seu cargo (opcional)</label>
+        <div className="wp-fa-cargos">
+          {CARGOS_AUTO.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              className={`wp-fa-cargo ${papel === c.label ? 'on' : ''}`}
+              onClick={() => setPapel(papel === c.label ? '' : c.label)}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {CARROS.map((c) => (

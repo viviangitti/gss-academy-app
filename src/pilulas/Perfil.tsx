@@ -14,6 +14,7 @@ import { notifState, notifPref, enableNotif, disableNotif } from './data/lembret
 import { updateElevaName, updateElevaWhatsapp, updateElevaFoto, retratoParaDataUrl, getElevaProfile } from './data/profile';
 import { auth } from '../services/firebase';
 import { excluirConta } from './data/excluirConta';
+import { cargoLabel } from './data/cargos';
 
 // Iniciais do nome pro avatar (ex.: "Ana Paula" -> "AP").
 function initials(name?: string): string {
@@ -129,7 +130,9 @@ export default function Perfil() {
         <div className="wp-perfil-av">{initials(user.name)}</div>
         <div className="wp-perfil-id">
           <h1>{user.name}</h1>
-          <p>{roleLabel(user.role, user.affiliateType)}</p>
+          {/* Na loja o que identifica a pessoa é o cargo, não o papel interno
+              do app — "Vendedor de acessórios" diz algo, "Balconista" não. */}
+          <p>{cargoLabel(user.cargo) || roleLabel(user.role, user.affiliateType)}</p>
           <span className="wp-perfil-brand">{brand.name}</span>
         </div>
       </div>

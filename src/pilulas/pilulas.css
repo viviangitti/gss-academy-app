@@ -2662,7 +2662,7 @@
 .wp-news-frente {
   display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto;
   padding: 7px 13px; border-radius: 999px; cursor: pointer;
-  border: 1px solid var(--wp-line); background: var(--wp-card);
+  border: 1px solid var(--wp-border); background: var(--wp-surface);
   color: var(--wp-soft); font-size: 12.5px; font-weight: 600; white-space: nowrap;
 }
 .wp-news-frente.on {
@@ -2675,12 +2675,12 @@
 .wp-cond-aviso {
   display: flex; align-items: flex-start; gap: 7px;
   font-size: 11.5px; line-height: 1.45; color: var(--wp-soft);
-  background: var(--wp-card); border: 1px solid var(--wp-line);
+  background: var(--wp-surface); border: 1px solid var(--wp-border);
   border-radius: 12px; padding: 9px 11px; margin: 0;
 }
 .wp-cond-aviso .wp-ico { flex: 0 0 auto; margin-top: 1px; }
 .wp-cond-card {
-  background: var(--wp-card); border: 1px solid var(--wp-line);
+  background: var(--wp-surface); border: 1px solid var(--wp-border);
   border-radius: 16px; padding: 13px; display: flex; flex-direction: column; gap: 9px;
 }
 .wp-cond-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
@@ -2688,7 +2688,7 @@
 .wp-cond-val { font-size: 11.5px; color: var(--wp-soft); flex: 0 0 auto; }
 .wp-cond-thumb {
   position: relative; display: block; width: 100%; padding: 0; cursor: pointer;
-  border: 1px solid var(--wp-line); border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--wp-border); border-radius: 12px; overflow: hidden;
   background: var(--wp-bg);
 }
 .wp-cond-thumb img { display: block; width: 100%; max-height: 260px; object-fit: cover; object-position: top; }
@@ -2706,7 +2706,7 @@
 .wp-cond-quando { font-size: 11px; color: var(--wp-soft); }
 .wp-cond-vazio {
   font-size: 13px; line-height: 1.55; color: var(--wp-soft);
-  background: var(--wp-card); border: 1px dashed var(--wp-line);
+  background: var(--wp-surface); border: 1px dashed var(--wp-border);
   border-radius: 14px; padding: 16px; margin-bottom: 18px;
 }
 .wp-cond-lb {
@@ -2725,7 +2725,7 @@
 /* ===== Painel: anexo da condição ===== */
 .wp-gz-anexo {
   display: flex; align-items: center; gap: 10px; margin-top: 9px;
-  border: 1px solid var(--wp-line); border-radius: 12px; padding: 9px; background: var(--wp-bg);
+  border: 1px solid var(--wp-border); border-radius: 12px; padding: 9px; background: var(--wp-bg);
 }
 .wp-gz-anexo img { width: 84px; height: 60px; object-fit: cover; border-radius: 8px; }
 .wp-gz-anexo-pdf { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; }
@@ -2739,7 +2739,7 @@
 /* Seção de catálogo sem itens (Acessórios, antes do primeiro cadastro) */
 .wp-section-vazio {
   font-size: 12.5px; line-height: 1.55; color: var(--wp-soft);
-  border: 1px dashed var(--wp-line); border-radius: 14px; padding: 14px; margin: 0;
+  border: 1px dashed var(--wp-border); border-radius: 14px; padding: 14px; margin: 0;
 }
 
 /* Microfone do Tira-dúvida: mesmo botão do enviar, na direita (como no
@@ -2760,7 +2760,7 @@
 .wp-tom-opts { display: flex; gap: 6px; width: 100%; margin-top: 10px; }
 .wp-tom-opt {
   flex: 1; padding: 8px 6px; border-radius: 10px; cursor: pointer;
-  border: 1px solid var(--wp-line); background: var(--wp-bg);
+  border: 1px solid var(--wp-border); background: var(--wp-bg);
   color: var(--wp-soft); font-size: 12.5px; font-weight: 600;
 }
 .wp-tom-opt.on { background: var(--wp-pink); border-color: var(--wp-pink); color: var(--wp-on-accent, #fff); }
@@ -2821,18 +2821,18 @@
 .wp-gz-obj-responder {
   align-self: flex-start; margin-top: 8px; cursor: pointer;
   display: inline-flex; align-items: center; gap: 6px;
-  border: 1px solid var(--wp-line); background: var(--wp-bg);
+  border: 1px solid var(--wp-border); background: var(--wp-bg);
   border-radius: 9px; padding: 7px 11px; font-size: 12.5px; font-weight: 700;
   color: var(--wp-text);
 }
 .wp-gz-obj-form { margin-top: 9px; display: flex; flex-direction: column; gap: 8px; }
 .wp-gz-obj-form textarea {
-  width: 100%; border: 1px solid var(--wp-line); border-radius: 10px;
+  width: 100%; border: 1px solid var(--wp-border); border-radius: 10px;
   padding: 10px; font: inherit; font-size: 13.5px; resize: vertical;
 }
 .wp-gz-obj-acoes { display: flex; gap: 8px; }
 .wp-gz-obj-acoes button {
-  cursor: pointer; border: 1px solid var(--wp-line); background: var(--wp-bg);
+  cursor: pointer; border: 1px solid var(--wp-border); background: var(--wp-bg);
   border-radius: 9px; padding: 8px 12px; font-size: 12.5px; font-weight: 700;
   color: var(--wp-text);
 }
@@ -2856,7 +2856,7 @@
 .wp-nivel {
   flex: 1; cursor: pointer; text-align: left;
   display: flex; flex-direction: column; gap: 1px;
-  border: 1px solid var(--wp-line); background: var(--wp-card);
+  border: 1px solid var(--wp-border); background: var(--wp-surface);
   border-radius: 11px; padding: 9px 10px; color: var(--wp-text);
 }
 .wp-nivel b { font-size: 12.5px; font-weight: 800; }
@@ -2873,7 +2873,7 @@
 /* Perfil: retrato que vai no material do cliente */
 .wp-perfil-foto {
   display: flex; align-items: center; gap: 12px; cursor: pointer;
-  border: 1px dashed var(--wp-line); border-radius: 12px; padding: 10px 12px;
+  border: 1px dashed var(--wp-border); border-radius: 12px; padding: 10px 12px;
   font-size: 13.5px; font-weight: 700; color: var(--wp-text);
 }
 .wp-perfil-foto img { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; }
@@ -2886,7 +2886,7 @@
 /* Painel: em que nível cada pessoa está */
 .wp-gz-niv { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
 .wp-gz-niv-nome { flex: 0 0 34%; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.wp-gz-niv-barra { flex: 1; height: 8px; border-radius: 99px; background: var(--wp-line); overflow: hidden; }
+.wp-gz-niv-barra { flex: 1; height: 8px; border-radius: 99px; background: var(--wp-border); overflow: hidden; }
 .wp-gz-niv-barra i { display: block; height: 100%; background: var(--wp-pink); }
 .wp-gz-niv-val {
   flex: 0 0 auto; text-align: right; font-size: 12.5px; font-weight: 800;
@@ -2989,7 +2989,7 @@
 .wp-gz-check i { display: block; font-style: normal; font-size: 11.5px; color: var(--wp-soft); margin-top: 2px; }
 .wp-gz-prog {
   display: flex; align-items: center; gap: 9px; margin-top: 12px;
-  height: 10px; border-radius: 99px; background: var(--wp-line);
+  height: 10px; border-radius: 99px; background: var(--wp-border);
 }
 .wp-gz-prog span { display: block; height: 100%; border-radius: 99px; background: var(--wp-pink); transition: width .2s ease; }
 .wp-gz-prog b { flex: 0 0 auto; font-size: 11.5px; margin-left: 4px; }
@@ -3002,7 +3002,7 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-acp-tag {
   align-self: flex-start; display: inline-flex; align-items: center; gap: 5px;
   font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em;
-  color: var(--wp-pink-deep); background: var(--wp-card); border: 1px solid var(--wp-line);
+  color: var(--wp-pink-deep); background: var(--wp-surface); border: 1px solid var(--wp-border);
   padding: 4px 9px; border-radius: 999px;
 }
 .wp-acp-nome { font-size: 25px; font-weight: 800; margin: 4px 0 0; line-height: 1.2; }
@@ -3014,24 +3014,24 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-acp-carros { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
 .wp-acp-carro {
   text-decoration: none; font-size: 13px; font-weight: 700; color: var(--wp-text);
-  background: var(--wp-bg); border: 1px solid var(--wp-line);
+  background: var(--wp-bg); border: 1px solid var(--wp-border);
   border-radius: 999px; padding: 7px 13px;
 }
 .wp-acp-pn {
   display: inline-flex; align-items: center; gap: 7px; cursor: pointer;
-  border: 1px solid var(--wp-line); background: var(--wp-bg);
+  border: 1px solid var(--wp-border); background: var(--wp-bg);
   border-radius: 7px; padding: 4px 9px; color: var(--wp-text);
 }
 .wp-acess-nome {
   font-size: 15px; font-weight: 700; color: var(--wp-text); text-decoration: none;
-  border-bottom: 1px solid var(--wp-line);
+  border-bottom: 1px solid var(--wp-border);
 }
 
 /* Miniatura do acessório — toca e amplia */
 .wp-acess-mini {
   position: relative; flex: 0 0 auto; cursor: pointer; padding: 0;
   width: 62px; height: 62px; border-radius: 10px; overflow: hidden;
-  border: 1px solid var(--wp-line); background: #fff;
+  border: 1px solid var(--wp-border); background: #fff;
 }
 .wp-acess-mini img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .wp-acess-mini--card { float: left; margin: 0 11px 6px 0; }
@@ -3044,7 +3044,7 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-acess-linha-txt { text-decoration: none; color: inherit; }
 .wp-acp-foto {
   position: relative; display: block; width: 100%; padding: 0; cursor: pointer;
-  border: 1px solid var(--wp-line); border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--wp-border); border-radius: 14px; overflow: hidden;
   background: #fff; margin-bottom: 14px;
 }
 .wp-acp-foto img { display: block; width: 100%; max-height: 250px; object-fit: contain; }
@@ -3114,7 +3114,7 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-fa-ok p { font-size: 15px; line-height: 1.6; color: #4b5563; margin: 0; }
 
 /* Painel: respostas do "argumento decisivo" */
-.wp-gz-arg-carro { border-top: 1px solid var(--wp-line); padding: 10px 0; }
+.wp-gz-arg-carro { border-top: 1px solid var(--wp-border); padding: 10px 0; }
 .wp-gz-arg-carro:first-of-type { border-top: 0; }
 .wp-gz-arg-head {
   display: flex; align-items: center; gap: 9px; width: 100%; cursor: pointer;
@@ -3126,12 +3126,12 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-gz-arg-nuvem { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 4px; }
 .wp-gz-arg-termo {
   font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px;
-  background: var(--wp-bg); border: 1px solid var(--wp-line); color: var(--wp-text);
+  background: var(--wp-bg); border: 1px solid var(--wp-border); color: var(--wp-text);
 }
 .wp-gz-arg-termo i { font-style: normal; color: var(--wp-pink-deep); }
 .wp-gz-arg {
-  border: 1px solid var(--wp-line); border-radius: 11px;
-  padding: 10px 12px; margin-top: 8px; background: var(--wp-card);
+  border: 1px solid var(--wp-border); border-radius: 11px;
+  padding: 10px 12px; margin-top: 8px; background: var(--wp-surface);
 }
 .wp-gz-arg.on { border-color: var(--wp-pink); }
 .wp-gz-arg ol { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
@@ -3139,7 +3139,7 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-gz-arg-pe { display: flex; align-items: center; gap: 10px; margin-top: 9px; }
 .wp-gz-arg-pe span { flex: 1; font-size: 11px; color: var(--wp-soft); }
 .wp-gz-arg-pe button {
-  cursor: pointer; border: 1px solid var(--wp-line); background: var(--wp-bg);
+  cursor: pointer; border: 1px solid var(--wp-border); background: var(--wp-bg);
   border-radius: 8px; padding: 6px 10px; font-size: 11.5px; font-weight: 700;
   color: var(--wp-text); display: inline-flex; align-items: center; gap: 5px;
 }
@@ -3175,7 +3175,7 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   border: 1px solid var(--wp-pink); background: transparent; color: var(--wp-pink-deep);
   border-radius: 7px; padding: 2px 8px; font-size: 11px; font-weight: 800;
 }
-.wp-gz-usar:disabled { opacity: .35; cursor: default; border-color: var(--wp-line); color: var(--wp-soft); }
+.wp-gz-usar:disabled { opacity: .35; cursor: default; border-color: var(--wp-border); color: var(--wp-soft); }
 
 /* Acessório no card do carro: foto de produto pede fundo claro e "contain",
    senão a peça no fundo branco aparece cortada dentro do quadro escuro. */
@@ -3202,11 +3202,11 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   color: var(--wp-text); margin: 0 0 2px;
 }
 .wp-acess-grupo-nota {
-  font-size: 11.5px; line-height: 1.45; color: var(--wp-muted); margin: 0;
+  font-size: 11.5px; line-height: 1.45; color: var(--wp-soft); margin: 0;
 }
 .wp-acp-origem {
   display: block; margin-top: 8px; font-size: 11.5px; line-height: 1.45;
-  color: var(--wp-muted); max-width: 34ch;
+  color: var(--wp-soft); max-width: 34ch;
 }
 
 /* Versões do modelo — o "e a de cima, o que muda?" respondido na tela.
@@ -3214,10 +3214,10 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-vers { margin: 14px 0 0; }
 .wp-vers-lista { margin-top: 10px; display: flex; flex-direction: column; gap: 14px; }
 .wp-vers-item {
-  border: 1px solid var(--wp-line);
+  border: 1px solid var(--wp-border);
   border-radius: 14px;
   padding: 13px 14px;
-  background: var(--wp-card);
+  background: var(--wp-surface);
 }
 .wp-vers-item { padding: 0; overflow: hidden; }
 .wp-vers-cab {
@@ -3232,14 +3232,14 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   display: block; margin-bottom: 3px; font-size: 13px; font-weight: 800;
   letter-spacing: .06em; color: var(--wp-text);
 }
-.wp-vers-quem { display: block; font-size: 12.5px; line-height: 1.5; color: var(--wp-muted); }
+.wp-vers-quem { display: block; font-size: 12.5px; line-height: 1.5; color: var(--wp-soft); }
 .wp-vers-conta {
   display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;
-  font-size: 11px; font-weight: 700; color: var(--wp-muted); padding-top: 1px;
+  font-size: 11px; font-weight: 700; color: var(--wp-soft); padding-top: 1px;
 }
 .wp-vers-herda {
   margin: 0 14px 6px; font-size: 11.5px; font-weight: 700;
-  color: var(--wp-accent, var(--wp-text)); opacity: .85;
+  color: var(--wp-pink); opacity: .85;
 }
 .wp-vers-itens { margin: 0 0 13px; padding-left: 31px; padding-right: 14px; }
 .wp-vers-itens li {
@@ -3252,8 +3252,8 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
    parede de texto na hora do fechamento. */
 .wp-acess-todos {
   width: 100%; margin-top: 10px; padding: 10px 12px;
-  border: 1px dashed var(--wp-line); border-radius: 11px;
-  background: none; color: var(--wp-muted);
+  border: 1px dashed var(--wp-border); border-radius: 11px;
+  background: none; color: var(--wp-soft);
   font-size: 12.5px; font-weight: 700; cursor: pointer;
 }
 .wp-acess-todos:hover { color: var(--wp-text); }
@@ -3265,3 +3265,31 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-card-thumb--semfoto { aspect-ratio: auto; min-height: 0; height: 46px; }
 .wp-card-thumb--semfoto .wp-card-emoji { display: none; }
 .wp-card-thumb--semfoto .wp-card-dur--preco { top: 9px; left: 10px; right: auto; bottom: auto; }
+
+/* Cargo na concessionária — cadastro e formulário de argumentos.
+   Botão largo com o nome em cima e o que a pessoa faz embaixo: sem isso o time
+   trava entre "vendedor de veículos" e "vendedor de acessórios". */
+.wp-login-cargos { display: flex; flex-direction: column; gap: 8px; }
+.wp-login-cargo {
+  width: 100%; text-align: left; cursor: pointer;
+  padding: 11px 13px; border-radius: 12px;
+  border: 1px solid var(--wp-border); background: var(--wp-surface);
+  color: var(--wp-text); font: inherit;
+}
+.wp-login-cargo.on { border-color: var(--wp-pink); box-shadow: 0 0 0 1px var(--wp-pink) inset; }
+.wp-login-cargo-nome {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 13.5px; font-weight: 700; margin-bottom: 2px;
+}
+.wp-login-cargo-faz { display: block; font-size: 12px; line-height: 1.45; color: var(--wp-soft); }
+
+.wp-fa-cargos { display: flex; flex-wrap: wrap; gap: 7px; }
+.wp-fa-cargo {
+  padding: 8px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--wp-border); background: var(--wp-surface);
+  color: var(--wp-soft); font-size: 12.5px; font-weight: 600; font-family: inherit;
+}
+.wp-fa-cargo.on {
+  border-color: var(--wp-pink); color: var(--wp-text); font-weight: 700;
+  box-shadow: 0 0 0 1px var(--wp-pink) inset;
+}

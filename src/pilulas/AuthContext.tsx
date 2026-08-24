@@ -49,7 +49,7 @@ export function audienceOf(user: Pick<User, 'role' | 'affiliateType'> | null | u
 // ATENÇÃO: pra GESTOR, o e-mail também precisa entrar em isGestor() no
 // firestore.eleva.rules — senão a pessoa vê os campos mas a nuvem recusa a
 // escrita, e ela acha que salvou.
-const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType; brands?: BrandId[] }> = {
+const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType; brands?: BrandId[]; cargo?: CargoAuto }> = {
   // Vivian: gestora das DUAS marcas — troca no seletor do topo.
   'maria26@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
   'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp', 'ramasa'] },
@@ -61,6 +61,11 @@ const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType
   'silene_mendes@hotmail.com': { role: 'afiliado', affiliateType: 'geral' },
   // Mari (Meraki): gestora SÓ da Meraki — sem o seletor de marca, sem Sorocaps.
   'mari.briso@merakifarma.com.br': { role: 'gestor', brands: ['meraki'] },
+  // Mariana (Ramasa), gerente de vendas. Cadastrou-se em 24/08/2026, quando a
+  // Meraki ainda vinha pré-selecionada, e caiu na marca errada — com o catálogo
+  // de farmácia. NÃO confundir com a Mari Briso acima: outra pessoa, outra
+  // empresa, primeiro nome igual.
+  'mariana@gruporamasa.com': { role: 'gestor', brands: ['ramasa'], cargo: 'gerente-veiculos' },
 };
 
 function overrideFor(email: string) {
@@ -109,7 +114,7 @@ function toUser(fb: AuthUser, profile: ElevaProfile | null): User {
     brands: brandsFor(email, profile),
     segment: profile?.segment || mySegment(),
     affiliateType: role === 'afiliado' ? (affiliateTypeFor(email, profile) ?? 'geral') : undefined,
-    cargo: profile?.cargo,
+    cargo: overrideFor(email)?.cargo || profile?.cargo,
   };
 }
 

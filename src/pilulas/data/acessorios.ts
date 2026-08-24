@@ -169,6 +169,13 @@ export const ACESSORIOS: Acessorio[] = [
     beneficio: 'Transforma o visual do carro: rack off-road, bolsa lateral com chave e escada.',
     comoOferecer:
       'As três peças são integradas e instaladas juntas — não venda uma só. É o kit que muda a cara do carro no estacionamento, então mostre no carro exposto, nunca em foto. E tem uma alavanca forte: a marca mantém taxa zero em 24, 36 e 60 vezes para incluir o kit no financiamento do Jaecoo 7 (confirme se a condição está valendo).',
+    roteiro: [
+      { t: '0–5s', label: 'GANCHO', line: 'Os dois Jaecoo lado a lado. Câmera passa de um para o outro. FALAR: “Mesmo carro. Mesma cor. Mesma versão.”' },
+      { t: '5–13s', label: 'O QUE É', line: 'Câmera percorre as três peças: barras, bolsa, escada. FALAR: “Barras de teto, bolsa lateral com chave e escada. As três instaladas juntas.”' },
+      { t: '13–25s', label: 'PRA QUEM É', line: 'Bota enlameada sendo guardada na bolsa lateral. FALAR: “Quem faz trilha, pesca ou camping. A bota enlameada fica do lado de fora e não entra no carro.”' },
+      { t: '25–37s', label: 'A OBJEÇÃO', line: 'Tela do financiamento com a parcela. FALAR: “Ele vai dizer que vai pensar — e aí você perde. A marca vem mantendo taxa zero em vinte e quatro, trinta e seis e sessenta vezes pra embutir o kit no financiamento. Confirme se está valendo e mostre a parcela.”' },
+      { t: '37–45s', label: 'QUANDO OFERECER', line: 'Fecha no carro completo, de frente. FALAR: “No carro exposto, nunca em foto. E ofereça as três peças juntas — separadas, ele leva uma e a cara do carro não muda.”' },
+    ],
     aplicaEm: [JAECOO],
     codigos: [{ modelo: 'Jaecoo 7', pn: 'ver comunicado PV033/2026' }],
     observacao: 'Preço inclui 4 horas de instalação. Na tabela da loja as três peças aparecem separadas: barras R$ 15.175, bolsa R$ 6.300 e escada R$ 4.690. Confirme o valor vigente com a gerência.',
@@ -210,6 +217,13 @@ export const ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'É dos poucos que o cliente pede depois de ver. Deixe rodando na tela grande enquanto conversa. Fecha sozinho com quem tem criança ou passa tempo em fila de escola. Deixe claro que funciona com o carro parado — prometer o contrário vira reclamação na entrega.',
     preco: 2900,
+    roteiro: [
+      { t: '0–5s', label: 'GANCHO', line: 'Tela central ligando direto no Netflix. Close na tela. FALAR: “Cinco segundos. É tudo que esse aqui precisa.”' },
+      { t: '5–13s', label: 'O QUE É', line: 'Navegando entre os aplicativos na tela do carro. FALAR: “Netflix, YouTube, Disney. Na tela do carro, com o carro parado.”' },
+      { t: '13–25s', label: 'PRA QUEM É', line: 'Banco de trás, criança olhando pra frente. FALAR: “Quem tem criança pequena, ou passa meia hora na fila da escola todo dia. Pergunte quem busca as crianças.”' },
+      { t: '25–37s', label: 'A OBJEÇÃO', line: 'Celular na mão, tela pequena, ao lado da tela do carro. FALAR: “Ele vai dizer que usa o celular. Usa — numa tela de seis polegadas, segurando na mão. Aqui é a tela do carro, e a criança assiste sozinha.”' },
+      { t: '37–45s', label: 'QUANDO OFERECER', line: 'Fecha na tela rodando. FALAR: “Deixe rodando quando ele entrar no carro. Esse é dos poucos que o cliente pede sem você oferecer.”' },
+    ],
     aplicaEm: [JAECOO, O5, O7, E5],
     codigos: [],
   },
@@ -222,6 +236,13 @@ export const ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'Não explique: passe a mão no capô de um carro vitrificado no showroom e peça pro cliente passar também. A diferença se sente em dois segundos. O fechamento é pela revenda — pintura conservada é o que segura o preço na hora da troca.',
     preco: 1900,
+    roteiro: [
+      { t: '0–5s', label: 'GANCHO', line: 'Água borrifada num capô comum: espalha e deixa marca. FALAR: “Capô normal. A água espalha e deixa marca.”' },
+      { t: '5–13s', label: 'O QUE É', line: 'A mesma água no capô vitrificado: vira bolinha e escorre. FALAR: “Vitrificado. A água vira bolinha e leva a sujeira junto.”' },
+      { t: '13–25s', label: 'PRA QUEM É', line: 'Mão passando devagar no capô vitrificado. FALAR: “Não explique esse. Peça pro cliente passar a mão. Quem sente a diferença não pergunta mais o que é.”' },
+      { t: '25–37s', label: 'A OBJEÇÃO', line: 'Pintura opaca e manchada de um seminovo do pátio. FALAR: “Ele vai perguntar se não é a mesma coisa que cera. Não é. Cera dura semanas. Isso dura anos, e é o que segura o valor do carro na hora da troca.”' },
+      { t: '37–45s', label: 'QUANDO OFERECER', line: 'Fecha no reflexo do capô. FALAR: “Ofereça junto da película, no fechamento. Sai no mesmo dia da entrega.”' },
+    ],
     aplicaEm: [JAECOO, O5, O7, E5],
     codigos: [],
   },
@@ -269,6 +290,13 @@ export const ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'É o acessório de quem roda rodovia — pergunte a quilometragem que ele faz por mês. O argumento que convence: um retoque de capô custa quase o mesmo e nunca fica no tom exato. O PPF sai depois e a pintura está intacta embaixo.',
     preco: 7000,
+    roteiro: [
+      { t: '0–5s', label: 'GANCHO', line: 'Close no capô lascado do seminovo, com luz rasante. FALAR: “Isso aqui é estrada. Um ano de rodovia no capô.”' },
+      { t: '5–13s', label: 'O QUE É', line: 'Chave passando no capô com PPF. Nada acontece. FALAR: “Uma película transparente por cima da pintura. A pedra bate nela, não na tinta.”' },
+      { t: '13–25s', label: 'PRA QUEM É', line: 'Carro saindo pra estrada. FALAR: “Pergunte quantos quilômetros ele faz por mês. Quem viaja a trabalho responde na hora — e é esse que leva.”' },
+      { t: '25–37s', label: 'A OBJEÇÃO', line: 'Orçamento de repintura de capô na tela. FALAR: “Ele vai achar caro. Repintar um capô custa quase isso, e nunca fica no tom exato do resto do carro. O PPF sai depois e a pintura continua intacta embaixo.”' },
+      { t: '37–45s', label: 'QUANDO OFERECER', line: 'Fecha no capô protegido. FALAR: “Depois do sim do carro. E se ele achar caro, ofereça a soleira e quina, por setecentos e cinquenta.”' },
+    ],
     aplicaEm: [JAECOO, O5, O7, E5],
     codigos: [],
   },

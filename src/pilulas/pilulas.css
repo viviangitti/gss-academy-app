@@ -1046,6 +1046,13 @@
   transition: border-color .15s, background .15s, color .15s;
 }
 .wp-login-role.on { border-color: var(--wp-pink); background: #fbf7ec; color: var(--wp-pink-deep); box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
+/* A classe --wrap era usada no HTML e nunca existiu aqui: a linha nunca
+   quebrava. Passava batido porque "Balconista" e "Gestor(a)" são curtos e o
+   flex:1 espremia os quatro na largura do celular. Com "Vendedor(a) de
+   acessórios" o quarto saía da tela. Duas por linha, e cada uma fica com
+   espaço pra escrever o cargo por extenso. */
+.wp-login-roles--wrap { flex-wrap: wrap; }
+.wp-login-roles--wrap .wp-login-role { flex: 1 1 calc(50% - 4px); }
 .wp-login-enter {
   width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
   background: var(--wp-pink); color: var(--wp-on-accent); border: none; border-radius: 12px;

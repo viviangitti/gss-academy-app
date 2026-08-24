@@ -39,7 +39,11 @@ export default function Login() {
   // Marcas: a pessoa pode representar UMA ou AS DUAS. Se veio por link de
   // convite (?marca=dsp), a marca já vem fixa e o seletor some.
   const invBrand = invitedBrand();
-  const [brands, setBrands] = useState<BrandId[]>(() => (invBrand ? [invBrand] : ['meraki']));
+  // NENHUMA marca vem marcada. Vinha 'meraki' por padrão, e quem não reparava
+  // no seletor era gravado como Meraki — foi assim que uma vendedora da Ramasa
+  // entrou na marca errada. Um campo em branco a pessoa preenche; um campo já
+  // respondido errado ela não vê.
+  const [brands, setBrands] = useState<BrandId[]>(() => (invBrand ? [invBrand] : []));
   const effBrands: BrandId[] = invBrand ? [invBrand] : brands;
   // Só é "balcão" se TODAS as marcas escolhidas forem de balcão (ex.: só Sorocaps).
   // Com a Meraki no meio, a pessoa escolhe o papel normalmente.
@@ -52,14 +56,14 @@ export default function Login() {
   const toggleBrand = (id: BrandId) => {
     setError('');
     setBrands((cur) => (cur.includes(id)
-      ? (cur.length > 1 ? cur.filter((b) => b !== id) : cur) // nunca deixa zerar
+      ? cur.filter((b) => b !== id) // pode zerar: quem trava é o botão de criar
       : [...cur, id]));
   };
 
   const emailOk = /\S+@\S+\.\S+/.test(email);
   const valid =
     emailOk && password.length >= 6 &&
-    (mode === 'entrar' || (name.trim().length > 0 && aceite));
+    (mode === 'entrar' || (name.trim().length > 0 && aceite && effBrands.length > 0));
 
   const submit = async () => {
     if (!valid || busy) return;
@@ -155,11 +159,15 @@ export default function Login() {
                 </button>
               ))}
             </div>
-            <p className="wp-login-hint">Trabalha com as duas? Pode marcar as duas — você troca de marca a qualquer momento.</p>
+            <p className="wp-login-hint">
+              {effBrands.length === 0
+                ? 'Escolha a sua para continuar.'
+                : 'Trabalha com mais de uma? Pode marcar quantas quiser — você troca a qualquer momento.'}
+            </p>
           </>
         )}
 
-        {mode === 'criar' && balcao && (
+        {mode === 'criar' && effBrands.length > 0 && balcao && (
           <>
             <div className="wp-login-brandbanner">
               Você está entrando em <b>{effBrands.map((b) => getBrand(b).name).join(' + ')}</b> — treinamento de balcão.
@@ -169,7 +177,7 @@ export default function Login() {
           </>
         )}
 
-        {mode === 'criar' && !balcao && auto && (
+        {mode === 'criar' && effBrands.length > 0 && !balcao && auto && (
           <>
             <label className="wp-login-label">Seu cargo na loja</label>
             <div className="wp-login-roles wp-login-roles--wrap">
@@ -191,7 +199,7 @@ export default function Login() {
           </>
         )}
 
-        {mode === 'criar' && !balcao && !auto && (
+        {mode === 'criar' && effBrands.length > 0 && !balcao && !auto && (
           <>
             <label className="wp-login-label">Você é...</label>
             <div className="wp-login-roles wp-login-roles--wrap">
@@ -242,7 +250,7 @@ export default function Login() {
             nunca habilita (`valid` exige nome) e o one-page sai sem quem
             assina. Ficou dentro do ramo da farmácia quando separei os dois e
             deixou a concessionária sem como criar conta. */}
-        {mode === 'criar' && !balcao && (
+        {mode === 'criar' && effBrands.length > 0 && !balcao && (
           <>
             <label className="wp-login-label">Seu nome</label>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />

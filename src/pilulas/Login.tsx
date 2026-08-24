@@ -172,18 +172,15 @@ export default function Login() {
         {mode === 'criar' && !balcao && auto && (
           <>
             <label className="wp-login-label">Seu cargo na loja</label>
-            <div className="wp-login-cargos">
+            <div className="wp-login-roles wp-login-roles--wrap">
               {CARGOS_AUTO.map((c) => (
                 <button
                   key={c.id}
                   type="button"
-                  className={`wp-login-cargo ${cargo === c.id ? 'on' : ''}`}
+                  className={`wp-login-role ${cargo === c.id ? 'on' : ''}`}
                   onClick={() => { setError(''); setCargo(c.id); }}
                 >
-                  <span className="wp-login-cargo-nome">
-                    {cargo === c.id && <Check size={13} className="wp-ico" />} {c.label}
-                  </span>
-                  <span className="wp-login-cargo-faz">{c.oQueFaz}</span>
+                  {cargo === c.id && <Check size={13} className="wp-ico" />} {c.label}
                 </button>
               ))}
             </div>

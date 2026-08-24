@@ -3269,19 +3269,6 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 /* Cargo na concessionária — cadastro e formulário de argumentos.
    Botão largo com o nome em cima e o que a pessoa faz embaixo: sem isso o time
    trava entre "vendedor de veículos" e "vendedor de acessórios". */
-.wp-login-cargos { display: flex; flex-direction: column; gap: 8px; }
-.wp-login-cargo {
-  width: 100%; text-align: left; cursor: pointer;
-  padding: 11px 13px; border-radius: 12px;
-  border: 1px solid var(--wp-border); background: var(--wp-surface);
-  color: var(--wp-text); font: inherit;
-}
-.wp-login-cargo.on { border-color: var(--wp-pink); box-shadow: 0 0 0 1px var(--wp-pink) inset; }
-.wp-login-cargo-nome {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 13.5px; font-weight: 700; margin-bottom: 2px;
-}
-.wp-login-cargo-faz { display: block; font-size: 12px; line-height: 1.45; color: var(--wp-soft); }
 
 .wp-fa-cargos { display: flex; flex-wrap: wrap; gap: 7px; }
 .wp-fa-cargo {

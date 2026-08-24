@@ -30,8 +30,6 @@ export type CargoAuto =
 export interface Cargo {
   id: CargoAuto;
   label: string;
-  /** Uma linha do que a pessoa faz — evita o "qual dos dois eu sou?" na tela. */
-  oQueFaz: string;
   /** O papel que o app usa por baixo. Vendedor vê o app; gerente vê o painel. */
   role: Role;
 }
@@ -40,25 +38,21 @@ export const CARGOS_AUTO: Cargo[] = [
   {
     id: 'vendedor-veiculos',
     label: 'Vendedor(a) de veículos',
-    oQueFaz: 'Atende no showroom e fecha o carro.',
     role: 'balconista',
   },
   {
     id: 'vendedor-acessorios',
     label: 'Vendedor(a) de acessórios',
-    oQueFaz: 'Trabalha o cliente que já escolheu o carro.',
     role: 'balconista',
   },
   {
     id: 'gerente-veiculos',
     label: 'Gerente de veículos',
-    oQueFaz: 'Acompanha o time de showroom.',
     role: 'gestor',
   },
   {
     id: 'gerente-acessorios',
     label: 'Gerente de acessórios',
-    oQueFaz: 'Acompanha a venda de acessórios e serviços.',
     role: 'gestor',
   },
 ];

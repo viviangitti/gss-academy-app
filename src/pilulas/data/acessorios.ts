@@ -51,6 +51,24 @@ export interface Acessorio {
   observacao?: string;
   /** Foto do item. Acessório sem foto ninguém oferece: não dá pra imaginar. */
   foto?: string;
+  /**
+   * MP4 de 45s do acessório. Fica em /public/videos/acessorios/.
+   *
+   * Não é upload pelo Painel de propósito: o Storage do projeto não está
+   * ligado, e vídeo subido pelo Painel hoje fica guardado só no aparelho de
+   * quem subiu — o time não vê. Foi assim que os vídeos da Mari entraram, e é
+   * assim que estes entram: o arquivo vem pra cá e vai junto com o app.
+   */
+  videoUrl?: string;
+  /**
+   * O roteiro do vídeo — as cinco batidas, do jeito que foi gravado.
+   *
+   * Fica visível no app mesmo antes de o vídeo existir, e isso é intencional:
+   * o roteiro JÁ é o treinamento. Quem lê as cinco batidas sabe abrir a
+   * conversa, reconhecer o cliente certo e responder a objeção — o vídeo
+   * reforça, não substitui.
+   */
+  roteiro?: { t: string; label: string; line: string }[];
 }
 
 const JAECOO = 'jaecoo-7';
@@ -85,6 +103,13 @@ export const ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'É o acessório que mais impressiona — e o de maior valor. Mostre funcionando: abra a porta e deixe o cliente ver o estribo sair e acender. Combina com quem tem criança, idoso em casa ou é baixinho.',
     preco: 9000,
+    roteiro: [
+      { t: '0-5s', label: 'GANCHO', line: 'Sem falar nada: a porta abre, o estribo sai e acende. Cinco segundos de plano fechado.' },
+      { t: '5-13s', label: 'O QUE É', line: 'Recolhe sozinho quando o carro anda. Mostrar o ciclo inteiro uma vez — sair, acender, recolher.' },
+      { t: '13-25s', label: 'PRA QUEM É', line: 'Quem tem criança pequena, idoso em casa, ou é baixinho e não fala isso em voz alta. Repare quem se apoia na porta pra subir.' },
+      { t: '25-37s', label: 'A OBJEÇÃO', line: '"É caro pra um degrau." Não é um degrau: é o que faz a avó entrar no carro sem ajuda. Quem tem essa dor não acha caro — só não sabia que existia.' },
+      { t: '37-45s', label: 'QUANDO OFERECER', line: 'No carro exposto, ao vivo. Este é o acessório que foto não vende e vídeo não fecha: precisa ver funcionando na frente.' },
+    ],
     aplicaEm: [JAECOO],
     codigos: [{ modelo: 'Jaecoo 7', pn: '08CT1W20T1EJPHN001' }],
     foto: '/acessorios/estribo-iluminado.jpg',
@@ -166,6 +191,13 @@ export const ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'Este o cliente ia colocar de qualquer jeito, em algum lugar. A disputa não é se ele quer, é onde faz. O argumento é a garantia: instalada aqui não descola, não dá bolha e não briga com a garantia do carro. Ofereça junto da vitrificação — quem aceita proteger por fora aceita proteger por dentro.',
     preco: 1600,
+    roteiro: [
+      { t: '0-5s', label: 'GANCHO', line: 'O cliente já decidiu o carro. Aí ele fala: "vou colocar película depois, num lugar aqui perto de casa."' },
+      { t: '5-13s', label: 'O QUE É', line: 'Mostrar a mão atrás do vidro com película e sem, no sol. Sem narrar: a diferença de calor se vê.' },
+      { t: '13-25s', label: 'PRA QUEM É', line: 'Todo mundo. É o único da lista que o cliente já ia comprar de qualquer jeito — a disputa não é se ele quer, é onde ele faz.' },
+      { t: '25-37s', label: 'A OBJEÇÃO', line: '"Lá fora é mais barato." É. E lá fora não tem garantia se descolar, dar bolha ou o vidro trincar na aplicação. Aqui, tem. E não mexe na garantia do carro.' },
+      { t: '37-45s', label: 'QUANDO OFERECER', line: 'Junto da vitrificação, na hora de fechar. Quem aceita proteger por fora aceita proteger por dentro.' },
+    ],
     aplicaEm: [JAECOO, O5, O7, E5],
     codigos: [],
   },
@@ -215,6 +247,13 @@ export const ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'Não é oferta, é pergunta de qualificação: "você puxa alguma coisa?". Quem tem barco, moto, quadriciclo ou reboque responde na hora — e quem não tem, encerra o assunto em um segundo. Vale nas duas direções.',
     preco: 1900,
+    roteiro: [
+      { t: '0-5s', label: 'GANCHO', line: 'Uma pergunta só, na cara do vendedor: "você puxa alguma coisa?"' },
+      { t: '5-13s', label: 'O QUE É', line: 'Mostrar o engate instalado, discreto, e a carretinha acoplando. Estrutura de fábrica — não fura nem solda nada.' },
+      { t: '13-25s', label: 'PRA QUEM É', line: 'Quem tem barco, jet-ski, moto, quadriciclo ou faz mudança. Este é o acessório que se qualifica sozinho: numa pergunta você sabe se vale seguir ou parar.' },
+      { t: '25-37s', label: 'A OBJEÇÃO', line: '"Coloco depois num lugar qualquer." Aí é solda em carro novo, e o cliente perde a garantia da estrutura. Diga isso uma vez e deixe ele pensar.' },
+      { t: '37-45s', label: 'QUANDO OFERECER', line: 'Na qualificação, junto de "o que você faz no fim de semana?". É o único da lista que entra cedo na conversa.' },
+    ],
     aplicaEm: [JAECOO, O5, O7, E5],
     codigos: [
       { modelo: 'Linha Jaecoo', pn: 'FR907' },
@@ -242,6 +281,13 @@ export const ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'Não ofereça pra todo mundo: é pra quem levou a versão de cima, pagou à vista ou falou em guardar o carro. O caminho é a desvalorização — manter a pintura original é o que sustenta o valor na revenda. Se achar caro, ofereça o frontal.',
     preco: 17000,
+    roteiro: [
+      { t: '0-5s', label: 'GANCHO', line: 'Câmera na lataria de um seminovo do pátio, de perto: os riscos que ninguém vê de longe.' },
+      { t: '5-13s', label: 'O QUE É', line: 'Uma película transparente sobre a pintura inteira. Mostrar alguém passando a chave no painel aplicado — e nada acontecer.' },
+      { t: '13-25s', label: 'PRA QUEM É', line: 'Não é pra todo mundo, e oferecer pra todo mundo queima o produto. É pra quem levou a versão de cima, pagou à vista ou disse que pretende ficar com o carro.' },
+      { t: '25-37s', label: 'A OBJEÇÃO', line: '"Dezessete mil num carro novo?" O caminho não é o preço, é a revenda: pintura original é o que sustenta o valor na tabela. E se achar demais, o frontal resolve a parte que mais sofre.' },
+      { t: '37-45s', label: 'QUANDO OFERECER', line: 'Depois do sim do carro, nunca antes. No meio da negociação vira mais um número e derruba a conversa toda.' },
+    ],
     aplicaEm: [JAECOO, O5, O7, E5],
     codigos: [],
   },

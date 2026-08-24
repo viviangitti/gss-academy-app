@@ -68,6 +68,34 @@ export default function Acessorio() {
         <p className="wp-acp-benef">{a.beneficio}</p>
       </div>
 
+      {a.videoUrl && (
+        <div className="wp-block">
+          <span className="wp-block-label">Vídeo de 45s</span>
+          <video className="wp-acp-video" src={a.videoUrl} controls playsInline preload="metadata" />
+        </div>
+      )}
+
+      {/* O roteiro aparece mesmo sem o vídeo pronto: as cinco batidas JÁ são o
+          treinamento. Quem lê sabe abrir a conversa, reconhecer o cliente certo
+          e responder a objeção — o vídeo reforça, não substitui. */}
+      {a.roteiro && a.roteiro.length > 0 && (
+        <div className="wp-block">
+          <span className="wp-block-label">
+            {a.videoUrl ? 'O roteiro do vídeo' : 'Roteiro — como apresentar em 45s'}
+          </span>
+          <ol className="wp-acp-roteiro">
+            {a.roteiro.map((c) => (
+              <li key={c.t}>
+                <span className="wp-acp-rot-cab">
+                  <b>{c.label}</b><i>{c.t}</i>
+                </span>
+                <span className="wp-acp-rot-linha">{c.line}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
       <div className="wp-block">
         <span className="wp-block-label">Como oferecer</span>
         <p className="wp-acp-texto">{a.comoOferecer}</p>

@@ -69,7 +69,10 @@ export async function enviarArgumento(o: {
   nome: string;
   papel?: string;
 }): Promise<boolean> {
-  const pontos = o.pontos.map((p) => p.trim().slice(0, 220)).filter(Boolean).slice(0, 3);
+  // 600, não 220. Com 220 a primeira rodada cortou nove respostas no meio da
+  // palavra — todas de quem escreveu argumento explicado, justamente o mais
+  // útil. O texto perdido não volta: o corte acontece antes de gravar.
+  const pontos = o.pontos.map((p) => p.trim().slice(0, 600)).filter(Boolean).slice(0, 3);
   if (!db || !pontos.length) return false;
   try {
     await addDoc(collection(db, COL), {

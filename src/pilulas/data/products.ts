@@ -907,6 +907,9 @@ export const PRODUCTS: Product[] = [
       'Pacote de série cheio para a faixa — teto solar panorâmico de 1,1 m², multimídia de 13,2" (14,8" na Prestige), painel digital de 10,25" e maçanetas retráteis',
       'Carroceria com 80% de aço de alta resistência e pacote ADAS completo (AEB, ACC, LDW, TJA, FCW, CSA)',
       'Marca do grupo Chery, no Brasil desde 2009 — rede e peça já existem no país',
+      'Gasta R$ 4.827 de combustível por ano contra R$ 8.798 do Corolla Cross — quase R$ 4 mil de diferença a cada 15 mil km (dados do guia de fábrica)',
+      '279 cv combinados contra 175 cv do Corolla Cross, com motor MENOR: 1.5 turbo contra 2.0 aspirado',
+      '7 anos de garantia total e 8 anos na bateria — Corolla Cross e Compass dão 5, Taos dá 3',
     ],
     howToUse:
       'Na abordagem: leve o cliente para o test drive antes de falar de preço. O 7 vende no rodar e no acabamento — ficha isolada perde para a experiência. Se ele veio pelo preço, comece pela lista de série: é aí que a comparação vira a seu favor.',
@@ -1088,6 +1091,7 @@ export const PRODUCTS: Product[] = [
       'Painel digital flutuante de 24,6" e som Sony de 8 alto-falantes de série',
       'Bancos dianteiros elétricos, ventilados e aquecidos — item que costuma ser opcional caro na concorrência',
       '7 airbags e carroceria com 78% de aço de alta resistência',
+      '7 anos de garantia total e 8 anos na bateria — uma das maiores do mercado brasileiro',
     ],
     howToUse:
       'A dúvida número um deste carro é "preciso de tomada?". Responda isso nos primeiros trinta segundos: não precisa. Depois disso a conversa flui, porque o resto é conforto — e conforto se vende no test drive, não na ficha.',
@@ -1237,6 +1241,7 @@ export const PRODUCTS: Product[] = [
       'Display de 24,6", head-up display colorido, comando de voz e carregador wireless de 50 W com refrigeração',
       'Bateria de lítio-ferro-fosfato — a química mais resistente a temperatura e com maior vida útil',
       'Pacote ADAS 2.5, 6 airbags e 78% de aço de alta resistência na estrutura',
+      '8 anos de garantia na bateria e 7 anos no veículo — no elétrico, a bateria é a pergunta que o cliente não faz em voz alta',
     ],
     howToUse:
       'Não comece pela tecnologia: comece pela rotina dele. Pergunte quantos quilômetros ele roda por dia e se ele estaciona em casa ou em prédio. Com essas duas respostas você já sabe se o carro serve — e o cliente percebe que você não está empurrando.',
@@ -1346,6 +1351,7 @@ export const PRODUCTS: Product[] = [
       'Multimídia de 15,6" Ultra HD 2.5K com função Sliding, som Sony de 12 alto-falantes e o L’Essence de aromas',
       '8 airbags e estrutura com 70% de aço de alta resistência mais 30% de ultra resistência',
       'ADAS avançado: evasão inteligente (IES), frenagem de emergência de 4 a 150 km/h e assistente de congestionamento',
+      '7 anos de garantia total e 8 anos na bateria — uma das maiores do mercado brasileiro',
     ],
     howToUse:
       'Nessa faixa o cliente não compra ficha, compra a sensação de ter acertado. Convide para sentar dentro antes de falar número — a tela deslizante, o som Sony e o L’Essence fazem o trabalho sozinhos. Só depois abra a comparação de preço, e aí compare equipado contra equipado.',
@@ -1383,11 +1389,12 @@ export const PRODUCTS: Product[] = [
       'Autonomia em modo elétrico, consumo, itens de série e garantia variam por versão. Confirme na ficha técnica oficial e na condição vigente antes de falar número com o cliente.',
     fotos: ['/carros/omoda-7-shs-p-1.jpg', '/carros/omoda-7-shs-p-2.jpg', '/carros/omoda-7-shs-p-3.jpg', '/carros/omoda-7-shs-p-4.jpg'],
     destaques: [
-      { titulo: 'São Paulo a Salvador sem parar no posto', prova: 'Até 1.200 km somando tanque e bateria' },
-      { titulo: 'O maior porta-malas da categoria', prova: '590 litros — mais de 1.300 com os bancos rebatidos' },
-      { titulo: 'Massagem no banco no meio do trânsito', prova: 'Bancos com massagem, ventilação e aquecimento' },
-      { titulo: 'A rua fica do lado de fora', prova: 'Vidros duplos, cancelamento ativo de ruído e som Sony de 390 W' },
-      { titulo: 'Oito airbags e o carro dirigindo com você', prova: '18 recursos de assistência ao motorista' },
+      { titulo: 'Massagem no banco no meio do trânsito', prova: 'Banco do passageiro VIP com massagem e função relax' },
+      { titulo: 'A tela acompanha quem está dirigindo', prova: 'Multimídia de 15,6" 2.5K que desliza pelo painel' },
+      { titulo: 'A rua fica do lado de fora', prova: 'Som Sony de 12 alto-falantes com 390 W RMS e sistema de aromas L\'Essence' },
+      { titulo: 'O maior porta-malas da categoria', prova: 'Espaço de sobra para a família inteira e a bagagem' },
+      { titulo: 'São Paulo a Salvador sem parar no posto', prova: 'Mais de 1.200 km somando tanque e bateria' },
+      { titulo: 'Oito airbags e o carro dirigindo com você', prova: 'Pacote ADAS 2.5 completo e airbag central dianteiro' },
     ],
     durationSec: 45,
     gradient: ['#8b6cf0', '#2a1f5c'],

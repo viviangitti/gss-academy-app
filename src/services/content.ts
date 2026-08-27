@@ -299,17 +299,112 @@ const SEGMENT_OBJECTIONS: Record<string, Objection[]> = {
       ]},
   ],
   automotivo: [
-    { id: 'a1', objection: '"Vou esperar o novo modelo"', segment: 'automotivo',
-      quickResponses: ['Condições atuais não se repetem no modelo novo.', 'Preço de entrada sobe Y%. Compre agora.'],
+    // O SHOWROOM, NÃO A SALA DE REUNIÃO.
+    //
+    // O segmento tinha duas objeções próprias; o resto vinha da lista geral,
+    // que é de venda corporativa — "já tenho fornecedor", "preciso falar com
+    // meu sócio", "me envia proposta por email". Quem compra SUV para a
+    // família não fala nada disso. As de baixo são as que o vendedor ouve de
+    // verdade no salão, e vieram de duas fontes: as objeções que já estavam
+    // nos carros do catálogo do Eleva e a pesquisa com os 16 vendedores da
+    // Ramasa (ago/2026), que mostrou o time forte em elogiar o carro e fraco
+    // em desmontar a objeção.
+    //
+    // Regra que vale para todas: NENHUMA promete número que a loja teria de
+    // honrar depois — desconto, taxa, prazo e bônus saem da tabela vigente.
+    { id: 'a3', objection: '"Quanto vale meu carro na troca?"', segment: 'automotivo',
+      quickResponses: ['A avaliação é presencial e sem compromisso.', 'O que te faria fechar hoje: o valor do seu ou a parcela final?'],
       responses: [
-        'O modelo atual tem condições que não se repetem: [bônus de fábrica/taxa zero/estoque limitado]. Quando o novo chegar, essas condições acabam e o preço sobe.',
-        'O novo modelo vai demorar X meses e o preço de entrada será Y% maior. Comprando agora, você aproveita as condições e ainda pega um bom valor de revenda.',
+        'A avaliação é feita aqui, com o carro na mão — tabela sozinha não diz o estado real do seu. Traz que a gente avalia sem compromisso e você já sai sabendo o número.',
+        'Antes de falar de número: o que pesa mais pra você, o valor que sai pelo seu carro ou a parcela que fecha no fim? Porque dá pra trabalhar os dois, e nem sempre pelo mesmo caminho.',
+      ]},
+    { id: 'a4', objection: '"E a revenda? Carro chinês não segura valor"', segment: 'automotivo',
+      quickResponses: ['Vamos olhar a tabela dos últimos 12 meses, não o boato.', 'Garantia longa sustenta valor no usado.'],
+      responses: [
+        'Essa é justa, e dá pra responder com dado em vez de opinião: a gente olha junto a variação dos últimos doze meses na tabela. É uma consulta de dois minutos e vale mais que qualquer promessa minha.',
+        'Um ponto que costuma passar batido: garantia longa ainda vigente valoriza o carro no usado, porque o segundo dono herda o que sobrou. É por isso que o prazo da garantia entra nessa conta.',
+      ]},
+    { id: 'a5', objection: '"Onde eu faço a revisão? Tem oficina perto de mim?"', segment: 'automotivo',
+      quickResponses: ['Me diz sua região que eu te mostro a autorizada mais perto.', 'A rede é da marca, não da loja.'],
+      responses: [
+        'Pergunta certa, e o cliente que não faz é o que se arrepende. Me diz em que região você mora que eu te mostro no mapa qual é a autorizada mais perto e o que ela atende.',
+        'Vale separar duas coisas: a loja é uma, a rede da marca é outra. A revisão você faz em qualquer autorizada do país, não só aqui. Se você viaja muito, é isso que importa.',
+      ]},
+    { id: 'a6', objection: '"E se a bateria pifar? Deve custar uma fortuna"', segment: 'automotivo',
+      quickResponses: ['A bateria tem garantia própria, maior que a do carro.', 'Quantos anos você costuma ficar com o carro?'],
+      responses: [
+        'A bateria tem garantia própria e mais longa que a do resto do carro — justamente porque é a peça que gera essa dúvida. Te mostro o prazo exato no manual, que é onde está escrito.',
+        'Pergunto antes de responder: quantos anos você costuma ficar com um carro? Porque se for menos que o prazo da garantia da bateria, essa preocupação não chega a ser sua.',
+      ]},
+    { id: 'a7', objection: '"Quanto tempo demora pra entregar?"', segment: 'automotivo',
+      quickResponses: ['Depende da cor e da versão — confiro agora no sistema.', 'Prazo eu só falo com o que está escrito.'],
+      responses: [
+        'Isso muda por cor e versão, então não vou chutar: confiro agora no sistema e te falo o prazo do carro que você quer, não uma média.',
+        'Prazo é a única coisa que eu não improviso. Se eu prometer uma data e ela não vier, você perde a confiança em tudo que eu falei antes — então deixa eu confirmar e te mandar por escrito.',
+      ]},
+    { id: 'a8', objection: '"Minha esposa/meu marido precisa ver antes"', segment: 'automotivo',
+      quickResponses: ['Traz junto — quem senta atrás decide mais do que parece.', 'Quando vocês conseguem vir juntos?'],
+      responses: [
+        'Faz todo sentido, e eu prefiro assim. Traz junto pro test drive: quem senta no banco de trás repara em coisa que a gente na frente nem percebe, e é isso que costuma decidir.',
+        'Só uma coisa pra não perder tempo de vocês: quando conseguem vir juntos? Eu já deixo o carro separado e a proposta pronta, aí vocês decidem na hora em vez de voltar mais uma vez.',
+      ]},
+    { id: 'a9', objection: '"Tô só olhando"', segment: 'automotivo',
+      quickResponses: ['Fica à vontade. Posso só perguntar o que te trouxe aqui?', 'Está trocando o seu ou é o primeiro?'],
+      responses: [
+        'Fica à vontade mesmo, sem pressa. Só pra eu não te atrapalhar com o carro errado: você está trocando o seu ou é o primeiro da casa?',
+        'Tranquilo. Deixa eu te dar uma informação que serve mesmo se você não comprar nada hoje, e depois eu te deixo olhar em paz.',
+      ]},
+    { id: 'a10', objection: '"Vou pesquisar e depois eu volto"', segment: 'automotivo',
+      quickResponses: ['Ótimo. Te mando a ficha pra você comparar item a item.', 'O que você quer comparar? Eu te ajudo a olhar.'],
+      responses: [
+        'Pesquisar é o certo a fazer, e eu prefiro que você compare. Te mando a ficha deste aqui pra você colocar lado a lado — o que costuma virar a comparação é o que vem de série.',
+        'Deixa eu te ajudar a pesquisar melhor: me diz quais dois carros você vai comparar com este. Eu te falo onde este ganha e onde ele perde, porque perde em alguma coisa.',
+      ]},
+    { id: 'a11', objection: '"Nunca ouvi falar dessa marca"', segment: 'automotivo',
+      quickResponses: ['É do grupo Chery, no Brasil desde 2009.', 'A pergunta certa não é a marca, é rede e garantia.'],
+      responses: [
+        'Justo — marca nova assusta porque falta referência. O grupo por trás está no Brasil desde 2009, então rede e peça já existem aqui. Não é uma marca que chegou este ano.',
+        'Quando o cliente fala isso, o que ele quer saber de verdade é: se der problema, tem onde consertar, e quem me cobre. Então é disso que eu prefiro falar — rede autorizada e prazo de garantia, que é o que sustenta a resposta.',
+      ]},
+    { id: 'a12', objection: '"Está muito caro"', segment: 'automotivo',
+      quickResponses: ['Caro comparado com qual?', 'Vamos olhar a parcela, não o preço de tabela.', 'Some o combustível do mês nessa conta.'],
+      responses: [
+        'Caro comparado com o quê? Pergunto sério, porque se for com outro carro eu quero fazer a comparação item a item com você — é aí que costuma virar.',
+        'Preço de tabela e custo do mês são coisas diferentes. Se você roda bastante, o que sai de combustível pesa mais que a diferença de preço em pouco tempo. Deixa eu fazer essa conta com o seu número de quilômetros.',
+      ],
+      commonMistake: 'Oferecer desconto antes de entender com o que ele está comparando. Você entrega margem que talvez nem precisasse e ensina o cliente a pedir mais.'},
+    { id: 'a13', objection: '"Vou pensar"', segment: 'automotivo',
+      quickResponses: ['Claro. O que ficou em aberto?', 'É o carro, o valor ou o momento?', 'Prefere pensar com a ficha na mão?'],
+      responses: [
+        'Claro, decisão de carro não se toma correndo. Só me diz uma coisa pra eu não te deixar pensando na dúvida errada: ficou faltando informação sobre o carro, sobre o valor, ou é o momento mesmo?',
+        'Enquanto você pensa, deixa eu te mandar a ficha e a comparação por escrito. Assim você pensa com o número na frente em vez de lembrar do que eu falei.',
+      ],
+      commonMistake: 'Aceitar o "vou pensar" sem descobrir o que trancou. Sem isso você não tem o que fazer no follow-up e vira o vendedor que só liga cobrando resposta.'},
+    { id: 'a14', objection: '"O concorrente é mais barato"', segment: 'automotivo',
+      quickResponses: ['Mais barato com o quê de série?', 'Traz a proposta dele que eu comparo item a item.', 'A diferença some no primeiro ano de combustível?'],
+      responses: [
+        'Provavelmente é mesmo, e eu prefiro comparar do que desconversar. Traz a proposta dele: a gente coloca lado a lado o que vem de série nos dois, porque a diferença de preço costuma estar em item que aqui não é opcional.',
+        'Vale checar duas coisas antes de decidir pelo preço: o que é opcional lá e já vem aqui, e quanto tempo de garantia cada um dá. São os dois pontos onde a conta muda depois da compra.',
+      ],
+      commonMistake: 'Falar mal do concorrente. Cliente que ouve isso desconfia de você, não dele — compare fato com fato e deixe o cliente concluir.'},
+    { id: 'a15', objection: '"Preciso de descontos maiores"', segment: 'automotivo',
+      quickResponses: ['O que está valendo eu te mostro por escrito.', 'Dá pra trabalhar a entrada e o prazo também.', 'Se eu conseguir, você fecha hoje?'],
+      responses: [
+        'Desconto eu não invento: o que está valendo neste mês eu te mostro por escrito, e não sou eu que defino. O que dá pra trabalhar junto é a entrada, o prazo e o que entra no pacote.',
+        'Pergunta direta: se eu conseguir chegar onde você precisa, você fecha hoje? Faço a diferença porque aí eu levo o pedido pra gerência com uma resposta, não com um talvez.',
+      ],
+      commonMistake: 'Prometer um desconto que depende da gerência antes de ter o aval. A palavra volta atrás na frente do cliente e a venda morre ali.'},
+    { id: 'a1', objection: '"Vou esperar o novo modelo"', segment: 'automotivo',
+      quickResponses: ['O que está valendo agora pode não valer no próximo.', 'Quer que eu confirme as condições desta semana?'],
+      responses: [
+        'Pode ser o certo pra você, depende do que você espera do carro novo. Mas as condições comerciais mudam de mês pra mês — confiro o que está valendo agora e te mostro por escrito, aí você compara com calma.',
+        'Vale perguntar o que exatamente você espera do novo. Se for um item específico, eu te digo se este já tem — às vezes a mudança é de acabamento e o cliente esperou um ano por nada.',
       ]},
     { id: 'a2', objection: '"O seguro está muito caro"', segment: 'automotivo',
-      quickResponses: ['Parceria com corretoras: até 30% de desconto.', 'Olhe o custo total mensal, não só o seguro.'],
+      quickResponses: ['Vale cotar em mais de uma corretora antes de decidir.', 'Olhe o custo do mês inteiro, não só o seguro.'],
       responses: [
-        'Temos parceria com corretoras que conseguem até 30% de desconto. Posso incluir isso na proposta e mostrar o custo total real mensal.',
-        'Vamos olhar o custo total de propriedade: consumo, manutenção, seguro. Comparando com o concorrente, nosso custo mensal é mais competitivo.',
+        'Cotação de seguro varia bastante entre corretoras pro mesmo carro — vale pedir mais de uma antes de decidir. Não é venda minha, mas é o que eu faria.',
+        'Uma conta que ajuda: some combustível, manutenção e seguro do mês. Em híbrido e elétrico o que você economiza no combustível costuma compensar parte da diferença do seguro.',
       ]},
   ],
   automotivo_luxo: [

@@ -97,52 +97,143 @@ export default {
   "automotivo": {
    "objecoes": [
     {
-     "objecao": "\"Vou esperar o novo modelo\"",
+     "objecao": "\"Quanto vale meu carro na troca?\"",
      "curtas": [
-      "Condições atuais não se repetem no modelo novo.",
-      "Preço de entrada sobe Y%. Compre agora."
+      "A avaliação é presencial e sem compromisso.",
+      "O que te faria fechar hoje: o valor do seu ou a parcela final?"
      ],
-     "completa": "O modelo atual tem condições que não se repetem: [bônus de fábrica/taxa zero/estoque limitado]. Quando o novo chegar, essas condições acabam e o preço sobe.",
+     "completa": "A avaliação é feita aqui, com o carro na mão — tabela sozinha não diz o estado real do seu. Traz que a gente avalia sem compromisso e você já sai sabendo o número.",
      "erro": ""
     },
     {
-     "objecao": "\"O seguro está muito caro\"",
+     "objecao": "\"E a revenda? Carro chinês não segura valor\"",
      "curtas": [
-      "Parceria com corretoras: até 30% de desconto.",
-      "Olhe o custo total mensal, não só o seguro."
+      "Vamos olhar a tabela dos últimos 12 meses, não o boato.",
+      "Garantia longa sustenta valor no usado."
      ],
-     "completa": "Temos parceria com corretoras que conseguem até 30% de desconto. Posso incluir isso na proposta e mostrar o custo total real mensal.",
+     "completa": "Essa é justa, e dá pra responder com dado em vez de opinião: a gente olha junto a variação dos últimos doze meses na tabela. É uma consulta de dois minutos e vale mais que qualquer promessa minha.",
+     "erro": ""
+    },
+    {
+     "objecao": "\"Onde eu faço a revisão? Tem oficina perto de mim?\"",
+     "curtas": [
+      "Me diz sua região que eu te mostro a autorizada mais perto.",
+      "A rede é da marca, não da loja."
+     ],
+     "completa": "Pergunta certa, e o cliente que não faz é o que se arrepende. Me diz em que região você mora que eu te mostro no mapa qual é a autorizada mais perto e o que ela atende.",
+     "erro": ""
+    },
+    {
+     "objecao": "\"E se a bateria pifar? Deve custar uma fortuna\"",
+     "curtas": [
+      "A bateria tem garantia própria, maior que a do carro.",
+      "Quantos anos você costuma ficar com o carro?"
+     ],
+     "completa": "A bateria tem garantia própria e mais longa que a do resto do carro — justamente porque é a peça que gera essa dúvida. Te mostro o prazo exato no manual, que é onde está escrito.",
+     "erro": ""
+    },
+    {
+     "objecao": "\"Quanto tempo demora pra entregar?\"",
+     "curtas": [
+      "Depende da cor e da versão — confiro agora no sistema.",
+      "Prazo eu só falo com o que está escrito."
+     ],
+     "completa": "Isso muda por cor e versão, então não vou chutar: confiro agora no sistema e te falo o prazo do carro que você quer, não uma média.",
+     "erro": ""
+    },
+    {
+     "objecao": "\"Minha esposa/meu marido precisa ver antes\"",
+     "curtas": [
+      "Traz junto — quem senta atrás decide mais do que parece.",
+      "Quando vocês conseguem vir juntos?"
+     ],
+     "completa": "Faz todo sentido, e eu prefiro assim. Traz junto pro test drive: quem senta no banco de trás repara em coisa que a gente na frente nem percebe, e é isso que costuma decidir.",
+     "erro": ""
+    },
+    {
+     "objecao": "\"Tô só olhando\"",
+     "curtas": [
+      "Fica à vontade. Posso só perguntar o que te trouxe aqui?",
+      "Está trocando o seu ou é o primeiro?"
+     ],
+     "completa": "Fica à vontade mesmo, sem pressa. Só pra eu não te atrapalhar com o carro errado: você está trocando o seu ou é o primeiro da casa?",
+     "erro": ""
+    },
+    {
+     "objecao": "\"Vou pesquisar e depois eu volto\"",
+     "curtas": [
+      "Ótimo. Te mando a ficha pra você comparar item a item.",
+      "O que você quer comparar? Eu te ajudo a olhar."
+     ],
+     "completa": "Pesquisar é o certo a fazer, e eu prefiro que você compare. Te mando a ficha deste aqui pra você colocar lado a lado — o que costuma virar a comparação é o que vem de série.",
+     "erro": ""
+    },
+    {
+     "objecao": "\"Nunca ouvi falar dessa marca\"",
+     "curtas": [
+      "É do grupo Chery, no Brasil desde 2009.",
+      "A pergunta certa não é a marca, é rede e garantia."
+     ],
+     "completa": "Justo — marca nova assusta porque falta referência. O grupo por trás está no Brasil desde 2009, então rede e peça já existem aqui. Não é uma marca que chegou este ano.",
      "erro": ""
     },
     {
      "objecao": "\"Está muito caro\"",
      "curtas": [
-      "Caro é perder R$ X por mês sem essa solução.",
-      "Quanto te custa NÃO resolver esse problema?",
-      "Nosso cliente Y achava o mesmo. Hoje o retorno dele é 3x."
+      "Caro comparado com qual?",
+      "Vamos olhar a parcela, não o preço de tabela.",
+      "Some o combustível do mês nessa conta."
      ],
-     "completa": "Entendo sua preocupação com o investimento. Vamos olhar pelo lado do retorno: quanto você perde hoje sem essa solução? O custo de não agir geralmente é maior que o investimento.",
-     "erro": "Dar desconto imediato sem explorar o valor. Isso desvaloriza seu produto e treina o cliente a sempre pedir desconto."
+     "completa": "Caro comparado com o quê? Pergunto sério, porque se for com outro carro eu quero fazer a comparação item a item com você — é aí que costuma virar.",
+     "erro": "Oferecer desconto antes de entender com o que ele está comparando. Você entrega margem que talvez nem precisasse e ensina o cliente a pedir mais."
     },
     {
      "objecao": "\"Vou pensar\"",
      "curtas": [
-      "Pensar sobre qual ponto especificamente?",
-      "O que falta para você decidir hoje?",
-      "Posso te ajudar a pensar — qual é a maior dúvida?"
+      "Claro. O que ficou em aberto?",
+      "É o carro, o valor ou o momento?",
+      "Prefere pensar com a ficha na mão?"
      ],
-     "completa": "Perfeito, pensar é importante. Para eu te ajudar a pensar melhor: qual é o ponto principal que te gera dúvida? Assim posso enviar informações focadas.",
-     "erro": "Aceitar passivamente e ir embora. \"Vou pensar\" geralmente significa que algum ponto não ficou claro ou existe uma objeção escondida."
+     "completa": "Claro, decisão de carro não se toma correndo. Só me diz uma coisa pra eu não te deixar pensando na dúvida errada: ficou faltando informação sobre o carro, sobre o valor, ou é o momento mesmo?",
+     "erro": "Aceitar o \"vou pensar\" sem descobrir o que trancou. Sem isso você não tem o que fazer no follow-up e vira o vendedor que só liga cobrando resposta."
     },
     {
-     "objecao": "\"Já tenho fornecedor\"",
+     "objecao": "\"O concorrente é mais barato\"",
      "curtas": [
-      "Ótimo! Está 100% satisfeito ou tem pontos a melhorar?",
-      "Não é trocar, é comparar. 15 minutos resolvem.",
-      "Ter referência é bom. Que tal uma segunda opinião?"
+      "Mais barato com o quê de série?",
+      "Traz a proposta dele que eu comparo item a item.",
+      "A diferença some no primeiro ano de combustível?"
      ],
-     "completa": "Ótimo, isso mostra que você valoriza esse tipo de solução. Muitos dos nossos melhores clientes já tinham fornecedor. A pergunta é: você está 100% satisfeito ou há pontos que gostaria de melhorar?",
-     "erro": "Falar mal do concorrente. Isso gera desconfiança e faz o cliente defender o fornecedor atual."
+     "completa": "Provavelmente é mesmo, e eu prefiro comparar do que desconversar. Traz a proposta dele: a gente coloca lado a lado o que vem de série nos dois, porque a diferença de preço costuma estar em item que aqui não é opcional.",
+     "erro": "Falar mal do concorrente. Cliente que ouve isso desconfia de você, não dele — compare fato com fato e deixe o cliente concluir."
+    },
+    {
+     "objecao": "\"Preciso de descontos maiores\"",
+     "curtas": [
+      "O que está valendo eu te mostro por escrito.",
+      "Dá pra trabalhar a entrada e o prazo também.",
+      "Se eu conseguir, você fecha hoje?"
+     ],
+     "completa": "Desconto eu não invento: o que está valendo neste mês eu te mostro por escrito, e não sou eu que defino. O que dá pra trabalhar junto é a entrada, o prazo e o que entra no pacote.",
+     "erro": "Prometer um desconto que depende da gerência antes de ter o aval. A palavra volta atrás na frente do cliente e a venda morre ali."
+    },
+    {
+     "objecao": "\"Vou esperar o novo modelo\"",
+     "curtas": [
+      "O que está valendo agora pode não valer no próximo.",
+      "Quer que eu confirme as condições desta semana?"
+     ],
+     "completa": "Pode ser o certo pra você, depende do que você espera do carro novo. Mas as condições comerciais mudam de mês pra mês — confiro o que está valendo agora e te mostro por escrito, aí você compara com calma.",
+     "erro": ""
+    },
+    {
+     "objecao": "\"O seguro está muito caro\"",
+     "curtas": [
+      "Vale cotar em mais de uma corretora antes de decidir.",
+      "Olhe o custo do mês inteiro, não só o seguro."
+     ],
+     "completa": "Cotação de seguro varia bastante entre corretoras pro mesmo carro — vale pedir mais de uma antes de decidir. Não é venda minha, mas é o que eu faria.",
+     "erro": ""
     },
     {
      "objecao": "\"Não é o momento\"",
@@ -155,46 +246,6 @@ export default {
      "erro": "Insistir agressivamente ou desistir rápido demais. O ideal é plantar uma semente e agendar retorno."
     },
     {
-     "objecao": "\"Preciso falar com meu sócio/diretor\"",
-     "curtas": [
-      "Posso preparar um resumo de 1 página para ele.",
-      "Que tal uma ligação rápida com ele? 15 minutos.",
-      "Quais critérios ele avalia? Preparo os argumentos."
-     ],
-     "completa": "Claro! Para facilitar a conversa dele, posso preparar um resumo executivo de 1 página com os pontos principais e o retorno esperado. O que acha?",
-     "erro": "Não pedir para falar direto com o decisor. Você fica dependendo de alguém vender por você."
-    },
-    {
-     "objecao": "\"Me envia uma proposta por email\"",
-     "curtas": [
-      "Envio! Mas 10 min juntos valem mais que um email.",
-      "80% das propostas se perdem no email. Revisamos juntos?",
-      "Posso fazer 2 perguntas antes para personalizar?"
-     ],
-     "completa": "Envio sim! Mas antes, quero garantir que a proposta esteja 100% personalizada. Posso fazer mais 2 perguntas rápidas sobre suas necessidades?",
-     "erro": "Enviar a proposta e esperar o cliente responder. Proposta sem apresentação é documento perdido."
-    },
-    {
-     "objecao": "\"O concorrente é mais barato\"",
-     "curtas": [
-      "Mais barato com as mesmas entregas? Vamos comparar.",
-      "O barato pode sair caro. Pergunte sobre o resultado.",
-      "Preço menor = escopo menor. Quer ver lado a lado?"
-     ],
-     "completa": "É uma comparação justa. Mas você está comparando exatamente as mesmas entregas? Geralmente o mais barato não inclui [diferencial]. No final, o barato pode sair caro.",
-     "erro": "Entrar em guerra de preço. Você nunca vai ganhar competindo só por preço — compete por valor."
-    },
-    {
-     "objecao": "\"Não tenho orçamento\"",
-     "curtas": [
-      "Se pagasse em 3 meses, realocaria orçamento?",
-      "Quanto esse problema te custa hoje? Compare.",
-      "Comece pequeno. O resultado paga a expansão."
-     ],
-     "completa": "Entendo. Mas me diz: se o investimento se pagasse em 3 meses, faria sentido realocar orçamento? Vamos olhar o retorno antes de decidir.",
-     "erro": "Aceitar que não tem orçamento e ir embora. Muitas vezes \"não tenho orçamento\" significa \"não vi valor suficiente para priorizar\"."
-    },
-    {
      "objecao": "\"Preciso pensar melhor sobre isso\"",
      "curtas": [
       "O que especificamente te deixa em dúvida?",
@@ -203,66 +254,6 @@ export default {
      ],
      "completa": "Claro! Para eu te ajudar a pensar melhor, qual é a parte que ainda não ficou 100% clara? Assim posso te enviar as informações focadas.",
      "erro": "Deixar o cliente ir sem agendar um próximo passo concreto com data e hora."
-    },
-    {
-     "objecao": "\"Seu produto não tem [feature específica]\"",
-     "curtas": [
-      "O que você precisa resolver com essa feature?",
-      "Temos uma forma diferente de resolver isso.",
-      "Vamos olhar o todo, não uma função isolada."
-     ],
-     "completa": "Me conta mais: o que você precisa resolver com essa funcionalidade? Muitas vezes temos uma forma diferente (e melhor) de chegar no mesmo resultado.",
-     "erro": "Prometer o que não tem só para fechar. Isso volta como problema pós-venda."
-    },
-    {
-     "objecao": "\"Já tentei algo parecido e não funcionou\"",
-     "curtas": [
-      "O que exatamente não funcionou da última vez?",
-      "Nosso diferencial é justamente [X].",
-      "Te mostro um case de alguém que disse o mesmo e hoje tem resultado."
-     ],
-     "completa": "Entendo perfeitamente. Me conta: o que especificamente não funcionou? Assim consigo te mostrar em que somos diferentes e se faz sentido tentar de novo.",
-     "erro": "Ignorar a experiência anterior. Você precisa entender o que falhou para não prometer a mesma coisa."
-    },
-    {
-     "objecao": "\"Me liga daqui a 6 meses\"",
-     "curtas": [
-      "O que muda em 6 meses para viabilizar?",
-      "Vou te mandar conteúdo útil até lá.",
-      "Posso reservar sua condição atual por 30 dias?"
-     ],
-     "completa": "Combinado. Só para eu entender: o que você espera que mude em 6 meses? Assim consigo te ajudar a chegar lá mais rápido.",
-     "erro": "Sumir 6 meses e aparecer de novo do zero. Mantenha contato útil (sem pressão) nesse período."
-    },
-    {
-     "objecao": "\"Preciso de descontos maiores\"",
-     "curtas": [
-      "Qual valor faz esse negócio acontecer hoje?",
-      "Posso trocar preço por condições melhores.",
-      "Desconto maior implica escopo menor. Prefere?"
-     ],
-     "completa": "Entendo. Antes de falarmos de desconto: qual valor exato faz esse negócio acontecer hoje? Prefiro fechar com condições criativas do que só baixar preço.",
-     "erro": "Ceder desconto sem contrapartida. Cada ponto de desconto precisa vir com algo em troca (volume, prazo, exclusividade)."
-    },
-    {
-     "objecao": "\"Minha equipe não vai aceitar mudança\"",
-     "curtas": [
-      "Temos onboarding que reduz a resistência.",
-      "A equipe sofre mais com o problema atual.",
-      "Posso falar com os usuários-chave?"
-     ],
-     "completa": "Resistência à mudança é natural. Temos um programa de onboarding que reduz essa barreira: envolvemos os usuários-chave desde o início e a adoção fica acima de 80% em 30 dias.",
-     "erro": "Tratar resistência à mudança como barreira técnica. É emocional — precisa de comunicação e envolvimento, não só treinamento."
-    },
-    {
-     "objecao": "\"Estamos em um momento de corte de custos\"",
-     "curtas": [
-      "Exatamente por isso vale a conversa.",
-      "Nossa solução reduz custos em [X].",
-      "Podemos estruturar como investimento com retorno rápido."
-     ],
-     "completa": "Entendo o momento. Paradoxalmente, é o cenário ideal para nós: nossa solução reduz custos em [X%] e o retorno vem no [prazo]. Posso te mostrar a análise?",
-     "erro": "Ir embora na primeira objeção. Momento de corte de custos é exatamente quando soluções que geram economia são mais atraentes."
     }
    ],
    "roteiros": [
@@ -362,16 +353,6 @@ export default {
      "erro": "Aceitar passivamente e ir embora. \"Vou pensar\" geralmente significa que algum ponto não ficou claro ou existe uma objeção escondida."
     },
     {
-     "objecao": "\"Já tenho fornecedor\"",
-     "curtas": [
-      "Ótimo! Está 100% satisfeito ou tem pontos a melhorar?",
-      "Não é trocar, é comparar. 15 minutos resolvem.",
-      "Ter referência é bom. Que tal uma segunda opinião?"
-     ],
-     "completa": "Ótimo, isso mostra que você valoriza esse tipo de solução. Muitos dos nossos melhores clientes já tinham fornecedor. A pergunta é: você está 100% satisfeito ou há pontos que gostaria de melhorar?",
-     "erro": "Falar mal do concorrente. Isso gera desconfiança e faz o cliente defender o fornecedor atual."
-    },
-    {
      "objecao": "\"Não é o momento\"",
      "curtas": [
       "Quando seria? Seus concorrentes estão agindo agora.",
@@ -380,26 +361,6 @@ export default {
      ],
      "completa": "Entendo que o timing é importante. Qual seria o momento ideal? Pergunto porque muitos clientes que esperaram acabaram perdendo [vantagem específica].",
      "erro": "Insistir agressivamente ou desistir rápido demais. O ideal é plantar uma semente e agendar retorno."
-    },
-    {
-     "objecao": "\"Preciso falar com meu sócio/diretor\"",
-     "curtas": [
-      "Posso preparar um resumo de 1 página para ele.",
-      "Que tal uma ligação rápida com ele? 15 minutos.",
-      "Quais critérios ele avalia? Preparo os argumentos."
-     ],
-     "completa": "Claro! Para facilitar a conversa dele, posso preparar um resumo executivo de 1 página com os pontos principais e o retorno esperado. O que acha?",
-     "erro": "Não pedir para falar direto com o decisor. Você fica dependendo de alguém vender por você."
-    },
-    {
-     "objecao": "\"Me envia uma proposta por email\"",
-     "curtas": [
-      "Envio! Mas 10 min juntos valem mais que um email.",
-      "80% das propostas se perdem no email. Revisamos juntos?",
-      "Posso fazer 2 perguntas antes para personalizar?"
-     ],
-     "completa": "Envio sim! Mas antes, quero garantir que a proposta esteja 100% personalizada. Posso fazer mais 2 perguntas rápidas sobre suas necessidades?",
-     "erro": "Enviar a proposta e esperar o cliente responder. Proposta sem apresentação é documento perdido."
     },
     {
      "objecao": "\"O concorrente é mais barato\"",
@@ -412,16 +373,6 @@ export default {
      "erro": "Entrar em guerra de preço. Você nunca vai ganhar competindo só por preço — compete por valor."
     },
     {
-     "objecao": "\"Não tenho orçamento\"",
-     "curtas": [
-      "Se pagasse em 3 meses, realocaria orçamento?",
-      "Quanto esse problema te custa hoje? Compare.",
-      "Comece pequeno. O resultado paga a expansão."
-     ],
-     "completa": "Entendo. Mas me diz: se o investimento se pagasse em 3 meses, faria sentido realocar orçamento? Vamos olhar o retorno antes de decidir.",
-     "erro": "Aceitar que não tem orçamento e ir embora. Muitas vezes \"não tenho orçamento\" significa \"não vi valor suficiente para priorizar\"."
-    },
-    {
      "objecao": "\"Preciso pensar melhor sobre isso\"",
      "curtas": [
       "O que especificamente te deixa em dúvida?",
@@ -432,36 +383,6 @@ export default {
      "erro": "Deixar o cliente ir sem agendar um próximo passo concreto com data e hora."
     },
     {
-     "objecao": "\"Seu produto não tem [feature específica]\"",
-     "curtas": [
-      "O que você precisa resolver com essa feature?",
-      "Temos uma forma diferente de resolver isso.",
-      "Vamos olhar o todo, não uma função isolada."
-     ],
-     "completa": "Me conta mais: o que você precisa resolver com essa funcionalidade? Muitas vezes temos uma forma diferente (e melhor) de chegar no mesmo resultado.",
-     "erro": "Prometer o que não tem só para fechar. Isso volta como problema pós-venda."
-    },
-    {
-     "objecao": "\"Já tentei algo parecido e não funcionou\"",
-     "curtas": [
-      "O que exatamente não funcionou da última vez?",
-      "Nosso diferencial é justamente [X].",
-      "Te mostro um case de alguém que disse o mesmo e hoje tem resultado."
-     ],
-     "completa": "Entendo perfeitamente. Me conta: o que especificamente não funcionou? Assim consigo te mostrar em que somos diferentes e se faz sentido tentar de novo.",
-     "erro": "Ignorar a experiência anterior. Você precisa entender o que falhou para não prometer a mesma coisa."
-    },
-    {
-     "objecao": "\"Me liga daqui a 6 meses\"",
-     "curtas": [
-      "O que muda em 6 meses para viabilizar?",
-      "Vou te mandar conteúdo útil até lá.",
-      "Posso reservar sua condição atual por 30 dias?"
-     ],
-     "completa": "Combinado. Só para eu entender: o que você espera que mude em 6 meses? Assim consigo te ajudar a chegar lá mais rápido.",
-     "erro": "Sumir 6 meses e aparecer de novo do zero. Mantenha contato útil (sem pressão) nesse período."
-    },
-    {
      "objecao": "\"Preciso de descontos maiores\"",
      "curtas": [
       "Qual valor faz esse negócio acontecer hoje?",
@@ -470,26 +391,6 @@ export default {
      ],
      "completa": "Entendo. Antes de falarmos de desconto: qual valor exato faz esse negócio acontecer hoje? Prefiro fechar com condições criativas do que só baixar preço.",
      "erro": "Ceder desconto sem contrapartida. Cada ponto de desconto precisa vir com algo em troca (volume, prazo, exclusividade)."
-    },
-    {
-     "objecao": "\"Minha equipe não vai aceitar mudança\"",
-     "curtas": [
-      "Temos onboarding que reduz a resistência.",
-      "A equipe sofre mais com o problema atual.",
-      "Posso falar com os usuários-chave?"
-     ],
-     "completa": "Resistência à mudança é natural. Temos um programa de onboarding que reduz essa barreira: envolvemos os usuários-chave desde o início e a adoção fica acima de 80% em 30 dias.",
-     "erro": "Tratar resistência à mudança como barreira técnica. É emocional — precisa de comunicação e envolvimento, não só treinamento."
-    },
-    {
-     "objecao": "\"Estamos em um momento de corte de custos\"",
-     "curtas": [
-      "Exatamente por isso vale a conversa.",
-      "Nossa solução reduz custos em [X].",
-      "Podemos estruturar como investimento com retorno rápido."
-     ],
-     "completa": "Entendo o momento. Paradoxalmente, é o cenário ideal para nós: nossa solução reduz custos em [X%] e o retorno vem no [prazo]. Posso te mostrar a análise?",
-     "erro": "Ir embora na primeira objeção. Momento de corte de custos é exatamente quando soluções que geram economia são mais atraentes."
     }
    ],
    "roteiros": [

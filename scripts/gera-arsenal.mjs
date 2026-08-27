@@ -13,6 +13,28 @@ import { getObjections, getScripts, TECHNIQUES } from '../src/services/content.t
 // Segmentos que o Eleva usa hoje. Novo vertical? Acrescente aqui.
 const SEGMENTOS = ['automotivo', 'automotivo_luxo', 'farmaceutico'];
 
+// Objeções da lista GERAL que só existem em venda corporativa. Elas fazem
+// sentido no MAESTR.IA — lá o vendedor negocia com uma empresa — e nenhum
+// sentido no showroom: quem compra SUV para a família não tem sócio para
+// consultar, nem orçamento de departamento, nem fornecedor atual.
+//
+// A auditoria de ago/2026 encontrou o Eleva mandando essas para a IA como se
+// fossem munição automotiva, com resposta em linguagem de ROI ("quanto te
+// custa NÃO resolver esse problema", "retorno 3x"). Ficam de fora dos
+// segmentos de carro. O content.ts continua intacto — o MAESTR.IA não muda.
+const SO_CORPORATIVA = new Set([
+  'g3',   // "Já tenho fornecedor"
+  'g5',   // "Preciso falar com meu sócio/diretor"
+  'g6',   // "Me envia uma proposta por email"
+  'g8',   // "Não tenho orçamento"
+  'g10',  // "Seu produto não tem [feature específica]"
+  'g11',  // "Já tentei algo parecido e não funcionou"
+  'g12',  // "Me liga daqui a 6 meses"
+  'g14',  // "Minha equipe não vai aceitar mudança"
+  'g15',  // "Estamos em um momento de corte de custos"
+]);
+const ehCarro = (seg) => seg.startsWith('automotivo');
+
 const saida = { tecnicas: TECHNIQUES.map((t) => ({
   nome: t.name, resumo: t.summary, quando: t.whenToUse, passos: t.steps,
 })), porSegmento: {} };
@@ -22,6 +44,7 @@ for (const seg of SEGMENTOS) {
   // humana). Pro contexto da IA isso é ruído: funde numa entrada só.
   const porTexto = new Map();
   for (const o of getObjections(seg)) {
+    if (ehCarro(seg) && SO_CORPORATIVA.has(o.id)) continue;
     const chave = o.objection.trim().toLowerCase();
     const ja = porTexto.get(chave);
     if (!ja) { porTexto.set(chave, { objecao: o.objection, curtas: [...(o.quickResponses || [])], completas: [...(o.responses || [])], erro: o.commonMistake || '' }); continue; }

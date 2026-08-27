@@ -48,3 +48,12 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
+
+// Atalho de DESENVOLVIMENTO para conferir o desenho do one-page sem passar pelo
+// compartilhamento do celular. Só em dev: não vai para o pacote publicado.
+if (import.meta.env.DEV) {
+  import('./pilulas/data/onePage').then((m) => {
+    (window as unknown as Record<string, unknown>).onePageDebug = m.desenharOnePage;
+  });
+}

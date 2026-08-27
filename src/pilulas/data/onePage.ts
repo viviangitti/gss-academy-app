@@ -159,11 +159,19 @@ function cobre(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, 
 function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: HTMLImageElement[], yRodape: number) {
   const { product: p } = d;
 
-  // ---- capa: o carro ocupando a folha inteira em cima ----
-  // 700 e não 790: com benefício + ficha embaixo, cada razão precisa de ~100px
-  // pra respirar. Foto grande demais espremia a lista e ela virava letra miúda —
-  // que é justamente o que a gente quis tirar daqui.
-  const hCapa = 700;
+  // O FORMATO "GUIA DO MODELO".
+  //
+  // Inspirado no guia de produto da Land Rover que a Ramasa usa como
+  // referência — mas com uma diferença que decide tudo: aquele é material
+  // INTERNO de treinamento, com parágrafo de cinquenta palavras por item.
+  // Este vai pro cliente no WhatsApp. Mesma organização (capa, faixa,
+  // motivos numerados), um terço do texto.
+  //
+  // Três faixas: capa grande que faz o cliente parar de rolar, faixa colorida
+  // que anuncia o que vem, e a lista numerada com foto por motivo.
+
+  // ---------------------------------------------------------------- capa ---
+  const hCapa = 560;
   if (fotos[0]) cobre(ctx, fotos[0], 0, 0, L, hCapa);
   else {
     const gg = ctx.createLinearGradient(0, 0, L, hCapa);
@@ -173,38 +181,61 @@ function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: H
     ctx.fillRect(0, 0, L, hCapa);
   }
 
-  // Véu escuro embaixo: sem ele o nome branco some numa foto clara.
-  const veu = ctx.createLinearGradient(0, hCapa - 420, 0, hCapa);
-  veu.addColorStop(0, 'rgba(10,12,22,0)');
-  veu.addColorStop(1, 'rgba(10,12,22,.86)');
-  ctx.fillStyle = veu;
-  ctx.fillRect(0, hCapa - 420, L, 420);
+  // Véu em cima E embaixo: em cima pro cabeçalho branco não sumir num céu
+  // claro, embaixo pro nome do carro não sumir num asfalto claro.
+  const cima = ctx.createLinearGradient(0, 0, 0, 200);
+  cima.addColorStop(0, 'rgba(10,15,25,0.55)');
+  cima.addColorStop(1, 'rgba(10,15,25,0)');
+  ctx.fillStyle = cima;
+  ctx.fillRect(0, 0, L, 200);
 
-  // marca da concessionária, discreta no topo
-  ctx.fillStyle = 'rgba(255,255,255,.9)';
-  ctx.font = `700 24px ${SANS}`;
-  ctx.fillText(d.marca.toUpperCase(), M, 74);
+  const baixo = ctx.createLinearGradient(0, hCapa - 340, 0, hCapa);
+  baixo.addColorStop(0, 'rgba(10,15,25,0)');
+  baixo.addColorStop(0.55, 'rgba(10,15,25,0.55)');
+  baixo.addColorStop(1, 'rgba(10,15,25,0.95)');
+  ctx.fillStyle = baixo;
+  ctx.fillRect(0, hCapa - 340, L, 340);
 
-  // o nome do modelo, grande
+  const mg = 52;
+  ctx.fillStyle = 'rgba(157,194,242,0.95)';
+  ctx.font = `600 19px ${SANS}`;
+  ctx.fillText('GUIA DO MODELO', mg, 62);
+
+  // A marca vai no canto direito, como no guia de referência — e sai do NOME
+  // DO CARRO, não da concessionária: "Ramasa · Jaecoo e Omoda" carimbaria
+  // JAECOO em cima de um Omoda.
+  ctx.textAlign = 'right';
   ctx.fillStyle = '#ffffff';
-  ctx.font = `800 92px ${SANS}`;
-  escreve(ctx, p.name, M, hCapa - 74, L - M * 2, 96, 1);
+  ctx.font = `800 34px ${SANS}`;
+  ctx.fillText(p.name.split(/\s+/)[0].toUpperCase(), L - mg, 66);
+  ctx.textAlign = 'left';
 
-  // ---- galeria: o que ele vai ver por dentro ----
-  const yGal = hCapa;
-  const hGal = 196;
-  const resto = fotos.slice(1, 4);
-  if (resto.length) {
-    const gap = 6;
-    const larg = (L - gap * (resto.length - 1)) / resto.length;
-    resto.forEach((f, i) => cobre(ctx, f, i * (larg + gap), yGal, larg, hGal));
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `800 104px ${SANS}`;
+  ctx.fillText(p.name.toUpperCase(), mg, hCapa - 96);
+
+  // A tagline completa é longa demais para uma linha e cortava no meio da
+  // frase ("...versões SHS híbridas plug-in, com"). Fica só a primeira
+  // afirmação — até os dois-pontos, que é onde o texto vira enumeração.
+  ctx.fillStyle = '#d6e2f2';
+  ctx.font = `500 26px ${SANS}`;
+  const corte = p.tagline.indexOf(':');
+  let chamada = corte >= 12 ? p.tagline.slice(0, corte) : p.tagline;
+  // Rede de segurança: se ainda não couber numa linha, corta na última palavra
+  // inteira e fecha com reticências — melhor curto que cortado no meio.
+  const cabe = L - mg * 2;
+  if (ctx.measureText(chamada).width > cabe) {
+    const ps = chamada.split(' ');
+    while (ps.length > 1 && ctx.measureText(ps.join(' ') + '…').width > cabe) ps.pop();
+    chamada = ps.join(' ') + '…';
   }
+  ctx.fillText(chamada, mg, hCapa - 50);
 
-  // ---- as razões de compra ----
-  // Benefício em cima, ficha embaixo. Quem recebe no WhatsApp decide pelo que
-  // muda na vida dele; a ficha é o que dá segurança pra ele repetir o argumento
-  // pra mulher, pro marido, pro cunhado. Uma sem a outra não fecha.
-  let y = yGal + (resto.length ? hGal : 0) + 88;
+  // --------------------------------------------------------------- faixa ---
+  const hFaixa = 78;
+  ctx.fillStyle = d.accent;
+  ctx.fillRect(0, hCapa, L, hFaixa);
+
   const itens = (d.destaques?.length
     ? d.destaques
     : p.destaques?.length
@@ -212,43 +243,67 @@ function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: H
       : p.benefits.map((b) => ({ titulo: b, prova: undefined }))
   ).slice(0, 5);
 
-  const sobra = yRodape - 44 - y;
-  const alturaItem = Math.min(112, Math.max(78, sobra / Math.max(itens.length, 1)));
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `800 40px ${SANS}`;
+  ctx.fillText(`${itens.length} MOTIVOS PARA COMPRAR`, mg, hCapa + 53);
+
+  ctx.textAlign = 'right';
+  ctx.fillStyle = 'rgba(255,255,255,0.82)';
+  ctx.font = `600 18px ${SANS}`;
+  ctx.fillText(d.marca.toUpperCase(), L - mg, hCapa + 50);
+  ctx.textAlign = 'left';
+
+  // --------------------------------------------------------- os motivos ---
+  // Numerados de propósito: no guia de referência o número é o que dá ordem de
+  // leitura. Aqui ele também diz qual argumento a gerência pôs em primeiro.
+  const yIni = hCapa + hFaixa + 14;
+  const alt = (yRodape - 20 - yIni) / Math.max(itens.length, 1);
+  const galeria = fotos.slice(1);
 
   itens.forEach((item, i) => {
-    const yi = y + i * alturaItem;
+    const y0 = yIni + i * alt;
+    const meio = y0 + alt / 2;
 
-    // marca de conferido — dá ritmo à lista sem virar numeração (numerar
-    // sugeriria ordem de importância, que não existe aqui)
-    ctx.strokeStyle = d.accent;
-    ctx.lineWidth = 5;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(M + 3, yi - 12);
-    ctx.lineTo(M + 13, yi - 2);
-    ctx.lineTo(M + 32, yi - 26);
-    ctx.stroke();
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#d3e1f4';
+    ctx.font = `800 74px ${SANS}`;
+    ctx.fillText(String(i + 1), mg + 34, meio + 24);
+    ctx.textAlign = 'left';
 
-    ctx.fillStyle = '#15152a';
-    ctx.font = `700 35px ${SANS}`;
-    const fim = escreve(ctx, item.titulo, M + 56, yi, L - M * 2 - 56, 43, 2);
-
-    if (item.prova) {
-      ctx.fillStyle = '#77778e';
-      ctx.font = `400 25px ${SANS}`;
-      escreve(ctx, item.prova, M + 56, fim + 12, L - M * 2 - 56, 32, 1);
+    // A foto do motivo vem da galeria do modelo; sem galeria, o bloco some e o
+    // texto ocupa a linha inteira em vez de deixar um buraco.
+    const xFoto = mg + 84;
+    const lFoto = 208;
+    const hFoto = Math.min(128, alt - 26);
+    const temFoto = galeria.length > 0;
+    if (temFoto) {
+      const f = galeria[i % galeria.length];
+      ctx.save();
+      retanguloArredondado(ctx, xFoto, meio - hFoto / 2, lFoto, hFoto, 10);
+      ctx.clip();
+      cobre(ctx, f, xFoto, meio - hFoto / 2, lFoto, hFoto);
+      ctx.restore();
     }
 
-    // O traço separa um benefício do próximo — tem que ficar DEPOIS da ficha
-    // deste item, senão a ficha parece pertencer ao de baixo. Estava caindo
-    // exatamente em cima dela.
+    const xTxt = temFoto ? xFoto + lFoto + 26 : mg + 84;
+    const larg = L - xTxt - mg;
+
+    ctx.fillStyle = '#15152a';
+    ctx.font = `700 33px ${SANS}`;
+    const fim = escreve(ctx, item.titulo, xTxt, meio - (item.prova ? 12 : 0), larg, 40, 2);
+
+    if (item.prova) {
+      ctx.fillStyle = '#5f6b7d';
+      ctx.font = `400 23px ${SANS}`;
+      escreve(ctx, item.prova, xTxt, fim + 14, larg, 30, 1);
+    }
+
     if (i < itens.length - 1) {
-      const yTraco = Math.min(yi + alturaItem - 26, (item.prova ? fim + 12 : fim) + 24);
-      ctx.strokeStyle = '#ececf3';
+      ctx.strokeStyle = '#e6ecf3';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(M, yTraco);
-      ctx.lineTo(L - M, yTraco);
+      ctx.moveTo(mg, y0 + alt);
+      ctx.lineTo(L - mg, y0 + alt);
       ctx.stroke();
     }
   });
@@ -315,7 +370,11 @@ function desenhaEstudo(ctx: CanvasRenderingContext2D, d: DadosOnePage, foto: HTM
 /** O rodapé — na versão do cliente é o cartão de visita do vendedor. */
 function rodape(ctx: CanvasRenderingContext2D, d: DadosOnePage, yRodape: number, hRodape: number, retrato: HTMLImageElement | null) {
   const { product: p, variante } = d;
-  ctx.fillStyle = '#f4f4f8';
+  // No material do CLIENTE o rodapé é escuro: fecha a folha com o mesmo peso
+  // da capa e faz o nome do vendedor saltar. Na folha de ESTUDO continua
+  // claro — ela é para ler e anotar, não para impressionar.
+  const escuro = variante === 'cliente';
+  ctx.fillStyle = escuro ? '#0e1420' : '#f4f4f8';
   ctx.fillRect(0, yRodape, L, hRodape);
   ctx.fillStyle = d.accent;
   ctx.fillRect(0, yRodape, L, 6);
@@ -343,22 +402,22 @@ function rodape(ctx: CanvasRenderingContext2D, d: DadosOnePage, yRodape: number,
       ctx.stroke();
     }
 
-    ctx.fillStyle = '#8a8a9e';
+    ctx.fillStyle = '#8fb6ea';
     ctx.font = `600 22px ${SANS}`;
     ctx.fillText('FALE COMIGO', x, yRodape + 62);
 
-    ctx.fillStyle = '#12121f';
+    ctx.fillStyle = '#ffffff';
     ctx.font = `800 44px ${SANS}`;
     ctx.fillText(d.vendedor || 'Sua consultoria', x, yRodape + 118);
 
     if (d.whatsapp) {
-      ctx.fillStyle = d.accentDeep;
+      ctx.fillStyle = '#a9bdd6';
       ctx.font = `600 34px ${SANS}`;
       ctx.fillText(d.whatsapp, x, yRodape + 168);
     }
 
     // Sem preço, sem taxa, sem prazo: isso sai da tabela vigente, na loja.
-    ctx.fillStyle = '#8a8a9e';
+    ctx.fillStyle = '#6d7a8c';
     ctx.font = `400 21px ${SANS}`;
     escreve(ctx, 'Imagens ilustrativas. Versões, itens e disponibilidade sujeitos à campanha vigente.', M, yRodape + 210, L - M * 2, 26, 1);
   } else {

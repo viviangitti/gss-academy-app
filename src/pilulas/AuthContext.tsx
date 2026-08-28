@@ -28,7 +28,7 @@ export interface User {
   brands: BrandId[]; // empresas que a pessoa pode ver
   segment?: SegmentId; // canal de onde veio (etiqueta do link/QR de convite)
   affiliateType?: AffiliateType; // só para role === 'afiliado'
-  cargo?: CargoAuto; // concessionária: qual dos quatro cargos da loja
+  cargo?: CargoAuto; // concessionária: qual dos cinco cargos da loja
 }
 
 // De qual público essa pessoa faz parte (pra escolher o vídeo do produto).
@@ -72,11 +72,11 @@ const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType
   // de farmácia. NÃO confundir com a Mari Briso acima: outra pessoa, outra
   // empresa, primeiro nome igual.
   'mariana@gruporamasa.com': { role: 'gestor', brands: ['ramasa'], cargo: 'gerente-veiculos' },
-  // Silmara (Lince Toyota, do grupo), líder de acessórios. Marcou "gerente de
-  // acessórios" no cadastro, mas cargo é declaração: quem abre o Painel é esta
-  // lista. Vê tudo da Ramasa — os quatro carros, os 27 acessórios e o Painel,
-  // incluindo o que o time respondeu na pesquisa de argumentos.
-  'silmara.ccrgerente@lincetoyota.com': { role: 'gestor', brands: ['ramasa'], cargo: 'gerente-acessorios' },
+  // Silmara: LÍDER de acessórios do grupo Ramasa — não gerente de uma loja.
+  // O e-mail é da Lince Toyota, mas o alcance dela é o grupo inteiro. Marcou
+  // "gerente de acessórios" no cadastro porque o cargo de líder ainda não
+  // existia; aqui o código corrige o que ela declarou.
+  'silmara.ccrgerente@lincetoyota.com': { role: 'gestor', brands: ['ramasa'], cargo: 'lider-acessorios' },
 };
 
 function overrideFor(email: string) {

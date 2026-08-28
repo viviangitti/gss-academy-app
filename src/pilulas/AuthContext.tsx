@@ -72,11 +72,10 @@ const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType
   // de farmácia. NÃO confundir com a Mari Briso acima: outra pessoa, outra
   // empresa, primeiro nome igual.
   'mariana@gruporamasa.com': { role: 'gestor', brands: ['ramasa'], cargo: 'gerente-veiculos' },
-  // Silmara: LÍDER de acessórios do grupo Ramasa — não gerente de uma loja.
-  // O e-mail é da Lince Toyota, mas o alcance dela é o grupo inteiro. Marcou
-  // "gerente de acessórios" no cadastro porque o cargo de líder ainda não
-  // existia; aqui o código corrige o que ela declarou.
-  'silmara.ccrgerente@lincetoyota.com': { role: 'gestor', brands: ['ramasa'], cargo: 'lider-acessorios' },
+  // Silmara: gerente de acessórios de TODAS as lojas do grupo Ramasa. O e-mail
+  // é da Lince Toyota, mas o alcance dela não é de uma loja só — não confundir
+  // o domínio com o escopo.
+  'silmara.ccrgerente@lincetoyota.com': { role: 'gestor', brands: ['ramasa'], cargo: 'gerente-acessorios' },
 };
 
 function overrideFor(email: string) {

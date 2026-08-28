@@ -138,11 +138,26 @@ export function duracaoLabel(p: Product): string {
   return temVideo ? 'vídeo' : `${p.durationSec}s`;
 }
 
-// Filtra o catálogo pelo que o papel pode ver. Afiliado só vê a linha GLPEN;
-// balconista, promotor e gestor veem tudo.
+/**
+ * Filtra o catálogo pelo que o papel pode ver.
+ *
+ * A regra nasceu na Meraki: afiliado vende a linha GLPEN e só ela, então não
+ * faz sentido mostrar o resto do portfólio pra ele. Balconista, promotor e
+ * gestor veem tudo.
+ *
+ * O QUE ESTAVA ERRADO: a regra era aplicada em QUALQUER marca. Na Ramasa não
+ * existe linha GLPEN — nenhum carro tem `line` —, então o filtro devolvia zero
+ * e a pessoa abria o catálogo e via só a seção de acessórios, que não passa por
+ * aqui. Parecia que os carros tinham sumido do app.
+ *
+ * Agora a restrição só vale onde a linha existe de verdade. Numa marca sem
+ * GLPEN ela não é regra nenhuma — e devolver tudo é mais certo que devolver
+ * uma tela vazia.
+ */
 export function visibleProducts(products: Product[], role?: string): Product[] {
-  if (role === 'afiliado') return products.filter((p) => p.line === AFILIADO_LINE);
-  return products;
+  if (role !== 'afiliado') return products;
+  const daLinha = products.filter((p) => p.line === AFILIADO_LINE);
+  return daLinha.length ? daLinha : products;
 }
 
 export const CATEGORIES: Record<Category, { label: string; Icon: LucideIcon }> = {

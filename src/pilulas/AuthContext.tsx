@@ -53,12 +53,18 @@ const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType
   // Vivian: gestora das DUAS marcas — troca no seletor do topo.
   'maria26@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
   'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp', 'ramasa'] },
-  // Silene: Gmail é a conta de GESTORA (as duas marcas); Hotmail é a de AFILIADA.
-  // ATENÇÃO: a conta real dela é "mendesdesouza" (sem "angelo"). O endereço com
+  // Silene: gestora de TODAS as marcas, em qualquer um dos e-mails dela.
+  //
+  // O Hotmail era a conta de AFILIADA — e afiliado só enxerga a linha GLPEN.
+  // Quando o acesso dela passou a incluir a Ramasa, o catálogo de carros
+  // apareceu vazio, porque lá não existe GLPEN nenhum. Os três endereços agora
+  // apontam para o mesmo lugar; não importa por qual ela entrar.
+  //
+  // ATENÇÃO: a conta real é "mendesdesouza" (sem "angelo"). O endereço com
   // "angelo" fica aqui só por segurança, caso ela use os dois.
-  'silene.mendesdesouza@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
-  'silene.mendesangelodesouza@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
-  'silene_mendes@hotmail.com': { role: 'afiliado', affiliateType: 'geral' },
+  'silene.mendesdesouza@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp', 'ramasa'] },
+  'silene.mendesangelodesouza@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp', 'ramasa'] },
+  'silene_mendes@hotmail.com': { role: 'gestor', brands: ['meraki', 'dsp', 'ramasa'] },
   // Mari (Meraki): gestora SÓ da Meraki — sem o seletor de marca, sem Sorocaps.
   'mari.briso@merakifarma.com.br': { role: 'gestor', brands: ['meraki'] },
   // Mariana (Ramasa), gerente de vendas. Cadastrou-se em 24/08/2026, quando a

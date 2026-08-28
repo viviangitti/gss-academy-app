@@ -45,6 +45,33 @@ export function storedRole(email: string): Role | null {
   }
 }
 
+// A MARCA ESCOLHIDA NO CADASTRO, guardada neste aparelho.
+//
+// Existe por causa de uma corrida no primeiro acesso: a conta é criada, o
+// onAuthChange dispara e vai buscar o perfil no Firestore — mas o perfil só é
+// gravado DEPOIS que a conta existe, porque precisa do uid. Nesse instante o
+// perfil ainda não está lá, e sem ele a pessoa caía na marca padrão.
+//
+// Como o onAuthChange só dispara de novo em mudança de login, ela ficava na
+// marca errada a sessão inteira. Isto aqui é gravado ANTES da conta nascer, e
+// serve de ponte até o perfil chegar.
+function marcaKey(email: string): string {
+  return 'wp_brands_' + email.trim().toLowerCase();
+}
+
+export function setStoredBrands(email: string, brands: string[]): void {
+  try { localStorage.setItem(marcaKey(email), JSON.stringify(brands)); } catch { /* cheio */ }
+}
+
+export function storedBrands(email: string): string[] | null {
+  try {
+    const v = JSON.parse(localStorage.getItem(marcaKey(email)) || 'null');
+    return Array.isArray(v) && v.length ? v : null;
+  } catch {
+    return null;
+  }
+}
+
 function typeKey(email: string): string {
   return 'wp_afiltype_' + email.trim().toLowerCase();
 }

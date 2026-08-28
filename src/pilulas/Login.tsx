@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Eye, EyeOff, Check } from 'lucide-react';
 import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } from '../services/auth';
-import { setStoredRole } from './data/roles';
+import { setStoredRole, setStoredBrands } from './data/roles';
 import { setElevaProfile } from './data/profile';
 import { invitedBrand } from './data/brandInvite';
 import { getBrand, isBalcao, isAuto, BRANDS, type BrandId } from './data/brands';
@@ -83,6 +83,9 @@ export default function Login() {
         const at: AffiliateType | '' = finalRoles.includes('afiliado') ? affType : '';
         // Cache local (rápido) + conta cria.
         setStoredRole(email.trim(), finalRole, at);
+        // ANTES de criar a conta: o perfil só pode ser gravado depois (precisa
+        // do uid), e no meio-tempo o app já decidiu qual marca mostrar.
+        setStoredBrands(email.trim(), effBrands);
         const fb = await signUpWithEmail(email.trim(), password, name.trim());
         // Perfil NA CONTA (Firestore): guarda TODOS os perfis marcados (pro
         // gestor saber) + o principal, que é o que o app usa.

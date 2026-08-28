@@ -5,7 +5,7 @@ import { invitedBrand } from './data/brandInvite';
 import { onAuthChange, signOut as fbSignOut, type AuthUser } from '../services/auth';
 import { setStatsAccount } from './data/tracking';
 import { firebaseEnabled } from '../services/firebase';
-import { storedRole, setStoredRole, storedAffiliateType } from './data/roles';
+import { storedRole, setStoredRole, storedAffiliateType, storedBrands } from './data/roles';
 import { getElevaProfile, type ElevaProfile } from './data/profile';
 import type { CargoAuto } from './data/cargos';
 
@@ -107,6 +107,11 @@ function brandsFor(email: string, profile: ElevaProfile | null): BrandId[] {
   if (profile?.brands?.length) return profile.brands;
   const inv = invitedBrand();
   if (inv) return [inv];
+  // Ponte do primeiro acesso: no cadastro a conta nasce antes do perfil, e por
+  // um instante não há perfil pra ler. Sem isto, quem acabou de se cadastrar
+  // caía na marca padrão e via o catálogo de outra empresa até recarregar.
+  const local = storedBrands(email);
+  if (local?.length) return local as BrandId[];
   return DEFAULT_BRANDS;
 }
 

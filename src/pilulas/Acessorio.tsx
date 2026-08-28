@@ -60,7 +60,9 @@ export default function Acessorio() {
         {a.preco && <span className="wp-acp-preco-obs">preço público sugerido</span>}
         {/* Prazo e garantia mudam com a origem — dito aqui, antes de o vendedor
             prometer data de entrega pro cliente. */}
-        <span className="wp-acp-origem">{ORIGENS[a.origem].nota}</span>
+        {ORIGENS[a.origem].nota && (
+          <span className="wp-acp-origem">{ORIGENS[a.origem].nota}</span>
+        )}
       </div>
 
       <div className="wp-block">

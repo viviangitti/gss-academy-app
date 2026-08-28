@@ -516,7 +516,10 @@ export const ORIGENS: Record<OrigemAcessorio, { label: string; nota: string }> =
   },
   loja: {
     label: 'Instalado aqui na loja',
-    nota: 'Serviço da Ramasa: agenda junto com a entrega e sai no mesmo dia.',
+    // Sem nota: a que existia aqui prometia prazo ("sai no mesmo dia") numa
+    // tela que o vendedor abre na frente do cliente. Prazo sai da agenda da
+    // oficina, não do app.
+    nota: '',
   },
 };
 

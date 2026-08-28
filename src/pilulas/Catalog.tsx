@@ -71,14 +71,16 @@ export default function Catalog() {
             {/* Duas listas, e a separação não é organização: é o que evita o
                 vendedor prometer "sai hoje" numa peça que vem de pedido, ou
                 mandar o cliente colocar película na rua. */}
-            {cat === 'acessorio' && acessorios.length > 0 && (['loja', 'fabrica'] as OrigemAcessorio[]).map((origem) => {
+            {cat === 'acessorio' && acessorios.length > 0 && (['fabrica', 'loja'] as OrigemAcessorio[]).map((origem) => {
               const daOrigem = acessoriosPorOrigem(brandId, origem);
               if (!daOrigem.length) return null;
               return (
               <div key={origem} className="wp-acess-grupo">
                 <div className="wp-acess-grupo-cab">
                   <h3 className="wp-acess-grupo-nome">{ORIGENS[origem].label}</h3>
-                  <p className="wp-acess-grupo-nota">{ORIGENS[origem].nota}</p>
+                  {ORIGENS[origem].nota && (
+                    <p className="wp-acess-grupo-nota">{ORIGENS[origem].nota}</p>
+                  )}
                 </div>
                 <div className="wp-grid">
                 {daOrigem.map((a) => (

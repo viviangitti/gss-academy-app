@@ -198,27 +198,27 @@ function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: H
 
   const mg = 52;
   ctx.fillStyle = 'rgba(157,194,242,0.95)';
-  ctx.font = `600 19px ${SANS}`;
-  ctx.fillText('GUIA DO MODELO', mg, 62);
+  ctx.font = `600 23px ${SANS}`;
+  ctx.fillText('GUIA DO MODELO', mg, 64);
 
   // A marca vai no canto direito, como no guia de referência — e sai do NOME
   // DO CARRO, não da concessionária: "Ramasa · Jaecoo e Omoda" carimbaria
   // JAECOO em cima de um Omoda.
   ctx.textAlign = 'right';
   ctx.fillStyle = '#ffffff';
-  ctx.font = `800 34px ${SANS}`;
-  ctx.fillText(p.name.split(/\s+/)[0].toUpperCase(), L - mg, 66);
+  ctx.font = `800 40px ${SANS}`;
+  ctx.fillText(p.name.split(/\s+/)[0].toUpperCase(), L - mg, 70);
   ctx.textAlign = 'left';
 
   ctx.fillStyle = '#ffffff';
-  ctx.font = `800 104px ${SANS}`;
-  ctx.fillText(p.name.toUpperCase(), mg, hCapa - 96);
+  ctx.font = `800 118px ${SANS}`;
+  ctx.fillText(p.name.toUpperCase(), mg, hCapa - 100);
 
   // A tagline completa é longa demais para uma linha e cortava no meio da
   // frase ("...versões SHS híbridas plug-in, com"). Fica só a primeira
   // afirmação — até os dois-pontos, que é onde o texto vira enumeração.
   ctx.fillStyle = '#d6e2f2';
-  ctx.font = `500 26px ${SANS}`;
+  ctx.font = `500 31px ${SANS}`;
   const corte = p.tagline.indexOf(':');
   let chamada = corte >= 12 ? p.tagline.slice(0, corte) : p.tagline;
   // Rede de segurança: se ainda não couber numa linha, corta na última palavra
@@ -244,13 +244,13 @@ function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: H
   ).slice(0, 5);
 
   ctx.fillStyle = '#ffffff';
-  ctx.font = `800 40px ${SANS}`;
-  ctx.fillText(`${itens.length} MOTIVOS PARA COMPRAR`, mg, hCapa + 53);
+  ctx.font = `800 47px ${SANS}`;
+  ctx.fillText(`${itens.length} MOTIVOS PARA COMPRAR`, mg, hCapa + 55);
 
   ctx.textAlign = 'right';
   ctx.fillStyle = 'rgba(255,255,255,0.82)';
-  ctx.font = `600 18px ${SANS}`;
-  ctx.fillText(d.marca.toUpperCase(), L - mg, hCapa + 50);
+  ctx.font = `600 21px ${SANS}`;
+  ctx.fillText(d.marca.toUpperCase(), L - mg, hCapa + 51);
   ctx.textAlign = 'left';
 
   // --------------------------------------------------------- os motivos ---
@@ -266,14 +266,14 @@ function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: H
 
     ctx.textAlign = 'center';
     ctx.fillStyle = '#d3e1f4';
-    ctx.font = `800 74px ${SANS}`;
-    ctx.fillText(String(i + 1), mg + 34, meio + 24);
+    ctx.font = `800 86px ${SANS}`;
+    ctx.fillText(String(i + 1), mg + 36, meio + 28);
     ctx.textAlign = 'left';
 
     // A foto do motivo vem da galeria do modelo; sem galeria, o bloco some e o
     // texto ocupa a linha inteira em vez de deixar um buraco.
-    const xFoto = mg + 84;
-    const lFoto = 208;
+    const xFoto = mg + 92;
+    const lFoto = 212;
     const hFoto = Math.min(128, alt - 26);
     const temFoto = galeria.length > 0;
     if (temFoto) {
@@ -289,13 +289,13 @@ function desenhaCliente(ctx: CanvasRenderingContext2D, d: DadosOnePage, fotos: H
     const larg = L - xTxt - mg;
 
     ctx.fillStyle = '#15152a';
-    ctx.font = `700 33px ${SANS}`;
-    const fim = escreve(ctx, item.titulo, xTxt, meio - (item.prova ? 12 : 0), larg, 40, 2);
+    ctx.font = `700 40px ${SANS}`;
+    const fim = escreve(ctx, item.titulo, xTxt, meio - (item.prova ? 16 : 0), larg, 48, 2);
 
     if (item.prova) {
       ctx.fillStyle = '#5f6b7d';
-      ctx.font = `400 23px ${SANS}`;
-      escreve(ctx, item.prova, xTxt, fim + 14, larg, 30, 1);
+      ctx.font = `400 27px ${SANS}`;
+      escreve(ctx, item.prova, xTxt, fim + 16, larg, 34, 1);
     }
 
     if (i < itens.length - 1) {
@@ -403,17 +403,17 @@ function rodape(ctx: CanvasRenderingContext2D, d: DadosOnePage, yRodape: number,
     }
 
     ctx.fillStyle = '#8fb6ea';
-    ctx.font = `600 22px ${SANS}`;
+    ctx.font = `600 25px ${SANS}`;
     ctx.fillText('FALE COMIGO', x, yRodape + 62);
 
     ctx.fillStyle = '#ffffff';
-    ctx.font = `800 44px ${SANS}`;
-    ctx.fillText(d.vendedor || 'Sua consultoria', x, yRodape + 118);
+    ctx.font = `800 52px ${SANS}`;
+    ctx.fillText(d.vendedor || 'Sua consultoria', x, yRodape + 122);
 
     if (d.whatsapp) {
       ctx.fillStyle = '#a9bdd6';
-      ctx.font = `600 34px ${SANS}`;
-      ctx.fillText(d.whatsapp, x, yRodape + 168);
+      ctx.font = `600 39px ${SANS}`;
+      ctx.fillText(d.whatsapp, x, yRodape + 174);
     }
 
     // Sem preço, sem taxa, sem prazo: isso sai da tabela vigente, na loja.

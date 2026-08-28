@@ -16,16 +16,25 @@
 // vender o acessório, e vendedor de carro fecha acessório no mesmo aperto de
 // mão. Esconder metade do app de cada um quebraria os dois.
 //
-// E ele também não dá poder: quem abre o Painel é a lista de e-mails
-// autorizados no AuthContext, não o que a pessoa marcou aqui. Escolher
-// "Gerente" no cadastro é uma declaração, não uma chave.
+// GERENTE x LÍDER: o gerente responde por UMA loja; o líder responde pela
+// operação de acessórios do grupo inteiro, acima dos gerentes. Hoje os dois
+// enxergam o mesmo conteúdo — o app ainda não separa o que é de cada loja,
+// então "ver tudo" já é o padrão de qualquer marca. A distinção existe aqui
+// para que o cadastro diga a verdade agora, e para que a separação por loja,
+// quando vier, tenha em que se apoiar.
+//
+// E o cargo não dá poder sozinho: quem abre o Painel é o papel por baixo
+// (gestor), e quem lê os dados do time é a lista de e-mails autorizados nas
+// regras do Firestore. Marcar "Líder" no cadastro é uma declaração, não uma
+// chave.
 import type { Role } from '../AuthContext';
 
 export type CargoAuto =
   | 'vendedor-veiculos'
   | 'gerente-veiculos'
   | 'vendedor-acessorios'
-  | 'gerente-acessorios';
+  | 'gerente-acessorios'
+  | 'lider-acessorios';
 
 export interface Cargo {
   id: CargoAuto;
@@ -53,6 +62,11 @@ export const CARGOS_AUTO: Cargo[] = [
   {
     id: 'gerente-acessorios',
     label: 'Gerente de acessórios',
+    role: 'gestor',
+  },
+  {
+    id: 'lider-acessorios',
+    label: 'Líder de acessórios',
     role: 'gestor',
   },
 ];

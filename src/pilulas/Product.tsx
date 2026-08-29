@@ -760,7 +760,7 @@ export default function Product() {
         ? `${product.name} — ${product.tagline}\n\n${product.salesLine}`
         : `${product.name} — material de estudo (uso interno).`;
       const r = await compartilharMaterial(m, texto);
-      if (r === 'baixou') setAvisoOp('Arquivos baixados: a imagem e o PDF estão na sua pasta de downloads.');
+      if (r === 'baixou') setAvisoOp('PDF baixado: está na sua pasta de downloads.');
     } catch {
       setAvisoOp('Não consegui montar o material agora. Tenta de novo em instantes.');
     } finally {
@@ -1085,7 +1085,7 @@ export default function Product() {
             </Link>
           ) : (
             <p className="wp-op-hint">
-              A imagem abre direto na conversa; o PDF é o que o cliente imprime e leva pra casa.
+              O PDF já chega com a folha em miniatura na conversa — e é o que o cliente imprime e leva pra casa.
             </p>
           )}
           {avisoOp && <p className="wp-op-aviso">{avisoOp}</p>}

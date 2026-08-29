@@ -495,16 +495,15 @@ async function montaPdf(c: HTMLCanvasElement): Promise<Blob> {
 }
 
 export interface Material {
-  imagem: Blob;
   pdf: Blob;
   nome: string; // sem extensão
 }
 
 export async function gerarMaterial(d: DadosOnePage): Promise<Material> {
   const c = await desenharOnePage(d);
-  const [imagem, pdf] = await Promise.all([paraBlob(c, 'image/jpeg', 0.9), montaPdf(c)]);
+  const pdf = await montaPdf(c);
   const base = d.product.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase();
-  return { imagem, pdf, nome: d.variante === 'estudo' ? `${base}-estudo` : base };
+  return { pdf, nome: d.variante === 'estudo' ? `${base}-estudo` : base };
 }
 
 /**
@@ -513,8 +512,11 @@ export async function gerarMaterial(d: DadosOnePage): Promise<Material> {
  * pessoa não ter que escrever nada.
  */
 export async function compartilharMaterial(m: Material, texto: string): Promise<'compartilhou' | 'baixou'> {
+  // SÓ O PDF. Antes iam os dois — a imagem e o PDF — e o cliente recebia a
+  // mesma folha duas vezes, uma como foto e outra como anexo. O PDF já mostra
+  // a folha em miniatura na conversa, então a imagem não acrescentava nada:
+  // dobrava o peso e fazia o vendedor parecer desorganizado.
   const arquivos = [
-    new File([m.imagem], `${m.nome}.jpg`, { type: 'image/jpeg' }),
     new File([m.pdf], `${m.nome}.pdf`, { type: 'application/pdf' }),
   ];
   const nav = navigator as Navigator & { canShare?: (d: { files?: File[] }) => boolean };

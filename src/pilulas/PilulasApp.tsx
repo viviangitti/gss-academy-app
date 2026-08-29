@@ -179,7 +179,7 @@ function Shell() {
   const [verLogin, setVerLogin] = useState(false);
   // Marca/papel/nome viajam junto com os stats que vão pro Sistema de Gestão
   useEffect(() => {
-    setStatsMeta({ brand: brand.id, role: user?.role, name: user?.name });
+    setStatsMeta({ brand: brand.id, role: user?.role, cargo: user?.cargo, name: user?.name });
     // "Cartão pronto" = tem WhatsApp preenchido. É o que o material do cliente
     // precisa pra sair com o contato certo, e o que a gerência precisa saber
     // pra cobrar quem ainda não fez.

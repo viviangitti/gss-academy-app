@@ -17,6 +17,15 @@ const MAX_EVENTS = 200; // corta o array pra não estourar o limite de 1MB do do
 interface SyncMeta {
   brand?: string;
   role?: string;
+  /**
+   * O cargo da concessionária (vendedor de veículos, gerente de acessórios…).
+   *
+   * Vai junto porque o Painel lê o time por aqui, e o PAPEL por baixo é o do
+   * vertical farmácia — "balconista". Numa concessionária não existe
+   * balconista: a gerência abria o Painel e via o time inteiro classificado
+   * com uma palavra que ninguém usa na loja.
+   */
+  cargo?: string;
   name?: string;
   /**
    * A pessoa já preencheu o contato que sai no material do cliente?
@@ -49,6 +58,7 @@ export function syncStats(stats: Stats, event: { type: ElevaEventType; id: strin
     name: meta.name || auth?.currentUser?.displayName || '',
     email: auth?.currentUser?.email || '',
     role: meta.role || '',
+    cargo: meta.cargo || '',
     brand: meta.brand || '',
     cartaoPronto: meta.cartaoPronto === true,
     totals: {

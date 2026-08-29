@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, X } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
+import { cargoLabel } from './data/cargos';
 import { vocab } from './data/vocabulario';
 import { useAuth } from './AuthContext';
 import { CATEGORIES, CATEGORIAS_AUTO, CATEGORIAS_SAUDE, type Category, type Product } from './data/products';
@@ -28,12 +29,48 @@ import type { Audience } from './AuthContext';
 // ---------- Resultados: dado REAL do time (elevaStats) ----------
 const ROLE_LB: Record<string, string> = {
   balconista: 'Balconistas', promotor: 'Promotores', afiliado: 'Afiliados', gestor: 'Gestores',
+  // Cargos da concessionária — o agrupamento passa a vir por cargo quando ele
+  // existe (ver buildReport).
+  'vendedor-veiculos': 'Vendedores de veículos', 'vendedor-acessorios': 'Vendedores de acessórios',
+  'gerente-veiculos': 'Gerentes de veículos', 'gerente-acessorios': 'Gerentes de acessórios',
+  'lider-acessorios': 'Líderes de acessórios',
 };
 // Singular certo por papel — antes o código tirava só o último "s" do plural, o
 // que gerava "Gestore" (de Gestores) e "Promotore" (de Promotores).
 const ROLE_LB1: Record<string, string> = {
   balconista: 'Balconista', promotor: 'Promotor', afiliado: 'Afiliado', gestor: 'Gestor',
 };
+
+/**
+ * O nome do GRUPO na barra (plural).
+ *
+ * Na concessionária os papéis do vertical farmácia são traduzidos ANTES de
+ * consultar a tabela: lá não existe balconista nem "gestor" — existe vendedor
+ * e gerente. Os cargos novos (vendedor-veiculos etc.) já chegam certos e
+ * passam direto.
+ */
+function comoChamarGrupo(chave: string, auto: boolean): string {
+  if (auto) {
+    if (chave === 'balconista') return 'Vendedores';
+    if (chave === 'gestor') return 'Gerentes';
+  }
+  return ROLE_LB[chave] || chave;
+}
+
+/**
+ * Como chamar a pessoa no Painel.
+ *
+ * O cargo manda quando existe. Sem ele (registro antigo, de antes de o cargo
+ * ser gravado), traduz o papel para a palavra da casa: numa concessionária não
+ * existe balconista — existe vendedor.
+ */
+function comoChamar(role: string, cargo: string | undefined, auto: boolean): string {
+  if (cargo) return cargoLabel(cargo) || cargo;
+  if (!auto) return ROLE_LB1[role] || role;
+  if (role === 'balconista') return 'Vendedor(a)';
+  if (role === 'gestor') return 'Gerente';
+  return ROLE_LB1[role] || role;
+}
 
 // Encurta um texto SEM cortar palavra pela metade: prefere terminar numa frase
 // completa; se não der, na última palavra inteira.
@@ -142,7 +179,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
         <div className="wp-gz-top-head"><Users size={12} className="wp-ico" /> Quem está usando, por acesso</div>
         {rep.byRole.map((r) => (
           <div key={r.role} className="wp-gz-bar-row">
-            <span className="wp-gz-bar-name">{ROLE_LB[r.role] || r.role}</span>
+            <span className="wp-gz-bar-name">{comoChamarGrupo(r.role, auto)}</span>
             <span className="wp-gz-bar-track">
               <span className="wp-gz-bar-fill" style={{ width: `${Math.round((r.ativos / Math.max(1, r.total)) * 100)}%` }} />
             </span>
@@ -211,7 +248,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
           {rep.ranking.map((r, i) => (
             <div key={r.name + i} className="wp-gz-rk">
               <span className="wp-gz-rk-pos">{i + 1}</span>
-              <span className="wp-gz-rk-name">{r.name}<i>{ROLE_LB1[r.role] || r.role}</i></span>
+              <span className="wp-gz-rk-name">{r.name}<i>{comoChamar(r.role, r.cargo, auto)}</i></span>
               <span className="wp-gz-rk-val">{r.points} pts<i>{r.views} {v.pilulas} · {r.quiz} dominados</i></span>
             </div>
           ))}
@@ -244,7 +281,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
             Toque em “Cobrar” pra copiar uma mensagem pronta e mandar no WhatsApp.
           </p>
           {rep.semUso.map((p) => (
-            <CobrarPessoa key={p.uid} p={p} campanhaNome={campanha?.nome} prazo={campanha ? prazoLabel(campanha) : undefined} />
+            <CobrarPessoa key={p.uid} p={p} campanhaNome={campanha?.nome} prazo={campanha ? prazoLabel(campanha) : undefined} auto={auto} />
           ))}
         </div>
       )}
@@ -536,7 +573,7 @@ function ObjectionsPanel({ brandId }: { brandId: string }) {
 // ---------- Cobrança de um toque ----------
 // O painel já dizia "3 pessoas nunca assistiram". Dado sem ação vira relatório.
 // Aqui vira gestão: um toque copia a mensagem pronta pra chamar a pessoa.
-function CobrarPessoa({ p, campanhaNome, prazo }: { p: TeamPerson; campanhaNome?: string; prazo?: string }) {
+function CobrarPessoa({ p, campanhaNome, prazo, auto }: { p: TeamPerson; campanhaNome?: string; prazo?: string; auto: boolean }) {
   const [copiado, setCopiado] = useState(false);
   const primeiro = (p.name || '').split(' ')[0] || 'Oi';
   // Aspas no nome da campanha de propósito: sem artigo, funciona pra qualquer
@@ -554,7 +591,7 @@ function CobrarPessoa({ p, campanhaNome, prazo }: { p: TeamPerson; campanhaNome?
     <div className="wp-gz-cob">
       <span className="wp-gz-cob-info">
         <b>{p.name}</b>
-        <i>{ROLE_LB1[p.role] || p.role}{p.email ? ` · ${p.email}` : ''}</i>
+        <i>{comoChamar(p.role, p.cargo, auto)}{p.email ? ` · ${p.email}` : ''}</i>
       </span>
       <button className="wp-gz-cob-btn" onClick={copiar} title="Copiar mensagem pronta">
         {copiado ? <><Check size={13} className="wp-ico" /> Copiada</> : <><Copy size={13} className="wp-ico" /> Cobrar</>}

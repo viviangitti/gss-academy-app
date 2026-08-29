@@ -20,6 +20,7 @@ export interface TeamPerson {
   name: string;
   email: string;
   role: string;
+  cargo?: string; // concessionária: o cargo real, quando existe
   totals: { views: number; missions: number; quizPassed: number; streak: number };
   cartaoPronto?: boolean; // já preencheu o contato que sai no material do cliente
   month: { id: string; views: number; points: number; missions: number };
@@ -41,7 +42,7 @@ export interface TeamReport {
   byRole: { role: string; total: number; ativos: number }[]; // ativos = mexeram no mês corrente
   months: MonthBucket[]; // do mais antigo pro mais novo
   topProducts: { id: string; views: number }[];
-  ranking: { name: string; role: string; points: number; views: number; quiz: number }[];
+  ranking: { name: string; role: string; cargo?: string; points: number; views: number; quiz: number }[];
   semUso: TeamPerson[]; // cadastrou e nunca assistiu nada
   semCartao: string[]; // quem ainda não preencheu o contato do material do cliente
 }
@@ -84,6 +85,7 @@ export async function fetchTeam(brand: string): Promise<TeamPerson[]> {
       name: String(x.name || '') || String(x.email || '').split('@')[0] || 'Sem nome',
       email: String(x.email || ''),
       role: String(x.role || ''),
+      cargo: String(x.cargo || '') || undefined,
       totals: { views: t.views || 0, missions: t.missions || 0, quizPassed: t.quizPassed || 0, streak: t.streak || 0 },
       cartaoPronto: x.cartaoPronto === true,
       month: { id: String(m.id || ''), views: m.views || 0, points: m.points || 0, missions: m.missions || 0 },
@@ -101,9 +103,12 @@ export function buildReport(people: TeamPerson[], allowedIds?: Set<string>, mont
   const now = currentMonthId();
 
   // --- por papel ---
+  // Agrupa pelo CARGO quando ele existe — numa concessionária "balconista" não
+  // diz nada, e a gerência precisa ver vendedor de veículos separado de
+  // vendedor de acessórios. Sem cargo (registro antigo), cai no papel.
   const roles = new Map<string, { total: number; ativos: number }>();
   for (const p of people) {
-    const r = p.role || 'sem papel';
+    const r = p.cargo || p.role || 'sem papel';
     const cur = roles.get(r) || { total: 0, ativos: 0 };
     cur.total += 1;
     if (p.month.id === now && (p.month.views > 0 || p.month.missions > 0)) cur.ativos += 1;
@@ -145,6 +150,7 @@ export function buildReport(people: TeamPerson[], allowedIds?: Set<string>, mont
     .map((p) => ({
       name: p.name,
       role: p.role,
+      cargo: p.cargo,
       points: p.month.points,
       views: p.month.views,
       quiz: p.totals.quizPassed,

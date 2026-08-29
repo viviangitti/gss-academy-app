@@ -541,6 +541,10 @@
   transition: transform 0.15s ease;
 }
 .wp-share:active { transform: translateX(-50%) scale(0.97); }
+/* Enquanto o one-page é montado: sem clique repetido, e fica claro que está
+   trabalhando — são alguns segundos desenhando a folha e montando o PDF. */
+.wp-share:disabled { opacity: .72; cursor: progress; }
+.wp-share:disabled:active { transform: translateX(-50%); }
 .wp-share-icon { font-size: 17px; }
 
 /* ---------- Misc ---------- */

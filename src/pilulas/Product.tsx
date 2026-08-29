@@ -737,7 +737,7 @@ export default function Product() {
 
   // Monta o one-page e manda. A foto usada é a capa que o gestor subiu; sem
   // capa, o desenho cai numa versão tipográfica (feia é não ter arquivo nenhum).
-  const material = async (variante: 'cliente' | 'estudo') => {
+  const material = async (variante: 'cliente' | 'estudo', textoPronto?: string) => {
     if (!product || gerando) return;
     setGerando(variante);
     setAvisoOp('');
@@ -756,9 +756,9 @@ export default function Product() {
         accent: marca.accent,
         accentDeep: marca.accentDeep,
       });
-      const texto = variante === 'cliente'
+      const texto = textoPronto ?? (variante === 'cliente'
         ? `${product.name} — ${product.tagline}\n\n${product.salesLine}`
-        : `${product.name} — material de estudo (uso interno).`;
+        : `${product.name} — material de estudo (uso interno).`);
       const r = await compartilharMaterial(m, texto);
       if (r === 'baixou') setAvisoOp('PDF baixado: está na sua pasta de downloads.');
     } catch {
@@ -772,6 +772,20 @@ export default function Product() {
     const variants = buildShareVariants(product, buyCtx);
     const text = variants[shareIdx % variants.length];
     setShareIdx((n) => n + 1); // próximo toque = próxima versão
+
+    // NO AUTOMOTIVO, ESTE BOTÃO MANDA O ONE-PAGE.
+    //
+    // Ele é o botão grande, verde, fixo no rodapé — o que o vendedor aperta.
+    // Mandava só a mensagem, enquanto o material de verdade ficava num botão
+    // discreto no meio da página. O cliente recebia texto solto de um lado e a
+    // folha do outro, dependendo de qual botão o vendedor achou primeiro.
+    // Agora os dois mandam a mesma coisa; muda só o texto que vai junto, que
+    // aqui gira a cada toque pra não repetir a mesma frase com clientes
+    // diferentes.
+    if (auto) {
+      await material('cliente', text);
+      return;
+    }
     // VÍDEO + texto: manda o MP4 do público junto da mensagem (share nativo com
     // arquivo). Se o aparelho não suportar arquivo, cai no texto (como antes).
     const aud = audienceOf(user);
@@ -1102,9 +1116,14 @@ export default function Product() {
 
       {!balcao && (
         <>
-          <p className="wp-share-hint">A cada toque, o botão envia uma mensagem diferente — assim você não repete o mesmo texto com clientes diferentes.</p>
-          <button className="wp-share" onClick={share}>
-            <ArrowUpRight size={18} className="wp-ico" /> Compartilhar com {v.aCliente}
+          <p className="wp-share-hint">
+            {auto
+              ? 'Vai o one-page em PDF com a mensagem. A cada toque a mensagem muda — assim você não repete o mesmo texto com clientes diferentes.'
+              : 'A cada toque, o botão envia uma mensagem diferente — assim você não repete o mesmo texto com clientes diferentes.'}
+          </p>
+          <button className="wp-share" onClick={share} disabled={!!gerando}>
+            <ArrowUpRight size={18} className="wp-ico" />
+            {gerando ? 'Preparando o material…' : `Compartilhar com ${v.aCliente}`}
           </button>
         </>
       )}

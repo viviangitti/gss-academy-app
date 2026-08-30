@@ -577,16 +577,23 @@
 }
 .wp-nav-item {
   flex: 1;
+  min-width: 0; /* sem isso o rótulo longo empurra os vizinhos e eles se encavalam */
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 3px;
-  padding: 9px 0 8px;
+  padding: 9px 2px 8px;
   text-decoration: none;
   color: var(--wp-soft);
   font-size: 11px;
   font-weight: 700;
+  text-align: center;
+  line-height: 1.15;
 }
+/* Seis abas (automotivo, com Documentos) não cabem em 11px num celular de
+   375px: "Documentos" e "Tira-dúvida" colavam uma na outra. O tamanho cai só
+   quando são seis — nas marcas de farmácia, que têm cinco, nada muda. */
+.wp-nav--6 .wp-nav-item { font-size: 9.5px; letter-spacing: -.01em; }
 .wp-nav-item.active { color: var(--wp-pink-deep); }
 
 /* ===== Ranking ===== */

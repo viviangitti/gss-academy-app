@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, BookOpen, Sparkles, Tag, LayoutDashboard, Eye, GraduationCap, MessageCircleQuestion, Newspaper } from 'lucide-react';
+import { Home, BookOpen, Sparkles, Tag, LayoutDashboard, Eye, GraduationCap, MessageCircleQuestion, Newspaper, FolderOpen } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { isBalcao, isAuto } from './data/brands';
@@ -46,6 +46,7 @@ const AUTO_TABS = [
   { to: '/eleva/catalogo', label: 'Carros', icon: BookOpen, end: false },
   { to: '/eleva/ofertas', label: 'Condições', icon: Tag, end: false },
   { to: '/eleva/noticias', label: 'Notícias', icon: Newspaper, end: false },
+  { to: '/eleva/documentos', label: 'Documentos', icon: FolderOpen, end: false },
   { to: '/eleva/assistente', label: 'Tira-dúvida', icon: MessageCircleQuestion, end: false },
 ];
 
@@ -58,6 +59,7 @@ const GESTOR_AUTO_TABS = [
   { to: '/eleva/catalogo', label: 'Ver como time', icon: Eye, end: false },
   { to: '/eleva/ofertas', label: 'Condições', icon: Tag, end: false },
   { to: '/eleva/noticias', label: 'Notícias', icon: Newspaper, end: false },
+  { to: '/eleva/documentos', label: 'Documentos', icon: FolderOpen, end: false },
   { to: '/eleva/assistente', label: 'Tira-dúvida', icon: MessageCircleQuestion, end: false },
 ];
 
@@ -82,7 +84,7 @@ export default function BottomNav() {
     user?.role === 'afiliado' ? AFILIADO_TABS :
     VENDEDORA_TABS; // balconista e promotor (revenda): tudo
   return (
-    <nav className="wp-nav">
+    <nav className={`wp-nav ${tabs.length >= 6 ? 'wp-nav--6' : ''}`}>
       {tabs.map((t) => (
         <NavLink key={t.to} to={t.to} end={t.end} className="wp-nav-item">
           <t.icon size={20} />

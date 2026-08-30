@@ -268,6 +268,22 @@ export default function Hoje() {
             </Link>
           )}
 
+          {/* O REPOSITÓRIO, LOGO ABAIXO DO RANKING.
+              Ficava no fim da tela, depois da trilha e das missões — existia,
+              e a gerência abria o app procurando e não achava. Fora da barra
+              de baixo continua certo (é consulta de quem está sentado se
+              preparando, não de quem está atendendo), mas fora de vista não. */}
+          {docs > 0 && (
+            <Link to="/eleva/documentos" className="wp-td-rank">
+              <FolderOpen size={16} className="wp-ico" />
+              <span>
+                <b>Documentos da marca</b>
+                <i>{docs} materiais oficiais: fichas, guias de venda e acessórios</i>
+              </span>
+              <ChevronRight size={16} className="wp-ico" />
+            </Link>
+          )}
+
           <PrimeirosPassos />
 
           {/* Trilha de formação — progresso + continuar */}
@@ -343,18 +359,6 @@ export default function Hoje() {
           </div>
           )}
 
-          {/* O repositório. Fica na Hoje e não na barra de baixo porque é consulta
-              de quem está sentado se preparando, não de quem está atendendo. */}
-          {docs > 0 && (
-            <Link to="/eleva/documentos" className="wp-td-rank">
-              <FolderOpen size={16} className="wp-ico" />
-              <span>
-                <b>Documentos da marca</b>
-                <i>{docs} materiais oficiais: fichas, guias de venda e acessórios</i>
-              </span>
-              <ChevronRight size={16} className="wp-ico" />
-            </Link>
-          )}
 
           {/* Quem é a marca — contexto institucional pra vender com segurança */}
           {getAbout(brandId) && (

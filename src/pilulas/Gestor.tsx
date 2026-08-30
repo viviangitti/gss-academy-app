@@ -201,9 +201,11 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
             O material que essas pessoas mandam sai sem WhatsApp — o cliente encaminha pra
             família e ninguém sabe pra quem responder. Cada uma preenche o seu em Perfil.
           </p>
-          {rep.semCartao.map((n) => (
-            <div key={n} className="wp-gz-item">
-              <span className="wp-gz-item-name">{n}</span>
+          {rep.semCartao.map((p) => (
+            <div key={p.name} className="wp-gz-item">
+              <span className="wp-gz-item-name">
+                {p.name}<i className="wp-gz-cargo">{comoChamar(p.role, p.cargo, auto)}</i>
+              </span>
               <span className="wp-gz-item-meta">falta preencher</span>
             </div>
           ))}
@@ -229,7 +231,9 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
             const pct = Math.round((dominados / niveis.total) * 100);
             return (
               <div key={`n${r.name}${i}`} className="wp-gz-niv">
-                <span className="wp-gz-niv-nome">{r.name}</span>
+                <span className="wp-gz-niv-nome">
+                  {r.name}<i className="wp-gz-cargo">{comoChamar(r.role, r.cargo, auto)}</i>
+                </span>
                 <span className="wp-gz-niv-barra"><i style={{ width: `${pct}%` }} /></span>
                 <span className="wp-gz-niv-val">
                   {dominados}/{niveis.total}

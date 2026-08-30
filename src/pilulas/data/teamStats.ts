@@ -44,7 +44,7 @@ export interface TeamReport {
   topProducts: { id: string; views: number }[];
   ranking: { name: string; role: string; cargo?: string; points: number; views: number; quiz: number }[];
   semUso: TeamPerson[]; // cadastrou e nunca assistiu nada
-  semCartao: string[]; // quem ainda não preencheu o contato do material do cliente
+  semCartao: { name: string; role: string; cargo?: string }[]; // quem ainda não preencheu o contato do material do cliente
 }
 
 const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
@@ -163,7 +163,7 @@ export function buildReport(people: TeamPerson[], allowedIds?: Set<string>, mont
   // ninguém percebe.
   const semCartao = people
     .filter((p) => p.role !== 'gestor' && !p.cartaoPronto)
-    .map((p) => p.name);
+    .map((p) => ({ name: p.name, role: p.role, cargo: p.cargo }));
 
   const topProducts = [...prodViews.entries()]
     .map(([id, views]) => ({ id, views }))

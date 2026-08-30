@@ -3317,3 +3317,13 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-acp-rot-linha {
   display: block; font-size: 13px; line-height: 1.55; color: var(--wp-text);
 }
+
+/* O cargo ao lado do nome, nas listas do Painel. A gerência precisa saber se
+   está olhando um vendedor de veículos ou de acessórios — sem isso a lista é
+   um monte de nome solto. */
+.wp-gz-cargo {
+  display: block; font-style: normal; margin-top: 2px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px; letter-spacing: .04em; color: var(--wp-soft);
+  text-transform: uppercase;
+}

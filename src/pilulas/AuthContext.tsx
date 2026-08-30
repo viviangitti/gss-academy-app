@@ -52,7 +52,14 @@ export function audienceOf(user: Pick<User, 'role' | 'affiliateType'> | null | u
 const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType; brands?: BrandId[]; cargo?: CargoAuto }> = {
   // Vivian: gestora das DUAS marcas — troca no seletor do topo.
   'maria26@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
-  'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp', 'ramasa'] },
+  // Vivian: entra como VENDEDORA a pedido dela — quer ver o app como o time vê,
+  // não pela porta da gerência. Continua nas três marcas.
+  //
+  // O e-mail dela segue na lista isGestor() das regras do Firestore: não dá
+  // poder nenhum enquanto o papel aqui for vendedora (a tela nem pede os dados
+  // do time), e evita ter que publicar regra de novo quando ela voltar a
+  // gestora. Trocar de volta é mudar 'balconista' para 'gestor' nesta linha.
+  'viviangitti23@gmail.com': { role: 'balconista', brands: ['meraki', 'dsp', 'ramasa'], cargo: 'vendedor-veiculos' },
   // Silene: gestora de TODAS as marcas, em qualquer um dos e-mails dela.
   //
   // O Hotmail era a conta de AFILIADA — e afiliado só enxerga a linha GLPEN.

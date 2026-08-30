@@ -46,6 +46,47 @@ export interface Documento {
 
 export const DOCUMENTOS: Documento[] = [
   {
+    id: 'guia-jaecoo-7-my27', brand: 'ramasa', prateleira: 'venda',
+    titulo: 'Guia do line-up MY27 — Jaecoo 7',
+    paraQue: 'O que muda entre ELITE, LUXURY e PRESTIGE, item por item — e o comparativo de gasto anual contra Corolla Cross, Compass e Taos.',
+    arquivo: '/docs/ramasa/guia-jaecoo-7-my27.pdf', paginas: 16, atualizado: 'Abril de 2026',
+    // A própria montadora carimbou "divulgação externa proibida" no rodapé.
+    interno: true,
+  },
+  {
+    id: 'treinamento-shs', brand: 'ramasa', prateleira: 'venda',
+    titulo: 'Sistema Super Híbrido (SHS) — treinamento',
+    paraQue: 'Como o híbrido funciona de verdade, para responder quando o cliente pergunta se precisa de tomada.',
+    arquivo: '/docs/ramasa/treinamento-shs.pdf', paginas: 40, atualizado: '2026',
+  },
+  {
+    id: 'treinamento-omoda-5', brand: 'ramasa', prateleira: 'venda',
+    titulo: 'Treinamento completo — Omoda 5 SHS-H',
+    paraQue: 'O material longo do carro: versões, equipamentos e as vantagens contra cada concorrente.',
+    arquivo: '/docs/ramasa/treinamento-omoda-5.pdf', paginas: 50, atualizado: '2026',
+  },
+  {
+    id: 'treinamento-omoda-7', brand: 'ramasa', prateleira: 'venda',
+    titulo: 'Treinamento completo — Omoda 7 SHS-P',
+    paraQue: 'O material longo do carro: LUXURY x PRESTIGE e o comparativo com Haval H6, Song Plus, Commander e Tiguan.',
+    arquivo: '/docs/ramasa/treinamento-omoda-7.pdf', paginas: 44, atualizado: '2026',
+  },
+  {
+    id: 'acessorios-tabela-loja', brand: 'ramasa', prateleira: 'acessorios',
+    titulo: 'Tabela de acessórios e serviços da loja',
+    paraQue: 'O que a Ramasa instala aqui dentro, por versão, com o valor de cada item — do PPF à película.',
+    arquivo: '/docs/ramasa/acessorios-tabela-loja.pdf', paginas: 3, atualizado: '2026',
+    // Preço público sugerido, mas é tabela da casa: confirmar o vigente antes
+    // de falar número com o cliente.
+    interno: true,
+  },
+  {
+    id: 'catalogo-jaecoo', brand: 'ramasa', prateleira: 'acessorios',
+    titulo: 'Catálogo Jaecoo — folha de acessórios',
+    paraQue: 'A folha de acessórios da linha Jaecoo, para mostrar na tela quando o cliente pergunta o que existe.',
+    arquivo: '/docs/ramasa/catalogo-jaecoo.pdf', paginas: 1, atualizado: '2026',
+  },
+  {
     id: 'ficha-jaecoo-7', brand: 'ramasa', prateleira: 'ficha',
     titulo: 'Ficha técnica — Jaecoo 7',
     paraQue: 'Item por item, o que vem na Luxury e o que vem na Prestige.',

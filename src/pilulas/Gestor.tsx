@@ -14,7 +14,7 @@ import { topSearches } from './data/insights';
 import { fetchTeam, buildReport, type TeamReport, type TeamPerson } from './data/teamStats';
 import { CAMPANHA, prazoLabel } from './data/campanha';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
-import { PRATELEIRAS, type PrateleiraId } from './data/documentos';
+import { DOCUMENTOS, PRATELEIRAS, type PrateleiraId } from './data/documentos';
 import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, type DocNuvem } from './data/docsUpload';
 import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
@@ -1324,7 +1324,7 @@ export default function Gestor() {
       {/* Documentos — o repositório que o gestor alimenta sozinho */}
       <div className="wp-gz-block">
         <div className="wp-gz-block-head">
-          <span className="wp-gz-block-title"><FolderOpen size={17} className="wp-ico" /> Documentos ({docsNuvem.length})</span>
+          <span className="wp-gz-block-title"><FolderOpen size={17} className="wp-ico" /> Documentos da marca ({DOCUMENTOS.filter((d) => d.brand === brandId).length + docsNuvem.length})</span>
           <button className="wp-gz-add" onClick={() => setOpenForm(openForm === 'documento' ? null : 'documento')}>
             <UploadCloud size={15} className="wp-ico" /> Publicar
           </button>

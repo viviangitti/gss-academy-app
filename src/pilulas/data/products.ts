@@ -912,8 +912,8 @@ export const PRODUCTS: Product[] = [
     brand: 'ramasa',
     category: 'jaecoo',
     family: 'jaecoo7',
-    name: 'Jaecoo 7',
-    tagline: 'O SUV que abre a Jaecoo no Brasil: versão a combustão e versões SHS híbridas plug-in, com pacote de série cheio para a faixa.',
+    name: 'Jaecoo 7 SHS-P',
+    tagline: 'O SUV que abre a Jaecoo no Brasil: SHS-P — híbrido plug-in em TODAS as versões, com pacote de série cheio para a faixa.',
     hook: 'O cliente gostou do carro, mas trava numa frase: "é chinês, né?"',
     whatItIs:
       'O Jaecoo 7 é o SUV que abre a marca Jaecoo no Brasil. A Jaecoo faz parte do grupo Chery, que está no país desde 2009. Chega em três versões: ELITE e as SHS Luxury e Prestige, que usam o sistema híbrido plug-in — motor 1.5 TGDI de 135 cv somado a um motor elétrico de 204 cv, com transmissão DHT de 3ª geração e bateria de lítio-ferro-fosfato de 18,3 kWh.',

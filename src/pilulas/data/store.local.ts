@@ -6,6 +6,7 @@ import { SEED_OFFERS, type Offer } from './offers';
 import { CALENDAR, TRENDS, type CalendarDay, type Trend } from './creatorContent';
 import type { BrandId } from './brands';
 import { putVideo, getVideo, removeVideo } from './videoStore';
+import { produtosNuvem, publicarProduto } from './produtosNuvem';
 
 const PKEY = 'wp_custom_products';
 const OKEY = 'wp_custom_offers';
@@ -108,6 +109,9 @@ export function clearProductImage(id: string) {
 
 let version = 0;
 const listeners = new Set<() => void>();
+/** Avisa as telas que o catálogo mudou — usado por quem carrega da nuvem. */
+export function avisarMudanca() { emit(); }
+
 function emit() {
   version += 1;
   listeners.forEach((l) => l());
@@ -155,12 +159,27 @@ export function customProducts(): Product[] {
 }
 export function allProducts(): Product[] {
   const ov = readOverrides();
-  return [...customProducts(), ...PRODUCTS].map((p) => (ov[p.id] ? { ...p, ...ov[p.id] } : p));
+  // A ordem importa: o que veio da NUVEM (cadastrado pela gerência, visível
+  // pra todo mundo) na frente; depois o que existe só neste aparelho — que é
+  // resíduo de cadastro feito antes da nuvem existir; por fim os de fábrica.
+  // O `unicos` evita duplicata quando o mesmo produto está nos dois lugares.
+  const nuvem = produtosNuvem();
+  const vistos = new Set(nuvem.map((p) => p.id));
+  const locais = customProducts().filter((p) => !vistos.has(p.id));
+  const base = PRODUCTS.filter((p) => !vistos.has(p.id));
+  return [...nuvem, ...locais, ...base].map((p) => (ov[p.id] ? { ...p, ...ov[p.id] } : p));
 }
 export function findProduct(id: string): Product | undefined {
   return allProducts().find((p) => p.id === id);
 }
-export function addProduct(p: Product, video?: File | null) {
+/**
+ * Cadastra o produto. Devolve se ele chegou na nuvem — a tela precisa saber
+ * pra avisar quando ficou só no aparelho.
+ *
+ * Grava local ANTES de tentar a nuvem: se a rede cair, a gerente pelo menos
+ * não perde o que digitou.
+ */
+export function addProduct(p: Product, video?: File | null): Promise<boolean> {
   const list = customProducts();
   list.unshift(p);
   try {
@@ -170,6 +189,7 @@ export function addProduct(p: Product, video?: File | null) {
   }
   if (video) setProductVideo(p.id, video);
   emit();
+  return publicarProduto(p).then(() => { emit(); return true; }).catch(() => false);
 }
 export function getVideoUrl(id: string): string | undefined {
   return loadedVideoUrls.get(id);

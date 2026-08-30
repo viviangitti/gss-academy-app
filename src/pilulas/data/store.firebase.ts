@@ -55,8 +55,10 @@ export async function setProductIG(id: string, instagramUrl: string) {
   const clean = instagramUrl.trim().split('?')[0].trim();
   await setDoc(doc(db, 'elevaOverrides', id), { instagramUrl: clean || null }, { merge: true });
 }
-export async function addProduct(p: Product, video?: File | null) {
-  if (!db) return;
+// Devolve se chegou na nuvem — paridade com o store local, que a tela usa
+// pra não dizer "o time já vê" quando o cadastro ficou no aparelho.
+export async function addProduct(p: Product, video?: File | null): Promise<boolean> {
+  if (!db) return false;
   let videoUrl = p.videoUrl ?? null;
   if (video && storage) {
     const r = ref(storage, `elevaBrands/${p.brand}/videos/${p.id}.mp4`);
@@ -68,6 +70,7 @@ export async function addProduct(p: Product, video?: File | null) {
     videoUrl,
     createdAt: serverTimestamp(),
   });
+  return true;
 }
 // No modo Firebase o vídeo vem em product.videoUrl (URL do Storage).
 export function getVideoUrl(_id: string): string | undefined {
@@ -168,3 +171,6 @@ export async function setRecado(brandId: BrandId, text: string, target = 'todos'
 export function useStore(): number {
   return useSyncExternalStore(subscribe, () => version);
 }
+
+/** Paridade com o store local: no Firebase as telas já ouvem os snapshots. */
+export function avisarMudanca() { /* noop */ }

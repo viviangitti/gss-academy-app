@@ -32,3 +32,4 @@ export const getRecado = impl.getRecado;
 export const getRecadoFor = impl.getRecadoFor;
 export const setRecado = impl.setRecado;
 export const useStore = impl.useStore;
+export const avisarMudanca = impl.avisarMudanca;

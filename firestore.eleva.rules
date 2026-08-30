@@ -147,6 +147,17 @@ service cloud.firestore {
       }
     }
 
+    // Carros e acessórios cadastrados pela gerência. Antes isso vivia só no
+    // localStorage: a gerente cadastrava, via na tela dela, e o time nunca
+    // recebia — sem erro nenhum, parecendo que tinha funcionado.
+    //
+    // Leitura pra quem está logado (é o catálogo do time) e escrita só do
+    // gestor. O `list` é necessário: o app busca por marca ao abrir.
+    match /elevaProdutos/{id} {
+      allow read, list: if request.auth != null;
+      allow write: if isGestor();
+    }
+
     // Conteúdo do Eleva: quem está logado LÊ; só o gestor ESCREVE.
     match /{document=**} {
       allow read: if request.auth != null;

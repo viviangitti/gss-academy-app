@@ -33,6 +33,8 @@ import { auth } from '../services/firebase';
 import { loadAudienceReels } from './data/audienceVideos';
 import { prepararVideo, videoDoProduto } from './data/videoGesture';
 import './pilulas.css';
+import { carregarProdutosNuvem } from './data/produtosNuvem';
+import { avisarMudanca } from './data/store';
 
 // Iniciais pro avatar do cabeçalho.
 function inits(name?: string): string {
@@ -196,6 +198,12 @@ function Shell() {
     if (!user) return;
     loadAudienceReels();
   }, [user]);
+  // E os carros/acessórios que a gerência cadastrou. Sem isto, o cadastro fica
+  // no aparelho de quem cadastrou e o time nunca vê — que era o caso até aqui.
+  useEffect(() => {
+    if (!user) return;
+    carregarProdutosNuvem(brand.id, avisarMudanca);
+  }, [user, brand.id]);
   // Depois de entrar, cai na HOME — não na tela em que o navegador tinha
   // parado da última vez (era isso que fazia o login abrir direto no Perfil).
   // Exceção: link de produto compartilhado no WhatsApp, que a pessoa abriu de

@@ -615,7 +615,7 @@ const GRADIENT: Record<Category, [string, string]> = {
   acessorio: ['#64748b', '#27303f'],
 };
 
-function ProductForm({ brand, onDone }: { brand: BrandId; onDone: (name: string) => void }) {
+function ProductForm({ brand, onDone }: { brand: BrandId; onDone: (name: string, naNuvem: boolean) => void }) {
   // A concessionária cadastra CARRO e ACESSÓRIO, não suplemento: rótulo,
   // exemplo e lista de categorias mudam junto. O formulário é o mesmo — o que
   // muda é a língua que ele fala.
@@ -664,8 +664,10 @@ function ProductForm({ brand, onDone }: { brand: BrandId; onDone: (name: string)
       storyboard,
       instagramUrl: igUrl.trim().split('?')[0].trim() || undefined,
     };
-    addProduct(product, video);
-    onDone(product.name);
+    // Espera a nuvem responder antes de dizer que publicou. Antes a tela
+    // sempre dizia "o time já vê" — mesmo quando o cadastro tinha ficado só
+    // neste aparelho, que era o caso de todos.
+    addProduct(product, video).then((naNuvem) => onDone(product.name, naNuvem));
   };
 
   return (
@@ -1225,10 +1227,12 @@ export default function Gestor() {
   const trends = allTrends(brandId);
   const buscas = topSearches(5, brandId);
 
-  const done = (label: string, what: string) => {
+  const done = (label: string, what: string, naNuvem = true) => {
     setOpenForm(null);
-    setToast(`${what} "${label}" publicado — o time já vê.`);
-    setTimeout(() => setToast(''), 4000);
+    setToast(naNuvem
+      ? `${what} "${label}" publicado — o time já vê.`
+      : `"${label}" foi salvo só neste aparelho: a nuvem não respondeu. Abra de novo com internet para publicar pro time.`);
+    setTimeout(() => setToast(''), naNuvem ? 4000 : 8000);
   };
 
   return (
@@ -1284,7 +1288,7 @@ export default function Gestor() {
             <Plus size={15} className="wp-ico" /> {auto ? 'Novo item' : 'Novo produto'}
           </button>
         </div>
-        {openForm === 'produto' && <ProductForm brand={brandId} onDone={(n) => done(n, 'Produto')} />}
+        {openForm === 'produto' && <ProductForm brand={brandId} onDone={(n, ok) => done(n, 'Produto', ok)} />}
         <div className="wp-gz-list">
           {products.map((p) => <ProductRow key={p.id} p={p} />)}
         </div>

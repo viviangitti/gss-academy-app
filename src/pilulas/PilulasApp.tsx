@@ -185,7 +185,11 @@ function Shell() {
     // pra cobrar quem ainda não fez.
     const uid = auth?.currentUser?.uid;
     if (uid) getElevaProfile(uid).then((pf) => setStatsMeta({ cartaoPronto: !!pf?.whatsapp?.trim() })).catch(() => {});
-  }, [brand.id, user?.role, user?.name]);
+    // `cargo` PRECISA estar aqui: ele chega junto com o perfil, que às vezes
+    // carrega depois deste efeito rodar. Sem a dependência, o cargo nunca era
+    // gravado nos stats dessas pessoas e o Painel voltava a mostrar o papel
+    // genérico — exatamente o problema que a gerência apontou.
+  }, [brand.id, user?.role, user?.cargo, user?.name]);
   // Puxa da nuvem os vídeos que o gestor configurou por público — é o que faz o
   // link chegar no celular do time, e não só no aparelho de quem cadastrou.
   useEffect(() => {

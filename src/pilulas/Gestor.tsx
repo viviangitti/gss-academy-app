@@ -1048,13 +1048,26 @@ function AudienceSlot({ productId, audience, label }: { productId: string; audie
   const mp4 = hasVideo(key);
   const [ig, setIg] = useState(reel || '');
   const [saved, setSaved] = useState(false);
+  // Um vídeo de 12 MB são 20 escritas na nuvem. Sem barra, a gerência acha que
+  // travou e aperta de novo — e aí sobem dois.
+  const [pct, setPct] = useState<number | null>(null);
+  const [aviso, setAviso] = useState('');
   const salvar = () => {
     clearProductVideo(key);
     setAudienceReel(productId, audience, ig);
     setSaved(true);
     setTimeout(() => setSaved(false), 1600);
   };
-  const subirMp4 = (f: File) => { setAudienceReel(productId, audience, ''); setIg(''); setProductVideo(key, f); };
+  const subirMp4 = (f: File) => {
+    setAudienceReel(productId, audience, '');
+    setIg('');
+    setAviso('');
+    setPct(0);
+    setProductVideo(key, f, setPct).then((naNuvem) => {
+      setPct(null);
+      if (!naNuvem) setAviso('Ficou só neste aparelho: a nuvem não respondeu. Suba de novo com internet.');
+    });
+  };
   const tirar = () => { clearProductVideo(key); setAudienceReel(productId, audience, ''); setIg(''); };
   const ok = mp4 || !!reel;
   return (
@@ -1075,12 +1088,18 @@ function AudienceSlot({ productId, audience, label }: { productId: string; audie
           <button className="wp-gz-slot-save" disabled={!ig.trim()} onClick={salvar}>
             {saved ? <><Check size={14} className="wp-ico" /> Salvo</> : 'Salvar'}
           </button>
-          <label className="wp-gz-slot-mp4">
-            <UploadCloud size={14} className="wp-ico" /> MP4
-            <input type="file" accept="video/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) subirMp4(f); }} />
+          <label className={`wp-gz-slot-mp4 ${pct !== null ? 'ocupado' : ''}`}>
+            <UploadCloud size={14} className="wp-ico" />
+            {pct !== null ? `${pct}%` : 'MP4'}
+            <input type="file" accept="video/*" hidden disabled={pct !== null}
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) subirMp4(f); }} />
           </label>
-          {ok && <button className="wp-gz-slot-clear" onClick={tirar}>Tirar</button>}
+          {ok && pct === null && <button className="wp-gz-slot-clear" onClick={tirar}>Tirar</button>}
         </div>
+        {pct !== null && (
+          <div className="wp-gz-slot-barra"><i style={{ width: `${pct}%` }} /></div>
+        )}
+        {aviso && <p className="wp-gz-slot-aviso">{aviso}</p>}
       </div>
     </div>
   );

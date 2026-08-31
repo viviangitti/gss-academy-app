@@ -34,6 +34,7 @@ import { loadAudienceReels } from './data/audienceVideos';
 import { prepararVideo, videoDoProduto } from './data/videoGesture';
 import './pilulas.css';
 import { carregarProdutosNuvem } from './data/produtosNuvem';
+import { carregarIndiceVideos } from './data/videosNuvem';
 import { avisarMudanca } from './data/store';
 
 // Iniciais pro avatar do cabeçalho.
@@ -203,6 +204,9 @@ function Shell() {
   useEffect(() => {
     if (!user) return;
     carregarProdutosNuvem(brand.id, avisarMudanca);
+    // E o índice de vídeos: sem ele o app não sabe que existe vídeo na nuvem e
+    // cai no storyboard, como se nada tivesse sido gravado.
+    carregarIndiceVideos().then(avisarMudanca).catch(() => {});
   }, [user, brand.id]);
   // Depois de entrar, cai na HOME — não na tela em que o navegador tinha
   // parado da última vez (era isso que fazia o login abrir direto no Perfil).

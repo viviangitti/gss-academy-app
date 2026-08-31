@@ -85,12 +85,13 @@ export function getVideoObjectUrl(_id: string): string | undefined {
 export function ensureVideoLoaded(_id: string) {
   /* No Firebase o vídeo é servido direto da URL do Storage (product.videoUrl). */
 }
-export async function setProductVideo(id: string, file: File) {
-  if (!db || !storage) return;
+export async function setProductVideo(id: string, file: File): Promise<boolean> {
+  if (!db || !storage) return false;
   const r = ref(storage, `elevaOverrides/${id}/video.mp4`);
   await uploadBytes(r, file);
   const url = await getDownloadURL(r);
   await setDoc(doc(db, 'elevaOverrides', id), { videoUrl: url }, { merge: true });
+  return true;
 }
 export function clearProductVideo(_id: string) {
   /* noop no Firebase por enquanto */

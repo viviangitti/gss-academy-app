@@ -158,6 +158,22 @@ service cloud.firestore {
       allow write: if isGestor();
     }
 
+    // Vídeos, partidos em pedaços — mesmo mecanismo dos documentos. Vive aqui e
+    // não no Storage porque o Storage exige plano pago e o Firestore dá conta:
+    // 1 GiB grátis, e um vídeo de 45s ocupa uns 12 MB.
+    //
+    // Os PEDAÇOS precisam da mesma regra da ficha. Proteger só a ficha e deixar
+    // os pedaços abertos seria trancar a porta e deixar a janela aberta — é
+    // neles que o vídeo realmente está.
+    match /elevaVideos/{id} {
+      allow read, list: if request.auth != null;
+      allow write: if isGestor();
+      match /pedacos/{n} {
+        allow read, list: if request.auth != null;
+        allow write: if isGestor();
+      }
+    }
+
     // Conteúdo do Eleva: quem está logado LÊ; só o gestor ESCREVE.
     match /{document=**} {
       allow read: if request.auth != null;

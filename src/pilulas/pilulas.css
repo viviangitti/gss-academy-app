@@ -3334,3 +3334,18 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   font-size: 10.5px; letter-spacing: .04em; color: var(--wp-soft);
   text-transform: uppercase;
 }
+
+/* Envio de vídeo pra nuvem: 12 MB são 20 escritas, e sem barra a gerência
+   acha que travou e sobe de novo. */
+.wp-gz-slot-mp4.ocupado { opacity: .7; cursor: progress; }
+.wp-gz-slot-barra {
+  height: 4px; border-radius: 3px; background: var(--wp-border);
+  margin: 8px 0 0; overflow: hidden;
+}
+.wp-gz-slot-barra i {
+  display: block; height: 100%; background: var(--wp-pink);
+  border-radius: 3px; transition: width .2s;
+}
+.wp-gz-slot-aviso {
+  margin: 8px 0 0; font-size: 12px; line-height: 1.45; color: #a8412c;
+}

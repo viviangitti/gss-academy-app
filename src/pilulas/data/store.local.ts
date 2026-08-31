@@ -7,6 +7,7 @@ import { CALENDAR, TRENDS, type CalendarDay, type Trend } from './creatorContent
 import type { BrandId } from './brands';
 import { putVideo, getVideo, removeVideo } from './videoStore';
 import { produtosNuvem, publicarProduto } from './produtosNuvem';
+import { enviarVideoNuvem, temVideoNuvem, abrirVideoNuvem, urlPronta, apagarVideoNuvem } from './videosNuvem';
 
 const PKEY = 'wp_custom_products';
 const OKEY = 'wp_custom_offers';
@@ -32,30 +33,54 @@ function removeVideoId(id: string) {
 }
 
 export function hasVideo(id: string): boolean {
-  return videoIds().includes(id) || loadedVideoUrls.has(id);
+  // A NUVEM CONTA PRIMEIRO: é o que o time inteiro enxerga. O IndexedDB é só o
+  // cache de quem já assistiu — antes ele era a única fonte, e por isso o
+  // vídeo que a gerência subia existia só no aparelho dela.
+  return temVideoNuvem(id) || videoIds().includes(id) || loadedVideoUrls.has(id);
 }
 export function getVideoObjectUrl(id: string): string | undefined {
-  return loadedVideoUrls.get(id);
+  return loadedVideoUrls.get(id) || urlPronta(id);
 }
 // Carrega o blob do IndexedDB e cria um object URL (assíncrono; avisa via emit).
 export function ensureVideoLoaded(id: string) {
-  if (loadedVideoUrls.has(id) || loadingVideos.has(id) || !videoIds().includes(id)) return;
+  if (loadedVideoUrls.has(id) || loadingVideos.has(id)) return;
+  // Nuvem antes do aparelho: quem não subiu o vídeo também precisa assisti-lo.
+  // O módulo da nuvem já procura no cache local primeiro, então não baixa duas
+  // vezes.
+  if (temVideoNuvem(id)) {
+    loadingVideos.add(id);
+    abrirVideoNuvem(id).then((url) => {
+      loadingVideos.delete(id);
+      if (url) { loadedVideoUrls.set(id, url); emit(); }
+    }).catch(() => { loadingVideos.delete(id); });
+    return;
+  }
+  if (!videoIds().includes(id)) return;
   loadingVideos.add(id);
   getVideo(id).then((blob) => {
     loadingVideos.delete(id);
     if (blob) { loadedVideoUrls.set(id, URL.createObjectURL(blob)); emit(); }
   }).catch(() => { loadingVideos.delete(id); });
 }
-export function setProductVideo(id: string, file: File) {
-  // Playback imediato: object URL do próprio arquivo; e persiste no IndexedDB.
+/**
+ * Sobe o vídeo. Devolve se chegou na nuvem — a tela precisa saber pra não
+ * dizer que o time já vê quando ficou só aqui.
+ *
+ * A ordem é de propósito: mostra na hora (object URL), guarda no aparelho, e
+ * só então manda pra nuvem. Assim a gerência assiste enquanto sobe, e não
+ * perde o arquivo se a rede cair no meio.
+ */
+export function setProductVideo(id: string, file: File, aoProgredir?: (pct: number) => void): Promise<boolean> {
   const prev = loadedVideoUrls.get(id);
   if (prev) URL.revokeObjectURL(prev);
   loadedVideoUrls.set(id, URL.createObjectURL(file));
   addVideoId(id);
   emit();
   putVideo(id, file).catch(() => { /* ignore */ });
+  return enviarVideoNuvem(id, file, aoProgredir).then(() => { emit(); return true; }).catch(() => false);
 }
 export function clearProductVideo(id: string) {
+  apagarVideoNuvem(id).catch(() => { /* offline: some daqui, tenta depois */ });
   const prev = loadedVideoUrls.get(id);
   if (prev) { URL.revokeObjectURL(prev); loadedVideoUrls.delete(id); }
   removeVideoId(id);

@@ -1,7 +1,7 @@
 // Rastreamento de "quem vê mais" — base da competição.
 // localStorage é a verdade do app (offline, instantâneo); statsSync manda uma
 // cópia agregada pro Firestore pra alimentar o Sistema de Gestão.
-import { syncStats } from './statsSync';
+import { syncStats, type ElevaEventType } from './statsSync';
 
 // Progresso é POR CONTA, não por aparelho. Antes havia uma chave só: quem
 // entrasse depois no mesmo celular herdava as pílulas, os pontos e a ofensiva
@@ -127,6 +127,38 @@ export function recordView(productId: string): Stats {
   save(s);
   if (isNew) syncStats(s, { type: 'pill_view', id: productId, points: POINTS_PER_PILL });
   return s;
+}
+
+// Ações que NÃO valem ponto: só servem pra saber o que o time usa de verdade.
+//
+// Ficam fora do placar de propósito. Assistir ao vídeo, abrir um documento ou
+// mandar o one-page são o trabalho acontecendo — se pontuassem, viraria alvo,
+// e o número deixaria de medir o que a gente quer medir.
+const KEY_USO = 'wp_uso_dia';
+
+/**
+ * Conta uma vez por dia por item. O vendedor que abre a mesma objeção cinco
+ * vezes com cinco clientes é a mesma informação repetida cinco vezes — e cada
+ * repetição custaria uma escrita no Firestore e uma linha no relatório.
+ */
+function primeiraVezHoje(chave: string): boolean {
+  const dia = today();
+  try {
+    const bruto = localStorage.getItem(KEY_USO);
+    const guardado = bruto ? (JSON.parse(bruto) as { dia: string; feitos: string[] }) : null;
+    const feitos = new Set(guardado?.dia === dia ? guardado.feitos : []);
+    if (feitos.has(chave)) return false;
+    feitos.add(chave);
+    localStorage.setItem(KEY_USO, JSON.stringify({ dia, feitos: [...feitos] }));
+    return true;
+  } catch {
+    return true; // sem storage (modo anônimo): registra e segue
+  }
+}
+
+export function registraUso(type: ElevaEventType, id: string): void {
+  if (!primeiraVezHoje(`${type}:${id}`)) return;
+  syncStats(getStats(), { type, id, points: 0 });
 }
 
 // Registra uma missão de creator concluída ("postei"). Pontua 1x por missão.

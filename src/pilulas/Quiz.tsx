@@ -4,7 +4,7 @@ import { visibleProducts, type Product } from './data/products';
 import { isAuto } from './data/brands';
 import { allProducts } from './data/store';
 import { useAuth } from './AuthContext';
-import { recordQuizPass, isQuizDone, POINTS_PER_QUIZ } from './data/tracking';
+import { recordQuizPass, isQuizDone, registraUso, POINTS_PER_QUIZ } from './data/tracking';
 
 // Quiz "Você pegou?" — 3 perguntas geradas do PRÓPRIO conteúdo da pílula
 // (benefício, objeção, pra quem é). Acertou tudo: pontua e ganha o selo
@@ -124,6 +124,10 @@ export default function Quiz({ product }: { product: Product }) {
 
   const answer = (i: number) => {
     if (picked !== null) return;
+    // A primeira resposta é o "começou o quiz". Sem isso, zero aprovação tem
+    // duas leituras opostas — ninguém tenta, ou todo mundo tenta e erra — e
+    // cada uma pede uma correção diferente.
+    if (idx === 0) registraUso('quiz_start', product.id);
     setPicked(i);
     if (i === questions[idx].correct) setHits((h) => h + 1);
   };
@@ -140,6 +144,8 @@ export default function Quiz({ product }: { product: Product }) {
       const wasNew = !isQuizDone(product.id);
       recordQuizPass(product.id);
       setPassedNow(wasNew);
+    } else {
+      registraUso('quiz_fail', product.id);
     }
     setFinished(true);
   };

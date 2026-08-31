@@ -27,7 +27,7 @@ import Ficha from './Ficha';
 import { stageSegmentFromUrl } from './data/segments';
 import { stageBrandFromUrl, invitedBrand } from './data/brandInvite';
 import { isAuto, isBalcao, type BrandId } from './data/brands';
-import { setStatsMeta } from './data/statsSync';
+import { setStatsMeta, podaEventos } from './data/statsSync';
 import { getElevaProfile } from './data/profile';
 import { auth } from '../services/firebase';
 import { loadAudienceReels } from './data/audienceVideos';
@@ -207,6 +207,9 @@ function Shell() {
     // E o índice de vídeos: sem ele o app não sabe que existe vídeo na nuvem e
     // cai no storyboard, como se nada tivesse sido gravado.
     carregarIndiceVideos().then(avisarMudanca).catch(() => {});
+    // O histórico de ações só cresce (arrayUnion não remove). Sem esta poda,
+    // um dia o doc bate no limite de 1 MB e TODO o sync passa a falhar calado.
+    podaEventos();
   }, [user, brand.id]);
   // Depois de entrar, cai na HOME — não na tela em que o navegador tinha
   // parado da última vez (era isso que fazia o login abrir direto no Perfil).

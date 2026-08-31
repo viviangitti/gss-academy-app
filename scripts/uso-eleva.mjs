@@ -20,6 +20,8 @@
  *   node scripts/uso-eleva.mjs --turno noite
  *   node scripts/uso-eleva.mjs --desde 2026-08-30T18:00:00-03:00   # janela manual
  *   node scripts/uso-eleva.mjs --dia 30/08                          # um dia inteiro
+ *   node scripts/uso-eleva.mjs --fundo                              # quem testou o quê, pessoa a pessoa
+ *   node scripts/uso-eleva.mjs --fundo --desde 2026-08-28T00:00-03:00
  *
  * Quando roda por turno, guarda o fim da janela em ~/.claude/eleva-uso/estado.json,
  * pra que o relatório seguinte comece exatamente onde este parou — sem buraco e
@@ -53,8 +55,10 @@ const CLIENT_SECRET = 'j9iVZfS8kkCEFUPaAeJV0sAi';
 
 const arg = (nome) => {
   const i = process.argv.indexOf(`--${nome}`);
-  return i > -1 ? process.argv[i + 1] : undefined;
+  const v = i > -1 ? process.argv[i + 1] : undefined;
+  return v && !v.startsWith('--') ? v : undefined;
 };
+const temFlag = (nome) => process.argv.includes(`--${nome}`);
 
 /** Data deslocada para Brasília — só para formatar, nunca para comparar. */
 const br = (d) => new Date(d.getTime() + FUSO * 3600 * 1000);
@@ -163,6 +167,23 @@ function catalogo() {
   return mapa;
 }
 
+/** id do documento → { nome, marca }, lido do documentos.ts. */
+function catalogoDocs() {
+  const mapa = {};
+  try {
+    const src = readFileSync(join(RAIZ, 'src/pilulas/data/documentos.ts'), 'utf8');
+    let atual = null;
+    for (const linha of src.split('\n')) {
+      const mId = linha.match(/id:\s*'([^']+)',\s*brand:\s*'([^']+)'/);
+      if (mId) { atual = { id: mId[1], marca: mId[2] }; continue; }
+      if (!atual) continue;
+      const mTit = linha.match(/titulo:\s*'([^']+)'/);
+      if (mTit) { mapa[atual.id] = { nome: mTit[1], marca: atual.marca }; atual = null; }
+    }
+  } catch { /* sem o arquivo, mostra o id cru */ }
+  return mapa;
+}
+
 /**
  * Lê o ROLE_OVERRIDES do AuthContext.tsx — é ele que manda no app. O perfil
  * salvo no Firestore pode estar velho: a Silene, por exemplo, está gravada
@@ -226,6 +247,10 @@ function janela(agora) {
     return { de, ate: new Date(+de + 86400000), rotulo: `o dia ${dia} inteiro`, fixa: true };
   }
 
+  // O relatório em profundidade olha a história inteira por padrão: a graça
+  // dele é ver o caminho de cada pessoa, não o recorte de um turno.
+  if (temFlag('fundo')) return { de: new Date(0), ate: agora, rotulo: 'desde o começo', fixa: true };
+
   let anterior = null;
   try { anterior = new Date(JSON.parse(readFileSync(ESTADO, 'utf8')).ultimoRelatorio); } catch { /* primeira vez */ }
   // Sem estado anterior, cobre as últimas 14h — o vão típico entre dois turnos.
@@ -234,6 +259,271 @@ function janela(agora) {
 }
 
 // ─────────────────────────────── relatório ───────────────────────────────
+
+
+
+/**
+ * Como cada ação aparece escrita. O `id` de objeção e one-page carrega duas
+ * partes separadas por "|": o produto e o detalhe.
+ */
+function descreve(e, cat, docs = {}) {
+  const [base, detalhe] = String(e.id || '').split('|');
+  const nome = cat[base]?.nome || docs[base]?.nome || base;
+  switch (e.type) {
+    case 'quiz_pass': return `★ QUIZ APROVADO — ${nome}`;
+    case 'quiz_start': return `começou o quiz — ${nome}`;
+    case 'quiz_fail': return `errou o quiz — ${nome}`;
+    case 'video_play': return `ASSISTIU AO VÍDEO (com som) — ${nome}`;
+    case 'doc_open': return `abriu o documento — ${nome}`;
+    case 'onepage': return `mandou o one-page${detalhe === 'estudo' ? ' (versão estudo)' : ''} — ${nome}`;
+    case 'objecao': return `consultou a objeção “${detalhe || '—'}” — ${nome}`;
+    case 'mission_done': return `missão — ${nome}`;
+    default: return nome;
+  }
+}
+
+/** Só estas ações contam como "abriu uma ficha". */
+const ABERTURA = 'pill_view';
+
+// ─────────────────────────── relatório em profundidade ───────────────────────────
+
+/**
+ * Reconstrói as sessões de uma pessoa. Duas aberturas separadas por mais de
+ * 30 minutos viram sessões diferentes — é a régua usual para "voltou ao app".
+ */
+function sessoes(eventos, minutos = 30) {
+  const ordenados = [...eventos].sort((a, b) => a.at - b.at);
+  const grupos = [];
+  for (const e of ordenados) {
+    const ultimo = grupos[grupos.length - 1];
+    if (ultimo && (e.at - ultimo[ultimo.length - 1].at) / 60000 <= minutos) ultimo.push(e);
+    else grupos.push([e]);
+  }
+  return grupos;
+}
+
+/**
+ * Lê o ritmo de uma sessão. A pílula tem ~45s de vídeo mais a ficha; abrir a
+ * próxima em menos de um minuto significa que a anterior não foi consumida.
+ *
+ * O último item da sessão fica de fora: não existe evento depois dele, então
+ * não dá para saber quanto tempo ficou ali. Dizer que "passou batido" seria
+ * inventar.
+ */
+function ritmo(sessao) {
+  if (sessao.length < 2) return null;
+  const gaps = [];
+  for (let i = 1; i < sessao.length; i += 1) gaps.push((sessao[i].at - sessao[i - 1].at) / 1000);
+  const corridos = gaps.filter((g) => g < 60).length;
+  // Mediana, e não média: um intervalo longo no meio (a pessoa foi atender um
+  // cliente e voltou) puxaria a média para cima e faria parecer que ela leu
+  // tudo com calma.
+  const ord = [...gaps].sort((a, b) => a - b);
+  const meio = Math.floor(ord.length / 2);
+  const mediana = Math.round(ord.length % 2 ? ord[meio] : (ord[meio - 1] + ord[meio]) / 2);
+  return { gaps, corridos, mediana, total: gaps.length };
+}
+
+const dur = (seg) => (seg < 60 ? `${seg}s` : `${Math.floor(seg / 60)}min${String(seg % 60).padStart(2, '0')}`);
+
+function relatorioFundo({ pessoas, cat, docs, de, ate, agora, P }) {
+  const noPeriodo = (p) => p.eventos.filter((e) => e.at >= de && e.at < ate).sort((a, b) => a.at - b.at);
+  const modelos = Object.entries(cat)
+    .filter(([, v]) => v.marca === MARCA)
+    .map(([id, v]) => ({ id, nome: v.nome }));
+  const idsModelo = new Set(modelos.map((m) => m.id));
+
+  P('═'.repeat(58));
+  P('ELEVA · RAMASA — quem testou o quê, em profundidade');
+  P(`${carimbo(agora)}`);
+  const primeiro = pessoas.flatMap((p) => p.eventos).sort((a, b) => a.at - b.at)[0];
+  P(
+    +de === 0 && primeiro
+      ? `Cobre da primeira ação registrada (${carimbo(primeiro.at)}) até ${carimbo(ate)}`
+      : `Cobre ${carimbo(de)} → ${carimbo(ate)}`,
+  );
+  P('═'.repeat(58));
+  P();
+  P('COMO LER ESTES NÚMEROS');
+  P('  ABERTURA é a ficha do produto aparecendo na tela — uma vez por produto');
+  P('  por dia. Não quer dizer que a pessoa assistiu: só que a tela abriu.');
+  P('  ASSISTIU AO VÍDEO é outra coisa: só conta quando o vídeo toca COM SOM,');
+  P('  que é uma escolha da pessoa. O autoplay mudo não entra.');
+  P();
+  P('  Onde o intervalo entre uma ação e a seguinte permite, o relatório diz o');
+  P('  ritmo. Abrir a próxima ficha em menos de 1 minuto significa que a');
+  P('  anterior não foi consumida: a pílula sozinha tem ~45s de vídeo.');
+  P();
+  P('  Vídeo, quiz começado, quiz errado, documento aberto, objeção consultada');
+  P('  e one-page enviado passaram a ser registrados em 31/08. Antes dessa');
+  P('  data só existia a abertura de ficha — a ausência deles no histórico');
+  P('  anterior não significa que não aconteceram.');
+  P();
+
+  // ── pessoa a pessoa ──
+  P('─'.repeat(58));
+  P('PESSOA A PESSOA');
+  P('─'.repeat(58));
+
+  const ativos = pessoas
+    .map((p) => ({ p, ev: noPeriodo(p) }))
+    .sort((a, b) => b.ev.length - a.ev.length || a.p.nome.localeCompare(b.p.nome));
+
+  for (const { p, ev } of ativos) {
+    const quem = identifica(p);
+    P();
+    P(`${p.nome.toUpperCase()}${quem ? ` — ${quem}` : ''}`);
+    P(`  ${p.email}`);
+    P(`  conta criada ${carimbo(p.criada)}${p.abriu ? ` · última vez no app ${carimbo(p.abriu)}` : ''}`);
+
+    if (!ev.length) {
+      const d = p.abriu ? diasAtras(p.abriu, agora) : diasAtras(p.criada, agora);
+      P(`  ⚠ NÃO ABRIU NENHUMA FICHA no período. Tem conta há ${diasAtras(p.criada, agora)} dias.`);
+      if (p.abriu && d <= 1) P('    Entrou no app, mas não chegou a abrir nenhum produto.');
+      continue;
+    }
+
+    const grupos = sessoes(ev);
+    const dias = new Set(ev.map((e) => ddmm(e.at)));
+    const base = (e) => String(e.id || '').split('|')[0];
+    const vistos = new Set(ev.filter((e) => idsModelo.has(base(e))).map(base));
+    const aberturas = ev.filter((e) => e.type === ABERTURA).length;
+    const assistiu = ev.filter((e) => e.type === 'video_play').length;
+    const passou = ev.filter((e) => e.type === 'quiz_pass').length;
+    const tentou = ev.filter((e) => e.type === 'quiz_start').length;
+
+    const resumo = [
+      plural(grupos.length, 'sessão', 'sessões'),
+      `em ${plural(dias.size, 'dia', 'dias diferentes')}`,
+      plural(aberturas, 'ficha aberta', 'fichas abertas'),
+    ];
+    if (assistiu) resumo.push(plural(assistiu, 'vídeo assistido', 'vídeos assistidos'));
+    resumo.push(tentou || passou ? `${passou} de ${tentou || passou} quizzes acertados` : 'nenhum quiz');
+    P(`  ${resumo.join(' · ')}`);
+    P(`  cobertura do catálogo: ${vistos.size} de ${modelos.length} modelos${vistos.size === modelos.length ? ' ✓' : ''}`);
+    P();
+
+    for (const s of grupos) {
+      const total = Math.round((s[s.length - 1].at - s[0].at) / 1000);
+      const cab = s.length === 1
+        ? `${carimbo(s[0].at)}`
+        : `${carimbo(s[0].at)}–${hhmm(s[s.length - 1].at)}  (${dur(total)})`;
+      P(`    ${cab}`);
+      for (let i = 0; i < s.length; i += 1) {
+        const e = s[i];
+        const gap = i > 0 ? Math.round((e.at - s[i - 1].at) / 1000) : null;
+        P(`      ${hhmm(e.at)}  ${descreve(e, cat, docs)}${gap != null ? `   (${dur(gap)} depois da anterior)` : ''}`);
+      }
+      const r = ritmo(s);
+      if (r) {
+        if (r.corridos === r.total) {
+          P(`      → passou por ${plural(s.length, 'ficha', 'fichas')} sem parar em nenhuma. Reconhecimento, não estudo.`);
+        } else if (r.corridos) {
+          P(`      → ${r.corridos} de ${r.total} fichas ficaram abertas menos de 1 minuto (metade delas, ${dur(r.mediana)} ou menos).`);
+        } else {
+          P(`      → metade das fichas ficou aberta ${dur(r.mediana)} ou mais: deu tempo de assistir.`);
+        }
+      }
+      P();
+    }
+
+    const faltando = modelos.filter((m) => !vistos.has(m.id));
+    if (faltando.length) P(`  Nunca abriu: ${faltando.map((m) => m.nome).join(' · ')}`);
+    if (!passou) {
+      P(tentou
+        ? `  Tentou o quiz ${plural(tentou, 'vez', 'vezes')} e não passou — segue travado no nível 1.`
+        : '  Nunca fez um quiz — segue travado no nível 1.');
+    }
+  }
+
+  // ── por modelo ──
+  P();
+  P('─'.repeat(58));
+  P('POR MODELO — o que o time procura');
+  P('─'.repeat(58));
+  const porModelo = modelos
+    .map((m) => {
+      const abriu = (p) => noPeriodo(p).filter((e) => String(e.id).split('|')[0] === m.id);
+      const quem = pessoas.filter((p) => abriu(p).length);
+      const assistiram = pessoas.filter((p) => abriu(p).some((e) => e.type === 'video_play'));
+      return { ...m, quem, assistiram };
+    })
+    .sort((a, b) => b.quem.length - a.quem.length);
+  for (const m of porModelo) {
+    P(`  ${String(m.quem.length).padStart(2)} de ${pessoas.length} pessoas  ${m.nome}`);
+    P(`      ${m.quem.length ? m.quem.map((p) => p.nome.split(' ')[0]).join(', ') : '— ninguém abriu —'}`);
+    if (m.assistiram.length) P(`      assistiram ao vídeo: ${m.assistiram.map((p) => p.nome.split(' ')[0]).join(', ')}`);
+  }
+
+  // ── por loja e por cargo ──
+  const agrupa = (chave, titulo) => {
+    const mapa = new Map();
+    for (const p of pessoas) {
+      const k = chave(p) || 'sem definição';
+      const g = mapa.get(k) || { pessoas: 0, ativas: 0, aberturas: 0 };
+      const ev = noPeriodo(p);
+      g.pessoas += 1;
+      if (ev.length) g.ativas += 1;
+      g.aberturas += ev.length;
+      mapa.set(k, g);
+    }
+    P();
+    P('─'.repeat(58));
+    P(titulo);
+    P('─'.repeat(58));
+    for (const [k, g] of [...mapa].sort((a, b) => b[1].ativas - a[1].ativas || b[1].pessoas - a[1].pessoas)) {
+      P(`  ${k.padEnd(24)} ${g.ativas} de ${g.pessoas} usaram · ${plural(g.aberturas, 'abertura', 'aberturas')}`);
+    }
+  };
+  agrupa((p) => LOJAS[p.email.split('@')[1]], 'POR LOJA');
+  agrupa((p) => CARGOS[p.cargo], 'POR CARGO');
+
+  // ── horários ──
+  const horas = new Map();
+  for (const p of pessoas) for (const e of noPeriodo(p)) {
+    const h = Number(hhmm(e.at).slice(0, 2));
+    horas.set(h, (horas.get(h) || 0) + 1);
+  }
+  if (horas.size) {
+    P();
+    P('─'.repeat(58));
+    P('A QUE HORAS O TIME USA');
+    P('─'.repeat(58));
+    const max = Math.max(...horas.values());
+    for (const h of [...horas.keys()].sort((a, b) => a - b)) {
+      const n = horas.get(h);
+      P(`  ${String(h).padStart(2, '0')}h  ${'█'.repeat(Math.max(1, Math.round((n / max) * 24)))} ${n}`);
+    }
+  }
+
+  // ── funil ──
+  const criou = pessoas.length;
+  const entrou = pessoas.filter((p) => p.abriu).length;
+  const abriuFicha = pessoas.filter((p) => noPeriodo(p).length).length;
+  const viuTudo = pessoas.filter((p) => {
+    const v = new Set(
+      noPeriodo(p).map((e) => String(e.id).split('|')[0]).filter((id) => idsModelo.has(id)),
+    );
+    return v.size === modelos.length && modelos.length > 0;
+  }).length;
+  const tentouQuiz = pessoas.filter((p) => noPeriodo(p).some((e) => e.type === 'quiz_start')).length;
+  const fezQuiz = pessoas.filter((p) => noPeriodo(p).some((e) => e.type === 'quiz_pass')).length;
+  P();
+  P('─'.repeat(58));
+  P('O FUNIL');
+  P('─'.repeat(58));
+  const etapa = (n, rot) => P(`  ${String(n).padStart(2)}  ${'▇'.repeat(Math.max(0, Math.round((n / Math.max(criou, 1)) * 30))).padEnd(30)} ${rot}`);
+  etapa(criou, 'criaram conta');
+  etapa(entrou, 'abriram o app');
+  etapa(abriuFicha, 'abriram pelo menos uma ficha');
+  etapa(viuTudo, `viram os ${modelos.length} modelos`);
+  etapa(tentouQuiz, 'tentaram um quiz');
+  etapa(fezQuiz, 'passaram em um quiz');
+  P();
+  P('─'.repeat(58));
+  P('Fonte: Firebase ao vivo (Auth + elevaStats, últimos 200 eventos por pessoa).');
+  P('A conta da Vivian fica fora, e só entram contas com acesso à Ramasa.');
+}
 
 async function main() {
   const turno = (arg('turno') || 'manha').toLowerCase();
@@ -248,12 +538,19 @@ async function main() {
   ]);
 
   const cat = catalogo();
+  const docs = catalogoDocs();
   const excecoes = excecoesDeAcesso();
   const perfilPorUid = Object.fromEntries(perfis.map((p) => [p._id, p]));
   const statPorUid = Object.fromEntries(stats.map((s) => [s._id, s]));
 
-  const daMarca = (id) => cat[id]?.marca === MARCA || !cat[id]; // id desconhecido conta (acessório novo)
-  const rotulo_ = (id) => cat[id]?.nome || id;
+  // Objeção e one-page trazem o id em duas partes ("produto|detalhe"): a marca
+  // está na primeira. Id que não está em lugar nenhum conta como da marca —
+  // é acessório recém-cadastrado, e sumir com ele seria pior do que incluir.
+  const daMarca = (id) => {
+    const base = String(id || '').split('|')[0];
+    const m = cat[base]?.marca ?? docs[base]?.marca;
+    return m === undefined || m === MARCA;
+  };
 
   const pessoas = users
     .map((u) => {
@@ -280,9 +577,16 @@ async function main() {
     })
     .filter((p) => p.marcas.includes(MARCA) && p.email !== DONA);
 
-  const dentro = (d) => d && d >= de && d < ate;
   const linhas = [];
   const P = (s = '') => linhas.push(s);
+
+  if (temFlag('fundo')) {
+    relatorioFundo({ pessoas, cat, docs, de, ate, agora, P });
+    console.log(linhas.join('\n'));
+    return;
+  }
+
+  const dentro = (d) => d && d >= de && d < ate;
 
   P('═'.repeat(58));
   P(`ELEVA · RAMASA — relatório de ${turno === 'noite' ? 'FIM DO DIA' : 'MANHÃ'}`);
@@ -312,10 +616,7 @@ async function main() {
     P(`  ${faixa.padEnd(13)}${p.nome}${quem ? ` (${quem})` : ''}`);
     const conta = new Map();
     for (const e of p.novos) {
-      const r =
-        e.type === 'quiz_pass' ? `★ QUIZ APROVADO — ${rotulo_(e.id)}`
-        : e.type === 'mission_done' ? `missão concluída — ${rotulo_(e.id)}`
-        : rotulo_(e.id);
+      const r = descreve(e, cat, docs);
       conta.set(r, (conta.get(r) || 0) + 1);
     }
     for (const [r, n] of conta) P(`  ${''.padEnd(13)}${r}${n > 1 ? ` (${n}×)` : ''}`);

@@ -14,7 +14,7 @@ import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProduct
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { pegarVideoPreparado, adotarVideo } from './data/videoGesture';
 import { getAfiliadoCode } from './data/afiliadoCode';
-import { recordView, isQuizDone } from './data/tracking';
+import { recordView, isQuizDone, registraUso } from './data/tracking';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { getBrand, isAuto, isBalcao } from './data/brands';
@@ -38,7 +38,7 @@ function sceneMs(t: string): number {
 // o mecanismo de exibição continua de pé.
 const LEGENDA_AUTO = new Set<string>([]);
 
-function VideoMp4({ url }: { url: string }) {
+function VideoMp4({ url, productId }: { url: string; productId: string }) {
   // Legenda (CC) só pros vídeos que ainda não vieram editados com legenda.
   const base = url.startsWith('/videos/') ? url.split('/videos/')[1].replace(/\.mp4$/, '') : '';
   const vtt = base && LEGENDA_AUTO.has(base) ? `/videos/${base}.vtt` : null;
@@ -97,6 +97,16 @@ function VideoMp4({ url }: { url: string }) {
       });
     return () => { cancelado = true; };
   }, [url, adotado]);
+  // Vídeo tocando COM SOM = a pessoa está assistindo de verdade.
+  //
+  // O autoplay mudo não vale como sinal: acontece sozinho, sem ninguém pedir.
+  // Sem som pode ser o celular no bolso enquanto a tela ficou aberta. Os três
+  // caminhos que ligam o áudio — player adotado do toque no card, autoplay com
+  // som aceito pelo navegador e o botão "Ativar som" — passam todos por aqui.
+  useEffect(() => {
+    if (!muted) registraUso('video_play', productId);
+  }, [muted, productId]);
+
   // Lê a legenda ativa e mostra num overlay próprio (o render nativo fica atrás
   // dos controles e some no fundo). mode='hidden': parseia mas não desenha.
   useEffect(() => {
@@ -297,12 +307,12 @@ function Reel({ product, previewAudience, nivel }: { product: ProductT; previewA
 
   // Prioridade: [público] upload MP4 > reel do IG > MP4 pronto por público (bundled)
   //           > [base] MP4 > reel base > storyboard animado.
-  if (variantMp4) return <VideoMp4 key={variantMp4} url={variantMp4} />;
+  if (variantMp4) return <VideoMp4 key={variantMp4} url={variantMp4} productId={product.id} />;
   if (variantReel) {
     return <div className="wp-reel wp-reel--ig"><InstagramEmbed url={variantReel} /></div>;
   }
-  if (staticAudienceVid) return <VideoMp4 key={staticAudienceVid} url={staticAudienceVid} />;
-  if (baseMp4) return <VideoMp4 key={baseMp4} url={baseMp4} />;
+  if (staticAudienceVid) return <VideoMp4 key={staticAudienceVid} url={staticAudienceVid} productId={product.id} />;
+  if (baseMp4) return <VideoMp4 key={baseMp4} url={baseMp4} productId={product.id} />;
 
   if (product.instagramUrl) {
     return (
@@ -760,6 +770,9 @@ export default function Product() {
         ? `${product.name} — ${product.tagline}\n\n${product.salesLine}`
         : `${product.name} — material de estudo (uso interno).`);
       const r = await compartilharMaterial(m, texto);
+      // O one-page saindo para um cliente é o trabalho acontecendo — o único
+      // sinal no app que não é estudo, e sim atendimento.
+      registraUso('onepage', `${product.id}|${variante}`);
       if (r === 'baixou') setAvisoOp('PDF baixado: está na sua pasta de downloads.');
     } catch {
       setAvisoOp('Não consegui montar o material agora. Tenta de novo em instantes.');
@@ -975,7 +988,15 @@ export default function Product() {
         <div className="wp-objections">
           {product.objections.map((o, idx) => (
             <div className={`wp-obj ${openObj === idx ? 'open' : ''}`} key={idx}>
-              <button className="wp-obj-q" onClick={() => setOpenObj(openObj === idx ? null : idx)}>
+              <button
+                className="wp-obj-q"
+                onClick={() => {
+                  // Qual objeção o vendedor foi buscar diz o que o cliente
+                  // está perguntando no showroom — é a pauta do treinamento.
+                  if (openObj !== idx) registraUso('objecao', `${product.id}|${o.trigger}`);
+                  setOpenObj(openObj === idx ? null : idx);
+                }}
+              >
                 <span>{o.trigger}</span>
                 <span className="wp-obj-chev">{openObj === idx ? <Minus size={16} /> : <Plus size={16} />}</span>
               </button>

@@ -4,6 +4,7 @@ import { useBrand } from './BrandContext';
 import { PRATELEIRAS, documentosDaMarca } from './data/documentos';
 import { carregarDocsNuvem, docsNuvemDaMarca, abrirDocNuvem, type DocNuvem } from './data/docsUpload';
 import { useEffect, useState } from 'react';
+import { registraUso } from './data/tracking';
 
 // O REPOSITÓRIO. Separado das pílulas de propósito: aqui é o material que se
 // lê sentado — guia de 35 páginas, ficha completa, comunicado da montadora.
@@ -19,6 +20,7 @@ function DocDaNuvem({ d }: { d: DocNuvem }) {
     if (pct !== null) return;
     setErro('');
     setPct(0);
+    registraUso('doc_open', d.id);
     try {
       const url = await abrirDocNuvem(d, setPct);
       window.open(url, '_blank', 'noopener');
@@ -86,7 +88,14 @@ export default function Documentos() {
             <h2 className="wp-docs-sec-tit">{pr.titulo}</h2>
             <p className="wp-docs-sec-sub">{pr.descricao}</p>
             {daPrateleira.map((d) => (
-              <a key={d.id} className="wp-doc" href={d.arquivo} target="_blank" rel="noopener noreferrer">
+              <a
+                key={d.id}
+                className="wp-doc"
+                href={d.arquivo}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => registraUso('doc_open', d.id)}
+              >
                 <span className="wp-doc-ic"><FileText size={17} className="wp-ico" /></span>
                 <span className="wp-doc-txt">
                   <b>

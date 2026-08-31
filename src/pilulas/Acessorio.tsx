@@ -1,8 +1,9 @@
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, Package, Copy, Check, Car, Maximize2, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ACESSORIOS, ORIGENS, precoLabel } from './data/acessorios';
 import { findProduct } from './data/store';
+import { registraUso } from './data/tracking';
 
 // A tela do ACESSÓRIO. Antes o card levava pro carro compatível — atalho meu
 // que enganava: a pessoa clicava em "estribo iluminado" e caía no Jaecoo 7.
@@ -14,6 +15,12 @@ export default function Acessorio() {
   const a = ACESSORIOS.find((x) => x.id === id);
   const [copiado, setCopiado] = useState('');
   const [ampliada, setAmpliada] = useState(false);
+
+  // Ponto cego que existia desde o começo: esta tela não registrava nada. Quem
+  // vive de acessório podia usar o app todo dia e sair zerado no relatório.
+  useEffect(() => {
+    if (id) registraUso('acessorio', id);
+  }, [id]);
 
   if (!a) {
     return (

@@ -167,6 +167,23 @@ function catalogo() {
   return mapa;
 }
 
+/** id do acessório → nome, lido do acessorios.ts. */
+function catalogoAcessorios() {
+  const mapa = {};
+  try {
+    const src = readFileSync(join(RAIZ, 'src/pilulas/data/acessorios.ts'), 'utf8');
+    let id = null;
+    for (const linha of src.split('\n')) {
+      const mId = linha.match(/^\s*id:\s*'([^']+)'/);
+      if (mId) { id = mId[1]; continue; }
+      if (!id) continue;
+      const mNome = linha.match(/^\s*nome:\s*'([^']+)'/);
+      if (mNome) { mapa[id] = { nome: mNome[1], marca: MARCA }; id = null; }
+    }
+  } catch { /* sem o arquivo, mostra o id cru */ }
+  return mapa;
+}
+
 /** id do documento → { nome, marca }, lido do documentos.ts. */
 function catalogoDocs() {
   const mapa = {};
@@ -266,9 +283,9 @@ function janela(agora) {
  * Como cada ação aparece escrita. O `id` de objeção e one-page carrega duas
  * partes separadas por "|": o produto e o detalhe.
  */
-function descreve(e, cat, docs = {}) {
+function descreve(e, cat, docs = {}, acess = {}) {
   const [base, detalhe] = String(e.id || '').split('|');
-  const nome = cat[base]?.nome || docs[base]?.nome || base;
+  const nome = cat[base]?.nome || docs[base]?.nome || acess[base]?.nome || base;
   switch (e.type) {
     case 'quiz_pass': return `★ QUIZ APROVADO — ${nome}`;
     case 'quiz_start': return `começou o quiz — ${nome}`;
@@ -277,6 +294,7 @@ function descreve(e, cat, docs = {}) {
     case 'doc_open': return `abriu o documento — ${nome}`;
     case 'onepage': return `mandou o one-page${detalhe === 'estudo' ? ' (versão estudo)' : ''} — ${nome}`;
     case 'objecao': return `consultou a objeção “${detalhe || '—'}” — ${nome}`;
+    case 'acessorio': return `abriu o acessório — ${nome}`;
     case 'mission_done': return `missão — ${nome}`;
     default: return nome;
   }
@@ -326,7 +344,7 @@ function ritmo(sessao) {
 
 const dur = (seg) => (seg < 60 ? `${seg}s` : `${Math.floor(seg / 60)}min${String(seg % 60).padStart(2, '0')}`);
 
-function relatorioFundo({ pessoas, cat, docs, de, ate, agora, P }) {
+function relatorioFundo({ pessoas, cat, docs, acess, de, ate, agora, P }) {
   const noPeriodo = (p) => p.eventos.filter((e) => e.at >= de && e.at < ate).sort((a, b) => a.at - b.at);
   const modelos = Object.entries(cat)
     .filter(([, v]) => v.marca === MARCA)
@@ -412,7 +430,7 @@ function relatorioFundo({ pessoas, cat, docs, de, ate, agora, P }) {
       for (let i = 0; i < s.length; i += 1) {
         const e = s[i];
         const gap = i > 0 ? Math.round((e.at - s[i - 1].at) / 1000) : null;
-        P(`      ${hhmm(e.at)}  ${descreve(e, cat, docs)}${gap != null ? `   (${dur(gap)} depois da anterior)` : ''}`);
+        P(`      ${hhmm(e.at)}  ${descreve(e, cat, docs, acess)}${gap != null ? `   (${dur(gap)} depois da anterior)` : ''}`);
       }
       const r = ritmo(s);
       if (r) {
@@ -539,6 +557,7 @@ async function main() {
 
   const cat = catalogo();
   const docs = catalogoDocs();
+  const acess = catalogoAcessorios();
   const excecoes = excecoesDeAcesso();
   const perfilPorUid = Object.fromEntries(perfis.map((p) => [p._id, p]));
   const statPorUid = Object.fromEntries(stats.map((s) => [s._id, s]));
@@ -548,7 +567,7 @@ async function main() {
   // é acessório recém-cadastrado, e sumir com ele seria pior do que incluir.
   const daMarca = (id) => {
     const base = String(id || '').split('|')[0];
-    const m = cat[base]?.marca ?? docs[base]?.marca;
+    const m = cat[base]?.marca ?? docs[base]?.marca ?? acess[base]?.marca;
     return m === undefined || m === MARCA;
   };
 
@@ -581,7 +600,7 @@ async function main() {
   const P = (s = '') => linhas.push(s);
 
   if (temFlag('fundo')) {
-    relatorioFundo({ pessoas, cat, docs, de, ate, agora, P });
+    relatorioFundo({ pessoas, cat, docs, acess, de, ate, agora, P });
     console.log(linhas.join('\n'));
     return;
   }
@@ -616,7 +635,7 @@ async function main() {
     P(`  ${faixa.padEnd(13)}${p.nome}${quem ? ` (${quem})` : ''}`);
     const conta = new Map();
     for (const e of p.novos) {
-      const r = descreve(e, cat, docs);
+      const r = descreve(e, cat, docs, acess);
       conta.set(r, (conta.get(r) || 0) + 1);
     }
     for (const [r, n] of conta) P(`  ${''.padEnd(13)}${r}${n > 1 ? ` (${n}×)` : ''}`);

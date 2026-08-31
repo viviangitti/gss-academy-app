@@ -24,6 +24,12 @@ import type { Stats } from './tracking';
  * `quiz_start` e `quiz_fail` existem porque zero aprovação tem duas leituras
  * opostas — ninguém tenta, ou todo mundo tenta e erra — e cada uma pede uma
  * correção diferente.
+ *
+ * `acessorio` cobre um ponto cego inteiro: a tela do acessório nunca registrou
+ * nada. Quem vende acessório podia estar no app o dia todo e aparecer zerado no
+ * relatório — inclusive a gerente de acessórios. Não pontua porque o placar de
+ * hoje é de pílula; dar ponto aqui mudaria o ranking, e isso é decisão de
+ * produto, não de instrumentação.
  */
 export type ElevaEventType =
   | 'pill_view'
@@ -34,7 +40,8 @@ export type ElevaEventType =
   | 'video_play'
   | 'doc_open'
   | 'onepage'
-  | 'objecao';
+  | 'objecao'
+  | 'acessorio';
 
 // Um doc do Firestore para em 1 MB. Cada evento pesa ~120 bytes, então o teto
 // real seria perto de 8 mil — mas quando estourasse, o setDoc passaria a falhar

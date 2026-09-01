@@ -33,7 +33,7 @@ const ROLE_LB: Record<string, string> = {
   // existe (ver buildReport).
   'vendedor-veiculos': 'Vendedores de veículos', 'vendedor-acessorios': 'Vendedores de acessórios',
   'gerente-veiculos': 'Gerentes de veículos', 'gerente-acessorios': 'Gerentes de acessórios',
-  'lider-acessorios': 'Líderes de acessórios',
+  'lider-acessorios': 'Líderes de acessórios', 'gerente-qualidade': 'Qualidade',
 };
 // Singular certo por papel — antes o código tirava só o último "s" do plural, o
 // que gerava "Gestore" (de Gestores) e "Promotore" (de Promotores).

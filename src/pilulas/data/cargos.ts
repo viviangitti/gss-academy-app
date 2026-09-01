@@ -23,6 +23,11 @@
 // para que o cadastro diga a verdade agora, e para que a separação por loja,
 // quando vier, tenha em que se apoiar.
 //
+// QUALIDADE: não é par de ninguém. O gerente de qualidade não vende — ele
+// audita o que o grupo faz, então precisa enxergar o conteúdo inteiro e o uso
+// do time inteiro, sem recorte de loja nem de linha. É o único cargo aqui cuja
+// razão de existir é justamente olhar o trabalho dos outros.
+//
 // E o cargo não dá poder sozinho: quem abre o Painel é o papel por baixo
 // (gestor), e quem lê os dados do time é a lista de e-mails autorizados nas
 // regras do Firestore. Marcar "Líder" no cadastro é uma declaração, não uma
@@ -34,7 +39,8 @@ export type CargoAuto =
   | 'gerente-veiculos'
   | 'vendedor-acessorios'
   | 'gerente-acessorios'
-  | 'lider-acessorios';
+  | 'lider-acessorios'
+  | 'gerente-qualidade';
 
 export interface Cargo {
   id: CargoAuto;
@@ -67,6 +73,11 @@ export const CARGOS_AUTO: Cargo[] = [
   {
     id: 'lider-acessorios',
     label: 'Líder de acessórios',
+    role: 'gestor',
+  },
+  {
+    id: 'gerente-qualidade',
+    label: 'Gerente de qualidade',
     role: 'gestor',
   },
 ];

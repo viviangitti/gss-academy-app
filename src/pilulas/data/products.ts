@@ -895,14 +895,23 @@ export const PRODUCTS: Product[] = [
   },
 
   // ===================== VERTICAL AUTOMOTIVO — Ramasa =====================
-  // A Ramasa vende as DUAS marcas do grupo: Jaecoo e Omoda. Os quatro modelos
-  // abaixo são a linha oficial no Brasil (omodajaecoo.com.br, consultada em
-  // 11/08/2026) — nome, versões, motorização, itens de série e preço público
-  // "a partir de" vieram do site da marca, não de estimativa.
+  // A Ramasa vende as DUAS marcas do grupo: Jaecoo e Omoda.
   //
-  // Onde eu NÃO tinha o dado oficial (autonomia, consumo, garantia), está
-  // escrito "confirmar" de propósito. Número de carro inventado vira promessa
-  // que a concessionária não cumpre.
+  // DE ONDE VEM O DADO, EM ORDEM DE QUEM MANDA:
+  //   1. As fichas técnicas oficiais da montadora e o manual de garantia, que
+  //      a Vivian enviou em 01/09/2026 e estão publicados em Documentos.
+  //   2. O site da marca (omodajaecoo.com.br, consultado em 11/08/2026), só
+  //      para o que as fichas não cobrem.
+  // Documento enviado SEMPRE ganha da internet. Quando os dois divergirem, o
+  // documento vale e a internet sai.
+  //
+  // PREÇO NÃO ENTRA NA FICHA. Ele muda por campanha, e ficha desatualizada na
+  // mão do vendedor vira promessa que a loja não cumpre. Quem responde preço é
+  // a tabela do dia, não o app.
+  //
+  // Onde nem o documento nem o site trazem o número (consumo e autonomia do
+  // Omoda 5, por exemplo), está escrito "confirmar" de propósito. Número de
+  // carro inventado vira promessa que a concessionária não cumpre.
   //
   // As objeções são as reais do mercado — cada modelo trava numa diferente:
   // o Jaecoo trava em "é chinês", o híbrido em "preciso de tomada?", o elétrico
@@ -924,7 +933,7 @@ export const PRODUCTS: Product[] = [
       'Marca do grupo Chery, no Brasil desde 2009 — rede e peça já existem no país',
       'Gasta R$ 4.827 de combustível por ano contra R$ 8.798 do Corolla Cross — quase R$ 4 mil de diferença a cada 15 mil km (dados do guia de fábrica)',
       '279 cv combinados contra 175 cv do Corolla Cross, com motor MENOR: 1.5 turbo contra 2.0 aspirado',
-      '7 anos de garantia total e 8 anos na bateria — Corolla Cross e Compass dão 5, Taos dá 3',
+      '7 anos ou 150.000 km de garantia total, e 8 anos ou 150.000 km na bateria — Corolla Cross e Compass dão 5, Taos dá 3',
     ],
     howToUse:
       'Na abordagem: leve o cliente para o test drive antes de falar de preço. O 7 vende no rodar e no acabamento — ficha isolada perde para a experiência. Se ele veio pelo preço, comece pela lista de série: é aí que a comparação vira a seu favor.',
@@ -955,7 +964,7 @@ export const PRODUCTS: Product[] = [
       {
         trigger: '"A garantia tem limite de quilometragem."',
         answer:
-          'Tem, e vale fazer a conta: o brasileiro roda em média 10 mil km por ano, e a garantia é de 8 anos. Me diz uma coisa — quanto tempo você costuma ficar com um carro? Se for como a maioria, entre três e cinco anos, você troca bem antes de o limite virar assunto.',
+          'Tem, e o número está no manual de garantia: 150.000 km, valendo o que vier primeiro entre isso e os 7 anos (8 anos na bateria). Vale fazer a conta com o cliente: o brasileiro roda em média 10 mil km por ano, então 150 mil km é bem mais do que ele vai rodar em 7 anos. Duas coisas que precisam ser ditas: no CNPJ ou uso comercial a garantia cai para 36 meses ou 100.000 km, e ela é cancelada se as revisões não forem feitas na rede autorizada, no prazo.',
       },
       {
         trigger: '"E a revenda? Vou perder muito."',
@@ -1051,10 +1060,13 @@ export const PRODUCTS: Product[] = [
       { label: 'Entre-eixos', value: '2.672 mm' },
       { label: 'Porta-malas', value: '500 L — mais de 1.300 L com os bancos rebatidos' },
       { label: 'Altura do solo', value: '17,4 cm' },
-      { label: 'Telas', value: 'Multimídia de 13,2" na ELITE e LUXURY, 14,8" na PRESTIGE · painel digital de 10,25"' },
-      { label: 'Segurança', value: '7 airbags · câmera 540° · pacote ADAS 2.5 (Prestige)' },
-      { label: 'Garantia', value: '8 anos — confirmar limite de km vigente com a Ramasa' },
-      { label: '1ª revisão', value: 'R$ 699 · 5 anos de revisão: R$ 3.216 (valores da marca, confirmar o vigente)' },
+      { label: 'Potência combinada', value: '339 cv e 510 Nm' },
+      { label: 'Rodas', value: 'Liga leve aerodinâmica de 19" · pneus 235/50R19' },
+      { label: 'Telas', value: 'Multimídia de 13,2" na ELITE e 14,8" na LUXURY e na PRESTIGE · painel digital de 10,25"' },
+      { label: 'Som', value: '6 alto-falantes na ELITE · 4 + 2 tweeters na LUXURY · Sony com 4 + 4 tweeters na PRESTIGE' },
+      { label: 'Segurança', value: '6 airbags na ELITE · 7 na LUXURY e na PRESTIGE (inclui airbag de joelho) · câmera 540°' },
+      { label: 'Garantia', value: '7 anos ou 150.000 km, o que vier primeiro · bateria de alta tensão: 8 anos ou 150.000 km' },
+      { label: 'Garantia em uso comercial', value: '36 meses ou 100.000 km — vale para compra no CNPJ ou uso comercial' },
     ],
     storyboard: [
       { t: '0-5s', label: 'GANCHO', line: 'O cliente gostou do carro. Aí ele fala: "mas é chinês, né?"' },
@@ -1106,7 +1118,7 @@ export const PRODUCTS: Product[] = [
       'Painel digital flutuante de 24,6" e som Sony de 8 alto-falantes de série',
       'Bancos dianteiros elétricos, ventilados e aquecidos — item que costuma ser opcional caro na concorrência',
       '7 airbags e carroceria com 78% de aço de alta resistência',
-      '7 anos de garantia total e 8 anos na bateria — uma das maiores do mercado brasileiro',
+      '7 anos ou 150.000 km de garantia total, e 8 anos ou 150.000 km na bateria — uma das maiores do mercado brasileiro',
     ],
     howToUse:
       'A dúvida número um deste carro é "preciso de tomada?". Responda isso nos primeiros trinta segundos: não precisa. Depois disso a conversa flui, porque o resto é conforto — e conforto se vende no test drive, não na ficha.',
@@ -1122,7 +1134,7 @@ export const PRODUCTS: Product[] = [
       {
         trigger: '"E se a bateria pifar? Deve custar uma fortuna."',
         answer:
-          'É a pergunta certa. A bateria é de lítio-ferro-fosfato, a química mais durável do mercado e com menor risco de incêndio, com sistema monitorando carga e temperatura o tempo todo. A garantia dela é própria, separada da do carro — confirmo o prazo vigente com a gerência e te passo por escrito.',
+          'É a pergunta certa. A bateria é de lítio-ferro-fosfato, a química mais durável do mercado e com menor risco de incêndio, com sistema monitorando carga e temperatura o tempo todo. A garantia dela é própria, separada da do carro: 8 anos ou 150.000 km, o que vier primeiro — está no manual de garantia da montadora, e eu te mando o documento.',
       },
       {
         trigger: '"Manutenção de híbrido é mais cara, né?"',
@@ -1195,16 +1207,23 @@ export const PRODUCTS: Product[] = [
     ficha: [
       { label: 'Marca', value: 'Omoda (grupo Chery)' },
       { label: 'Versões', value: 'SHS-H Luxury · SHS-H Prestige' },
-      { label: 'Tipo', value: 'Híbrido autorrecarregável (HEV) — não precisa de tomada' },
-      { label: 'Motor', value: '1.5 TGDI HEV' },
-      { label: 'Telas', value: 'Painel digital flutuante de 24,6"' },
-      { label: 'Som', value: 'Sony com 8 alto-falantes' },
-      { label: 'Conforto', value: 'Bancos dianteiros elétricos, ventilados e aquecidos · teto solar' },
-      { label: 'Rodas', value: 'Liga leve de 18"' },
-      { label: 'Segurança', value: '7 airbags · 78% de aço de alta resistência · FCW e AEB' },
-      { label: 'Preço público', value: 'A partir de R$ 164.990 (site da marca, ago/2026) — confirmar a condição vigente' },
-      { label: 'Consumo e autonomia', value: 'confirmar na ficha técnica oficial' },
-      { label: 'Garantia', value: 'confirmar com a Ramasa (bateria tem garantia própria)' },
+      { label: 'Tipo', value: 'Híbrido autorrecarregável — não precisa de tomada. CONFIRMAR ANTES DE PROMETER: a ficha da montadora traz uma marcação de plug-in que não bate com o resto do próprio documento (bateria de 1,83 kWh e o "H" de SHS-H).' },
+      { label: 'Motor a combustão', value: '1.5 TGDI — 135 cv e 20,4 kgfm' },
+      { label: 'Motor elétrico', value: '204 cv e 31,6 kgfm' },
+      { label: 'Potência combinada', value: '224 cv e 30,1 kgfm' },
+      { label: 'Transmissão', value: 'DHT' },
+      { label: 'Bateria', value: '1,83 kWh' },
+      { label: 'Dimensões', value: '4.447 mm de comprimento · 1.824 de largura · 1.588 de altura' },
+      { label: 'Entre-eixos', value: '2.610 mm' },
+      { label: 'Porta-malas', value: '372 L' },
+      { label: 'Telas', value: 'Multimídia de 12,3" e painel de instrumentos de 12,3"' },
+      { label: 'Som', value: '6 alto-falantes na LUXURY · Sony com 8 na PRESTIGE' },
+      { label: 'Conforto', value: 'Teto solar elétrico nas duas · bancos dianteiros elétricos, ventilados e aquecidos só na PRESTIGE' },
+      { label: 'Rodas', value: 'Liga leve de 18" nas duas versões' },
+      { label: 'Segurança', value: '7 airbags · câmera 540° · TPMS · HAC e HDC · ADS 2.5 com 15 recursos (PRESTIGE)' },
+      { label: 'Consumo e autonomia', value: 'não constam na ficha da montadora — confirmar antes de falar número' },
+      { label: 'Garantia', value: '7 anos ou 150.000 km, o que vier primeiro · bateria de alta tensão: 8 anos ou 150.000 km' },
+      { label: 'Garantia em uso comercial', value: '36 meses ou 100.000 km — vale para compra no CNPJ ou uso comercial' },
     ],
     storyboard: [
       { t: '0-5s', label: 'GANCHO', line: '"Híbrido eu preciso ligar na tomada?" — é a primeira pergunta que você vai ouvir.' },
@@ -1256,7 +1275,7 @@ export const PRODUCTS: Product[] = [
       'Display de 24,6", head-up display colorido, comando de voz e carregador wireless de 50 W com refrigeração',
       'Bateria de lítio-ferro-fosfato — a química mais resistente a temperatura e com maior vida útil',
       'Pacote ADAS 2.5, 6 airbags e 78% de aço de alta resistência na estrutura',
-      '8 anos de garantia na bateria e 7 anos no veículo — no elétrico, a bateria é a pergunta que o cliente não faz em voz alta',
+      '8 anos ou 150.000 km de garantia na bateria e 7 anos ou 150.000 km no veículo — no elétrico, a bateria é a pergunta que o cliente não faz em voz alta',
     ],
     howToUse:
       'Não comece pela tecnologia: comece pela rotina dele. Pergunte quantos quilômetros ele roda por dia e se ele estaciona em casa ou em prédio. Com essas duas respostas você já sabe se o carro serve — e o cliente percebe que você não está empurrando.',
@@ -1309,12 +1328,19 @@ export const PRODUCTS: Product[] = [
       { label: 'Autonomia', value: '345 km (Inmetro) — a maior da faixa: concorrentes fazem 294, 330, 319 e 250 km' },
       { label: '0 a 100 km/h', value: '7,6 segundos' },
       { label: 'Aerodinâmica', value: 'Coeficiente de 0,281 — melhor que o dos concorrentes' },
-      { label: 'Telas', value: 'Display de 24,6" e head-up display colorido' },
-      { label: 'Tecnologia', value: 'Carregador por indução refrigerado · comando de voz · ADAS 2.5' },
-      { label: 'Segurança', value: '7 airbags · 78% de aço de alta resistência' },
-      { label: 'Garantia', value: '8 anos — confirmar limite de km vigente com a Ramasa' },
-      { label: 'Revisão', value: '1ª por R$ 459 aos 20.000 km ou 2 anos · R$ 1.852 em 5 anos' },
-      { label: 'Preço público', value: 'A partir de R$ 209.990 (site da marca, ago/2026) — confirmar a condição vigente' },
+      { label: 'Motor', value: '204 cv e 340 Nm — ímã permanente, síncrono' },
+      { label: 'Função V2L', value: '3,3 kW — o carro vira tomada para churrasqueira, ferramenta, camping' },
+      { label: 'Dimensões', value: '4.424 mm de comprimento · 1.830 de largura · 1.588 de altura' },
+      { label: 'Entre-eixos', value: '2.630 mm' },
+      { label: 'Porta-malas', value: '360 L' },
+      { label: 'Rodas', value: 'Liga leve aerodinâmica de 18" · pneus 215/55R18' },
+      { label: 'Telas', value: 'Multimídia de 12,3", painel digital de 12,3" e head-up display colorido' },
+      { label: 'Som', value: 'Sony com 6 alto-falantes e 2 tweeters' },
+      { label: 'Tecnologia', value: 'Carregador por indução refrigerado · comando de voz · câmera 360° · ADAS' },
+      { label: 'Segurança', value: 'Airbags frontais duplos, laterais dianteiros e de cortina · TPMS · BSD · ACC · AEB' },
+      { label: 'Garantia', value: '7 anos ou 150.000 km, o que vier primeiro · bateria de alta tensão: 8 anos ou 150.000 km' },
+      { label: 'Garantia em uso comercial', value: '36 meses ou 100.000 km — vale para compra no CNPJ ou uso comercial' },
+      { label: 'Revisão', value: '1ª aos 20.000 km ou 2 anos (valor: confirmar o vigente com a Ramasa)' },
     ],
     storyboard: [
       { t: '0-5s', label: 'GANCHO', line: 'Ele quer o elétrico. E aí pergunta: "onde eu carrego?"' },
@@ -1366,7 +1392,7 @@ export const PRODUCTS: Product[] = [
       'Multimídia de 15,6" Ultra HD 2.5K com função Sliding, som Sony de 12 alto-falantes e o L’Essence de aromas',
       '8 airbags e estrutura com 70% de aço de alta resistência mais 30% de ultra resistência',
       'ADAS avançado: evasão inteligente (IES), frenagem de emergência de 4 a 150 km/h e assistente de congestionamento',
-      '7 anos de garantia total e 8 anos na bateria — uma das maiores do mercado brasileiro',
+      '7 anos ou 150.000 km de garantia total, e 8 anos ou 150.000 km na bateria — uma das maiores do mercado brasileiro',
     ],
     howToUse:
       'Nessa faixa o cliente não compra ficha, compra a sensação de ter acertado. Convide para sentar dentro antes de falar número — a tela deslizante, o som Sony e o L’Essence fazem o trabalho sozinhos. Só depois abra a comparação de preço, e aí compare equipado contra equipado.',
@@ -1476,12 +1502,16 @@ export const PRODUCTS: Product[] = [
       { label: 'Bateria', value: '18,4 kWh de lítio-ferro-fosfato (LFP)' },
       { label: 'Entre-eixos', value: '2.720 mm' },
       { label: 'Porta-malas', value: '590 L — um dos maiores da categoria; passa de 1.300 L rebatendo' },
-      { label: 'Tela', value: 'Multimídia de 15,6" Ultra HD com função Smart Sliding' },
-      { label: 'Som', value: 'Sony de 390 W, com cancelamento ativo de ruído' },
-      { label: 'Exclusivo', value: 'L’Essence — três fragrâncias para a cabine' },
-      { label: 'Segurança', value: '8 airbags · 18 recursos ADAS · estrutura reforçada' },
-      { label: 'Garantia', value: '8 anos — confirmar limite de km vigente com a Ramasa' },
-      { label: 'Preço público', value: 'A partir de R$ 254.990 (site da marca, ago/2026) — confirmar a condição vigente' },
+      { label: 'Potência combinada', value: '279 cv e 37,2 kgfm' },
+      { label: 'Dimensões', value: '4.660 mm de comprimento · 1.875 de largura · 1.670 de altura' },
+      { label: 'Rodas', value: 'Liga leve de 19" na LUXURY e 20" na PRESTIGE' },
+      { label: 'Telas', value: 'Multimídia Ultra HD 2.5K de 15,6" · painel de 8,88" · head-up display só na PRESTIGE' },
+      { label: 'Som', value: 'Sony com 8 alto-falantes na LUXURY · Concert Sound System Sony com 12 na PRESTIGE' },
+      { label: 'Cabine', value: 'Cancelamento de ruído ENC nas duas · fragrância Essence só na PRESTIGE' },
+      { label: 'Exclusivo da PRESTIGE', value: 'Banco do passageiro com massagem e função Relax · indicador de carga na coluna C' },
+      { label: 'Segurança', value: '7 airbags na LUXURY e 8 na PRESTIGE · câmera 540° · ADAS 2.5 com 18 recursos' },
+      { label: 'Garantia', value: '7 anos ou 150.000 km, o que vier primeiro · bateria de alta tensão: 8 anos ou 150.000 km' },
+      { label: 'Garantia em uso comercial', value: '36 meses ou 100.000 km — vale para compra no CNPJ ou uso comercial' },
     ],
     storyboard: [
       { t: '0-5s', label: 'GANCHO', line: 'Ele tem o dinheiro. Mas acha que nessa faixa só marca conhecida entrega.' },

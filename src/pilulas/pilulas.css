@@ -1984,10 +1984,6 @@
   display: block; margin-top: 1px; font-size: 10.5px; font-weight: 700;
   letter-spacing: .12em; text-transform: uppercase; color: #7a857f;
 }
-.wp-fk-logo {
-  font-family: Georgia, serif; font-size: 15px; font-weight: 700;
-  letter-spacing: .04em; color: #7a857f;
-}
 .wp-fk-hero { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; }
 .wp-fk-img {
   width: 84px; height: 84px; object-fit: contain; flex: none;

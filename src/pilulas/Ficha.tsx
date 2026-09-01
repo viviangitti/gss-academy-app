@@ -22,6 +22,24 @@ export default function Ficha() {
     if (product && hasImage(product.id)) ensureImageLoaded(product.id);
   }, [product]);
 
+  // O NOME DO ARQUIVO QUE CHEGA NO CLIENTE.
+  //
+  // Aqui o PDF nasce do "Imprimir > Salvar em PDF" do navegador, e o navegador
+  // batiza o arquivo com o título da página. Como o título era o do site, o
+  // cliente recebia no WhatsApp um anexo chamado "Eleva — produto que vende na
+  // ponta.pdf": o nome da ferramenta interna do vendedor, com slogan e tudo.
+  //
+  // Trocando o título enquanto esta tela está aberta, o arquivo sai como
+  // "Omoda 5 SHS-H — ficha técnica.pdf". Restaura ao sair pra não vazar o nome
+  // do carro no título das outras telas.
+  const tipoFicha = product && isAuto(product.brand) ? 'ficha técnica' : 'ficha do produto';
+  useEffect(() => {
+    if (!product) return;
+    const anterior = document.title;
+    document.title = `${product.name} — ${tipoFicha}`;
+    return () => { document.title = anterior; };
+  }, [product, tipoFicha]);
+
   if (!product || !product.ficha?.length) {
     return (
       <div className="wp-empty">
@@ -61,7 +79,9 @@ export default function Ficha() {
             <span className="wp-fk-brand">{brand.name}</span>
             <span className="wp-fk-kind">{isAuto(product.brand) ? 'Ficha técnica' : 'Ficha do produto'}</span>
           </div>
-          <span className="wp-fk-logo">eleva</span>
+          {/* Sem a marca do Eleva. Esta folha vai pro cliente, e quem assina
+              ela é a concessionária — não a ferramenta que o vendedor usa por
+              dentro. O nome da loja já está aqui do lado esquerdo. */}
         </header>
 
         <div className="wp-fk-hero">

@@ -8,6 +8,7 @@
 // Nada de dado sensível: só o que a pessoa fez dentro do app.
 import { doc, getDoc, setDoc, serverTimestamp, arrayUnion } from 'firebase/firestore';
 import { db, auth } from '../../services/firebase';
+import { publicarPlacar } from './placar';
 import type { Stats } from './tracking';
 
 /**
@@ -120,6 +121,15 @@ export function syncStats(stats: Stats, event: { type: ElevaEventType; id: strin
 
   setDoc(doc(db, 'elevaStats', uid), payload, { merge: true }).catch(() => {
     /* offline ou sem permissão: ignora, o localStorage continua sendo a verdade do app */
+  });
+
+  // E o placar, que é público pro time. Vai separado porque o elevaStats só o
+  // gestor pode ler — e o ranking precisa chegar em quem vende (ver placar.ts).
+  publicarPlacar({
+    brand: meta.brand || '',
+    pontos: stats.weekPoints,
+    streak: stats.streak,
+    mes: stats.week,
   });
 }
 

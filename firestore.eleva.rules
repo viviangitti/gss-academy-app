@@ -22,6 +22,17 @@ service cloud.firestore {
       allow list: if isGestor();
       allow write: if request.auth != null && request.auth.uid == uid;
     }
+    // Placar do ranking. Só uid, marca, pontos, ofensiva e mês — SEM nome e SEM
+    // e-mail, de propósito: é isso que permite liberar a leitura pro time todo
+    // sem expor o desempenho de ninguém. O vendedor vê a escada e a distância
+    // pra posição de cima, não quem está na lanterna.
+    //
+    // O elevaStats ao lado continua trancado no gestor, e continua tendo que
+    // ficar: lá estão nome, e-mail e o histórico individual.
+    match /elevaPlacar/{uid} {
+      allow read, list: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
     // Vendas declaradas pela ponta (venda de balcão não passa pelo site, então
     // só existe se a pessoa declarar). Guardamos o NÚMERO do cupom, nunca a
     // imagem — cupom de farmácia expõe o que a cliente comprou (dado sensível

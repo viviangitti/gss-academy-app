@@ -1,18 +1,15 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { Trophy, Flame, Target, Check, Medal, User, Rocket, ArrowRight, Users } from 'lucide-react';
 import { getStats, WEEKLY_GOAL } from './data/tracking';
 import { getDesafio } from './data/desafio';
-import { RIVALS } from './data/leaderboard';
-import { useAuth } from './AuthContext';
+import { carregarPlacar, type LinhaPlacar } from './data/placar';
 import { useBrand } from './BrandContext';
 import { vocab } from './data/vocabulario';
-import { segmentLabel } from './data/segments';
 
 const MEDAL_COLOR = ['#c9a84c', '#9ca3af', '#b8763e']; // ouro, prata, bronze
 
 interface Row {
-  name: string;
-  company: string; // empresa / ponto de venda
   points: number;
   streak: number;
   me?: boolean;
@@ -20,17 +17,28 @@ interface Row {
 
 export default function Ranking() {
   const stats = getStats();
-  const { user } = useAuth();
-  const myCompany = user?.segment ? segmentLabel(user.segment) : 'seu ponto de venda';
   const { brandId } = useBrand();
   const v = vocab(brandId);
-  // Só a gestão vê quem é quem. Pra quem vende, o ranking é posição e distância.
-  const verNomes = user?.role === 'gestor';
 
-  const rows: Row[] = [
-    ...RIVALS.map((r) => ({ ...r })),
-    { name: 'Você', company: myCompany, points: stats.weekPoints, streak: stats.streak, me: true },
-  ].sort((a, b) => b.points - a.points);
+  // O placar vem do time de verdade (ver data/placar.ts). Antes vinham oito
+  // colegas inventados no código, e quem estava em primeiro no time via a tela
+  // dizer "4º lugar" — atrás de gente que não existe.
+  const [placar, setPlacar] = useState<LinhaPlacar[] | null>(null);
+  useEffect(() => {
+    let vivo = true;
+    carregarPlacar(brandId, stats.week)
+      .then((r) => { if (vivo) setPlacar(r); })
+      .catch(() => { if (vivo) setPlacar([]); });
+    return () => { vivo = false; };
+  }, [brandId, stats.week]);
+
+  // A pontuação local é a mais fresca: ela conta a pílula do segundo passado,
+  // que ainda pode não ter subido. Por isso ela sobrescreve a minha linha.
+  const rows: Row[] = (() => {
+    const outros = (placar || []).filter((l) => !l.eu).map((l) => ({ points: l.pontos, streak: l.streak }));
+    return [...outros, { points: stats.weekPoints, streak: stats.streak, me: true }]
+      .sort((a, b) => b.points - a.points);
+  })();
 
   const myIndex = rows.findIndex((r) => r.me);
   const myRank = myIndex + 1;
@@ -38,6 +46,10 @@ export default function Ranking() {
   const above = rows[myIndex - 1];
   const gap = above ? above.points - rows[myIndex].points : 0;
 
+  // Time de uma pessoa só não tem ranking: mostrar pódio com um degrau ocupado
+  // e dois vazios não motiva ninguém, e inventar colega foi o erro que a gente
+  // acabou de desfazer.
+  const temTime = rows.length > 1;
   const podium = rows.slice(0, 3);
   const rest = rows.slice(3);
   const goalPct = Math.min(100, Math.round((stats.weekViews / WEEKLY_GOAL) * 100));
@@ -98,17 +110,16 @@ export default function Ranking() {
         </p>
       </div>
 
-      {/* Os colegas ainda são DE EXEMPLO — e a tela diz isso.
-          Ranking real exige ler o desempenho de todo o time, e a regra do
-          Firestore (com razão) só deixa o gestor listar isso: se liberasse pro
-          vendedor, o nome e o número do colega chegariam no navegador dele — o
-          oposto do ranking sem nome que a gente decidiu. O caminho certo é o
-          servidor devolver só a escada anonimizada, e isso depende da chave de
-          serviço do projeto. Até lá, mentir de número seria pior. */}
-      <p className="wp-rk-exemplo">
-        Sua pontuação é real. As posições dos colegas ainda são de exemplo —
-        viram o desempenho de verdade do time quando a gestão ligar o placar da loja.
-      </p>
+      {/* O placar é o time de verdade. A escada chega sem nome nenhum — é só
+          uid e pontos no servidor —, então dá pra liberar a leitura pra quem
+          vende sem expor o desempenho de ninguém. */}
+      {placar === null && <p className="wp-rk-exemplo">Carregando o placar do time…</p>}
+      {placar !== null && !temTime && (
+        <p className="wp-rk-exemplo">
+          Você é a única pessoa do time com pontos este mês. O ranking aparece
+          quando mais alguém do time começar a pontuar.
+        </p>
+      )}
 
       {/* Pódio */}
       {/* Ranking com nome expõe quem está na lanterna na frente dos colegas, e
@@ -116,6 +127,7 @@ export default function Ranking() {
           ninguém corre sozinho no escuro. O meio: a pessoa vê a POSIÇÃO de
           todo mundo e o quanto falta pra passar da frente — sem saber quem é.
           O gestor continua vendo os nomes: sem isso ele não consegue gerir. */}
+      {temTime && (
       <div className="wp-podium">
         {[1, 0, 2].map((slot) => {
           const r = podium[slot];
@@ -124,20 +136,20 @@ export default function Ranking() {
           return (
             <div key={slot} className={`wp-pod wp-pod-${place} ${r.me ? 'me' : ''}`}>
               <div className="wp-pod-medal"><Medal size={24} color={MEDAL_COLOR[slot]} /></div>
-              <div className="wp-pod-av">{r.me ? <User size={18} /> : verNomes ? r.name[0] : <User size={16} />}</div>
-              <div className="wp-pod-name">{r.me ? 'Você' : verNomes ? r.name : `${place}º lugar`}</div>
+              <div className="wp-pod-av"><User size={r.me ? 18 : 16} /></div>
+              <div className="wp-pod-name">{r.me ? 'Você' : `${place}º lugar`}</div>
               <div className="wp-pod-pts">{r.points} pts</div>
               <div className="wp-pod-base">{place}º</div>
             </div>
           );
         })}
       </div>
+      )}
 
       {/* Linha de motivação */}
       {above && (
         <div className="wp-gap">
-          Faltam <b>{gap} pts</b> ({Math.ceil(gap / 10)} {v.pilulas}) para passar para a <b>{minhaPos - 1}ª posição</b>
-          {verNomes && !above.me && <> — hoje de <b>{above.name}</b></>} <Rocket size={14} className="wp-ico" />
+          Faltam <b>{gap} pts</b> ({Math.ceil(gap / 10)} {v.pilulas}) para passar para a <b>{minhaPos - 1}ª posição</b> <Rocket size={14} className="wp-ico" />
         </div>
       )}
 
@@ -146,10 +158,9 @@ export default function Ranking() {
         {rest.map((r, i) => (
           <div key={i} className={`wp-rk-row ${r.me ? 'me' : ''}`}>
             <span className="wp-rk-pos">{i + 4}º</span>
-            <span className="wp-rk-av">{r.me ? <User size={15} /> : verNomes ? r.name[0] : <User size={14} />}</span>
+            <span className="wp-rk-av"><User size={r.me ? 15 : 14} /></span>
             <span className="wp-rk-info">
-              <b>{r.me ? 'Você' : verNomes ? r.name : 'Colega de time'}</b>
-              {verNomes && <small>{r.company}</small>}
+              <b>{r.me ? 'Você' : 'Colega de time'}</b>
             </span>
             <span className="wp-rk-streak"><Flame size={12} className="wp-ico" />{r.streak}</span>
             <span className="wp-rk-pts">{r.points}</span>

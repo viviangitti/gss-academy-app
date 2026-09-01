@@ -100,7 +100,18 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
     const allowed = new Set(products.map((p) => p.id));
     fetchTeam(brandId)
       .then((people) => { if (vivo) { setRep(buildReport(people, allowed)); setErro(''); } })
-      .catch(() => { if (vivo) setErro('Não consegui ler os dados do time.'); })
+      .catch((e: unknown) => {
+        if (!vivo) return;
+        // Duas falhas MUITO diferentes davam a mesma frase. "Sem internet" a
+        // pessoa resolve sozinha; "e-mail ainda não liberado" ela não tem como
+        // adivinhar — e é o que acontece com todo gerente novo, porque ler o
+        // time depende de uma lista publicada nas regras do Firestore, não do
+        // cargo escolhido no cadastro.
+        const negado = (e as { code?: string })?.code === 'permission-denied';
+        setErro(negado
+          ? 'Seu acesso ao Painel ainda não foi liberado. Avise a Vivian: falta soltar o seu e-mail para ler os dados do time. O resto do app funciona normalmente.'
+          : 'Não consegui ler os dados do time. Confira a internet e tente de novo.');
+      })
       .finally(() => { if (vivo) setCarregando(false); });
     return () => { vivo = false; };
     // products é determinado por brandId (catálogo da marca) — refetch só na troca de marca.

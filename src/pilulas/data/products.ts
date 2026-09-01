@@ -959,7 +959,7 @@ export const PRODUCTS: Product[] = [
       {
         trigger: '"Tenho medo do pós-venda."',
         answer:
-          'É a preocupação certa numa marca nova. O centro de distribuição de peças fica em Cajamar, São Paulo, com os itens essenciais em estoque — não depende de importar peça a peça. A assistência 24h é da Allianz, e a revisão é aqui, com a gente. A primeira sai por R$ 699, e cinco anos de revisão dão R$ 3.216 — abaixo do que a concorrência cobra.',
+          'É a preocupação certa numa marca nova. O centro de distribuição de peças fica em Cajamar, São Paulo, com os itens essenciais em estoque — não depende de importar peça a peça. A assistência 24h é da Allianz, e a revisão é aqui, com a gente, com preço fixo publicado pela marca: a primeira sai por R$ 699, a segunda por R$ 1.379 e a terceira por R$ 1.138 — R$ 3.216 nos três primeiros anos. O preço é travado pelos 8 primeiros anos, então ele sabe hoje o que vai pagar.',
       },
       {
         trigger: '"A garantia tem limite de quilometragem."',
@@ -1065,7 +1065,9 @@ export const PRODUCTS: Product[] = [
       { label: 'Telas', value: 'Multimídia de 13,2" na ELITE e 14,8" na LUXURY e na PRESTIGE · painel digital de 10,25"' },
       { label: 'Som', value: '6 alto-falantes na ELITE · 4 + 2 tweeters na LUXURY · Sony com 4 + 4 tweeters na PRESTIGE' },
       { label: 'Segurança', value: '6 airbags na ELITE · 7 na LUXURY e na PRESTIGE (inclui airbag de joelho) · câmera 540°' },
-      { label: 'Garantia', value: '7 anos ou 150.000 km, o que vier primeiro · bateria de alta tensão: 8 anos ou 150.000 km' },
+      { label: 'Garantia', value: '7 anos ou 150.000 km no veículo · 8 anos ou 150.000 km na bateria de alta tensão · 5 anos ou 150.000 km na pintura e contra corrosão — sempre o que vier primeiro' },
+      { label: 'Revisões', value: 'A cada 12 meses ou 10.000 km, o que vier primeiro' },
+      { label: 'As três primeiras revisões', value: '1ª R$ 699 · 2ª R$ 1.379 · 3ª R$ 1.138 — R$ 3.216 nas três (preço fixo da marca, válido até 31/12/2026)' },
       { label: 'Garantia em uso comercial', value: '36 meses ou 100.000 km — vale para compra no CNPJ ou uso comercial' },
     ],
     storyboard: [
@@ -1081,7 +1083,7 @@ export const PRODUCTS: Product[] = [
         foco: 'Os números que ganham do Haval, do Song Plus, do Corolla Cross e do Compass.',
         storyboard: [
           { t: '0-8s', label: 'A REGRA', line: 'Nunca fale mal do concorrente. Compare com número, que é o que o cliente consegue repetir em casa.' },
-          { t: '8-20s', label: 'CONTRA O HAVAL', line: 'O porta-malas dele é maior, admita. Mas o nosso faz 15,1 km por litro contra 13,5, e cinco anos de revisão custam 3.216 contra 3.890. Mais som Sony e aquecimento de banco, que ele não tem.' },
+          { t: '8-20s', label: 'CONTRA O HAVAL', line: 'O porta-malas dele é maior, admita. Mas o nosso faz 15,1 km por litro contra 13,5, e as três primeiras revisões saem por 3.216 com preço fixo publicado. Mais som Sony e aquecimento de banco, que ele não tem.' },
           { t: '20-32s', label: 'CONTRA O SONG PLUS', line: 'Ele é mais espaçoso no entre-eixos. Nós temos um ano a mais de garantia e 17,4 centímetros de altura do solo contra 15. E ele depreciou 17,2% em 2025 — quarenta mil reais.' },
           { t: '32-42s', label: 'CONTRA O COROLLA CROSS', line: 'A garantia dele de dez anos é real, reconheça. Depois compare potência, autonomia e porta-malas: ganhamos nos três, e o acabamento fala por si no test drive.' },
           { t: '42-52s', label: 'CONTRA O COMPASS', line: 'Dois anos a mais de garantia, mais espaço, mais porta-malas. E ele faz 10,1 km por litro no urbano contra os nossos 15,1.' },
@@ -1222,7 +1224,9 @@ export const PRODUCTS: Product[] = [
       { label: 'Rodas', value: 'Liga leve de 18" nas duas versões' },
       { label: 'Segurança', value: '7 airbags · câmera 540° · TPMS · HAC e HDC · ADS 2.5 com 15 recursos (PRESTIGE)' },
       { label: 'Consumo e autonomia', value: 'não constam na ficha da montadora — confirmar antes de falar número' },
-      { label: 'Garantia', value: '7 anos ou 150.000 km, o que vier primeiro · bateria de alta tensão: 8 anos ou 150.000 km' },
+      { label: 'Garantia', value: '7 anos ou 150.000 km no veículo · 8 anos ou 150.000 km na bateria de alta tensão · 5 anos ou 150.000 km na pintura e contra corrosão — sempre o que vier primeiro' },
+      { label: 'Revisões', value: 'A cada 12 meses ou 10.000 km, o que vier primeiro' },
+      { label: 'As três primeiras revisões', value: '1ª R$ 698,54 · 2ª R$ 1.379 · 3ª R$ 839 — R$ 2.916,54 nas três (preço fixo da marca, válido até 31/12/2026)' },
       { label: 'Garantia em uso comercial', value: '36 meses ou 100.000 km — vale para compra no CNPJ ou uso comercial' },
     ],
     storyboard: [
@@ -1301,7 +1305,7 @@ export const PRODUCTS: Product[] = [
       {
         trigger: '"Manutenção de elétrico deve ser cara."',
         answer:
-          'É o contrário, e dá pra provar com número: a primeira revisão sai por R$ 459, aos 20 mil km ou 2 anos. Cinco anos de revisão dão R$ 1.852 no total. Não tem óleo, não tem filtro, não tem correia. Compare com o que você paga hoje.',
+          'É o contrário, e dá pra provar com número: a primeira revisão sai por R$ 459, aos 20 mil km ou 2 anos — e a próxima só dois anos depois, por R$ 1.393. Em cinco anos você gasta R$ 1.852 de revisão, com preço fixo publicado pela marca. Não tem óleo, não tem filtro de óleo, não tem correia. Compare com o que você paga hoje, todo ano.',
       },
       {
         trigger: '"Elétrico desvaloriza mais rápido."',
@@ -1315,7 +1319,7 @@ export const PRODUCTS: Product[] = [
     destaques: [
       { titulo: 'Roda a semana toda sem recarregar', prova: '345 km de autonomia Inmetro — a maior entre os elétricos da faixa' },
       { titulo: 'Some a gasolina e a troca de óleo da sua vida', prova: '100% elétrico, sem motor a combustão pra revisar' },
-      { titulo: 'Cinco anos de revisão custam menos que uma', prova: 'R$ 1.852 no total — a primeira sai por R$ 459' },
+      { titulo: 'Cinco anos de revisão custam menos que uma', prova: 'R$ 1.852 no total — a primeira sai por R$ 459, e a seguinte só dois anos depois' },
       { titulo: 'Arranca na frente de todo mundo no semáforo', prova: 'De 0 a 100 km/h em 7,6 segundos' },
       { titulo: 'A informação no para-brisa, o olho na rua', prova: 'Projeção colorida, comando de voz e 7 airbags' },
     ],
@@ -1338,9 +1342,10 @@ export const PRODUCTS: Product[] = [
       { label: 'Som', value: 'Sony com 6 alto-falantes e 2 tweeters' },
       { label: 'Tecnologia', value: 'Carregador por indução refrigerado · comando de voz · câmera 360° · ADAS' },
       { label: 'Segurança', value: 'Airbags frontais duplos, laterais dianteiros e de cortina · TPMS · BSD · ACC · AEB' },
-      { label: 'Garantia', value: '7 anos ou 150.000 km, o que vier primeiro · bateria de alta tensão: 8 anos ou 150.000 km' },
+      { label: 'Garantia', value: '7 anos ou 150.000 km no veículo · 8 anos ou 150.000 km na bateria de alta tensão · 5 anos ou 150.000 km na pintura e contra corrosão — sempre o que vier primeiro' },
       { label: 'Garantia em uso comercial', value: '36 meses ou 100.000 km — vale para compra no CNPJ ou uso comercial' },
-      { label: 'Revisão', value: '1ª aos 20.000 km ou 2 anos (valor: confirmar o vigente com a Ramasa)' },
+      { label: 'Revisões', value: 'A cada 24 meses ou 20.000 km — metade da frequência de um carro a combustão' },
+      { label: 'As três primeiras revisões', value: '1ª (2 anos) R$ 459 · 2ª (4 anos) R$ 1.393 · 3ª (6 anos) R$ 459 — R$ 2.311 em SEIS anos (preço fixo da marca, válido até 31/12/2026)' },
     ],
     storyboard: [
       { t: '0-5s', label: 'GANCHO', line: 'Ele quer o elétrico. E aí pergunta: "onde eu carrego?"' },
@@ -1510,7 +1515,9 @@ export const PRODUCTS: Product[] = [
       { label: 'Cabine', value: 'Cancelamento de ruído ENC nas duas · fragrância Essence só na PRESTIGE' },
       { label: 'Exclusivo da PRESTIGE', value: 'Banco do passageiro com massagem e função Relax · indicador de carga na coluna C' },
       { label: 'Segurança', value: '7 airbags na LUXURY e 8 na PRESTIGE · câmera 540° · ADAS 2.5 com 18 recursos' },
-      { label: 'Garantia', value: '7 anos ou 150.000 km, o que vier primeiro · bateria de alta tensão: 8 anos ou 150.000 km' },
+      { label: 'Garantia', value: '7 anos ou 150.000 km no veículo · 8 anos ou 150.000 km na bateria de alta tensão · 5 anos ou 150.000 km na pintura e contra corrosão — sempre o que vier primeiro' },
+      { label: 'Revisões', value: 'A cada 12 meses ou 10.000 km, o que vier primeiro' },
+      { label: 'As três primeiras revisões', value: '1ª R$ 698,54 · 2ª R$ 1.379 · 3ª R$ 1.137,75 — R$ 3.215,29 nas três (preço fixo da marca, válido até 31/12/2026)' },
       { label: 'Garantia em uso comercial', value: '36 meses ou 100.000 km — vale para compra no CNPJ ou uso comercial' },
     ],
     storyboard: [

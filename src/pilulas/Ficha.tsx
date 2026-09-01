@@ -97,7 +97,9 @@ export default function Ficha() {
             {product.ficha.map((r) => (
               <tr key={r.label}>
                 <th>{r.label}</th>
-                <td>{r.value}</td>
+                {/* A linha das VERSÕES sai em caixa alta junto com o nome do
+                    carro: é o par que o cliente procura primeiro na folha. */}
+                <td className={/vers/i.test(r.label) ? 'wp-fk-versoes' : undefined}>{r.value}</td>
               </tr>
             ))}
           </tbody>

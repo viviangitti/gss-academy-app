@@ -1984,12 +1984,14 @@
   display: block; margin-top: 1px; font-size: 10.5px; font-weight: 700;
   letter-spacing: .12em; text-transform: uppercase; color: #7a857f;
 }
+.wp-fk-versoes { text-transform: uppercase; }
 .wp-fk-hero { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; }
 .wp-fk-img {
   width: 84px; height: 84px; object-fit: contain; flex: none;
   border: 1px solid #e3e6df; border-radius: 10px; background: #fff; padding: 5px;
 }
-.wp-fk-name { margin: 0; font-size: 19px; line-height: 1.2; color: #17231d; }
+.wp-fk-name {
+  text-transform: uppercase; margin: 0; font-size: 19px; line-height: 1.2; color: #17231d; }
 .wp-fk-tag { margin: 5px 0 0; font-size: 12.5px; line-height: 1.5; color: #5c6660; }
 .wp-fk-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
 .wp-fk-table th, .wp-fk-table td {
@@ -2025,7 +2027,12 @@
 
 /* IMPRESSÃO: só o documento sai no papel/PDF */
 @media print {
-  @page { size: A4; margin: 14mm; }
+  /* MARGEM ZERO DE PROPÓSITO. Com margem, o navegador escreve na sobra a
+     data, o título e a URL da página — e a URL é gsseleva.com.br/eleva/...,
+     ou seja, o nome da ferramenta interna impresso na folha que vai pro
+     cliente. Sem margem não sobra espaço e nada disso é desenhado. A margem
+     branca do papel volta como padding do próprio documento, abaixo. */
+  @page { size: A4; margin: 0; }
   body { background: #fff; }
   .wp-header, .wp-nav, .wp-fk-bar, .wp-fk-hint, .wp-boot { display: none !important; }
   /* O app tem largura de celular (480px). No papel isso deixaria o documento
@@ -2034,7 +2041,7 @@
     max-width: none !important; width: 100% !important;
     padding: 0 !important; margin: 0 !important; background: #fff !important;
   }
-  .wp-fk-wrap { padding: 0 !important; max-width: none !important; }
+  .wp-fk-wrap { padding: 14mm !important; max-width: none !important; }
   .wp-fk { border: 0 !important; border-radius: 0 !important; padding: 0 !important; }
   .wp-fk-buy { background: transparent !important; color: #17231d !important; padding: 0 !important; }
   .wp-fk, .wp-fk-sec, .wp-fk-table tr { break-inside: avoid; }

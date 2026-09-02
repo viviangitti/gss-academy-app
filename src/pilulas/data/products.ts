@@ -898,10 +898,14 @@ export const PRODUCTS: Product[] = [
   // A Ramasa vende as DUAS marcas do grupo: Jaecoo e Omoda.
   //
   // DE ONDE VEM O DADO, EM ORDEM DE QUEM MANDA:
-  //   1. As fichas técnicas oficiais da montadora e o manual de garantia, que
-  //      a Vivian enviou em 01/09/2026 e estão publicados em Documentos.
-  //   2. O site da marca (omodajaecoo.com.br, consultado em 11/08/2026), só
-  //      para o que as fichas não cobrem.
+  //   1. As fichas técnicas oficiais e o manual de garantia (01/09/2026).
+  //   2. Os guias de venda e treinamentos da montadora, também publicados em
+  //      Documentos: é DELES que vêm desempenho, consumo e autonomia — as
+  //      fichas técnicas não trazem esses números. guia-jaecoo-7 (0-100, 79 km,
+  //      1.200 km, 15,1 km/L, 44,5%, 17,4 cm, recarga), guia-omoda-7 (0-100,
+  //      60 km), guia-omoda-e5 (345 km Inmetro, 0-100, coeficiente 0,281) e
+  //      treinamento-omoda-5 (78% de aço).
+  //   3. O site da marca (omodajaecoo.com.br, 11/08/2026), só para o resto.
   // Documento enviado SEMPRE ganha da internet. Quando os dois divergirem, o
   // documento vale e a internet sai.
   //
@@ -929,7 +933,7 @@ export const PRODUCTS: Product[] = [
     benefits: [
       'Sistema SHS: 1.5 TGDI de 135 cv + elétrico de 204 cv, com 44,5% de eficiência térmica declarada',
       'Pacote de série cheio para a faixa — teto solar panorâmico de 1,1 m², multimídia de 13,2" (14,8" na Prestige), painel digital de 10,25" e maçanetas retráteis',
-      'Carroceria com 80% de aço de alta resistência e pacote ADAS completo (AEB, ACC, LDW, TJA, FCW, CSA)',
+      'Estrutura reforçada e pacote ADAS completo (AEB, ACC, LDW, TJA, FCW, CSA) — o guia da marca fala em estrutura reforçada, sem dar percentual',
       'Marca do grupo Chery, no Brasil desde 2009 — rede e peça já existem no país',
       'Gasta R$ 4.827 de combustível por ano contra R$ 8.798 do Corolla Cross — quase R$ 4 mil de diferença a cada 15 mil km (dados do guia de fábrica)',
       '279 cv combinados contra 175 cv do Corolla Cross, com motor MENOR: 1.5 turbo contra 2.0 aspirado',
@@ -1278,7 +1282,7 @@ export const PRODUCTS: Product[] = [
       '100% elétrico: zero combustível, zero troca de óleo, e silêncio que o cliente sente já na primeira arrancada',
       'Display de 24,6", head-up display colorido, comando de voz e carregador wireless de 50 W com refrigeração',
       'Bateria de lítio-ferro-fosfato — a química mais resistente a temperatura e com maior vida útil',
-      'Pacote ADAS 2.5, 6 airbags e 78% de aço de alta resistência na estrutura',
+      'Pacote ADAS 2.5 e 6 airbags — o percentual de aço de alta resistência não consta nos documentos do E5',
       '8 anos ou 150.000 km de garantia na bateria e 7 anos ou 150.000 km no veículo — no elétrico, a bateria é a pergunta que o cliente não faz em voz alta',
     ],
     howToUse:
@@ -1395,7 +1399,7 @@ export const PRODUCTS: Product[] = [
     benefits: [
       'Híbrido plug-in: roda no elétrico no dia a dia e usa a gasolina na estrada — sem ansiedade de autonomia',
       'Multimídia de 15,6" Ultra HD 2.5K com função Sliding, som Sony de 12 alto-falantes e o L’Essence de aromas',
-      '8 airbags e estrutura com 70% de aço de alta resistência mais 30% de ultra resistência',
+      '8 airbags e estrutura com mais de 72% de aço de alta resistência, 30% de ultra-alta resistência e rigidez torsional acima de 25.000 Nm por grau',
       'ADAS avançado: evasão inteligente (IES), frenagem de emergência de 4 a 150 km/h e assistente de congestionamento',
       '7 anos ou 150.000 km de garantia total, e 8 anos ou 150.000 km na bateria — uma das maiores do mercado brasileiro',
     ],

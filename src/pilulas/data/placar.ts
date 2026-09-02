@@ -59,7 +59,14 @@ export async function carregarPlacar(brand: string, mes: string): Promise<LinhaP
   const meuUid = auth?.currentUser?.uid;
   try {
     const q = query(collection(db, COL), where('brand', '==', brand), where('mes', '==', mes));
-    const snap = await getDocs(q);
+    // Com prazo. Sem rede ou sem sessão válida, o SDK do Firestore fica
+    // tentando de novo sem nunca rejeitar — e a tela ficava em "Carregando o
+    // placar do time…" para sempre. Seis segundos e a tela segue sem o pódio,
+    // que é melhor do que uma promessa que nunca chega.
+    const snap = await Promise.race([
+      getDocs(q),
+      new Promise<never>((_, rejeita) => setTimeout(() => rejeita(new Error('tempo esgotado')), 6000)),
+    ]);
     const linhas: LinhaPlacar[] = [];
     snap.forEach((d) => {
       const v = d.data() as { uid?: string; pontos?: number; streak?: number };

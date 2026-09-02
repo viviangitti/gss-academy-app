@@ -1363,7 +1363,7 @@ export const PRODUCTS: Product[] = [
       { label: 'Motor', value: '204 cv e 340 Nm — ímã permanente, síncrono' },
       { label: 'Função V2L', value: '3,3 kW — o carro vira tomada para churrasqueira, ferramenta, camping' },
       { label: 'Tempo de carga (20% a 100%)', value: 'Tomada 220V de casa: 17h28 · wallbox de 7 kW: 6h59 · wallbox de 11 kW: 4h56 · rápido de 30 kW: 1h37 · rápido de 80 kW: 36 min' },
-      { label: 'Cores', value: 'A montadora não publicou carta de cores do E5 — confirmar as disponíveis com a loja antes de prometer' },
+      { label: 'Cores', value: 'As mesmas do Omoda 5 — Branco Arctic · Prata Alya · Preto Andromeda · Cinza Centaurus — mais o AZUL ANTARES, que é exclusivo do E5. Interior preto.' },
       { label: 'Custo de rodagem', value: '6,01 km por R$ 1 — o Yuan Plus faz 5,17, o Corolla Cross híbrido 2,81 e o Compass 1,60. É quase 4× o Compass no mesmo real gasto.' },
       { label: 'Consumo equivalente', value: '44,7 km/L — a conversão que a marca usa pra comparar com carro a combustão' },
       { label: 'Peso por torque', value: '5,03 kg por Nm — a melhor relação entre os concorrentes diretos, e é o que dá a sensação de leveza na arrancada' },

@@ -1145,7 +1145,7 @@ export const PRODUCTS: Product[] = [
       {
         trigger: '"Híbrido não precisa de tomada em casa?"',
         answer:
-          'Este não. O SHS-H se recarrega sozinho enquanto você roda, no freio e no motor. Você abastece no posto, como sempre. Quem precisa de tomada é o plug-in, que é outra versão — e aí vira escolha sua, não obrigação.',
+          'Este não — e dá pra provar. O treinamento da própria montadora tem uma tabela comparando os dois sistemas lado a lado: na coluna do SHS-H, que é este carro, a linha “carrega na tomada?” responde NÃO. Ele se recarrega sozinho enquanto você roda, no freio e no motor; você abastece no posto, como sempre. Quem carrega na tomada é o SHS-P, do Omoda 7 e do Jaecoo 7 — e aí é escolha, não obrigação.',
       },
       {
         trigger: '"E se a bateria pifar? Deve custar uma fortuna."',
@@ -1228,7 +1228,7 @@ export const PRODUCTS: Product[] = [
     ficha: [
       { label: 'Marca', value: 'Omoda (grupo Chery)' },
       { label: 'Versões', value: 'SHS-H Luxury · SHS-H Prestige' },
-      { label: 'Tipo', value: 'Híbrido autorrecarregável (HEV) — não precisa de tomada. A tabela do treinamento oficial marca HEV, a bateria é de 1,83 kWh e o nome é SHS-H. A única coisa que diz o contrário é uma linha "PHEV" na ficha técnica, que destoa do resto do próprio documento.' },
+      { label: 'Tipo', value: 'Híbrido autorrecarregável (HEV) — NÃO carrega na tomada. O treinamento do SHS responde em tabela, lado a lado com o Omoda 7: “Carrega na tomada? NÃO” no SHS-H contra “SIM” no SHS-P. Sem carregamento AC/DC e sem autonomia EV, porque não tem. A linha “PHEV” que aparece na ficha técnica é erro de template.' },
       { label: 'Motor a combustão', value: '1.5 TGDI — 135 cv e 20,4 kgfm' },
       { label: 'Motor elétrico', value: '204 cv e 31,6 kgfm' },
       { label: 'Potência combinada', value: '224 cv e 30,1 kgfm' },

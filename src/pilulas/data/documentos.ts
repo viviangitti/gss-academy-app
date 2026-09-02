@@ -63,12 +63,16 @@ export const DOCUMENTOS: Documento[] = [
     id: 'treinamento-omoda-5', brand: 'ramasa', prateleira: 'venda',
     titulo: 'Treinamento completo — Omoda 5 SHS-H',
     paraQue: 'O material longo do carro: versões, equipamentos e as vantagens contra cada concorrente.',
+    // Traz o comparativo de PREÇO contra Corolla Cross, HR-V e Creta — material de treinamento, não de cliente.
+    interno: true,
     arquivo: '/docs/ramasa/treinamento-omoda-5.pdf', paginas: 50, atualizado: '2026',
   },
   {
     id: 'treinamento-omoda-7', brand: 'ramasa', prateleira: 'venda',
     titulo: 'Treinamento completo — Omoda 7 SHS-P',
     paraQue: 'O material longo do carro: LUXURY x PRESTIGE e o comparativo com Haval H6, Song Plus, Commander e Tiguan.',
+    // Traz o comparativo de PREÇO contra os concorrentes — material de treinamento, não de cliente.
+    interno: true,
     arquivo: '/docs/ramasa/treinamento-omoda-7.pdf', paginas: 44, atualizado: '2026',
   },
   {
@@ -132,24 +136,32 @@ export const DOCUMENTOS: Documento[] = [
     id: 'guia-jaecoo-7', brand: 'ramasa', prateleira: 'venda',
     titulo: 'Guia de venda — Jaecoo 7',
     paraQue: 'A apresentação em 6 passos e o comparativo contra Haval, Song Plus, Corolla Cross e Compass.',
+    // Traz preço público e o preço dos concorrentes — é guia de venda, não folheto de cliente.
+    interno: true,
     arquivo: '/docs/ramasa/guia-jaecoo-7.pdf', paginas: 35, atualizado: '2026',
   },
   {
     id: 'guia-omoda-7', brand: 'ramasa', prateleira: 'venda',
     titulo: 'Guia de venda — Omoda 7',
     paraQue: 'Os 6 passos do topo de linha e as respostas de objeção da marca.',
+    // Traz preço público e o preço dos concorrentes — é guia de venda, não folheto de cliente.
+    interno: true,
     arquivo: '/docs/ramasa/guia-omoda-7.pdf', paginas: 25, atualizado: '2026',
   },
   {
     id: 'guia-omoda-e5', brand: 'ramasa', prateleira: 'venda',
     titulo: 'Guia de venda — Omoda E5',
     paraQue: 'Comparativo de autonomia e tempo de recarga contra os elétricos concorrentes.',
+    // Traz preço público e o preço dos concorrentes — é guia de venda, não folheto de cliente.
+    interno: true,
     arquivo: '/docs/ramasa/guia-omoda-e5.pdf', paginas: 26, atualizado: '2026',
   },
   {
     id: 'acessorios-catalogo', brand: 'ramasa', prateleira: 'acessorios',
     titulo: 'Catálogo de acessórios originais',
     paraQue: 'As fotos de cada acessório e em que modelo cada um entra.',
+    // Traz o preço de cada acessório — quem responde preço é a condição vigente, não o catálogo.
+    interno: true,
     arquivo: '/docs/ramasa/acessorios-catalogo.pdf', paginas: 10, atualizado: 'jul/2026',
   },
   {

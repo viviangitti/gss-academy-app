@@ -933,6 +933,7 @@ export const PRODUCTS: Product[] = [
     benefits: [
       'Sistema SHS: 1.5 TGDI de 135 cv + elétrico de 204 cv, com 44,5% de eficiência térmica declarada',
       'Pacote de série cheio para a faixa — teto solar panorâmico de 1,1 m², multimídia de 13,2" (14,8" na Prestige), painel digital de 10,25" e maçanetas retráteis',
+      'Cinco estrelas no Euro NCAP em 2025, com 81% de proteção ao adulto e 80% à criança — e o protocolo de 2025 é o mais duro que já existiu',
       'Estrutura reforçada e pacote ADAS completo (AEB, ACC, LDW, TJA, FCW, CSA) — o guia da marca fala em estrutura reforçada, sem dar percentual',
       'Marca do grupo Chery, no Brasil desde 2009 — rede e peça já existem no país',
       'Gasta R$ 4.827 de combustível por ano contra R$ 8.798 do Corolla Cross — quase R$ 4 mil de diferença a cada 15 mil km (dados do guia de fábrica)',
@@ -945,6 +946,11 @@ export const PRODUCTS: Product[] = [
       'Cliente que busca SUV médio, compara preço contra itens de série, e está aberto a marca nova desde que a assistência esteja resolvida.',
     salesLine: 'Me diz com quais carros você está comparando, que eu monto o item a item pra você levar e decidir com calma.',
     objections: [
+      {
+        trigger: '"E é seguro? Nunca vi esse carro batido."',
+        answer:
+          'Tem laudo, e é o mais duro do mundo: cinco estrelas no Euro NCAP, teste de 2025. Foram 81% de proteção ao adulto, 80% à criança, 80% ao pedestre e 80% em assistências à condução. O protocolo europeu de 2025 é mais exigente que o de anos anteriores, então essa nota vale mais do que uma nota igual tirada em 2020. Posso te mandar o laudo completo agora — ele está aqui no meu app. Uma coisa que eu preciso te dizer: o teste é do Jaecoo 7 PHEV europeu. O carro brasileiro não passou pelo Latin NCAP ainda.',
+      },
       {
         trigger: '"Nunca ouvi falar dessa marca."',
         answer:
@@ -1070,6 +1076,7 @@ export const PRODUCTS: Product[] = [
       { label: 'Telas', value: 'Multimídia de 13,2" na ELITE e 14,8" na LUXURY e na PRESTIGE · painel digital de 10,25"' },
       { label: 'Som', value: '6 alto-falantes na ELITE · 4 + 2 tweeters na LUXURY · Sony com 4 + 4 tweeters na PRESTIGE' },
       { label: 'Segurança', value: '6 airbags na ELITE · 7 na LUXURY e na PRESTIGE (inclui airbag de joelho) · câmera 540°' },
+      { label: 'Euro NCAP', value: '★★★★★ cinco estrelas (teste de 2025) — 81% adulto · 80% criança · 80% pedestre · 80% assistências. Testado no Jaecoo 7 PHEV europeu; o laudo completo está em Documentos. Não é Latin NCAP: o carro brasileiro não foi testado.' },
       { label: 'Garantia', value: '7 anos ou 150.000 km no veículo · 8 anos ou 150.000 km na bateria de alta tensão · 5 anos ou 150.000 km na pintura e contra corrosão — sempre o que vier primeiro' },
       { label: 'Revisões', value: 'A cada 12 meses ou 10.000 km, o que vier primeiro' },
       { label: 'As três primeiras revisões', value: '1ª R$ 699 · 2ª R$ 1.379 · 3ª R$ 1.138 — R$ 3.216 nas três (preço fixo da marca, válido até 31/12/2026)' },
@@ -1124,6 +1131,7 @@ export const PRODUCTS: Product[] = [
       'Híbrido que NÃO precisa de tomada: recarrega sozinho enquanto roda — zero mudança na rotina do cliente',
       'Painel digital flutuante de 24,6" (duas telas de 12,3") nas duas versões — som Sony com 8 alto-falantes só na PRESTIGE; a LUXURY tem 6',
       'Bancos dianteiros elétricos, ventilados e aquecidos — item que costuma ser opcional caro na concorrência',
+      'Cinco estrelas no Euro NCAP, com 87% de proteção ao adulto e 87% à criança — e a nota vale para todas as versões',
       '7 airbags e carroceria com 78% de aço de alta resistência',
       '7 anos ou 150.000 km de garantia total, e 8 anos ou 150.000 km na bateria — uma das maiores do mercado brasileiro',
     ],
@@ -1152,6 +1160,11 @@ export const PRODUCTS: Product[] = [
         trigger: '"Nunca ouvi falar dessa marca."',
         answer:
           'A Omoda é do grupo Chery: 44 países e mais de 570 mil veículos vendidos. No Reino Unido, 1,5% do mercado em menos de um ano. No Brasil passamos de mil unidades em menos de três meses, e a assistência é nossa, com centro de peças em Cajamar e apoio 24h da Allianz.',
+      },
+      {
+        trigger: '"É seguro? É um carro que eu não conheço."',
+        answer:
+          'O Omoda 5 tirou cinco estrelas no Euro NCAP: 87% de proteção ao adulto, 87% à criança, 88% em assistências à condução. E tem um detalhe que costuma pesar: o laudo diz que a nota vale para TODAS as versões do Omoda 5, não só para a testada. São 7 airbags, câmera 540° e 78% da carroceria em aço de alta resistência. O laudo completo está aqui no app e eu te mando agora. Só sendo transparente: o teste é europeu, o carro brasileiro não passou pelo Latin NCAP.',
       },
       {
         trigger: '"Prefiro um Corolla Cross ou um HR-V, que já conheço."',
@@ -1228,6 +1241,7 @@ export const PRODUCTS: Product[] = [
       { label: 'Conforto', value: 'Teto solar elétrico nas duas · bancos dianteiros elétricos, ventilados e aquecidos só na PRESTIGE' },
       { label: 'Rodas', value: 'Liga leve de 18" nas duas versões' },
       { label: 'Segurança', value: '7 airbags · câmera 540° · TPMS · HAC e HDC · ADS 2.5 com 15 recursos (PRESTIGE)' },
+      { label: 'Euro NCAP', value: '★★★★★ cinco estrelas (teste de 2022) — 87% adulto · 87% criança · 68% pedestre · 88% assistências. O laudo diz que a nota vale para TODAS as versões do Omoda 5. Não é Latin NCAP: o carro brasileiro não foi testado.' },
       { label: 'Consumo (gasolina)', value: '15,1 km/L na cidade e 13,2 km/L na estrada — o melhor da comparação da própria marca contra Corolla Cross, Song Plus, Compass e Taos' },
       { label: 'Tanque', value: '51 L' },
       { label: 'Autonomia', value: 'RECORDE de 1.306 km com um tanque, de São Paulo a Vitória, na maratona da marca. É marca de condução econômica, não número de todo dia — a conta normal é o tanque vezes o consumo acima.' },

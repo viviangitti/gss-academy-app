@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "confere": "bash scripts/check-secrets.sh && node scripts/check-marcas.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

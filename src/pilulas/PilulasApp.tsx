@@ -104,6 +104,21 @@ function BlockBalcao({ children }: { children: React.ReactElement }) {
   return isBalcao(brandId) ? <Navigate to="/eleva" replace /> : children;
 }
 
+/**
+ * Fecha para a concessionária o que é conteúdo de creator de farmácia.
+ *
+ * O menu do automotivo já não mostrava "Postar" — quem posta pela loja é o
+ * marketing, não o vendedor. Só que esconder o botão não fecha a porta: a rota
+ * continuava abrindo por URL, e lá dentro estão o calendário e as tendências
+ * de conteúdo, que são "de fábrica" (sem marca) e escritos para revenda de
+ * farmácia. Um vendedor da Ramasa que caísse ali veria pauta de Instagram de
+ * suplemento dentro do app da Jaecoo.
+ */
+function BlockAuto({ children }: { children: React.ReactElement }) {
+  const { brandId } = useBrand();
+  return isAuto(brandId) ? <Navigate to="/eleva" replace /> : children;
+}
+
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -327,7 +342,7 @@ function Shell() {
           <Route path="/eleva" element={user.role === 'gestor' ? <Navigate to="/eleva/gestor" replace /> : <Hoje />} />
           <Route path="/eleva/catalogo" element={<Catalog />} />
           <Route path="/eleva/produto/:id" element={<Product />} />
-          <Route path="/eleva/missoes" element={<BlockBalcao><Missoes /></BlockBalcao>} />
+          <Route path="/eleva/missoes" element={<BlockBalcao><BlockAuto><Missoes /></BlockAuto></BlockBalcao>} />
           <Route path="/eleva/trilha" element={<Trilha />} />
           <Route path="/eleva/sobre" element={<Sobre />} />
           <Route path="/eleva/perfil" element={<Perfil />} />

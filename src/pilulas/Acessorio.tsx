@@ -149,7 +149,15 @@ export default function Acessorio() {
         <span className="wp-acp-tag"><Package size={13} className="wp-ico" /> {ORIGENS[a.origem].label}</span>
         <h1 className="wp-acp-nome">{a.nome}</h1>
         <span className="wp-acp-preco">{precoLabel(a)}</span>
-        {a.preco && <span className="wp-acp-preco-obs">preço público sugerido</span>}
+        {/* PREÇO DE REFERÊNCIA, e a tela diz isso. Pacote com desconto e prazo
+            de validade vive em Condições, publicado pela gerência com a data —
+            é lá que está o número do dia. Sem este aviso o vendedor via R$ 9.000
+            aqui, outro valor na condição vigente, e não sabia qual valia. */}
+        {a.preco && (
+          <span className="wp-acp-preco-obs">
+            preço de referência · <Link to="/eleva/ofertas">veja a condição vigente</Link>
+          </span>
+        )}
         {/* Prazo e garantia mudam com a origem — dito aqui, antes de o vendedor
             prometer data de entrega pro cliente. */}
         {ORIGENS[a.origem].nota && (

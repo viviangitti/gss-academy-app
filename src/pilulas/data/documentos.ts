@@ -117,13 +117,13 @@ export const DOCUMENTOS: Documento[] = [
   {
     id: 'ncap-jaecoo-7', brand: 'ramasa', prateleira: 'ficha',
     titulo: 'Euro NCAP — Jaecoo 7 PHEV (5 estrelas)',
-    paraQue: 'O laudo completo do teste de 2025: 81% adulto, 80% criança, 80% pedestre, 80% assistências.',
+    paraQue: 'O laudo completo do teste de 2025, com o vídeo e as fotos de cada impacto. Para mandar ao cliente que pede prova.',
     arquivo: '/docs/ramasa/ncap-jaecoo-7.pdf', paginas: 14, atualizado: 'abr/2025',
   },
   {
     id: 'ncap-omoda-5', brand: 'ramasa', prateleira: 'ficha',
     titulo: 'Euro NCAP — Omoda 5 (5 estrelas)',
-    paraQue: 'O laudo completo do teste de 2022: 87% adulto, 87% criança, 68% pedestre, 88% assistências. Vale para todas as versões do Omoda 5.',
+    paraQue: 'O laudo completo, com o vídeo e as fotos de cada impacto. A nota vale para todas as versões do Omoda 5.',
     arquivo: '/docs/ramasa/ncap-omoda-5.pdf', paginas: 11, atualizado: 'dez/2022',
   },
   {

@@ -1,9 +1,81 @@
 import { useParams, Link } from 'react-router-dom';
-import { ChevronLeft, Package, Copy, Check, Car, Maximize2, X } from 'lucide-react';
+import { ChevronLeft, Package, Copy, Check, Car, Maximize2, X, Image as ImageIcon, Video, FileText, Pencil } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ACESSORIOS, ORIGENS, precoLabel } from './data/acessorios';
-import { findProduct } from './data/store';
+import {
+  findProduct, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage,
+  hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductVideo, clearProductVideo, useStore,
+} from './data/store';
 import { registraUso } from './data/tracking';
+import { useAuth } from './AuthContext';
+
+/**
+ * O editor de foto e vídeo do acessório, só pra gestão.
+ *
+ * Existe pelo mesmo motivo do editor do carro: quem conhece o acessório é quem
+ * vende acessório, e essa pessoa não mexe em código. Sem isto, cada foto nova
+ * dependia de alguém abrir o repositório.
+ *
+ * Foto e vídeo vão pra NUVEM. Antes ficavam no IndexedDB de quem subiu: a
+ * gerente via na tela dela e o time seguia com o card vazio.
+ */
+function EditorAcessorio({ id, nome }: { id: string; nome: string }) {
+  const [aberto, setAberto] = useState(false);
+  const [pct, setPct] = useState<number | null>(null);
+  const [aviso, setAviso] = useState('');
+  const temFoto = hasImage(id);
+  const temVideo = hasVideo(id);
+
+  const subirFoto = async (f: File) => {
+    setAviso('');
+    const naNuvem = await setProductImage(id, f);
+    setAviso(naNuvem
+      ? 'Foto publicada — o time inteiro já vê.'
+      : 'A foto ficou só neste aparelho: não consegui publicar agora. Tente de novo com internet melhor.');
+  };
+
+  const subirVideo = (f: File) => {
+    setAviso('');
+    setPct(0);
+    setProductVideo(id, f, setPct)
+      .then((naNuvem) => setAviso(naNuvem
+        ? 'Vídeo publicado — o time inteiro já vê.'
+        : 'O vídeo ficou só neste aparelho: não consegui publicar agora.'))
+      .finally(() => setPct(null));
+  };
+
+  return (
+    <div className="wp-videdit">
+      <button className="wp-videdit-toggle" onClick={() => setAberto(!aberto)}>
+        <Pencil size={14} className="wp-ico" /> {aberto ? 'Fechar' : `Foto e vídeo de ${nome}`}
+      </button>
+      {aberto && (
+        <div className="wp-videdit-body">
+          <p className="wp-videdit-now">Foto <span className="wp-videdit-cap">— aparece no card e na ficha</span></p>
+          <label className="wp-videdit-mp4">
+            <ImageIcon size={16} className="wp-ico" />
+            {temFoto ? 'Trocar a foto' : 'Subir uma foto'}
+            <input type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) subirFoto(f); }} />
+          </label>
+          {temFoto && <button className="wp-videdit-remove" onClick={() => clearProductImage(id)}>Tirar a foto</button>}
+
+          <div className="wp-videdit-divider" />
+          <p className="wp-videdit-now">Vídeo de 45s <span className="wp-videdit-cap">— o mesmo formato das pílulas</span></p>
+          <label className="wp-videdit-mp4">
+            <Video size={16} className="wp-ico" />
+            {temVideo ? 'Trocar o vídeo' : 'Subir o vídeo'}
+            <input type="file" accept="video/*" hidden disabled={pct !== null} onChange={(e) => { const f = e.target.files?.[0]; if (f) subirVideo(f); }} />
+          </label>
+          {pct !== null && (
+            <div className="wp-gz-slot-barra"><span style={{ width: `${pct}%` }} /></div>
+          )}
+          {temVideo && pct === null && <button className="wp-videdit-remove" onClick={() => clearProductVideo(id)}>Tirar o vídeo</button>}
+          {aviso && <p className="wp-videdit-help">{aviso}</p>}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // A tela do ACESSÓRIO. Antes o card levava pro carro compatível — atalho meu
 // que enganava: a pessoa clicava em "estribo iluminado" e caía no Jaecoo 7.
@@ -11,7 +83,9 @@ import { registraUso } from './data/tracking';
 // Aqui o conteúdo é o do acessório mesmo, na ordem em que ele se vende: o que
 // resolve pro cliente, como oferecer, em que carros entra e o código pra pedir.
 export default function Acessorio() {
+  useStore(); // redesenha quando a foto ou o vídeo da nuvem chega
   const { id } = useParams();
+  const { user } = useAuth();
   const a = ACESSORIOS.find((x) => x.id === id);
   const [copiado, setCopiado] = useState('');
   const [ampliada, setAmpliada] = useState(false);
@@ -20,6 +94,13 @@ export default function Acessorio() {
   // vive de acessório podia usar o app todo dia e sair zerado no relatório.
   useEffect(() => {
     if (id) registraUso('acessorio', id);
+  }, [id]);
+
+  // Foto e vídeo publicados pela gerência moram na nuvem — puxa quando abre.
+  useEffect(() => {
+    if (!id) return;
+    if (hasImage(id)) ensureImageLoaded(id);
+    if (hasVideo(id)) ensureVideoLoaded(id);
   }, [id]);
 
   if (!a) {
@@ -39,6 +120,10 @@ export default function Acessorio() {
   };
 
   const carros = a.aplicaEm.map((pid) => findProduct(pid)).filter(Boolean);
+  // A foto publicada pela gerência ganha da que veio junto com o app.
+  const foto = getProductImageUrl(a.id) || a.foto;
+  const video = getVideoObjectUrl(a.id) || a.videoUrl;
+  const ehGestor = user?.role === 'gestor';
 
   return (
     <div className="wp-acp">
@@ -46,17 +131,17 @@ export default function Acessorio() {
         <ChevronLeft size={16} className="wp-ico" /> Voltar
       </Link>
 
-      {a.foto && (
+      {foto && (
         <button type="button" className="wp-acp-foto" onClick={() => setAmpliada(true)} aria-label="Ampliar foto">
-          <img src={a.foto} alt={a.nome} />
+          <img src={foto} alt={a.nome} />
           <span className="wp-cond-zoom"><Maximize2 size={13} className="wp-ico" /> Ampliar</span>
         </button>
       )}
-      {ampliada && a.foto && (
+      {ampliada && foto && (
         <div className="wp-foto-lb" onClick={() => setAmpliada(false)} role="dialog" aria-label={a.nome}>
           <button type="button" className="wp-cond-lb-x" aria-label="Fechar"><X size={20} className="wp-ico" /></button>
-          <img src={a.foto} alt={a.nome} onClick={(e) => e.stopPropagation()} />
-          <span className="wp-foto-lb-cap">{a.nome} · {precoLabel(a)}</span>
+          <img src={foto} alt={a.nome} onClick={(e) => e.stopPropagation()} />
+          <span className="wp-foto-lb-cap">{a.nome}</span>
         </div>
       )}
 
@@ -77,10 +162,18 @@ export default function Acessorio() {
         <p className="wp-acp-benef">{a.beneficio}</p>
       </div>
 
-      {a.videoUrl && (
+      {/* A ficha do acessório, igual à do carro: vira PDF pelo Imprimir e vai
+          pro cliente com a marca da loja, sem preço. */}
+      <Link to={`/eleva/ficha/${a.id}`} className="wp-acp-ficha">
+        <FileText size={15} className="wp-ico" /> Ficha técnica para o cliente
+      </Link>
+
+      {ehGestor && <EditorAcessorio id={a.id} nome={a.nome} />}
+
+      {video && (
         <div className="wp-block">
           <span className="wp-block-label">Vídeo de 45s</span>
-          <video className="wp-acp-video" src={a.videoUrl} controls playsInline preload="metadata" />
+          <video className="wp-acp-video" src={video} controls playsInline preload="metadata" />
         </div>
       )}
 

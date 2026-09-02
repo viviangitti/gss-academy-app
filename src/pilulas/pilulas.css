@@ -2034,7 +2034,7 @@
      branca do papel volta como padding do próprio documento, abaixo. */
   @page { size: A4; margin: 0; }
   body { background: #fff; }
-  .wp-header, .wp-nav, .wp-fk-bar, .wp-fk-hint, .wp-boot { display: none !important; }
+  .wp-header, .wp-nav, .wp-fk-bar, .wp-fk-hint, .wp-boot, .wp-fk-voltar-baixo { display: none !important; }
   /* O app tem largura de celular (480px). No papel isso deixaria o documento
      espremido num terço da folha — solta a largura na impressão. */
   .wp-app, .wp-main {
@@ -3041,6 +3041,19 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-acp-texto { margin: 0; font-size: 14px; line-height: 1.6; color: var(--wp-soft); }
 .wp-acp-obs { margin: 9px 0 0; font-size: 13px; font-style: italic; color: var(--wp-soft); }
 .wp-acp-carros { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+/* Link pra ficha do acessório — o mesmo peso do botão de compartilhar do
+   carro, porque é a mesma ação: mandar papel pro cliente. */
+.wp-acp-ficha {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin: 14px 0; padding: 13px 16px;
+  text-decoration: none; font-size: 14px; font-weight: 700;
+  color: var(--wp-text); background: var(--wp-surface);
+  border: 1px solid var(--wp-border); border-radius: 12px;
+}
+/* Segunda saída no fim da folha: depois de rolar a ficha inteira, o botão de
+   voltar lá no topo ficou longe. Some na impressão junto com o resto da barra. */
+.wp-fk-voltar-baixo { display: inline-flex; margin-top: 18px; }
+
 .wp-acp-carro {
   text-decoration: none; font-size: 13px; font-weight: 700; color: var(--wp-text);
   background: var(--wp-bg); border: 1px solid var(--wp-border);

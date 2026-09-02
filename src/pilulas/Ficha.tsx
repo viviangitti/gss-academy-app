@@ -7,6 +7,8 @@ import { useAuth, audienceOf } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { useEffect } from 'react';
+import { ACESSORIOS } from './data/acessorios';
+import FichaAcessorio from './FichaAcessorio';
 
 // Ficha do produto como DOCUMENTO — feita pra virar PDF (Imprimir > Salvar em PDF).
 // Renderiza dos mesmos dados do app: se a ficha mudar ali, o PDF muda junto.
@@ -39,6 +41,13 @@ export default function Ficha() {
     document.title = `${product.name} — ${tipoFicha}`;
     return () => { document.title = anterior; };
   }, [product, tipoFicha]);
+
+  // Acessório também vira folha pro cliente. Mesma rota de propósito: o
+  // vendedor não precisa aprender dois caminhos, e o botão "Salvar em PDF"
+  // é o mesmo. A montagem é outra porque o dado é outro — acessório não tem
+  // motorização nem versão, tem o que resolve e em que carro entra.
+  const acessorio = id ? ACESSORIOS.find((x) => x.id === id) : undefined;
+  if (!product && acessorio) return <FichaAcessorio a={acessorio} />;
 
   if (!product || !product.ficha?.length) {
     return (

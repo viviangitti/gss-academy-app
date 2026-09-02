@@ -1,6 +1,7 @@
 // Store do app — junta o conteúdo "de fábrica" (seed) com o que o GESTOR cria
 // no Painel. Persiste em localStorage. Quando houver Firebase, troca-se só a fonte.
 import { useSyncExternalStore } from 'react';
+import { temImagemNuvem, urlImagemPronta, abrirImagemNuvem, enviarImagemNuvem, apagarImagemNuvem } from './imagensNuvem';
 import { PRODUCTS, type Product } from './products';
 import { SEED_OFFERS, type Offer } from './offers';
 import { CALENDAR, TRENDS, type CalendarDay, type Trend } from './creatorContent';
@@ -102,27 +103,46 @@ function addImageId(id: string) {
 function removeImageId(id: string) {
   try { localStorage.setItem(IMGKEY, JSON.stringify(imageIds().filter((v) => v !== id))); } catch { /* ignore */ }
 }
+// A NUVEM MANDA NA FOTO, igual ao vídeo. Antes a foto vivia só no IndexedDB de
+// quem subiu: a gerente via, e o time continuava com o card vazio.
 export function hasImage(id: string): boolean {
-  return imageIds().includes(id) || loadedImgUrls.has(id);
+  return temImagemNuvem(id) || imageIds().includes(id) || loadedImgUrls.has(id);
 }
 export function getProductImageUrl(id: string): string | undefined {
-  return loadedImgUrls.get(id);
+  return loadedImgUrls.get(id) || urlImagemPronta(id);
 }
 export function ensureImageLoaded(id: string) {
-  if (loadedImgUrls.has(id) || loadingImgs.has(id) || !imageIds().includes(id)) return;
+  if (loadedImgUrls.has(id) || loadingImgs.has(id)) return;
+  if (temImagemNuvem(id) && !urlImagemPronta(id)) {
+    loadingImgs.add(id);
+    abrirImagemNuvem(id).then((url) => {
+      loadingImgs.delete(id);
+      if (url) emit();
+    }).catch(() => { loadingImgs.delete(id); });
+    return;
+  }
+  if (!imageIds().includes(id)) return;
   loadingImgs.add(id);
   getVideo('img:' + id).then((blob) => {
     loadingImgs.delete(id);
     if (blob) { loadedImgUrls.set(id, URL.createObjectURL(blob)); emit(); }
   }).catch(() => { loadingImgs.delete(id); });
 }
-export function setProductImage(id: string, file: File) {
+/**
+ * Sobe a foto. Mostra na hora (do arquivo local) e manda pra nuvem em seguida —
+ * quem subiu não fica esperando upload pra ver o resultado.
+ *
+ * Devolve se chegou na nuvem: `false` significa que só esta pessoa vai ver, e a
+ * tela precisa dizer isso em vez de fingir que deu certo.
+ */
+export function setProductImage(id: string, file: File): Promise<boolean> {
   const prev = loadedImgUrls.get(id);
   if (prev) URL.revokeObjectURL(prev);
   loadedImgUrls.set(id, URL.createObjectURL(file));
   addImageId(id);
   emit();
-  putVideo('img:' + id, file).catch(() => { /* ignore */ });
+  putVideo('img:' + id, file).catch(() => { /* cache local: segue sem */ });
+  return enviarImagemNuvem(id, file).then(() => { emit(); return true; }).catch(() => false);
 }
 export function clearProductImage(id: string) {
   const prev = loadedImgUrls.get(id);
@@ -130,6 +150,7 @@ export function clearProductImage(id: string) {
   removeImageId(id);
   emit();
   removeVideo('img:' + id).catch(() => { /* ignore */ });
+  apagarImagemNuvem(id).catch(() => { /* ignore */ });
 }
 
 let version = 0;

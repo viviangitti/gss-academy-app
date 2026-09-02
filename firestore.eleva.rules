@@ -29,6 +29,13 @@ service cloud.firestore {
     //
     // O elevaStats ao lado continua trancado no gestor, e continua tendo que
     // ficar: lá estão nome, e-mail e o histórico individual.
+    // Fotos de produto e de acessório. Uma foto por chave, redimensionada no
+    // navegador antes de subir. Publicar é ato de gestão (o time só lê), e a
+    // lista de e-mails é a mesma que manda no resto do conteúdo.
+    match /elevaImagens/{chave} {
+      allow read, list: if request.auth != null;
+      allow write: if isGestor();
+    }
     match /elevaPlacar/{uid} {
       allow read, list: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == uid;

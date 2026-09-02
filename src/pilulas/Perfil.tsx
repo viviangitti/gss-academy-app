@@ -180,7 +180,7 @@ export default function Perfil() {
           placeholder="Como você quer aparecer"
           onFocus={(e) => e.target.select()}
         />
-        <p className="wp-perfil-hint">É o nome que aparece no painel e no ranking do time.</p>
+        <p className="wp-perfil-hint">É o nome que a gerência vê no Painel. No ranking do time ninguém aparece por nome — só a posição.</p>
         <button className="wp-perfil-save" onClick={salvarNome} disabled={nomeBusy || !nome.trim() || nome.trim() === user.name}>
           {nomeBusy ? 'Salvando…' : 'Salvar nome'}
         </button>

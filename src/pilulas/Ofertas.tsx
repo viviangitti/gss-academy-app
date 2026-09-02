@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X } from 'lucide-react';
+import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Send } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
@@ -12,6 +12,29 @@ function shareOffer(text: string) {
     return;
   }
   window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+/**
+ * Manda a arte da campanha pro cliente. Vai o ARQUIVO, não um texto descrevendo
+ * a promoção: a peça já traz preço, cortesia e o "de/por" — reescrever à mão é
+ * onde nasce o número errado.
+ */
+async function enviarAoCliente(c: Condicao) {
+  const texto = `${c.titulo}\n\n${c.observacao || ''}`.trim();
+  try {
+    const blob = await (await fetch(c.arquivo)).blob();
+    const ext = c.tipo === 'pdf' ? 'pdf' : 'jpg';
+    const arquivo = new File([blob], `${c.nomeArquivo || 'condicao'}.${ext}`.replace(/\.\w+\.(jpg|pdf)$/, '.$1'), { type: blob.type });
+    const nav = navigator as Navigator & { canShare?: (d: { files?: File[] }) => boolean };
+    if (nav.share && nav.canShare?.({ files: [arquivo] })) {
+      await nav.share({ files: [arquivo], text: texto, title: c.titulo });
+      return;
+    }
+  } catch {
+    /* recusou, cancelou ou o aparelho não manda arquivo: cai no texto */
+  }
+  if (navigator.share) { navigator.share({ text: texto, title: c.titulo }).catch(() => {}); return; }
+  window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
 }
 
 function quando(ts: number): string {
@@ -74,16 +97,20 @@ export default function Ofertas() {
       {/* ---- Tabelas e campanhas (print/PDF publicado pela gerência) ---- */}
       {condicoes.length > 0 && (
         <div className="wp-cond-list">
-          <p className="wp-cond-aviso">
-            <Lock size={13} className="wp-ico" />
-            Material interno. Não encaminhe a tabela ao cliente — passe só o número que vale para ele.
-          </p>
           {condicoes.map((c) => (
             <div key={c.id} className="wp-cond-card">
               <div className="wp-cond-head">
                 <h3 className="wp-cond-title">{c.titulo}</h3>
                 <span className="wp-cond-val">{c.validade}</span>
               </div>
+              {/* O aviso é POR PEÇA. Antes era um só no topo da lista, dizendo
+                  que tudo era interno — e mandava o vendedor não encaminhar
+                  justamente a arte que foi feita pra ser encaminhada. */}
+              <span className={`wp-cond-selo ${c.paraCliente ? 'cliente' : 'interno'}`}>
+                {c.paraCliente
+                  ? <><Send size={12} className="wp-ico" /> Pode enviar ao cliente</>
+                  : <><Lock size={12} className="wp-ico" /> Interno — passe só o número, não a tabela</>}
+              </span>
               <button type="button" className="wp-cond-thumb" onClick={() => setAberta(c)}>
                 {c.tipo === 'imagem' ? (
                   <img src={c.arquivo} alt={c.titulo} />
@@ -93,6 +120,11 @@ export default function Ofertas() {
                 <span className="wp-cond-zoom"><Maximize2 size={14} className="wp-ico" /> Abrir</span>
               </button>
               {c.observacao && <p className="wp-cond-obs">{c.observacao}</p>}
+              {c.paraCliente && (
+                <button type="button" className="wp-cond-enviar" onClick={() => enviarAoCliente(c)}>
+                  <Send size={14} className="wp-ico" /> Enviar para o cliente
+                </button>
+              )}
               <span className="wp-cond-quando">{quando(c.criadoEm)}</span>
             </div>
           ))}

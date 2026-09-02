@@ -808,6 +808,10 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
   const [titulo, setTitulo] = useState('');
   const [validade, setValidade] = useState('');
   const [observacao, setObservacao] = useState('');
+  // Padrão FECHADO. Tabela da montadora tem margem e custo dentro: se o padrão
+  // fosse "pode enviar", bastaria alguém publicar com pressa pra ela sair pro
+  // cliente. Quem marca a caixinha está afirmando que a peça é de campanha.
+  const [paraCliente, setParaCliente] = useState(false);
   const [arq, setArq] = useState<ArquivoPronto | null>(null);
   const [erro, setErro] = useState('');
   const [subindo, setSubindo] = useState(false);
@@ -835,6 +839,7 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
         titulo: titulo.trim(),
         validade: validade.trim() || 'confirmar validade com a gerência',
         observacao: observacao.trim() || undefined,
+        paraCliente,
         arquivo: arq.arquivo,
         tipo: arq.tipo,
         nomeArquivo: arq.nomeArquivo,
@@ -873,6 +878,13 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
 
       <label className="wp-gz-label">Validade</label>
       <input value={validade} onChange={(e) => setValidade(e.target.value)} placeholder="Ex.: até 31/08 ou enquanto durar o estoque" />
+      <label className="wp-gz-check">
+        <input type="checkbox" checked={paraCliente} onChange={(e) => setParaCliente(e.target.checked)} />
+        <span>
+          <b>Esta peça pode ir para o cliente</b>
+          <small>Marque só em arte de campanha, feita pra enviar. Tabela da montadora, com margem e custo, fica desmarcada.</small>
+        </span>
+      </label>
 
       <label className="wp-gz-label">Observação para o time (opcional)</label>
       <textarea value={observacao} onChange={(e) => setObservacao(e.target.value)} rows={2} placeholder="Ex.: bônus de troca só com avaliação presencial." />

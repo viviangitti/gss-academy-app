@@ -25,6 +25,15 @@ export interface Condicao {
   titulo: string;
   validade: string;
   observacao?: string;
+  /**
+   * A peça pode ir para o cliente?
+   *
+   * A tabela da montadora é interna: traz margem e custo, e encaminhar é
+   * problema. Mas a arte de kit de acessórios é feita PRA mandar — tem preço
+   * "por apenas", cortesia, chamada de campanha. O aviso era um só pra tudo e
+   * mandava o vendedor não encaminhar justo o material feito para encaminhar.
+   */
+  paraCliente?: boolean;
   arquivo: string; // data URL (imagem comprimida ou PDF)
   tipo: 'imagem' | 'pdf';
   nomeArquivo: string;

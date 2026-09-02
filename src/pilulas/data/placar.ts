@@ -21,6 +21,7 @@
 // Cada pessoa publica só o próprio registro, junto do sync de estatísticas.
 import { collection, doc, getDocs, query, setDoc, where, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../../services/firebase';
+import { ehContaDeTeste } from './contasDeTeste';
 
 const COL = 'elevaPlacar';
 
@@ -39,6 +40,10 @@ export interface LinhaPlacar {
 export function publicarPlacar(dados: { brand: string; pontos: number; streak: number; mes: string }): void {
   const uid = auth?.currentUser?.uid;
   if (!db || !uid) return;
+  // O placar não guarda e-mail (é isso que permite o time inteiro ler sem
+  // expor ninguém), então quem é conta de teste tem que ser barrado AQUI, na
+  // publicação, enquanto a sessão ainda sabe de quem é a pontuação.
+  if (ehContaDeTeste(auth?.currentUser?.email)) return;
   setDoc(
     doc(db, COL, uid),
     { uid, brand: dados.brand, pontos: dados.pontos, streak: dados.streak, mes: dados.mes, updatedAt: serverTimestamp() },

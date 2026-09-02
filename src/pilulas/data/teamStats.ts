@@ -7,6 +7,7 @@
 // o agregado `month` só guarda o mês corrente, então histórico só existe ali.
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../services/firebase';
+import { ehContaDeTeste } from './contasDeTeste';
 
 export interface TeamEvent {
   type: 'pill_view' | 'quiz_pass' | 'mission_done';
@@ -76,7 +77,9 @@ export async function fetchTeam(brand: string): Promise<TeamPerson[]> {
   if (!db) return [];
   const q = query(collection(db, 'elevaStats'), where('brand', '==', brand));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => {
+  // Fora as contas de teste: elas inflavam o total e faziam o Painel dizer que
+  // mais gente usou o app do que realmente usou (ver contasDeTeste.ts).
+  return snap.docs.filter((d) => !ehContaDeTeste((d.data() as { email?: string }).email)).map((d) => {
     const x = d.data() as Record<string, unknown>;
     const t = (x.totals || {}) as TeamPerson['totals'];
     const m = (x.month || {}) as TeamPerson['month'];

@@ -48,8 +48,12 @@ for (const f of readdirSync(DOCS).filter((x) => x.endsWith('.pdf'))) {
   // script existe para não repetir.
   if (t.replace(/\s/g, '').length < 40) { semTexto.push(f); continue; }
   // Guarda duas versões: com espaço (tabela) e sem (texto corrido "500L").
-  textos[f] = t.replace(/\s+/g, ' ');
-  textos[f + ' (corrido)'] = t.replace(/\s+/g, '');
+  // Polegada aparece de cinco jeitos no material da montadora: 24,6" 24,6”
+  // 24,6’’ 24,6'' 24,6“. Sem normalizar, a busca não acha e o script acusa
+  // "sem documento" um número que está lá — o erro que ele existe pra evitar.
+  const pol = (x) => x.replace(/[\u2019\u2018\u201C\u201D\u2033\u2032]{1,2}|''|´´/g, '"');
+  textos[f] = pol(t.replace(/\s+/g, ' '));
+  textos[f + ' (corrido)'] = pol(t.replace(/\s+/g, ''));
 }
 if (semTexto.length) {
   console.log(`${C}Não dá para conferir automaticamente${N} — estes documentos são imagem, sem texto:`);
@@ -91,6 +95,17 @@ function achaNoDoc(numero) {
       if (un && new RegExp(`${esc(v)}\\s*${esc(un.slice(0, 2))}`, 'i').test(texto)) return arq.replace(' (corrido)', '');
     }
   }
+  // Segunda tentativa: TABELA com a unidade no cabeçalho, não colada no número
+  // — "Volume do porta-malas (L)  372". É como a montadora escreve os
+  // comparativos, e sem isto o script acusava oito números que estavam lá.
+  if (un) {
+    for (const [arq, texto] of Object.entries(textos)) {
+      if (arq.includes('(corrido)')) continue;
+      for (const v of [...new Set([...variantes, semMilhar])]) {
+        if (new RegExp(`\\(\\s*${esc(un)}\\s*\\)[^\\n]{0,120}?\\b${esc(v)}\\b`, 'i').test(texto)) return `${arq} (tabela)`;
+      }
+    }
+  }
   return null;
 }
 
@@ -102,14 +117,38 @@ for (const id of CARROS) {
   const nome = src.slice(src.indexOf("name: '", i) + 7, src.indexOf("'", src.indexOf("name: '", i) + 7));
 
   const linhas = [];
-  for (const m of bloco.matchAll(/\{ label: '([^']+)', value: '([^']*)'/g)) {
-    const [, label, valor] = m;
-    if (IGNORAR.test(label)) continue;
-    for (const num of numerosDe(valor)) {
+  const vistos = new Set();
+  const anota = (label, texto) => {
+    if (IGNORAR.test(label)) return;
+    for (const num of numerosDe(texto)) {
+      const chave = `${label}|${num}`;
+      if (vistos.has(chave)) continue;
+      vistos.add(chave);
       const doc = achaNoDoc(num);
       if (!doc) semFonte += 1;
       linhas.push({ label, num, doc });
     }
+  };
+
+  // 1) a ficha
+  for (const m of bloco.matchAll(/\{ label: '([^']+)', value: '([^']*)'/g)) anota(m[1], m[2]);
+
+  // 2) o resto do carro: benefício, objeção, roteiro, destaque, versões.
+  //    O produto vai do seu `id:` até o `id:` do próximo — pega tudo no meio.
+  const iProx = CARROS.map((c) => src.indexOf(`id: '${c}'`)).filter((x) => x > i).sort((a, b) => a - b)[0];
+  const tudo = src.slice(i, iProx > 0 ? iProx : src.length);
+  const CAMPOS = [
+    ['benefício', /benefits: \[([\s\S]*?)\n    \]/],
+    ['objeção', /objections: \[([\s\S]*?)\n    \]/],
+    ['roteiro', /storyboard: \[([\s\S]*?)\n    \]/],
+    ['destaque', /destaques: \[([\s\S]*?)\n    \]/],
+    ['versões', /versoes: \[([\s\S]*?)\n    \]/],
+    ['o que é', /whatItIs:\s*'([^']*)'/],
+    ['chamada', /tagline: '([^']*)'/],
+  ];
+  for (const [nome, re] of CAMPOS) {
+    const m = tudo.match(re);
+    if (m) anota(nome, m[1]);
   }
 
   const mostrar = soFaltantes ? linhas.filter((l) => !l.doc) : linhas;

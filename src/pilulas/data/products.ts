@@ -1066,6 +1066,7 @@ export const PRODUCTS: Product[] = [
       { label: 'Eficiência térmica', value: '44,5% — um dos motores mais eficientes do mercado' },
       { label: 'Bateria', value: '18,3 kWh de lítio-ferro-fosfato (LFP) — mais durável e com menor risco de incêndio' },
       { label: 'Recarga', value: 'até 6,6 kW na tomada (AC) e até 40 kW na rápida (DC)' },
+      { label: 'Tempo de carga (20% a 100%)', value: 'Tomada 220V de casa: 5h13 · wallbox de 7 ou 11 kW: 2h13 · rápido de 30 kW: 29 min · rápido de 80 kW: 22 min. Bateria menor que a de um elétrico, então carrega bem mais rápido.' },
       { label: 'Dimensões', value: '4.500 mm de comprimento · 1.865 de largura · 1.670 de altura' },
       { label: 'Entre-eixos', value: '2.672 mm' },
       { label: 'Porta-malas', value: '500 L — mais de 1.300 L com os bancos rebatidos' },
@@ -1305,6 +1306,7 @@ export const PRODUCTS: Product[] = [
       'Display de 24,6", head-up display colorido, comando de voz e carregador wireless de 50 W com refrigeração',
       'Bateria de lítio-ferro-fosfato — a química mais resistente a temperatura e com maior vida útil',
       'Pacote ADAS 2.5 e 6 airbags — o percentual de aço de alta resistência não consta nos documentos do E5',
+      'Roda 6 km com R$ 1 — o Corolla Cross híbrido faz 2,81 km e o Compass 1,60 km com o mesmo real. É a conta que o cliente faz todo mês',
       '8 anos ou 150.000 km de garantia na bateria e 7 anos ou 150.000 km no veículo — no elétrico, a bateria é a pergunta que o cliente não faz em voz alta',
     ],
     howToUse:
@@ -1316,7 +1318,7 @@ export const PRODUCTS: Product[] = [
       {
         trigger: '"E onde eu carrego? Não tenho posto perto."',
         answer:
-          'A conta real é outra: quem tem elétrico carrega em casa, de noite, e sai todo dia com o carro cheio. E ele roda 345 km com uma carga — o brasileiro faz em média 10 mil km por ano, ou seja, uns 30 por dia. Você recarregaria uma vez por semana. Me diz quantos quilômetros você roda e onde o carro dorme, que eu te digo na hora se ele serve.',
+          'A conta real é outra: quem tem elétrico carrega em casa, de noite, e sai todo dia com o carro cheio — ele roda 345 km com uma carga, e o brasileiro faz em média 10 mil km por ano, uns 30 por dia. E dá pra te dizer o tempo exato: na tomada comum de 220V da sua casa, 17h28 pra ir de 20% a 100% — é o carregamento da noite inteira, dormindo. Com um wallbox de 7 kW instalado na garagem, 6h59. Num carregador rápido de 80 kW, na estrada, 36 minutos: o tempo de um almoço.'
       },
       {
         trigger: '"Autonomia de elétrico é pouca."',
@@ -1360,6 +1362,10 @@ export const PRODUCTS: Product[] = [
       { label: 'Aerodinâmica', value: 'Coeficiente de 0,281 — melhor que o dos concorrentes' },
       { label: 'Motor', value: '204 cv e 340 Nm — ímã permanente, síncrono' },
       { label: 'Função V2L', value: '3,3 kW — o carro vira tomada para churrasqueira, ferramenta, camping' },
+      { label: 'Tempo de carga (20% a 100%)', value: 'Tomada 220V de casa: 17h28 · wallbox de 7 kW: 6h59 · wallbox de 11 kW: 4h56 · rápido de 30 kW: 1h37 · rápido de 80 kW: 36 min' },
+      { label: 'Custo de rodagem', value: '6,01 km por R$ 1 — o Yuan Plus faz 5,17, o Corolla Cross híbrido 2,81 e o Compass 1,60. É quase 4× o Compass no mesmo real gasto.' },
+      { label: 'Consumo equivalente', value: '44,7 km/L — a conversão que a marca usa pra comparar com carro a combustão' },
+      { label: 'Peso por torque', value: '5,03 kg por Nm — a melhor relação entre os concorrentes diretos, e é o que dá a sensação de leveza na arrancada' },
       { label: 'Dimensões', value: '4.424 mm de comprimento · 1.830 de largura · 1.588 de altura' },
       { label: 'Entre-eixos', value: '2.630 mm' },
       { label: 'Porta-malas', value: '360 L' },

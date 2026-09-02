@@ -56,8 +56,31 @@ function buildQuestions(product: Product, role?: string): Question[] {
   const nucleo = product.name.toLowerCase().split(' ').slice(0, 2).join(' ');
   const falaDoProduto = (t: string) => t.toLowerCase().includes(nucleo);
 
+  /**
+   * A alternativa errada não pode ser VERDADE sobre este carro.
+   *
+   * Os quatro modelos são da mesma família e dividem quase tudo: a garantia de
+   * 7 e 8 anos está escrita igual no Omoda 5 e no Omoda 7, e o pacote SHS de
+   * 135 + 204 cv vale pros dois plug-in. Como as alternativas erradas vêm dos
+   * OUTROS carros, uma frase verdadeira sobre este aparecia como opção errada —
+   * o vendedor que conhece o produto marcava, acertava de fato, e o quiz dava
+   * como erro. Isso trava o nível 2 e o 3 de quem mais sabe.
+   */
+  const proprio = [...product.benefits, product.forWho, ...product.objections.map((o) => o.answer)];
+  const palavras = (t: string) =>
+    new Set(t.toLowerCase().normalize('NFD').replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter((w) => w.length > 4));
+  const pareceCom = (a: string, b: string) => {
+    const A = palavras(a); const B = palavras(b);
+    if (!A.size || !B.size) return false;
+    const juntos = new Set([...A, ...B]).size;
+    const comuns = [...A].filter((w) => B.has(w)).length;
+    return comuns / juntos > 0.3;
+  };
   const make = (q: string, correct: string, wrong: string[]): Question | null => {
-    const distractors = pick(wrong.filter((w) => w && w !== correct && !falaDoProduto(w)), 2);
+    const candidatas = wrong.filter(
+      (w) => w && w !== correct && !falaDoProduto(w) && !proprio.some((meu) => pareceCom(w, meu)),
+    );
+    const distractors = pick(candidatas, 2);
     if (distractors.length < 2) return null;
     const options = shuffle([cut(correct), ...distractors.map((d) => cut(d))]);
     return { q, options, correct: options.indexOf(cut(correct)) };

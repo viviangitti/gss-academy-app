@@ -809,6 +809,7 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
   const [titulo, setTitulo] = useState('');
   const [validade, setValidade] = useState('');
   const [observacao, setObservacao] = useState('');
+  const [categoria, setCategoria] = useState<'veiculo' | 'acessorio'>('veiculo');
   const [arq, setArq] = useState<ArquivoPronto | null>(null);
   const [erro, setErro] = useState('');
   const [subindo, setSubindo] = useState(false);
@@ -836,6 +837,7 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
         titulo: titulo.trim(),
         validade: validade.trim() || 'confirmar validade com a gerência',
         observacao: observacao.trim() || undefined,
+        categoria,
         arquivo: arq.arquivo,
         tipo: arq.tipo,
         nomeArquivo: arq.nomeArquivo,
@@ -874,6 +876,16 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
 
       <label className="wp-gz-label">Validade</label>
       <input value={validade} onChange={(e) => setValidade(e.target.value)} placeholder="Ex.: até 31/08 ou enquanto durar o estoque" />
+
+      <label className="wp-gz-label">É condição de quê?</label>
+      <select value={categoria} onChange={(e) => setCategoria(e.target.value as 'veiculo' | 'acessorio')}>
+        <option value="veiculo">Veículo — taxa, entrada, bônus, trade-in</option>
+        <option value="acessorio">Acessório — kit, película, proteção, som</option>
+      </select>
+      <p className="wp-gz-hint">
+        Separa as duas listas na tela do time. A do carro entra na negociação; a do
+        acessório entra depois do sim.
+      </p>
       <p className="wp-gz-hint">
         Toda condição publicada aqui é <b>interna</b>. O app não oferece encaminhar
         nenhuma delas — o vendedor passa o número ao cliente, não a folha.

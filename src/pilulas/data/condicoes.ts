@@ -34,6 +34,18 @@ export interface Condicao {
   validade: string;
   observacao?: string;
   /**
+   * Condição de carro ou de acessório?
+   *
+   * São duas conversas diferentes e dois momentos diferentes: a condição do
+   * carro entra na negociação, a do acessório entra DEPOIS do sim. Misturadas
+   * numa lista só, o vendedor rolava kit de proteção para achar a taxa do
+   * Jaecoo — com o cliente esperando.
+   *
+   * Sem valor, vale 'veiculo': é o que a gerência sobe na maior parte das
+   * vezes, e errar para o lado do carro não esconde nada de ninguém.
+   */
+  categoria?: 'veiculo' | 'acessorio';
+  /**
    * O arquivo — data URL (imagem comprimida ou PDF).
    *
    * Opcional porque a lista chega SEM ele: desce só quando alguém abre esta

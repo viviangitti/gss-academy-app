@@ -20,6 +20,14 @@ function shareOffer(text: string) {
 // tem número: rebate da rede na carta comercial, "de/por" no kit de acessório.
 // Preço muda e a peça encaminhada não muda junto. Quem fala número com o
 // cliente é o vendedor, na hora, olhando a condição vigente.
+// As duas listas da tela, na ordem em que a venda acontece.
+const GRUPOS = [
+  { chave: 'veiculo' as const, titulo: 'Veículos',
+    sub: 'Taxa, entrada, bônus e trade-in. É o que entra na negociação do carro.' },
+  { chave: 'acessorio' as const, titulo: 'Acessórios',
+    sub: 'Kits, proteção, som e película. Entram depois do sim, na mesma visita.' },
+];
+
 function quando(ts: number): string {
   const dias = Math.floor((Date.now() - ts) / 86400000);
   if (dias <= 0) return 'publicada hoje';
@@ -113,10 +121,22 @@ export default function Ofertas() {
         </p>
       </div>
 
-      {/* ---- Tabelas e campanhas (print/PDF publicado pela gerência) ---- */}
-      {condicoes.length > 0 && (
+      {/* ---- Tabelas e campanhas (print/PDF publicado pela gerência) ----
+           Em duas listas, e não numa só: a condição do carro entra NA
+           negociação, a do acessório entra DEPOIS do sim. Juntas, o vendedor
+           rolava kit de proteção pra achar a taxa do Jaecoo, com o cliente
+           esperando. */}
+      {GRUPOS.map(({ chave, titulo, sub }) => {
+        const doGrupo = condicoes.filter((c) => (c.categoria || 'veiculo') === chave);
+        if (!doGrupo.length) return null;
+        return (
+        <section key={chave} className="wp-cond-grupo">
+          <div className="wp-cond-grupo-head">
+            <h2 className="wp-cond-grupo-tit">{titulo} <span>{doGrupo.length}</span></h2>
+            <p className="wp-cond-grupo-sub">{sub}</p>
+          </div>
         <div className="wp-cond-list">
-          {condicoes.map((c) => (
+          {doGrupo.map((c) => (
             <div key={c.id} className="wp-cond-card">
               <div className="wp-cond-head">
                 <h3 className="wp-cond-title">{c.titulo}</h3>
@@ -131,7 +151,9 @@ export default function Ofertas() {
             </div>
           ))}
         </div>
-      )}
+        </section>
+        );
+      })}
 
       {auto && condicoes.length === 0 && (
         <p className="wp-cond-vazio">

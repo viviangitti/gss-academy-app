@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Send } from 'lucide-react';
+import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 import { allOffers, useStore } from './data/store';
-import { carregarCondicoes, condicoesDaMarca, useCondicoes, type Condicao } from './data/condicoes';
+import { carregarCondicoes, condicoesDaMarca, abrirArquivo, useCondicoes, type Condicao } from './data/condicoes';
 
 function shareOffer(text: string) {
   if (navigator.share) {
@@ -14,29 +14,12 @@ function shareOffer(text: string) {
   window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
 }
 
-/**
- * Manda a arte da campanha pro cliente. Vai o ARQUIVO, não um texto descrevendo
- * a promoção: a peça já traz preço, cortesia e o "de/por" — reescrever à mão é
- * onde nasce o número errado.
- */
-async function enviarAoCliente(c: Condicao) {
-  const texto = `${c.titulo}\n\n${c.observacao || ''}`.trim();
-  try {
-    const blob = await (await fetch(c.arquivo)).blob();
-    const ext = c.tipo === 'pdf' ? 'pdf' : 'jpg';
-    const arquivo = new File([blob], `${c.nomeArquivo || 'condicao'}.${ext}`.replace(/\.\w+\.(jpg|pdf)$/, '.$1'), { type: blob.type });
-    const nav = navigator as Navigator & { canShare?: (d: { files?: File[] }) => boolean };
-    if (nav.share && nav.canShare?.({ files: [arquivo] })) {
-      await nav.share({ files: [arquivo], text: texto, title: c.titulo });
-      return;
-    }
-  } catch {
-    /* recusou, cancelou ou o aparelho não manda arquivo: cai no texto */
-  }
-  if (navigator.share) { navigator.share({ text: texto, title: c.titulo }).catch(() => {}); return; }
-  window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
-}
-
+// NADA daqui vai pro cliente — nem a tabela da montadora, nem a arte de kit.
+// Existiu um botão de encaminhar e uma caixinha "esta peça pode ir para o
+// cliente", pensados pra arte de campanha. Só que toda peça que passa por aqui
+// tem número: rebate da rede na carta comercial, "de/por" no kit de acessório.
+// Preço muda e a peça encaminhada não muda junto. Quem fala número com o
+// cliente é o vendedor, na hora, olhando a condição vigente.
 function quando(ts: number): string {
   const dias = Math.floor((Date.now() - ts) / 86400000);
   if (dias <= 0) return 'publicada hoje';
@@ -58,6 +41,42 @@ function Lightbox({ c, onFechar }: { c: Condicao; onFechar: () => void }) {
         <iframe src={c.arquivo} title={c.titulo} onClick={(e) => e.stopPropagation()} />
       )}
     </div>
+  );
+}
+
+/**
+ * A folha da condição. A lista chega sem os arquivos — são megabytes, e baixar
+ * treze de uma vez pra mostrar miniatura era o que travava a tela no 4G. Cada
+ * card baixa a sua quando aparece, e o botão já funciona antes de terminar.
+ */
+function Folha({ c, onAbrir }: { c: Condicao; onAbrir: (c: Condicao) => void }) {
+  const [url, setUrl] = useState(c.arquivo || '');
+  const [erro, setErro] = useState(false);
+
+  useEffect(() => {
+    if (url) return;
+    let vivo = true;
+    abrirArquivo(c).then((u) => {
+      if (!vivo) return;
+      if (u) setUrl(u); else setErro(true);
+    });
+    return () => { vivo = false; };
+  }, [c, url]);
+
+  const abrir = () => { if (url) onAbrir({ ...c, arquivo: url }); };
+
+  return (
+    <button type="button" className="wp-cond-thumb" onClick={abrir} disabled={!url}>
+      {c.tipo === 'imagem' && url ? (
+        <img src={url} alt={c.titulo} />
+      ) : (
+        <span className="wp-cond-pdf">
+          <FileText size={26} className="wp-ico" />
+          {erro ? 'sem internet para abrir a folha' : url ? c.nomeArquivo : 'carregando a folha…'}
+        </span>
+      )}
+      <span className="wp-cond-zoom"><Maximize2 size={14} className="wp-ico" /> Abrir</span>
+    </button>
   );
 }
 
@@ -103,28 +122,11 @@ export default function Ofertas() {
                 <h3 className="wp-cond-title">{c.titulo}</h3>
                 <span className="wp-cond-val">{c.validade}</span>
               </div>
-              {/* O aviso é POR PEÇA. Antes era um só no topo da lista, dizendo
-                  que tudo era interno — e mandava o vendedor não encaminhar
-                  justamente a arte que foi feita pra ser encaminhada. */}
-              <span className={`wp-cond-selo ${c.paraCliente ? 'cliente' : 'interno'}`}>
-                {c.paraCliente
-                  ? <><Send size={12} className="wp-ico" /> Pode enviar ao cliente</>
-                  : <><Lock size={12} className="wp-ico" /> Interno — passe só o número, não a tabela</>}
+              <span className="wp-cond-selo interno">
+                <Lock size={12} className="wp-ico" /> Interno — passe só o número, não a folha
               </span>
-              <button type="button" className="wp-cond-thumb" onClick={() => setAberta(c)}>
-                {c.tipo === 'imagem' ? (
-                  <img src={c.arquivo} alt={c.titulo} />
-                ) : (
-                  <span className="wp-cond-pdf"><FileText size={26} className="wp-ico" /> {c.nomeArquivo}</span>
-                )}
-                <span className="wp-cond-zoom"><Maximize2 size={14} className="wp-ico" /> Abrir</span>
-              </button>
+              <Folha c={c} onAbrir={setAberta} />
               {c.observacao && <p className="wp-cond-obs">{c.observacao}</p>}
-              {c.paraCliente && (
-                <button type="button" className="wp-cond-enviar" onClick={() => enviarAoCliente(c)}>
-                  <Send size={14} className="wp-ico" /> Enviar para o cliente
-                </button>
-              )}
               <span className="wp-cond-quando">{quando(c.criadoEm)}</span>
             </div>
           ))}

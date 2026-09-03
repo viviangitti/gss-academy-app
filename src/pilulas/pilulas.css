@@ -2739,14 +2739,10 @@
   font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px;
   border: 1px solid transparent;
 }
-.wp-cond-selo.cliente { color: #1f7a52; background: #e6f3ec; border-color: #b9e0cc; }
 .wp-cond-selo.interno { color: #8a6410; background: #fdf3dc; border-color: #efdcae; }
-.wp-cond-enviar {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; margin-top: 2px; padding: 11px 14px;
-  font-family: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer;
-  color: #fff; background: #1f7a52; border: 0; border-radius: 11px;
-}
+/* Enquanto a folha não desceu, o botão não engana: fica apagado e sem cursor
+   de clique, em vez de abrir uma tela vazia. */
+.wp-cond-thumb:disabled { opacity: .55; cursor: default; }
 .wp-cond-quando { font-size: 11px; color: var(--wp-soft); }
 .wp-cond-vazio {
   font-size: 13px; line-height: 1.55; color: var(--wp-soft);

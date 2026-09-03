@@ -1129,8 +1129,8 @@ export const PRODUCTS: Product[] = [
         foco: 'Os números que ganham do Haval, do Song Plus, do Corolla Cross e do Compass.',
         storyboard: [
           { t: '0-8s', label: 'A REGRA', line: 'Nunca fale mal do concorrente. Compare com número, que é o que o cliente consegue repetir em casa.' },
-          { t: '8-20s', label: 'CONTRA O HAVAL', line: 'O porta-malas dele é maior, admita. Mas o nosso faz 15,1 km por litro contra 13,5, e as três primeiras revisões saem por 3.216 com preço fixo publicado. Mais som Sony e aquecimento de banco, que ele não tem.' },
-          { t: '20-32s', label: 'CONTRA O SONG PLUS', line: 'Ele é mais espaçoso no entre-eixos. Nós temos um ano a mais de garantia e 17,4 centímetros de altura do solo contra 15. E ele depreciou 17,2% em 2025 — quarenta mil reais.' },
+          { t: '8-20s', label: 'CONTRA O HAVAL', line: 'O porta-malas dele é maior, admita. Mas o nosso faz 15,1 km por litro contra 13,5, e as três primeiras revisões têm preço fixo publicado pela marca — abra a tabela no app e mostre na hora. Mais som Sony e aquecimento de banco, que ele não tem.' },
+          { t: '20-32s', label: 'CONTRA O SONG PLUS', line: 'Ele é mais espaçoso no entre-eixos. Nós temos um ano a mais de garantia e 17,4 centímetros de altura do solo contra 15. E ele depreciou 17,2% em 2025 — a conta em reais você monta na frente do cliente, não decora no vídeo.' },
           { t: '32-42s', label: 'CONTRA O COROLLA CROSS', line: 'A garantia dele de dez anos é real, reconheça. Depois compare potência, autonomia e porta-malas: ganhamos nos três, e o acabamento fala por si no test drive.' },
           { t: '42-52s', label: 'CONTRA O COMPASS', line: 'Dois anos a mais de garantia, mais espaço, mais porta-malas. E ele faz 10,1 km por litro no urbano contra os nossos 15,1.' },
           { t: '52-58s', label: 'CTA', line: 'Pergunte qual ele está comparando e monte o item a item por escrito. É o papel que ele leva pra casa.' },
@@ -1494,7 +1494,7 @@ export const PRODUCTS: Product[] = [
         storyboard: [
           { t: '0-8s', label: 'O NÚMERO', line: 'Guarde este: 345 km de autonomia pelo Inmetro. Os concorrentes diretos fazem 330, 319, 294 e 250.' },
           { t: '8-18s', label: 'POR QUE GANHA', line: 'Não é bateria maior por força bruta: o coeficiente aerodinâmico é 0,281, melhor que o deles. O carro corta o ar gastando menos.' },
-          { t: '18-30s', label: 'A CONTA QUE FECHA', line: 'Primeira revisão: 459 reais. Cinco anos de revisão: 1.852. Sem óleo, sem filtro, sem correia. Peça pro cliente lembrar quanto pagou na última revisão dele.' },
+          { t: '18-30s', label: 'A CONTA QUE FECHA', line: 'A revisão do elétrico não tem óleo, não tem filtro de óleo e não tem correia — e o preço é fixo, publicado pela marca. Abra a tabela no app e mostre. Peça pro cliente lembrar quanto pagou na última revisão dele.' },
           { t: '30-42s', label: 'A RECARGA', line: '345 km é uma recarga por semana pra quem roda 30 km por dia, que é a média do brasileiro. Ele carrega em casa, de noite, e sai cheio.' },
           { t: '42-52s', label: 'A HONESTIDADE', line: 'Se ele roda estrada toda semana, diga que o híbrido encaixa melhor e mostre o Omoda 5. Cliente sente quando você não está empurrando.' },
           { t: '52-58s', label: 'CTA', line: 'Test drive no fim do dia: o silêncio no trânsito é o que fecha esse carro.' },

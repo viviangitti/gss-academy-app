@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X } from 'lucide-react';
+import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
@@ -20,11 +20,16 @@ function shareOffer(text: string) {
 // tem número: rebate da rede na carta comercial, "de/por" no kit de acessório.
 // Preço muda e a peça encaminhada não muda junto. Quem fala número com o
 // cliente é o vendedor, na hora, olhando a condição vigente.
-// As duas listas da tela, na ordem em que a venda acontece.
+// As duas portas da tela, na ordem em que a venda acontece.
+//
+// Por que porta e não seção: no showroom o vendedor abre Condições com o
+// cliente do lado, e precisa chegar na folha em dois toques. Empilhadas numa
+// tela só, as sete folhas da carta empurram os kits pra baixo e ele rola o mês
+// inteiro pra achar a película. Aqui ele escolhe o assunto e vê só ele.
 const GRUPOS = [
-  { chave: 'veiculo' as const, titulo: 'Veículos',
+  { chave: 'veiculo' as const, titulo: 'Veículos', Icone: Car,
     sub: 'Taxa, entrada, bônus e trade-in. É o que entra na negociação do carro.' },
-  { chave: 'acessorio' as const, titulo: 'Acessórios',
+  { chave: 'acessorio' as const, titulo: 'Acessórios', Icone: Wrench,
     sub: 'Kits, proteção, som e película. Entram depois do sim, na mesma visita.' },
 ];
 
@@ -95,6 +100,7 @@ export default function Ofertas() {
   const { user } = useAuth();
   const auto = isAuto(brandId);
   const [aberta, setAberta] = useState<Condicao | null>(null);
+  const [grupo, setGrupo] = useState<'veiculo' | 'acessorio' | null>(null);
 
   useEffect(() => { carregarCondicoes(brandId); }, [brandId]);
 
@@ -121,39 +127,81 @@ export default function Ofertas() {
         </p>
       </div>
 
-      {/* ---- Tabelas e campanhas (print/PDF publicado pela gerência) ----
-           Em duas listas, e não numa só: a condição do carro entra NA
-           negociação, a do acessório entra DEPOIS do sim. Juntas, o vendedor
-           rolava kit de proteção pra achar a taxa do Jaecoo, com o cliente
-           esperando. */}
-      {GRUPOS.map(({ chave, titulo, sub }) => {
-        const doGrupo = condicoes.filter((c) => (c.categoria || 'veiculo') === chave);
-        if (!doGrupo.length) return null;
+      {/* ---- Tabelas e campanhas (print/PDF publicado pela gerência) ---- */}
+      {auto && condicoes.length > 0 && !grupo && (
+        <div className="wp-cond-portas">
+          {GRUPOS.map(({ chave, titulo, sub, Icone }) => {
+            const n = condicoes.filter((c) => (c.categoria || 'veiculo') === chave).length;
+            return (
+              <button key={chave} type="button" className="wp-cond-porta" onClick={() => setGrupo(chave)}>
+                <span className="wp-cond-porta-ic"><Icone size={22} className="wp-ico" /></span>
+                <span className="wp-cond-porta-txt">
+                  <b>{titulo} <i>{n}</i></b>
+                  <small>{sub}</small>
+                </span>
+                <ChevronRight size={18} className="wp-ico wp-cond-porta-seta" />
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {auto && grupo && (() => {
+        const g = GRUPOS.find((x) => x.chave === grupo)!;
+        const doGrupo = condicoes.filter((c) => (c.categoria || 'veiculo') === grupo);
         return (
-        <section key={chave} className="wp-cond-grupo">
-          <div className="wp-cond-grupo-head">
-            <h2 className="wp-cond-grupo-tit">{titulo} <span>{doGrupo.length}</span></h2>
-            <p className="wp-cond-grupo-sub">{sub}</p>
-          </div>
+          <>
+            <button type="button" className="wp-cond-voltar" onClick={() => setGrupo(null)}>
+              <ChevronLeft size={16} className="wp-ico" /> Condições
+            </button>
+            <div className="wp-cond-grupo-head">
+              <h2 className="wp-cond-grupo-tit"><g.Icone size={18} className="wp-ico" /> {g.titulo} <span>{doGrupo.length}</span></h2>
+              <p className="wp-cond-grupo-sub">{g.sub}</p>
+            </div>
+            {!doGrupo.length && (
+              <p className="wp-cond-vazio">
+                Nada publicado em {g.titulo.toLowerCase()} ainda. A gerência sobe pelo Painel e aparece aqui na hora.
+              </p>
+            )}
+            <div className="wp-cond-list">
+              {doGrupo.map((c) => (
+                <div key={c.id} className="wp-cond-card">
+                  <div className="wp-cond-head">
+                    <h3 className="wp-cond-title">{c.titulo}</h3>
+                    <span className="wp-cond-val">{c.validade}</span>
+                    <span className="wp-cond-selo interno">
+                      <Lock size={12} className="wp-ico" /> Interno — passe só o número, não a folha
+                    </span>
+                  </div>
+                  <Folha c={c} onAbrir={setAberta} />
+                  {c.observacao && <p className="wp-cond-obs">{c.observacao}</p>}
+                  <span className="wp-cond-quando">{quando(c.criadoEm)}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        );
+      })()}
+
+      {/* Marca que não é automotiva não tem as duas portas: cai na lista direta. */}
+      {!auto && condicoes.length > 0 && (
         <div className="wp-cond-list">
-          {doGrupo.map((c) => (
+          {condicoes.map((c) => (
             <div key={c.id} className="wp-cond-card">
               <div className="wp-cond-head">
                 <h3 className="wp-cond-title">{c.titulo}</h3>
                 <span className="wp-cond-val">{c.validade}</span>
+                <span className="wp-cond-selo interno">
+                  <Lock size={12} className="wp-ico" /> Interno — passe só o número, não a folha
+                </span>
               </div>
-              <span className="wp-cond-selo interno">
-                <Lock size={12} className="wp-ico" /> Interno — passe só o número, não a folha
-              </span>
               <Folha c={c} onAbrir={setAberta} />
               {c.observacao && <p className="wp-cond-obs">{c.observacao}</p>}
               <span className="wp-cond-quando">{quando(c.criadoEm)}</span>
             </div>
           ))}
         </div>
-        </section>
-        );
-      })}
+      )}
 
       {auto && condicoes.length === 0 && (
         <p className="wp-cond-vazio">

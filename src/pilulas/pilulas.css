@@ -2712,9 +2712,16 @@
   background: var(--wp-surface); border: 1px solid var(--wp-border);
   border-radius: 16px; padding: 13px; display: flex; flex-direction: column; gap: 9px;
 }
-.wp-cond-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
-.wp-cond-title { font-size: 15px; font-weight: 700; margin: 0; }
-.wp-cond-val { font-size: 11.5px; color: var(--wp-soft); flex: 0 0 auto; }
+/* Título e validade EMPILHADOS e centrados.
+   Lado a lado, a validade ("Válida em setembro/2026 · notas no DMS até 30/09
+   às 22h") não encolhia — era `flex: 0 0 auto` — e espremia o título numa
+   coluna de 170px que quebrava em seis linhas, com meia tela vazia do lado. */
+.wp-cond-head {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: 5px;
+}
+.wp-cond-title { font-size: 15px; font-weight: 700; margin: 0; line-height: 1.3; }
+.wp-cond-val { font-size: 11.5px; color: var(--wp-soft); }
 .wp-cond-thumb {
   position: relative; display: block; width: 100%; padding: 0; cursor: pointer;
   border: 1px solid var(--wp-border); border-radius: 12px; overflow: hidden;
@@ -2735,7 +2742,7 @@
 /* Selo por peça: quem pode ir pro cliente e quem não pode. O verde não é
    decoração — é a única diferença entre mandar a arte e vazar a margem. */
 .wp-cond-selo {
-  display: inline-flex; align-items: center; gap: 5px; align-self: flex-start;
+  display: inline-flex; align-items: center; gap: 5px; align-self: center;
   font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px;
   border: 1px solid transparent;
 }
@@ -3387,15 +3394,46 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   display: inline-block;
 }
 
-/* Condições em duas listas: carro e acessório. O cabeçalho precisa ser forte o
-   bastante pra ser encontrado no meio da rolagem, com o cliente esperando. */
-.wp-cond-grupo { margin-bottom: 6px; }
-.wp-cond-grupo-head {
-  border-top: 2px solid var(--wp-text); padding-top: 10px; margin-bottom: 12px;
+/* AS DUAS PORTAS de Condições: carro e acessório.
+   Entrar na tela e escolher o assunto, em vez de rolar treze folhas atrás da
+   película com o cliente esperando. */
+.wp-cond-portas { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
+.wp-cond-porta {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 13px;
+  width: 100%; text-align: left; cursor: pointer;
+  background: var(--wp-surface); border: 1px solid var(--wp-border);
+  border-radius: 16px; padding: 15px 14px; font-family: inherit;
 }
+.wp-cond-porta:active { transform: scale(.995); }
+.wp-cond-porta-ic {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px;
+  background: var(--wp-bg); border: 1px solid var(--wp-border); color: var(--wp-text);
+}
+.wp-cond-porta-txt { display: block; min-width: 0; }
+.wp-cond-porta-txt b {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 16px; font-weight: 800; letter-spacing: -.01em; color: var(--wp-text);
+}
+.wp-cond-porta-txt b i {
+  font-style: normal; font-size: 11.5px; font-weight: 700; color: var(--wp-soft);
+  background: var(--wp-bg); border: 1px solid var(--wp-border);
+  border-radius: 999px; padding: 1px 8px;
+}
+.wp-cond-porta-txt small {
+  display: block; margin-top: 3px;
+  font-size: 12.5px; line-height: 1.45; color: var(--wp-soft);
+}
+.wp-cond-porta-seta { color: var(--wp-soft); }
+
+.wp-cond-voltar {
+  display: inline-flex; align-items: center; gap: 4px; margin-bottom: 12px;
+  background: none; border: 0; padding: 0; cursor: pointer; font-family: inherit;
+  font-size: 13px; font-weight: 600; color: var(--wp-soft);
+}
+.wp-cond-grupo-head { margin-bottom: 12px; }
 .wp-cond-grupo-tit {
   display: flex; align-items: center; gap: 8px;
-  font-size: 17px; font-weight: 800; margin: 0 0 3px; letter-spacing: -.01em;
+  font-size: 19px; font-weight: 800; margin: 0 0 3px; letter-spacing: -.01em;
 }
 .wp-cond-grupo-tit span {
   font-size: 11.5px; font-weight: 700; color: var(--wp-soft);

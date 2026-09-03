@@ -34,6 +34,22 @@ export interface Condicao {
   validade: string;
   observacao?: string;
   /**
+   * O último dia em que ela vale, como aaaa-mm-dd.
+   *
+   * `validade` acima é texto pro vendedor ler ("Carta VEN062/2026 — válida de
+   * 03/09 a 02/10/2026"). Isto é data de verdade, pro app agir: passou, a
+   * condição some da tela do time sozinha.
+   *
+   * Existe porque a carta comercial vira no dia 2 e a nova chega no primeiro
+   * dia útil. No intervalo, quem abrisse o app veria taxa e bônus que a loja
+   * não pratica mais — e sem ninguém errado na história: a gerência não tem
+   * como lembrar de apagar sete folhas num sábado.
+   *
+   * Sem data, não vence. É o certo pra arte de kit, que fica até a gerência
+   * dizer o contrário.
+   */
+  venceEm?: string;
+  /**
    * Condição de carro ou de acessório?
    *
    * São duas conversas diferentes e dois momentos diferentes: a condição do
@@ -96,6 +112,21 @@ function gravarCache(lista: Condicao[]) {
 // Arquivos já baixados nesta sessão. Some ao recarregar a página, e tudo bem:
 // é cache de conveniência, não fonte de verdade.
 const baixados = new Map<string, string>();
+
+/**
+ * Já passou do último dia?
+ *
+ * Compara só a data, no fuso de São Paulo — a condição que vale "até 02/10"
+ * tem que valer o dia 02 inteiro, incluindo às 23h de quem está fechando uma
+ * venda no showroom.
+ */
+export function estaVencida(c: Condicao, agora = new Date()): boolean {
+  if (!c.venceEm) return false;
+  const hoje = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(agora);
+  return c.venceEm < hoje;
+}
 
 export function condicoesDaMarca(brand: BrandId): Condicao[] {
   return lerCache()

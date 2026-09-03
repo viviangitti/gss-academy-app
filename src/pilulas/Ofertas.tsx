@@ -4,7 +4,7 @@ import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 import { allOffers, useStore } from './data/store';
-import { carregarCondicoes, condicoesDaMarca, abrirArquivo, useCondicoes, type Condicao } from './data/condicoes';
+import { carregarCondicoes, condicoesDaMarca, abrirArquivo, estaVencida, useCondicoes, type Condicao } from './data/condicoes';
 
 function shareOffer(text: string) {
   if (navigator.share) {
@@ -114,7 +114,11 @@ export default function Ofertas() {
     : allOffers().filter(
         (o) => o.brand === brandId && (!o.segment || o.segment === 'todos' || !seg || o.segment === seg)
       );
-  const condicoes = condicoesDaMarca(brandId);
+  // Vencida NÃO aparece pro vendedor. A carta vira no dia 2 e a nova chega no
+  // primeiro dia útil; no meio disso, tabela velha na tela é promessa que a
+  // loja não cumpre. Ela continua na lista do Painel, marcada, pra gerência
+  // trocar — some da ponta, não do controle.
+  const condicoes = condicoesDaMarca(brandId).filter((c) => !estaVencida(c));
 
   return (
     <div className="wp-ofertas">

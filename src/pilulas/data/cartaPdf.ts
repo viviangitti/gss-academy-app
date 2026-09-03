@@ -29,6 +29,8 @@ export interface PaginaCarta {
   bytes: number;
   /** Quantos blocos de rebate foram cobertos — a tela mostra pra dar confiança. */
   rebates: number;
+  /** Último dia de validade lido na própria carta, como aaaa-mm-dd. */
+  venceEm?: string;
   incluir: boolean;
 }
 
@@ -56,6 +58,29 @@ const CIFRA = /^R\$$/;
 
 /** Distância máxima entre duas cifras do MESMO bloco, em pontos de PDF. */
 const PULO_MAXIMO = 60;
+
+const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+  'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+
+/**
+ * O último dia de validade, lido na própria carta.
+ *
+ * A capa traz "03 de setembro a 02 de outubro de 2026" — a data que decide
+ * quando a folha tem que sair da tela do time. Ler daqui evita a gerência
+ * digitar, e digitar 02/11 no lugar de 02/10 é o tipo de erro que ninguém
+ * percebe até o vendedor prometer taxa de um mês vencido.
+ *
+ * Vira sugestão na tela, não decisão: quem publica confere a data antes.
+ */
+export function validadeDaCarta(texto: string): string | undefined {
+  const t = texto.toLowerCase().replace(/\s+/g, ' ');
+  const meses = MESES.join('|');
+  const m = t.match(new RegExp(`(\\d{1,2}) de (${meses})(?: de (\\d{4}))? a (\\d{1,2}) de (${meses}) de (\\d{4})`));
+  if (!m) return undefined;
+  const dia = m[4].padStart(2, '0');
+  const mes = String(MESES.indexOf(m[5]) + 1).padStart(2, '0');
+  return `${m[6]}-${mes}-${dia}`;
+}
 
 const MODELOS: Array<[RegExp, string]> = [
   [/LINHA\s+OMODA\s*E\s*5|OMODA\s*E5/i, 'Omoda E5'],
@@ -144,6 +169,7 @@ export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]
 
   const doc = await pdfjs.getDocument({ data: await f.arrayBuffer() }).promise;
   const paginas: PaginaCarta[] = [];
+  let textoTodo = '';
 
   for (let n = 1; n <= doc.numPages; n += 1) {
     const pg = await doc.getPage(n);
@@ -240,6 +266,7 @@ export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]
       if (arquivo.length <= 900 * 1024) break;
     }
 
+    textoTodo += ' ' + texto;
     paginas.push({
       n,
       titulo: tituloDaPagina(texto, n),
@@ -252,5 +279,7 @@ export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]
       incluir: !/^Página \d+$/.test(tituloDaPagina(texto, n)),
     });
   }
-  return paginas;
+  // A validade está escrita UMA vez, na capa — vale pra carta toda.
+  const venceEm = validadeDaCarta(textoTodo);
+  return venceEm ? paginas.map((p) => ({ ...p, venceEm })) : paginas;
 }

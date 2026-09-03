@@ -18,7 +18,7 @@ import { DOCUMENTOS, PRATELEIRAS, type PrateleiraId } from './data/documentos';
 import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, type DocNuvem } from './data/docsUpload';
 import { carregarOcultos, ocultosDaMarca, alternarOculto, useDocsOcultos } from './data/docsOcultos';
 import { lerCarta, pareceAcessorio, type PaginaCarta } from './data/cartaPdf';
-import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, useCondicoes, type ArquivoPronto } from './data/condicoes';
+import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, estaVencida, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
 import { buscarArgumentos, destacarArgumento, apagarArgumento, palavrasQueSeRepetem, type Argumento } from './data/argumentos';
@@ -811,6 +811,7 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
   const [validade, setValidade] = useState('');
   const [observacao, setObservacao] = useState('');
   const [categoria, setCategoria] = useState<'veiculo' | 'acessorio'>('veiculo');
+  const [venceEm, setVenceEm] = useState('');
   // Enquanto ninguém escolher à mão, o app decide pelo título e pelo nome do
   // arquivo. A arte de kit chega como print, sem texto pra ler — mas o nome
   // ("kit-premium-sound.jpg") e o título que a pessoa digita dizem tudo.
@@ -834,7 +835,13 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
       // não vira UMA condição — vira uma por modelo, que é como o vendedor
       // procura.
       const pgs = await lerCarta(f, brand).catch(() => [] as PaginaCarta[]);
-      if (pgs.length > 1) { setPaginas(pgs); return; }
+      if (pgs.length > 1) {
+        setPaginas(pgs);
+        // A carta diz até quando vale; a data entra preenchida e a gerência
+        // confere. Só sugere se ela ainda não tiver digitado uma.
+        if (!venceEm && pgs[0].venceEm) setVenceEm(pgs[0].venceEm);
+        return;
+      }
       const pronto = await prepararArquivo(f);
       setArq(pronto);
       if (!escolheuCategoria) setCategoria(pareceAcessorio(pronto.nomeArquivo, titulo) ? 'acessorio' : 'veiculo');
@@ -865,6 +872,7 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
           validade: validade.trim() || 'confirmar validade com a gerência',
           observacao: observacao.trim() || undefined,
           categoria: p.categoria,
+          venceEm: venceEm || undefined,
           arquivo: p.arquivo,
           tipo: 'imagem',
           nomeArquivo: `${p.titulo.trim().slice(0, 60)}.jpg`,
@@ -892,6 +900,7 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
         validade: validade.trim() || 'confirmar validade com a gerência',
         observacao: observacao.trim() || undefined,
         categoria,
+        venceEm: venceEm || undefined,
         arquivo: arq.arquivo,
         tipo: arq.tipo,
         nomeArquivo: arq.nomeArquivo,
@@ -986,6 +995,15 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
 
       <label className="wp-gz-label">Validade{paginas ? ' (vale para todas)' : ''}</label>
       <input value={validade} onChange={(e) => setValidade(e.target.value)} placeholder="Ex.: até 31/08 ou enquanto durar o estoque" />
+      <p className="wp-gz-hint">O texto que o vendedor lê no card.</p>
+
+      <label className="wp-gz-label">Último dia em que vale{paginas ? ' (vale para todas)' : ''}</label>
+      <input type="date" value={venceEm} onChange={(e) => setVenceEm(e.target.value)} />
+      <p className="wp-gz-hint">
+        Depois desta data a condição <b>sai sozinha</b> da tela do time — ninguém
+        precisa lembrar de apagar. Ela continua aqui no Painel, marcada como vencida,
+        pra você trocar pela nova. Em branco, fica no ar até você tirar.
+      </p>
 
       {!paginas && (<>
         <label className="wp-gz-label">É condição de quê?</label>
@@ -1484,8 +1502,11 @@ export default function Gestor() {
           {openForm === 'condicao' && <CondicaoForm brand={brandId} onDone={(t) => done(t, 'Condição')} />}
           <div className="wp-gz-list">
             {condicoes.map((c) => (
-              <div key={c.id} className="wp-gz-item">
-                <span className="wp-gz-item-name">{c.titulo}</span>
+              <div key={c.id} className={`wp-gz-item ${estaVencida(c) ? 'wp-gz-item-off' : ''}`}>
+                <span className="wp-gz-item-name">
+                  {c.titulo}
+                  {estaVencida(c) && <span className="wp-gz-fora">vencida — fora do ar</span>}
+                </span>
                 <span className="wp-gz-item-meta">
                   {c.validade}
                   <button

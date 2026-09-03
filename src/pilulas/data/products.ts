@@ -1087,7 +1087,7 @@ export const PRODUCTS: Product[] = [
       { t: '0-5s', label: 'GANCHO', line: 'O cliente gostou do carro. Aí ele fala: "mas é chinês, né?"' },
       { t: '5-15s', label: 'A CAUSA', line: 'Marca nova assusta porque o cliente não tem referência. Ele não está negando o carro — está pedindo segurança.' },
       { t: '15-30s', label: 'O ARGUMENTO', line: 'Jaecoo é do grupo Chery, no Brasil desde 2009. Rede e peça existem aqui. E o SHS entrega 135 cv de motor a combustão mais 204 cv de elétrico.' },
-      { t: '30-40s', label: 'A VIRADA', line: 'Compare item a item: teto panorâmico, ADAS completo, tela de até 14,8 polegadas. Na concorrência isso é opcional.' },
+      { t: '30-40s', label: 'A VIRADA', line: 'E o que mais fecha: até 1.200 km de autonomia somando tanque e bateria — São Paulo a Salvador sem parar no posto. São 79 km só no elétrico, mais que o trajeto diário da maioria. Some o teto panorâmico e o ADAS completo, que na concorrência são opcionais.' },
       { t: '40-45s', label: 'CTA', line: 'Agende o test drive e mande a condição por escrito — ela tem validade.' },
     ],
     niveis: [
@@ -1260,7 +1260,7 @@ export const PRODUCTS: Product[] = [
       { t: '0-5s', label: 'GANCHO', line: '"Híbrido eu preciso ligar na tomada?" — é a primeira pergunta que você vai ouvir.' },
       { t: '5-15s', label: 'A RESPOSTA', line: 'Não precisa. O SHS-H se recarrega sozinho enquanto roda. O cliente abastece no posto, como sempre.' },
       { t: '15-30s', label: 'O ARGUMENTO', line: 'Resolvida a tomada, mostre o resto: painel de 24,6", 7 airbags e câmera 540°. Som Sony e bancos ventilados são só da PRESTIGE — confira a versão antes de citar.' },
-      { t: '30-40s', label: 'A VIRADA', line: 'Contra Corolla Cross e HR-V, compare item a item na mesma faixa. Aqui o pacote vem de série.' },
+      { t: '30-40s', label: 'A VIRADA', line: 'Aí venha com o número: 15,1 km por litro na cidade, o melhor do comparativo da própria marca contra Corolla Cross e HR-V. E o recorde da marca foi São Paulo a Vitória com um tanque só — 1.306 km. Diga que é recorde, não o número de todo dia.' },
       { t: '40-45s', label: 'CTA', line: 'Leve pro test drive: economia de combustível se sente rodando, não na tabela.' },
     ],
     niveis: [
@@ -1385,7 +1385,7 @@ export const PRODUCTS: Product[] = [
       { t: '0-5s', label: 'GANCHO', line: 'Ele quer o elétrico. E aí pergunta: "onde eu carrego?"' },
       { t: '5-15s', label: 'A VIRADA DE CHAVE', line: 'Quem tem elétrico carrega em casa, de noite, e sai todo dia cheio. Eletroposto é para viagem.' },
       { t: '15-30s', label: 'AS DUAS PERGUNTAS', line: 'Pergunte quantos km por dia e onde o carro dorme. Com isso você já sabe se serve — e ele vê que você não está empurrando.' },
-      { t: '30-40s', label: 'O ARGUMENTO', line: 'Aí sim: 24,6", head-up display, comando de voz, ADAS 2.5. E a conta de combustível saindo da vida dele.' },
+      { t: '30-40s', label: 'O ARGUMENTO', line: 'Aí vêm os dois números que fecham: 345 km de autonomia pelo Inmetro, a maior da faixa, e 6 km rodados por real gasto — o Corolla Cross híbrido faz 2,8 e o Compass 1,6. Depois mostre a tela de 24,6" e o head-up display.' },
       { t: '40-45s', label: 'CTA', line: 'Se o perfil não bater, ofereça o híbrido. Vender o carro errado volta como reclamação.' },
     ],
     niveis: [
@@ -1559,7 +1559,7 @@ export const PRODUCTS: Product[] = [
     storyboard: [
       { t: '0-5s', label: 'GANCHO', line: 'Ele tem o dinheiro. Mas acha que nessa faixa só marca conhecida entrega.' },
       { t: '5-15s', label: 'A ORDEM CERTA', line: 'Não comece pelo número. Sente ele dentro: tela deslizante de 15,6", som Sony de 12, o aroma do L’Essence.' },
-      { t: '15-30s', label: 'O ARGUMENTO', line: 'Compare equipado contra equipado: 8 airbags, ADAS com evasão inteligente, plug-in com 18,4 kWh. Veja onde o preço do concorrente para.' },
+      { t: '15-30s', label: 'O ARGUMENTO', line: 'Mostre o espaço: 590 litros de porta-malas, um dos maiores da categoria, e mais de 1.300 rebatendo. Depois compare equipado contra equipado — 8 airbags e ADAS com evasão inteligente. Veja onde o preço do concorrente para.' },
       { t: '30-40s', label: 'A OBJEÇÃO', line: '"Preciso de tomada em casa?" — para aproveitar o melhor dele, sim. Mas sem carregar ele roda como híbrido normal.' },
       { t: '40-45s', label: 'CTA', line: 'Test drive em horário de trânsito: o assistente de congestionamento vende sozinho.' },
     ],

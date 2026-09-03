@@ -31,6 +31,8 @@ export interface PaginaCarta {
   rebates: number;
   /** Último dia de validade lido na própria carta, como aaaa-mm-dd. */
   venceEm?: string;
+  /** O texto de validade já montado a partir do período da carta. */
+  validade?: string;
   incluir: boolean;
 }
 
@@ -63,23 +65,54 @@ const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
   'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
 /**
- * O último dia de validade, lido na própria carta.
+ * O período de validade, lido na própria carta.
  *
- * A capa traz "03 de setembro a 02 de outubro de 2026" — a data que decide
- * quando a folha tem que sair da tela do time. Ler daqui evita a gerência
- * digitar, e digitar 02/11 no lugar de 02/10 é o tipo de erro que ninguém
- * percebe até o vendedor prometer taxa de um mês vencido.
+ * A capa traz "03 de setembro a 02 de outubro de 2026" — as datas que decidem
+ * o que o vendedor lê no card E quando a folha sai da tela sozinha. Ler daqui
+ * é o que tira DUAS digitações da mão da gerência: escrever 02/11 no lugar de
+ * 02/10 é erro que ninguém percebe até o vendedor prometer o mês errado.
  *
- * Vira sugestão na tela, não decisão: quem publica confere a data antes.
+ * Vira sugestão na tela, não decisão: quem publica confere antes de mandar.
  */
-export function validadeDaCarta(texto: string): string | undefined {
+export function periodoDaCarta(texto: string): { inicio?: string; fim: string } | undefined {
   const t = texto.toLowerCase().replace(/\s+/g, ' ');
   const meses = MESES.join('|');
   const m = t.match(new RegExp(`(\\d{1,2}) de (${meses})(?: de (\\d{4}))? a (\\d{1,2}) de (${meses}) de (\\d{4})`));
   if (!m) return undefined;
-  const dia = m[4].padStart(2, '0');
-  const mes = String(MESES.indexOf(m[5]) + 1).padStart(2, '0');
-  return `${m[6]}-${mes}-${dia}`;
+  const ano = m[6];
+  const iso = (dia: string, mes: string, a: string) =>
+    `${a}-${String(MESES.indexOf(mes) + 1).padStart(2, '0')}-${dia.padStart(2, '0')}`;
+  return {
+    // O ano do início costuma estar implícito ("03 de setembro a 02 de outubro
+    // DE 2026"). Vira virada de ano quando o fim é janeiro e o início não é.
+    inicio: iso(m[1], m[2], m[3] || (MESES.indexOf(m[2]) > MESES.indexOf(m[5]) ? String(Number(ano) - 1) : ano)),
+    fim: iso(m[4], m[5], ano),
+  };
+}
+
+/** O número do comunicado — "VEN062/2026". É como a rede chama a carta. */
+export function numeroDaCarta(texto: string): string | undefined {
+  return texto.match(/\bVEN\s?\d{3}[-/]\d{4}\b/i)?.[0].replace(/\s/g, '').replace('-', '/');
+}
+
+/** dd/mm/aaaa a partir de aaaa-mm-dd — sem passar por Date, que muda de fuso. */
+function br(iso: string): string {
+  const [a, m, d] = iso.split('-');
+  return `${d}/${m}/${a}`;
+}
+
+/**
+ * O texto de validade que o vendedor lê no card.
+ *
+ * Nasce das datas de propósito: eram dois campos dizendo a mesma coisa, e o
+ * gerente tinha que escrever à mão o que a carta já diz. Um campo que ninguém
+ * preenche fica desatualizado; um campo que nasce da data, não.
+ */
+export function textoDeValidade(fim: string, inicio?: string, numero?: string): string {
+  const base = inicio && inicio !== fim
+    ? `válida de ${br(inicio)} a ${br(fim)}`
+    : `válida até ${br(fim)}`;
+  return numero ? `Carta ${numero} — ${base}` : base.charAt(0).toUpperCase() + base.slice(1);
 }
 
 const MODELOS: Array<[RegExp, string]> = [
@@ -280,6 +313,8 @@ export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]
     });
   }
   // A validade está escrita UMA vez, na capa — vale pra carta toda.
-  const venceEm = validadeDaCarta(textoTodo);
-  return venceEm ? paginas.map((p) => ({ ...p, venceEm })) : paginas;
+  const periodo = periodoDaCarta(textoTodo);
+  if (!periodo) return paginas;
+  const validade = textoDeValidade(periodo.fim, periodo.inicio, numeroDaCarta(textoTodo));
+  return paginas.map((p) => ({ ...p, venceEm: periodo.fim, validade }));
 }

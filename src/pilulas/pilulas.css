@@ -3473,3 +3473,18 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   margin: 8px 0 0;
 }
 .wp-ficha-send:disabled { opacity: .6; cursor: default; }
+
+/* O que quase ninguém precisa mexer fica dobrado: o formulário de condição
+   tinha dois campos pra mesma coisa, e o segundo só atrapalhava. */
+.wp-gz-avancado {
+  border: 1px solid var(--wp-border); border-radius: 12px;
+  padding: 0 12px; margin: 6px 0 12px; background: var(--wp-bg);
+}
+.wp-gz-avancado > summary {
+  cursor: pointer; padding: 11px 0; font-size: 12.5px; font-weight: 600;
+  color: var(--wp-soft); list-style: none;
+}
+.wp-gz-avancado > summary::-webkit-details-marker { display: none; }
+.wp-gz-avancado > summary::before { content: '+ '; font-weight: 700; }
+.wp-gz-avancado[open] > summary::before { content: '– '; }
+.wp-gz-avancado[open] { padding-bottom: 10px; }

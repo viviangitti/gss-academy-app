@@ -17,7 +17,7 @@ import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, a
 import { DOCUMENTOS, PRATELEIRAS, type PrateleiraId } from './data/documentos';
 import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, type DocNuvem } from './data/docsUpload';
 import { carregarOcultos, ocultosDaMarca, alternarOculto, useDocsOcultos } from './data/docsOcultos';
-import { lerCarta, pareceAcessorio, type PaginaCarta } from './data/cartaPdf';
+import { lerCarta, pareceAcessorio, textoDeValidade, type PaginaCarta } from './data/cartaPdf';
 import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, estaVencida, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
@@ -812,6 +812,10 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
   const [observacao, setObservacao] = useState('');
   const [categoria, setCategoria] = useState<'veiculo' | 'acessorio'>('veiculo');
   const [venceEm, setVenceEm] = useState('');
+  // O texto de validade nasce da data. Eram dois campos dizendo a mesma coisa,
+  // e o gerente tinha que escrever à mão o que a carta já diz — some quando ele
+  // decide escrever o dele.
+  const [escreveuValidade, setEscreveuValidade] = useState(false);
   // Enquanto ninguém escolher à mão, o app decide pelo título e pelo nome do
   // arquivo. A arte de kit chega como print, sem texto pra ler — mas o nome
   // ("kit-premium-sound.jpg") e o título que a pessoa digita dizem tudo.
@@ -837,9 +841,10 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
       const pgs = await lerCarta(f, brand).catch(() => [] as PaginaCarta[]);
       if (pgs.length > 1) {
         setPaginas(pgs);
-        // A carta diz até quando vale; a data entra preenchida e a gerência
-        // confere. Só sugere se ela ainda não tiver digitado uma.
+        // A carta diz de quando até quando vale: a data E o texto entram
+        // preenchidos, e a gerência só confere.
         if (!venceEm && pgs[0].venceEm) setVenceEm(pgs[0].venceEm);
+        if (!escreveuValidade && pgs[0].validade) setValidade(pgs[0].validade);
         return;
       }
       const pronto = await prepararArquivo(f);
@@ -993,17 +998,34 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
         />
       </>)}
 
-      <label className="wp-gz-label">Validade{paginas ? ' (vale para todas)' : ''}</label>
-      <input value={validade} onChange={(e) => setValidade(e.target.value)} placeholder="Ex.: até 31/08 ou enquanto durar o estoque" />
-      <p className="wp-gz-hint">O texto que o vendedor lê no card.</p>
-
-      <label className="wp-gz-label">Último dia em que vale{paginas ? ' (vale para todas)' : ''}</label>
-      <input type="date" value={venceEm} onChange={(e) => setVenceEm(e.target.value)} />
+      <label className="wp-gz-label">Vale até quando{paginas ? ' (vale para todas)' : ''}</label>
+      <input
+        type="date"
+        value={venceEm}
+        onChange={(e) => {
+          setVenceEm(e.target.value);
+          if (!escreveuValidade) setValidade(e.target.value ? textoDeValidade(e.target.value) : '');
+        }}
+      />
       <p className="wp-gz-hint">
-        Depois desta data a condição <b>sai sozinha</b> da tela do time — ninguém
-        precisa lembrar de apagar. Ela continua aqui no Painel, marcada como vencida,
-        pra você trocar pela nova. Em branco, fica no ar até você tirar.
+        É o único campo que importa aqui. Depois desta data a condição <b>sai sozinha</b> da
+        tela do time — ninguém precisa lembrar de apagar. Ela continua no Painel, marcada
+        como vencida, pra você trocar pela nova. Em branco, fica no ar até você tirar.
       </p>
+
+      <details className="wp-gz-avancado">
+        <summary>Escrever a validade com outras palavras</summary>
+        <label className="wp-gz-label">Texto que o vendedor lê no card</label>
+        <input
+          value={validade}
+          onChange={(e) => { setEscreveuValidade(true); setValidade(e.target.value); }}
+          placeholder="Ex.: enquanto durar o estoque"
+        />
+        <p className="wp-gz-hint">
+          Já vem pronto pela data acima. Só mexa quando a condição não for por data —
+          &ldquo;enquanto durar o estoque&rdquo;, &ldquo;até acabar a série&rdquo;.
+        </p>
+      </details>
 
       {!paginas && (<>
         <label className="wp-gz-label">É condição de quê?</label>

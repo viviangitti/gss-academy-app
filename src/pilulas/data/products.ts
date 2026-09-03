@@ -1259,7 +1259,7 @@ export const PRODUCTS: Product[] = [
     storyboard: [
       { t: '0-5s', label: 'GANCHO', line: '"Híbrido eu preciso ligar na tomada?" — é a primeira pergunta que você vai ouvir.' },
       { t: '5-15s', label: 'A RESPOSTA', line: 'Não precisa. O SHS-H se recarrega sozinho enquanto roda. O cliente abastece no posto, como sempre.' },
-      { t: '15-30s', label: 'O ARGUMENTO', line: 'Resolvida a tomada, mostre o resto: painel de 24,6", som Sony, bancos ventilados e aquecidos, 7 airbags.' },
+      { t: '15-30s', label: 'O ARGUMENTO', line: 'Resolvida a tomada, mostre o resto: painel de 24,6", 7 airbags e câmera 540°. Som Sony e bancos ventilados são só da PRESTIGE — confira a versão antes de citar.' },
       { t: '30-40s', label: 'A VIRADA', line: 'Contra Corolla Cross e HR-V, compare item a item na mesma faixa. Aqui o pacote vem de série.' },
       { t: '40-45s', label: 'CTA', line: 'Leve pro test drive: economia de combustível se sente rodando, não na tabela.' },
     ],

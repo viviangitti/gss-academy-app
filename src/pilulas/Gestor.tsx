@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, X } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, X } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { cargoLabel } from './data/cargos';
@@ -16,6 +16,7 @@ import { CAMPANHA, prazoLabel } from './data/campanha';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
 import { DOCUMENTOS, PRATELEIRAS, type PrateleiraId } from './data/documentos';
 import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, type DocNuvem } from './data/docsUpload';
+import { carregarOcultos, ocultosDaMarca, alternarOculto, useDocsOcultos } from './data/docsOcultos';
 import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
@@ -1260,6 +1261,12 @@ export default function Gestor() {
   const condicoes = condicoesDaMarca(brandId);
   const [docsNuvem, setDocsNuvem] = useState<DocNuvem[]>([]);
   useEffect(() => { carregarDocsNuvem(brandId).then(setDocsNuvem).catch(() => {}); }, [brandId]);
+  // Os PDFs que vieram no app também precisam sair de cartaz sozinhos: a lista
+  // do Painel só tinha lixeira pro que a gerência subiu, e não havia nada.
+  useDocsOcultos();
+  useEffect(() => { carregarOcultos(brandId); }, [brandId]);
+  const escondidos = ocultosDaMarca(brandId);
+  const docsDoApp = DOCUMENTOS.filter((d) => d.brand === brandId);
   const auto = isAuto(brandId);
 
   const products = allProducts().filter((p) => p.brand === brandId);
@@ -1370,7 +1377,7 @@ export default function Gestor() {
       {/* Documentos — o repositório que o gestor alimenta sozinho */}
       <div className="wp-gz-block">
         <div className="wp-gz-block-head">
-          <span className="wp-gz-block-title"><FolderOpen size={17} className="wp-ico" /> Documentos da marca ({DOCUMENTOS.filter((d) => d.brand === brandId).length + docsNuvem.length})</span>
+          <span className="wp-gz-block-title"><FolderOpen size={17} className="wp-ico" /> Documentos da marca ({docsDoApp.length - escondidos.length + docsNuvem.length})</span>
           <button className="wp-gz-add" onClick={() => setOpenForm(openForm === 'documento' ? null : 'documento')}>
             <UploadCloud size={15} className="wp-ico" /> Publicar
           </button>
@@ -1398,7 +1405,36 @@ export default function Gestor() {
               </span>
             </div>
           ))}
-          {!docsNuvem.length && (
+          {/* Os que vieram no app. Não têm lixeira de propósito: são material
+              oficial da montadora e apagar seria perda. Tirar de cartaz é
+              reversível — um clique tira do time, outro devolve. */}
+          {docsDoApp.map((d) => {
+            const off = escondidos.includes(d.id);
+            return (
+              <div key={d.id} className={`wp-gz-item ${off ? 'wp-gz-item-off' : ''}`}>
+                <span className="wp-gz-item-name">
+                  {d.titulo}
+                  {off && <span className="wp-gz-fora">fora do ar</span>}
+                </span>
+                <span className="wp-gz-item-meta">
+                  {d.paginas} pág.
+                  <button
+                    type="button"
+                    className="wp-gz-del"
+                    aria-label={off ? `Voltar ${d.titulo} para o time` : `Tirar ${d.titulo} do ar`}
+                    title={off ? 'Voltar para o time' : 'Tirar do ar'}
+                    onClick={() => {
+                      if (!off && !confirm(`Tirar "${d.titulo}" do ar? O time deixa de ver — dá pra voltar depois.`)) return;
+                      alternarOculto(brandId, d.id).catch(() => alert('Não consegui salvar agora. Confira a internet e tente de novo.'));
+                    }}
+                  >
+                    {off ? <Eye size={14} className="wp-ico" /> : <EyeOff size={14} className="wp-ico" />}
+                  </button>
+                </span>
+              </div>
+            );
+          })}
+          {!docsNuvem.length && !docsDoApp.length && (
             <p className="wp-gz-help" style={{ margin: 0 }}>
               Ficha técnica, guia de venda, comunicado da montadora. O time abre pelo app, na tela Documentos.
             </p>

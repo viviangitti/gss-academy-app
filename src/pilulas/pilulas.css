@@ -3380,3 +3380,13 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-gz-slot-aviso {
   margin: 8px 0 0; font-size: 12px; line-height: 1.45; color: #a8412c;
 }
+
+/* Documento que a gerência tirou de cartaz: continua na lista do Painel, mas
+   apagado — quem olha precisa ver na hora que ele existe e não está no ar. */
+.wp-gz-item-off .wp-gz-item-name { opacity: .5; text-decoration: line-through; }
+.wp-gz-fora {
+  margin-left: 8px; font-size: 10px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: #8a6516; background: #fdf3dd;
+  border-radius: 3px; padding: 2px 6px; vertical-align: 1px; text-decoration: none;
+  display: inline-block;
+}

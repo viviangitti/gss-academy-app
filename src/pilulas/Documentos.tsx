@@ -3,6 +3,7 @@ import { ChevronLeft, FileText, Lock, ExternalLink, FolderOpen } from 'lucide-re
 import { useBrand } from './BrandContext';
 import { PRATELEIRAS, documentosDaMarca } from './data/documentos';
 import { carregarDocsNuvem, docsNuvemDaMarca, abrirDocNuvem, type DocNuvem } from './data/docsUpload';
+import { carregarOcultos, ocultosDaMarca, useDocsOcultos } from './data/docsOcultos';
 import { useEffect, useState } from 'react';
 import { registraUso } from './data/tracking';
 
@@ -52,7 +53,13 @@ function DocDaNuvem({ d }: { d: DocNuvem }) {
 
 export default function Documentos() {
   const { brandId, brand } = useBrand();
-  const docs = documentosDaMarca(brandId);
+  // O que a gerência tirou de cartaz não aparece aqui. Carta comercial vence
+  // todo dia 2 — documento vencido no ar é vendedor prometendo o que a loja
+  // não pratica mais.
+  useDocsOcultos();
+  useEffect(() => { carregarOcultos(brandId); }, [brandId]);
+  const escondidos = ocultosDaMarca(brandId);
+  const docs = documentosDaMarca(brandId).filter((d) => !escondidos.includes(d.id));
   const [daNuvem, setDaNuvem] = useState<DocNuvem[]>([]);
   useEffect(() => {
     let vivo = true;

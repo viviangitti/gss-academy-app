@@ -1092,6 +1092,39 @@ export const PRODUCTS: Product[] = [
     ],
     niveis: [
       {
+        titulo: 'Por dentro',
+        foco: 'Passo 4 da montadora: o que o cliente sente ao sentar, antes de qualquer número.',
+        storyboard: [
+          { t: '0-8s', label: 'A REGRA', line: 'Não fale enquanto ele senta. Deixe cinco segundos de silêncio — é nesse tempo que o cliente decide se o carro é bom.' },
+          { t: '8-20s', label: 'O TETO', line: 'Abra a cortina do teto panorâmico de 1,1 m² antes de ele entrar. A cabine muda de tamanho aos olhos dele, e isso não se explica: se mostra.' },
+          { t: '20-32s', label: 'O SILÊNCIO', line: 'Feche a porta com ele dentro e pare de falar. Os vidros dianteiros duplos e o acabamento seguram o barulho da rua — se a loja for movimentada, melhor ainda.' },
+          { t: '32-42s', label: 'O BANCO', line: 'Na LUXURY e na PRESTIGE, ventilação e aquecimento. Na PRESTIGE tem memória. Ligue o ventilado num dia quente e não diga nada.' },
+          { t: '42-52s', label: 'O ESPAÇO', line: 'Abra o porta-malas: 500 litros, e mais de 1.300 rebatendo os bancos. Pergunte o que ele costuma carregar.' },
+        ],
+      },
+      {
+        titulo: 'Cabine e tecnologia',
+        foco: 'Passo 5: as telas e o que elas resolvem — não a lista de recursos.',
+        storyboard: [
+          { t: '0-8s', label: 'A REGRA', line: 'Ninguém compra polegada. Mostre o que a tela RESOLVE, e deixe ele mexer.' },
+          { t: '8-20s', label: 'AS TELAS', line: 'Multimídia de 14,8" na LUXURY e na PRESTIGE, 13,2" na ELITE, com painel digital de 10,25". Diga a versão junto do número, sempre.' },
+          { t: '20-32s', label: 'O CELULAR', line: 'CarPlay e Android Auto sem fio. Peça o telefone dele e conecte na frente dele — leva dez segundos e vale mais que qualquer explicação.' },
+          { t: '32-42s', label: 'A MANOBRA', line: 'Câmera 540° com imagem panorâmica. Estacione com ele vendo a tela: quem tem medo de garagem apertada compra aqui.' },
+          { t: '42-52s', label: 'O ADAS', line: 'Pacote completo: frenagem automática, piloto adaptativo, assistente de faixa e de congestionamento. Guarde pro test drive, é lá que convence.' },
+        ],
+      },
+      {
+        titulo: 'Motorização',
+        foco: 'Passo 6: o sistema SHS e a autonomia — o argumento que o time mais usa.',
+        storyboard: [
+          { t: '0-8s', label: 'O NÚMERO', line: 'Autonomia foi o argumento mais citado pelo time: nove de dezesseis vendedores. Comece por ele.' },
+          { t: '8-20s', label: 'A AUTONOMIA', line: 'Até 1.200 km somando tanque e bateria. São Paulo a Salvador sem parar no posto. E 79 km só no elétrico, mais que o trajeto diário da maioria.' },
+          { t: '20-32s', label: 'O SISTEMA', line: '1.5 TGDI de 135 cv mais elétrico de 204, com 44,5% de eficiência térmica. Sem carregar na tomada ele faz 15,1 km por litro na cidade.' },
+          { t: '32-42s', label: 'A TOMADA', line: 'Carrega, mas não precisa. Quem instalar wallbox de 7 kW carrega em 2h13; na tomada de casa, 5h13; no rápido de 80 kW, 22 minutos.' },
+          { t: '42-52s', label: 'A BATERIA', line: 'Lítio-ferro-fosfato de 18,3 kWh — a química mais resistente a temperatura. Garantia de 8 anos ou 150.000 km só nela.' },
+        ],
+      },
+      {
         titulo: 'Contra o concorrente',
         foco: 'Os números que ganham do Haval, do Song Plus, do Corolla Cross e do Compass.',
         storyboard: [
@@ -1265,6 +1298,39 @@ export const PRODUCTS: Product[] = [
     ],
     niveis: [
       {
+        titulo: 'Por dentro',
+        foco: 'Passo 4 da montadora: o interior de um SUV de entrada que não parece de entrada.',
+        storyboard: [
+          { t: '0-8s', label: 'A REGRA', line: 'Este é o carro de entrada da Omoda. O cliente entra esperando pouco — use isso a favor e deixe ele sentar antes de falar.' },
+          { t: '8-20s', label: 'O TETO', line: 'Teto solar com acionamento elétrico nas duas versões. Abra antes de ele entrar: num carro dessa faixa, isso não é comum.' },
+          { t: '20-32s', label: 'O ACABAMENTO', line: 'Revestimento soft-touch nas portas e no painel central, bancos em material premium sintético. Peça pra ele passar a mão no painel.' },
+          { t: '32-42s', label: 'O BANCO', line: 'Ventilação e aquecimento só na PRESTIGE — diga a versão. Na LUXURY os bancos são revestidos, mas sem ventilação.' },
+          { t: '42-52s', label: 'O ESPAÇO', line: '372 litros de porta-malas e iluminação ambiente customizável. Pergunte quem anda no banco de trás no dia a dia.' },
+        ],
+      },
+      {
+        titulo: 'Cabine e tecnologia',
+        foco: 'Passo 5: as duas telas e o que muda entre LUXURY e PRESTIGE.',
+        storyboard: [
+          { t: '0-8s', label: 'A REGRA', line: 'Aqui a diferença entre as versões é grande. Errar isso vira promessa quebrada na entrega.' },
+          { t: '8-20s', label: 'AS TELAS', line: 'Duas telas de 12,3" — multimídia e painel — que a marca chama de painel flutuante de 24,6". Isso vem nas DUAS versões.' },
+          { t: '20-32s', label: 'O SOM', line: 'Sony com 8 alto-falantes é só da PRESTIGE. A LUXURY tem 6 alto-falantes comuns. Nunca prometa Sony sem confirmar a versão.' },
+          { t: '32-42s', label: 'O CELULAR', line: 'CarPlay e Android Auto sem fio nas duas, e reconhecimento de voz para comandos. Carregador por indução de 50W com refrigeração só na PRESTIGE.' },
+          { t: '42-52s', label: 'A SEGURANÇA', line: '7 airbags e câmera 540° nas duas. O pacote ADS 2.5, com 15 recursos de assistência, é da PRESTIGE.' },
+        ],
+      },
+      {
+        titulo: 'Motorização',
+        foco: 'Passo 6: o híbrido que não precisa de tomada, e o número que prova.',
+        storyboard: [
+          { t: '0-8s', label: 'A PERGUNTA', line: 'Toda apresentação deste carro passa por aqui: precisa ligar na tomada? Não. E você tem como provar.' },
+          { t: '8-20s', label: 'A PROVA', line: 'O treinamento da montadora compara os dois sistemas lado a lado: no SHS-H a linha "carrega na tomada?" responde NÃO. Mostre o documento no app.' },
+          { t: '20-32s', label: 'COMO FUNCIONA', line: '1.5 TGDI de 135 cv mais elétrico de 204, 224 cv combinados, com transmissão DHT. A bateria de 1,83 kWh se recarrega no freio e no motor.' },
+          { t: '32-42s', label: 'O CONSUMO', line: '15,1 km por litro na cidade e 13,2 na estrada — o melhor do comparativo da própria marca contra Corolla Cross, HR-V e Creta.' },
+          { t: '42-52s', label: 'O RECORDE', line: 'Na maratona da marca, São Paulo a Vitória com um tanque: 1.306 km. Diga que é recorde de condução econômica, não número de todo dia.' },
+        ],
+      },
+      {
         titulo: 'Contra o concorrente',
         foco: 'Onde o híbrido ganha do carro a combustão que o cliente já conhece.',
         storyboard: [
@@ -1389,6 +1455,39 @@ export const PRODUCTS: Product[] = [
       { t: '40-45s', label: 'CTA', line: 'Se o perfil não bater, ofereça o híbrido. Vender o carro errado volta como reclamação.' },
     ],
     niveis: [
+      {
+        titulo: 'Por dentro',
+        foco: 'Passo 4: o silêncio do elétrico é o argumento que nenhum folheto entrega.',
+        storyboard: [
+          { t: '0-8s', label: 'A REGRA', line: 'No elétrico, o interior vende sozinho — mas só se você calar a boca. Ligue o carro e não fale.' },
+          { t: '8-20s', label: 'O SILÊNCIO', line: 'Sem motor a combustão não existe ruído de marcha lenta. Deixe cinco segundos. É a primeira vez que ele sente isso.' },
+          { t: '20-32s', label: 'O TETO', line: 'Teto solar elétrico e iluminação ambiente. A cabine do E5 foi desenhada em volta das telas — mostre com a luz baixa.' },
+          { t: '32-42s', label: 'O BANCO', line: 'Bancos dianteiros ventilados, com ajuste elétrico de 6 direções no motorista. Material premium sintético.' },
+          { t: '42-52s', label: 'O ESPAÇO', line: '360 litros de porta-malas, com tampa elétrica e sensor de presença. Abra com o pé, com as mãos ocupadas.' },
+        ],
+      },
+      {
+        titulo: 'Cabine e tecnologia',
+        foco: 'Passo 5: a tela é o painel do carro — e ele foi desenhado assim.',
+        storyboard: [
+          { t: '0-8s', label: 'A REGRA', line: 'Deixe ele mexer. Elétrico assusta quem nunca dirigiu um, e a tela é onde o medo passa.' },
+          { t: '8-20s', label: 'AS TELAS', line: 'Multimídia de 12,3" e painel de 12,3" — os 24,6" de alta definição que a marca anuncia — mais o head-up display colorido no para-brisa.' },
+          { t: '20-32s', label: 'A CÂMERA', line: 'Câmera 360° com imagem panorâmica. Estacione com ele olhando a tela: no elétrico, silencioso, a manobra impressiona ainda mais.' },
+          { t: '32-42s', label: 'O CARREGADOR', line: 'Carregador de celular por indução com refrigeração — não esquenta o telefone. Som Sony com 6 alto-falantes e 2 tweeters.' },
+          { t: '42-52s', label: 'O ADAS', line: 'Ponto cego, centralização de faixa, frenagem automática, monitoramento de fadiga e evasão inteligente. Guarde pro test drive.' },
+        ],
+      },
+      {
+        titulo: 'Motorização',
+        foco: 'Passo 6: os dois números que fecham — autonomia e custo por real.',
+        storyboard: [
+          { t: '0-8s', label: 'O NÚMERO', line: 'Autonomia foi o argumento mais citado pelo time neste carro: seis de dezesseis. Comece por ele e não enrole.' },
+          { t: '8-20s', label: 'A AUTONOMIA', line: '345 km pelo Inmetro — a maior entre os elétricos da faixa. O Yuan Plus faz 294, o Dolphin Plus 330. Bateria de lítio-ferro-fosfato de 61,1 kWh.' },
+          { t: '20-32s', label: 'A CONTA', line: '6 km rodados por real gasto. O Corolla Cross híbrido faz 2,8 e o Compass 1,6. É quase quatro vezes mais com o mesmo dinheiro.' },
+          { t: '32-42s', label: 'A RECARGA', line: 'Na tomada de casa, 17h28 — é a noite inteira dormindo. Wallbox de 7 kW, 6h59. No rápido de 80 kW da estrada, 36 minutos: o tempo de um almoço.' },
+          { t: '42-52s', label: 'O EXTRA', line: 'Função V2L de 3,3 kW: o carro vira tomada. Churrasqueira, ferramenta, camping. É o item que ninguém espera e todo mundo comenta.' },
+        ],
+      },
       {
         titulo: 'Contra o concorrente elétrico',
         foco: 'O número que ganha de todos eles — e como usar sem parecer folheto.',
@@ -1564,6 +1663,39 @@ export const PRODUCTS: Product[] = [
       { t: '40-45s', label: 'CTA', line: 'Test drive em horário de trânsito: o assistente de congestionamento vende sozinho.' },
     ],
     niveis: [
+      {
+        titulo: 'Por dentro',
+        foco: 'Passo 4: é aqui que o topo de linha se justifica. Não corra.',
+        storyboard: [
+          { t: '0-8s', label: 'A REGRA', line: 'Este carro se vende sentado, não em pé. Leve ele para o banco do passageiro, não do motorista.' },
+          { t: '8-20s', label: 'A MASSAGEM', line: 'Na PRESTIGE, o banco do passageiro tem massagem e função Relax. Ligue e fique quieto. É o momento que decide esta venda.' },
+          { t: '20-32s', label: 'O SILÊNCIO', line: 'Vidros dianteiros duplos e cancelamento ativo de ruído ENC nas duas versões. Feche a porta e deixe ele ouvir a diferença.' },
+          { t: '32-42s', label: 'O ESPAÇO', line: '2,72 m de entre-eixos e 590 litros de porta-malas — um dos maiores da categoria. Mais de 1.300 rebatendo os bancos.' },
+          { t: '42-52s', label: 'O DETALHE', line: 'Na PRESTIGE, sistema de fragrância Essence. Teto solar wide panorama nas duas. Bancos com aquecimento, ventilação e memória.' },
+        ],
+      },
+      {
+        titulo: 'Cabine e tecnologia',
+        foco: 'Passo 5: a tela deslizante e o som de 12 alto-falantes.',
+        storyboard: [
+          { t: '0-8s', label: 'A REGRA', line: 'Aqui a tecnologia é o produto. Mostre funcionando, uma coisa de cada vez.' },
+          { t: '8-20s', label: 'A TELA', line: 'Multimídia Ultra HD 2.5K de 15,6" nas duas versões. Na PRESTIGE ela DESLIZA — mostre o movimento, é o item que mais surpreende.' },
+          { t: '20-32s', label: 'O SOM', line: 'Concert Sound System da Sony com 12 alto-falantes na PRESTIGE; Sony com 8 na LUXURY. Leve uma música que você conheça bem.' },
+          { t: '32-42s', label: 'O PAINEL', line: 'Painel digital de 8,88" nas duas, e head-up display colorido só na PRESTIGE. Smart Cabin com reconhecimento de voz multizona.' },
+          { t: '42-52s', label: 'A SEGURANÇA', line: '8 airbags na PRESTIGE e 7 na LUXURY. ADAS 2.5 com 18 recursos, incluindo evasão inteligente e monitoramento de fadiga.' },
+        ],
+      },
+      {
+        titulo: 'Motorização',
+        foco: 'Passo 6: plug-in de verdade, com 60 km só no elétrico.',
+        storyboard: [
+          { t: '0-8s', label: 'A DIFERENÇA', line: 'Este é SHS-P: carrega na tomada de verdade, diferente do Omoda 5. E isso é escolha, não obrigação.' },
+          { t: '8-20s', label: 'O SISTEMA', line: '1.5 TGDI de 135 cv mais elétrico de 204, com 279 cv combinados e 37,2 kgfm. Bateria de 18,4 kWh.' },
+          { t: '20-32s', label: 'A AUTONOMIA', line: '60 km só no elétrico — a semana inteira de trajeto urbano sem gastar gasolina. Somando tanque e bateria, mais de 1.200 km.' },
+          { t: '32-42s', label: 'SEM CARREGAR', line: 'Se ele nunca ligar na tomada, o carro roda como híbrido comum e faz 15,1 km por litro. Diga isso: tira o medo de quem mora em prédio.' },
+          { t: '42-52s', label: 'A RECARGA', line: 'Wallbox de 7 kW: 2h13. Tomada de casa: 5h13. Rápido de 80 kW: 22 minutos. Garantia de 8 anos ou 150.000 km na bateria.' },
+        ],
+      },
       {
         titulo: 'Vender o topo de linha',
         foco: 'A ordem certa da apresentação e os números que sustentam o preço.',

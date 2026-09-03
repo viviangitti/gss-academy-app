@@ -678,6 +678,7 @@ export default function Product() {
   const product = id ? findProduct(id) : undefined;
   const [openObj, setOpenObj] = useState<number | null>(0);
   const [openFicha, setOpenFicha] = useState(false);
+  const [enviandoFicha, setEnviandoFicha] = useState(false);
   const [openVers, setOpenVers] = useState(false);
   const [versAberta, setVersAberta] = useState<string | null>(null);
   const [verTodosAcess, setVerTodosAcess] = useState(false);
@@ -732,14 +733,55 @@ export default function Product() {
     );
   }
 
-  // Manda só a ficha (fatos secos) — quando a cliente pergunta o que tem,
-  // quantos vem, quanto dura. Mesmo caminho do compartilhar: share nativo no
-  // celular, WhatsApp web no computador.
-  const sendFicha = () => {
+  // Manda a ficha para o cliente.
+  //
+  // Quando o produto tem FOLHA OFICIAL, vai o arquivo — o desenho da montadora,
+  // as versões lado a lado, sem preço. Antes ia texto: "*Comprimento:* 4.660 /
+  // *Largura:* 1.875 / ..." — trinta linhas de asterisco no WhatsApp, que
+  // chegam no cliente parecendo mensagem digitada às pressas e não caem bem ao
+  // lado da proposta.
+  //
+  // Sem folha oficial (acessório, outra marca), segue o texto: é melhor do que
+  // não mandar nada.
+  const sendFicha = async () => {
+    if (enviandoFicha) return;
+    const legenda = `${product.name} — ficha técnica`;
+
+    if (product.fichaPdf) {
+      setEnviandoFicha(true);
+      setAvisoOp('');
+      try {
+        const blob = await (await fetch(product.fichaPdf)).blob();
+        const nome = `${product.name} - ficha tecnica.pdf`.replace(/[\\/:*?"<>|]/g, '');
+        const arquivo = new File([blob], nome, { type: 'application/pdf' });
+        const nav = navigator as Navigator & { canShare?: (d: { files?: File[] }) => boolean };
+        if (nav.share && nav.canShare?.({ files: [arquivo] })) {
+          await nav.share({ files: [arquivo], text: legenda, title: legenda });
+          registraUso('doc_open', `ficha-pdf|${product.id}`);
+          return;
+        }
+        // Computador, ou celular que não manda arquivo: baixa e avisa onde está.
+        const url = URL.createObjectURL(arquivo);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = nome;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+        setAvisoOp('Ficha baixada: está na sua pasta de downloads, pronta pra anexar.');
+        registraUso('doc_open', `ficha-pdf|${product.id}`);
+        return;
+      } catch {
+        setAvisoOp('Não consegui abrir a ficha agora. Tenta de novo em instantes.');
+        return;
+      } finally {
+        setEnviandoFicha(false);
+      }
+    }
+
     const text = buildFichaMessage(product, buyCtx);
     if (!text) return;
     if (navigator.share) {
-      navigator.share({ text, title: `${product.name} — ficha` }).catch(() => {});
+      navigator.share({ text, title: legenda }).catch(() => {});
       return;
     }
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
@@ -952,14 +994,28 @@ export default function Product() {
               </dl>
               <div className="wp-ficha-acts">
                 {!balcao && (
-                  <button className="wp-ficha-send" onClick={sendFicha}>
-                    <Send size={15} className="wp-ico" /> Enviar no WhatsApp
+                  <button className="wp-ficha-send" onClick={sendFicha} disabled={enviandoFicha}>
+                    <Send size={15} className="wp-ico" />
+                    {enviandoFicha ? 'Preparando…' : product.fichaPdf ? 'Enviar a folha oficial' : 'Enviar no WhatsApp'}
                   </button>
                 )}
-                <Link to={`/eleva/ficha/${product.id}`} className="wp-ficha-pdf">
-                  <FileText size={15} className="wp-ico" /> {balcao ? 'Abrir ficha (PDF)' : 'Ver em PDF'}
-                </Link>
+                {product.fichaPdf ? (
+                  <a className="wp-ficha-pdf" href={product.fichaPdf} target="_blank" rel="noopener noreferrer"
+                     onClick={() => registraUso('doc_open', `ficha-pdf|${product.id}`)}>
+                    <FileText size={15} className="wp-ico" /> Ver a folha oficial
+                  </a>
+                ) : (
+                  <Link to={`/eleva/ficha/${product.id}`} className="wp-ficha-pdf">
+                    <FileText size={15} className="wp-ico" /> {balcao ? 'Abrir ficha (PDF)' : 'Ver em PDF'}
+                  </Link>
+                )}
               </div>
+              {product.fichaPdf && (
+                <p className="wp-ficha-nota">
+                  É a folha da própria montadora, com as versões lado a lado e sem preço.
+                  A lista acima é para você consultar aqui, na tela.
+                </p>
+              )}
             </>
           )}
         </div>

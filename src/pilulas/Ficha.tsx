@@ -49,6 +49,22 @@ export default function Ficha() {
   const acessorio = id ? ACESSORIOS.find((x) => x.id === id) : undefined;
   if (!product && acessorio) return <FichaAcessorio a={acessorio} />;
 
+  // CARRO COM FOLHA OFICIAL NÃO PASSA POR AQUI.
+  //
+  // Esta tela monta a ficha a partir dos dados do app: é honesta, imprime bem,
+  // mas é a NOSSA folha. Quando a montadora publica a dela — versões lado a
+  // lado, no desenho da marca, sem preço — é essa que vai pro cliente. Os
+  // botões do produto já apontam pra lá; a troca aqui é pra quem chegar por um
+  // link antigo não receber a versão de texto sem saber que existe a outra.
+  if (product?.fichaPdf) {
+    window.location.replace(product.fichaPdf);
+    return (
+      <div className="wp-empty">
+        <p>Abrindo a ficha oficial do {product.name}…</p>
+      </div>
+    );
+  }
+
   if (!product || !product.ficha?.length) {
     return (
       <div className="wp-empty">

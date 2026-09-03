@@ -121,6 +121,20 @@ export interface Product {
   destaques?: { titulo: string; prova?: string }[];
   buyUrl?: string; // e-commerce oficial — a cliente compra direto
   ficha?: FichaRow[]; // ficha técnica p/ consulta rápida no balcão
+  /**
+   * A FOLHA OFICIAL da montadora, em PDF — a que vai para o cliente.
+   *
+   * A `ficha` acima é para o vendedor consultar EM PÉ, com o cliente do lado:
+   * linha a linha, na tela, dá pra achar um número em dois segundos. Mas ela
+   * saía no WhatsApp como texto corrido de "*Item:* valor", e chegava no
+   * cliente parecendo mensagem digitada às pressas.
+   *
+   * Quando existe folha oficial, é ela que vai: o desenho da marca, as versões
+   * lado a lado, sem preço (a caixa de preço foi tapada com "consulte a
+   * condição vigente na loja"). O que o cliente recebe passa a ser o mesmo
+   * documento que a montadora publica.
+   */
+  fichaPdf?: string;
   /** Versões do modelo, da de entrada pra de topo. */
   versoes?: Versao[];
 }
@@ -1053,6 +1067,7 @@ export const PRODUCTS: Product[] = [
         ],
       },
     ],
+    fichaPdf: '/docs/ramasa/ficha-jaecoo-7.pdf',
     ficha: [
       { label: 'Marca', value: 'Jaecoo (grupo Chery)' },
       { label: 'Versões', value: 'ELITE · LUXURY · PRESTIGE (line-up MY27)' },
@@ -1258,6 +1273,7 @@ export const PRODUCTS: Product[] = [
         ],
       },
     ],
+    fichaPdf: '/docs/ramasa/ficha-omoda-5.pdf',
     ficha: [
       { label: 'Marca', value: 'Omoda (grupo Chery)' },
       { label: 'Versões', value: 'SHS-H Luxury · SHS-H Prestige' },
@@ -1419,6 +1435,7 @@ export const PRODUCTS: Product[] = [
     ],
     durationSec: 45,
     gradient: ['#6ea8ff', '#1b2a63'],
+    fichaPdf: '/docs/ramasa/ficha-omoda-e5.pdf',
     ficha: [
       { label: 'Marca', value: 'Omoda (grupo Chery)' },
       { label: 'Tipo', value: '100% elétrico' },
@@ -1626,6 +1643,7 @@ export const PRODUCTS: Product[] = [
         ],
       },
     ],
+    fichaPdf: '/docs/ramasa/ficha-omoda-7.pdf',
     ficha: [
       { label: 'Marca', value: 'Omoda (grupo Chery)' },
       { label: 'Versões', value: 'SHS-P Luxury · SHS-P Prestige' },

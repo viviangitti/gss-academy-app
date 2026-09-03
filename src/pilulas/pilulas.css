@@ -3465,3 +3465,11 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 }
 .wp-gz-pg-meta { font-size: 11.5px; color: var(--wp-soft); }
 .wp-gz-pg-meta b { color: #1f7a52; font-weight: 700; }
+
+/* Explica a diferença entre a lista da tela e a folha que vai pro cliente —
+   sem isso o vendedor acha que está mandando o que está lendo. */
+.wp-ficha-nota {
+  font-size: 11.5px; line-height: 1.5; color: var(--wp-soft);
+  margin: 8px 0 0;
+}
+.wp-ficha-send:disabled { opacity: .6; cursor: default; }

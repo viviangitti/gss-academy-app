@@ -184,6 +184,15 @@ export const DOCUMENTOS: Documento[] = [
     paraQue: 'O que mostrar ao cliente na entrega do carro, sem sobrecarregar.',
     arquivo: '/docs/ramasa/entrega-tecnica.pdf', paginas: 28, atualizado: 'mar/2026',
   },
+  {
+    id: 'carta-comercial-setembro-2026', brand: 'ramasa', prateleira: 'processo',
+    titulo: 'Carta comercial de setembro — VEN062/2026 (documento completo)',
+    paraQue: 'A folha assinada pela montadora, com as oito páginas. É a fonte das lâminas que estão em Condições — abra aqui quando precisar conferir a letra miúda.',
+    arquivo: '/docs/ramasa/carta-comercial-setembro-2026.pdf', paginas: 8, atualizado: '03/09/2026',
+    // Carimbada INTERNAL em todas as páginas pela própria montadora: traz
+    // rebate da rede, margem variável e a cláusula de fraude no reembolso.
+    interno: true,
+  },
 ];
 
 export function documentosDaMarca(brand: BrandId): Documento[] {

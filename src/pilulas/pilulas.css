@@ -3403,3 +3403,27 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   border-radius: 999px; padding: 1px 8px;
 }
 .wp-cond-grupo-sub { font-size: 12.5px; line-height: 1.5; color: var(--wp-soft); margin: 0; }
+
+/* Carta comercial de várias páginas: a gerência confere folha por folha antes
+   de publicar. A miniatura tem que ser grande o bastante pra dar pra ver se o
+   rebate foi tapado no lugar certo. */
+.wp-gz-carta {
+  border: 1px solid var(--wp-border); border-radius: 12px;
+  padding: 14px; margin-bottom: 14px; background: var(--wp-surface);
+}
+.wp-gz-carta-tit { font-size: 14px; font-weight: 800; margin: 0 0 4px; }
+.wp-gz-pg {
+  display: grid; grid-template-columns: 118px 1fr; gap: 12px;
+  padding: 12px 0; border-top: 1px solid var(--wp-border);
+}
+.wp-gz-pg.off { opacity: .45; }
+.wp-gz-pg img {
+  width: 118px; border-radius: 6px; border: 1px solid var(--wp-border);
+  background: #fff; display: block;
+}
+.wp-gz-pg-campos { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.wp-gz-pg-campos input[type="text"], .wp-gz-pg-campos input:not([type]), .wp-gz-pg-campos select {
+  width: 100%;
+}
+.wp-gz-pg-meta { font-size: 11.5px; color: var(--wp-soft); }
+.wp-gz-pg-meta b { color: #1f7a52; font-weight: 700; }

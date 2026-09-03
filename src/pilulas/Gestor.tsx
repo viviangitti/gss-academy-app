@@ -17,6 +17,7 @@ import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, a
 import { DOCUMENTOS, PRATELEIRAS, type PrateleiraId } from './data/documentos';
 import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, type DocNuvem } from './data/docsUpload';
 import { carregarOcultos, ocultosDaMarca, alternarOculto, useDocsOcultos } from './data/docsOcultos';
+import { lerCarta, type PaginaCarta } from './data/cartaPdf';
 import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
@@ -813,15 +814,62 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
   const [arq, setArq] = useState<ArquivoPronto | null>(null);
   const [erro, setErro] = useState('');
   const [subindo, setSubindo] = useState(false);
+  // Carta de várias páginas: uma folha por página, com título já sugerido.
+  const [paginas, setPaginas] = useState<PaginaCarta[] | null>(null);
+  const [lendo, setLendo] = useState(false);
+  const [feitas, setFeitas] = useState(0);
 
   const escolher = async (f: File | undefined) => {
     if (!f) return;
     setErro('');
+    setPaginas(null);
+    setArq(null);
     try {
+      setLendo(true);
+      // Antes de tudo: é uma carta comercial de várias páginas? Se for, ela
+      // não vira UMA condição — vira uma por modelo, que é como o vendedor
+      // procura.
+      const pgs = await lerCarta(f, brand).catch(() => [] as PaginaCarta[]);
+      if (pgs.length > 1) { setPaginas(pgs); return; }
       setArq(await prepararArquivo(f));
     } catch (e) {
       setArq(null);
       setErro(e instanceof Error ? e.message : 'Não consegui ler o arquivo.');
+    } finally {
+      setLendo(false);
+    }
+  };
+
+  const mexer = (n: number, mud: Partial<PaginaCarta>) =>
+    setPaginas((ps) => (ps || []).map((p) => (p.n === n ? { ...p, ...mud } : p)));
+
+  const escolhidas = (paginas || []).filter((p) => p.incluir);
+
+  /** Publica uma folha por página marcada, na ordem — a mais nova fica no topo. */
+  const publicarCarta = async () => {
+    if (!escolhidas.length) return;
+    setSubindo(true);
+    setErro('');
+    setFeitas(0);
+    try {
+      for (const p of [...escolhidas].reverse()) {
+        await publicarCondicao({
+          brand,
+          titulo: p.titulo.trim(),
+          validade: validade.trim() || 'confirmar validade com a gerência',
+          observacao: observacao.trim() || undefined,
+          categoria: p.categoria,
+          arquivo: p.arquivo,
+          tipo: 'imagem',
+          nomeArquivo: `${p.titulo.trim().slice(0, 60)}.jpg`,
+        });
+        setFeitas((k) => k + 1);
+      }
+      onDone(`${escolhidas.length} condições`);
+    } catch {
+      setErro('Não consegui publicar todas. Confira a internet — as que já subiram estão no ar.');
+    } finally {
+      setSubindo(false);
     }
   };
 
@@ -862,6 +910,51 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
         Pode ser o print do grupo, a foto da planilha ou o PDF da campanha. A imagem é
         reduzida automaticamente para abrir rápido no celular do time.
       </p>
+      {lendo && <p className="wp-gz-hint">Lendo o arquivo…</p>}
+
+      {paginas && (
+        <div className="wp-gz-carta">
+          <p className="wp-gz-carta-tit">
+            {paginas.length} páginas — cada uma vira uma condição
+          </p>
+          <p className="wp-gz-hint">
+            O título veio do que está escrito na própria página. Corrija o que estiver
+            errado e desmarque o que não deve ir (capa, verso). O <b>rebate da rede</b> é
+            tapado na imagem automaticamente — nenhum número é redigitado.
+          </p>
+          {paginas.map((p) => (
+            <div key={p.n} className={`wp-gz-pg ${p.incluir ? '' : 'off'}`}>
+              <img src={p.arquivo} alt={`Página ${p.n}`} />
+              <div className="wp-gz-pg-campos">
+                <label className="wp-gz-check">
+                  <input type="checkbox" checked={p.incluir} onChange={(e) => mexer(p.n, { incluir: e.target.checked })} />
+                  <span>publicar a página {p.n}</span>
+                </label>
+                <input
+                  value={p.titulo}
+                  onChange={(e) => mexer(p.n, { titulo: e.target.value })}
+                  disabled={!p.incluir}
+                  aria-label={`Título da página ${p.n}`}
+                />
+                <select
+                  value={p.categoria}
+                  onChange={(e) => mexer(p.n, { categoria: e.target.value as 'veiculo' | 'acessorio' })}
+                  disabled={!p.incluir}
+                  aria-label={`Categoria da página ${p.n}`}
+                >
+                  <option value="veiculo">Veículo</option>
+                  <option value="acessorio">Acessório</option>
+                </select>
+                <span className="wp-gz-pg-meta">
+                  {Math.round(p.bytes / 1024)} KB
+                  {p.rebates > 0 && <b> · {p.rebates === 1 ? '1 rebate tapado' : `${p.rebates} rebates tapados`}</b>}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {arq && (
         <div className="wp-gz-anexo">
           {arq.tipo === 'imagem'
@@ -871,34 +964,47 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
         </div>
       )}
 
-      <label className="wp-gz-label">Título</label>
-      <input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Ex.: Tabela Jaecoo — campanha de agosto" />
+      {!paginas && (<>
+        <label className="wp-gz-label">Título</label>
+        <input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Ex.: Tabela Jaecoo — campanha de agosto" />
+      </>)}
 
-      <label className="wp-gz-label">Validade</label>
+      <label className="wp-gz-label">Validade{paginas ? ' (vale para todas)' : ''}</label>
       <input value={validade} onChange={(e) => setValidade(e.target.value)} placeholder="Ex.: até 31/08 ou enquanto durar o estoque" />
 
-      <label className="wp-gz-label">É condição de quê?</label>
-      <select value={categoria} onChange={(e) => setCategoria(e.target.value as 'veiculo' | 'acessorio')}>
-        <option value="veiculo">Veículo — taxa, entrada, bônus, trade-in</option>
-        <option value="acessorio">Acessório — kit, película, proteção, som</option>
-      </select>
-      <p className="wp-gz-hint">
-        Separa as duas listas na tela do time. A do carro entra na negociação; a do
-        acessório entra depois do sim.
-      </p>
+      {!paginas && (<>
+        <label className="wp-gz-label">É condição de quê?</label>
+        <select value={categoria} onChange={(e) => setCategoria(e.target.value as 'veiculo' | 'acessorio')}>
+          <option value="veiculo">Veículo — taxa, entrada, bônus, trade-in</option>
+          <option value="acessorio">Acessório — kit, película, proteção, som</option>
+        </select>
+        <p className="wp-gz-hint">
+          Separa as duas listas na tela do time. A do carro entra na negociação; a do
+          acessório entra depois do sim.
+        </p>
+      </>)}
       <p className="wp-gz-hint">
         Toda condição publicada aqui é <b>interna</b>. O app não oferece encaminhar
         nenhuma delas — o vendedor passa o número ao cliente, não a folha.
       </p>
 
-      <label className="wp-gz-label">Observação para o time (opcional)</label>
+      <label className="wp-gz-label">Observação para o time (opcional){paginas ? ' — vale para todas' : ''}</label>
       <textarea value={observacao} onChange={(e) => setObservacao(e.target.value)} rows={2} placeholder="Ex.: bônus de troca só com avaliação presencial." />
 
       {erro && <p className="wp-gz-erro">{erro}</p>}
 
-      <button className="wp-gz-submit" disabled={!valid || subindo} onClick={submit}>
-        <Check size={16} className="wp-ico" /> {subindo ? 'Publicando…' : 'Publicar condição'}
-      </button>
+      {paginas ? (
+        <button className="wp-gz-submit" disabled={!escolhidas.length || subindo} onClick={publicarCarta}>
+          <Check size={16} className="wp-ico" />
+          {subindo
+            ? `Publicando… ${feitas}/${escolhidas.length}`
+            : `Publicar ${escolhidas.length === 1 ? '1 condição' : `${escolhidas.length} condições`}`}
+        </button>
+      ) : (
+        <button className="wp-gz-submit" disabled={!valid || subindo} onClick={submit}>
+          <Check size={16} className="wp-ico" /> {subindo ? 'Publicando…' : 'Publicar condição'}
+        </button>
+      )}
     </div>
   );
 }

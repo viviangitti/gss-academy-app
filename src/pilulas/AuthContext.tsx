@@ -52,14 +52,17 @@ export function audienceOf(user: Pick<User, 'role' | 'affiliateType'> | null | u
 const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType; brands?: BrandId[]; cargo?: CargoAuto }> = {
   // Vivian: gestora das DUAS marcas — troca no seletor do topo.
   'maria26@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp'] },
-  // Vivian: entra como VENDEDORA a pedido dela — quer ver o app como o time vê,
-  // não pela porta da gerência. Continua nas três marcas.
+  // Vivian: GESTORA das três marcas (voltou em 03/09/2026 — estava entrando
+  // como vendedora pra ver o app do jeito que o time vê).
   //
-  // O e-mail dela segue na lista isGestor() das regras do Firestore: não dá
-  // poder nenhum enquanto o papel aqui for vendedora (a tela nem pede os dados
-  // do time), e evita ter que publicar regra de novo quando ela voltar a
-  // gestora. Trocar de volta é mudar 'balconista' para 'gestor' nesta linha.
-  'viviangitti23@gmail.com': { role: 'balconista', brands: ['meraki', 'dsp', 'ramasa'], cargo: 'vendedor-veiculos' },
+  // O e-mail dela já estava na lista isGestor() das regras do Firestore, então
+  // a volta não precisou de deploy de regra: o papel aqui é que abre o Painel e
+  // manda a tela pedir os dados do time.
+  //
+  // A conta continua fora da contagem e do ranking (ver data/contasDeTeste):
+  // gestora não disputa posição com quem está no showroom, e o "11 pessoas
+  // usaram" do Painel tem que ser 9 vendedores de verdade.
+  'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp', 'ramasa'] },
   // Silene: gestora de TODAS as marcas, em qualquer um dos e-mails dela.
   //
   // O Hotmail era a conta de AFILIADA — e afiliado só enxerga a linha GLPEN.

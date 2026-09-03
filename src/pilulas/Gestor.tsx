@@ -17,7 +17,7 @@ import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, a
 import { DOCUMENTOS, PRATELEIRAS, type PrateleiraId } from './data/documentos';
 import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, type DocNuvem } from './data/docsUpload';
 import { carregarOcultos, ocultosDaMarca, alternarOculto, useDocsOcultos } from './data/docsOcultos';
-import { lerCarta, type PaginaCarta } from './data/cartaPdf';
+import { lerCarta, pareceAcessorio, type PaginaCarta } from './data/cartaPdf';
 import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
@@ -811,6 +811,10 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
   const [validade, setValidade] = useState('');
   const [observacao, setObservacao] = useState('');
   const [categoria, setCategoria] = useState<'veiculo' | 'acessorio'>('veiculo');
+  // Enquanto ninguém escolher à mão, o app decide pelo título e pelo nome do
+  // arquivo. A arte de kit chega como print, sem texto pra ler — mas o nome
+  // ("kit-premium-sound.jpg") e o título que a pessoa digita dizem tudo.
+  const [escolheuCategoria, setEscolheuCategoria] = useState(false);
   const [arq, setArq] = useState<ArquivoPronto | null>(null);
   const [erro, setErro] = useState('');
   const [subindo, setSubindo] = useState(false);
@@ -831,7 +835,9 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
       // procura.
       const pgs = await lerCarta(f, brand).catch(() => [] as PaginaCarta[]);
       if (pgs.length > 1) { setPaginas(pgs); return; }
-      setArq(await prepararArquivo(f));
+      const pronto = await prepararArquivo(f);
+      setArq(pronto);
+      if (!escolheuCategoria) setCategoria(pareceAcessorio(pronto.nomeArquivo, titulo) ? 'acessorio' : 'veiculo');
     } catch (e) {
       setArq(null);
       setErro(e instanceof Error ? e.message : 'Não consegui ler o arquivo.');
@@ -966,7 +972,16 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
 
       {!paginas && (<>
         <label className="wp-gz-label">Título</label>
-        <input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Ex.: Tabela Jaecoo — campanha de agosto" />
+        <input
+          value={titulo}
+          onChange={(e) => {
+            setTitulo(e.target.value);
+            if (!escolheuCategoria) {
+              setCategoria(pareceAcessorio(e.target.value, arq?.nomeArquivo) ? 'acessorio' : 'veiculo');
+            }
+          }}
+          placeholder="Ex.: Tabela Jaecoo — campanha de agosto"
+        />
       </>)}
 
       <label className="wp-gz-label">Validade{paginas ? ' (vale para todas)' : ''}</label>
@@ -974,12 +989,16 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
 
       {!paginas && (<>
         <label className="wp-gz-label">É condição de quê?</label>
-        <select value={categoria} onChange={(e) => setCategoria(e.target.value as 'veiculo' | 'acessorio')}>
+        <select
+          value={categoria}
+          onChange={(e) => { setEscolheuCategoria(true); setCategoria(e.target.value as 'veiculo' | 'acessorio'); }}
+        >
           <option value="veiculo">Veículo — taxa, entrada, bônus, trade-in</option>
           <option value="acessorio">Acessório — kit, película, proteção, som</option>
         </select>
         <p className="wp-gz-hint">
-          Separa as duas listas na tela do time. A do carro entra na negociação; a do
+          {escolheuCategoria ? 'Você escolheu — ' : 'Sugerido pelo título e pelo arquivo, dá pra trocar. '}
+          Separa as duas listas na tela do time: a do carro entra na negociação, a do
           acessório entra depois do sim.
         </p>
       </>)}

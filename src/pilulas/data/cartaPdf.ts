@@ -64,7 +64,31 @@ const MODELOS: Array<[RegExp, string]> = [
   [/LINHA\s+JAECOO\s*7|JAECOO\s*7\s+(ELITE|LUXURY|PRESTIGE)/i, 'Jaecoo 7'],
 ];
 
-const ACESSORIO = /kit\b|pel[íi]cula|vitrifica|PPF|acess[óo]rio|insulfilm|engate/i;
+/**
+ * O vocabulário de acessório — o que separa a folha do carro da arte do kit.
+ *
+ * Fica aqui e é exportado porque as DUAS portas de publicação usam o mesmo
+ * julgamento: a carta de várias páginas lê o texto de cada página, e o print
+ * solto (que é como a arte de kit chega, sem camada de texto) é julgado pelo
+ * título e pelo nome do arquivo. Duas listas diferentes de palavras seria a
+ * mesma peça caindo em prateleiras diferentes conforme o caminho.
+ */
+const ACESSORIO = /kit\b|pel[íi]cula|vitrifica|PPF|acess[óo]rio|insulfilm|engate|som\b|protec|prote[çc][ãa]o|estribo|calha|tapete|rack|capa\b/i;
+
+/** Linha de produto da montadora — carro, não acessório. */
+const LINHA_CARRO = /LINHA\s+(OMODA|JAECOO)/i;
+
+/**
+ * Isto aqui é condição de acessório?
+ *
+ * Devolve `false` na dúvida: cair em Veículos não esconde nada de ninguém, e a
+ * lista do carro é a que o vendedor abre primeiro. Quem publica confirma na
+ * tela antes de mandar.
+ */
+export function pareceAcessorio(...textos: Array<string | undefined>): boolean {
+  const t = textos.filter(Boolean).join(' ');
+  return ACESSORIO.test(t) && !LINHA_CARRO.test(t);
+}
 
 /** O título que a folha ganha se ninguém mexer. */
 function tituloDaPagina(texto: string, n: number): string {
@@ -219,7 +243,7 @@ export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]
     paginas.push({
       n,
       titulo: tituloDaPagina(texto, n),
-      categoria: ACESSORIO.test(texto) && !/LINHA\s+(OMODA|JAECOO)/i.test(texto) ? 'acessorio' : 'veiculo',
+      categoria: pareceAcessorio(texto) ? 'acessorio' : 'veiculo',
       arquivo,
       bytes: arquivo.length,
       rebates: faixas.length,

@@ -35,8 +35,8 @@ const ROLE_LB: Record<string, string> = {
   // Cargos da concessionária — o agrupamento passa a vir por cargo quando ele
   // existe (ver buildReport).
   'vendedor-veiculos': 'Vendedores de veículos', 'vendedor-acessorios': 'Vendedores de acessórios',
-  'gerente-veiculos': 'Gerentes de veículos', 'gerente-acessorios': 'Gerentes de acessórios',
-  'lider-acessorios': 'Líderes de acessórios', 'gerente-qualidade': 'Qualidade',
+  'gerente-veiculos': 'Gerentes de vendas', 'gerente-acessorios': 'Gerentes de acessórios',
+  'lider-acessorios': 'Supervisores de acessórios', 'gerente-qualidade': 'Qualidade',
   'executivo-leads': 'Executivos de leads', 'gerente-leads': 'Gerentes de leads',
 };
 // Singular certo por papel — antes o código tirava só o último "s" do plural, o

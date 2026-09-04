@@ -247,9 +247,9 @@ const LOJAS = {
 const CARGOS = {
   'vendedor-veiculos': 'vendedor de veículos',
   'vendedor-acessorios': 'vendedor de acessórios',
-  'gerente-veiculos': 'gerente de veículos',
+  'gerente-veiculos': 'gerente de vendas',
   'gerente-acessorios': 'gerente de acessórios',
-  'lider-acessorios': 'líder de acessórios',
+  'lider-acessorios': 'supervisor de acessórios',
   'gerente-qualidade': 'gerente de qualidade',
   'executivo-leads': 'executivo de leads',
   'gerente-leads': 'gerente de leads',

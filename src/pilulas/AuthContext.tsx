@@ -62,7 +62,7 @@ const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType
   // A conta continua fora da contagem e do ranking (ver data/contasDeTeste):
   // gestora não disputa posição com quem está no showroom, e o "11 pessoas
   // usaram" do Painel tem que ser 9 vendedores de verdade.
-  'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp', 'ramasa'] },
+  'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp', 'ramasa'], cargo: 'gerente-veiculos' },
   // Silene: gestora de TODAS as marcas, em qualquer um dos e-mails dela.
   //
   // O Hotmail era a conta de AFILIADA — e afiliado só enxerga a linha GLPEN.

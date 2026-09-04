@@ -16,8 +16,13 @@
 // vender o acessório, e vendedor de carro fecha acessório no mesmo aperto de
 // mão. Esconder metade do app de cada um quebraria os dois.
 //
-// GERENTE x LÍDER: o gerente responde por UMA loja; o líder responde pela
-// operação de acessórios do grupo inteiro, acima dos gerentes. Hoje os dois
+// OS NOMES SÃO OS DA CASA, não os meus. Eu tinha escrito "Gerente de veículos"
+// e "Líder de acessórios"; no grupo eles se chamam GERENTE DE VENDAS e
+// SUPERVISOR DE ACESSÓRIOS. O id no banco continua o mesmo — muda o que a
+// pessoa lê, que é o que decide se ela se reconhece na lista do cadastro.
+//
+// GERENTE x SUPERVISOR: o gerente responde por UMA loja; o supervisor responde
+// pela operação de acessórios do grupo inteiro, acima dos gerentes. Hoje os dois
 // enxergam o mesmo conteúdo — o app ainda não separa o que é de cada loja,
 // então "ver tudo" já é o padrão de qualquer marca. A distinção existe aqui
 // para que o cadastro diga a verdade agora, e para que a separação por loja,
@@ -72,7 +77,7 @@ export const CARGOS_AUTO: Cargo[] = [
   },
   {
     id: 'gerente-veiculos',
-    label: 'Gerente de veículos',
+    label: 'Gerente de vendas',
     role: 'gestor',
   },
   {
@@ -82,7 +87,7 @@ export const CARGOS_AUTO: Cargo[] = [
   },
   {
     id: 'lider-acessorios',
-    label: 'Líder de acessórios',
+    label: 'Supervisor(a) de acessórios',
     role: 'gestor',
   },
   {

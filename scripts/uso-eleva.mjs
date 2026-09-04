@@ -40,9 +40,21 @@ const ESTADO_DIR = join(homedir(), '.claude', 'eleva-uso');
 const ESTADO = join(ESTADO_DIR, 'estado.json');
 const FUSO = -3; // America/Sao_Paulo
 
-// Conta da Vivian: fica fora da contagem do time. Ela é quem lê o relatório —
-// o uso dela inflaria os números e esconderia se o time está entrando ou não.
-const DONA = 'viviangitti23@gmail.com';
+// Contas de TESTE: ficam fora da contagem do time.
+//
+// A Vivian é quem lê o relatório, e a Silene testa junto — o uso das duas
+// inflaria os números e esconderia se o time está entrando ou não. É a mesma
+// lista que o app usa pra tirá-las do Painel e do ranking (ver
+// src/pilulas/data/contasDeTeste.ts); as duas listas têm que contar a MESMA
+// história, senão o Painel diz 9 vendedores e o relatório diz 11.
+const TESTE = new Set([
+  'viviangitti23@gmail.com',
+  'viviangitti@gmail.com',
+  'maria26@gmail.com',
+  'silene_mendes@hotmail.com',
+  'silene.mendesdesouza@gmail.com',
+  'silene.mendesangelodesouza@gmail.com',
+]);
 
 // Credenciais públicas do CLI do Firebase (firebase-tools). Não são segredo:
 // um "installed app" do OAuth não consegue guardar segredo, por definição, e
@@ -379,6 +391,116 @@ function relatorioFundo({ pessoas, cat, docs, acess, de, ate, agora, P }) {
   P('  anterior não significa que não aconteceram.');
   P();
 
+  // ── a leitura: o parágrafo que responde "e aí, como está?" ──
+  //
+  // O relatório crescia pra 500 linhas e a resposta que a Vivian quer cabe em
+  // seis. Elas são CALCULADAS, não escritas: se o time melhorar, o texto muda
+  // sozinho. Escrever "o time está engajado" à mão seria o mesmo que não medir.
+  // Primeiro nome resolve, até ter três Anas e duas Silenes: aí "Ana (6d)" vira
+  // uma acusação sem destinatário. Quando o primeiro nome se repete, entra o
+  // segundo.
+  const primeiros = new Map();
+  for (const p of pessoas) {
+    const n = p.nome.split(' ')[0];
+    primeiros.set(n, (primeiros.get(n) || 0) + 1);
+  }
+  const curto = (p) => {
+    const partes = p.nome.split(' ').filter(Boolean);
+    return primeiros.get(partes[0]) > 1 && partes[1] ? `${partes[0]} ${partes[1]}` : partes[0];
+  };
+
+  const diasDe = (p) => new Set(noPeriodo(p).map((e) => ddmm(e.at)));
+  const ultimaAcao = (p) => noPeriodo(p).slice(-1)[0]?.at || null;
+  const ehChefia = (p) => /gerente|lider|líder/.test(p.cargo || '') || p.papel === 'gestor';
+
+  const usaram = pessoas.filter((p) => noPeriodo(p).length);
+  const nucleo = usaram.filter((p) => diasDe(p).size >= 3);
+  const umDiaSo = usaram.filter((p) => diasDe(p).size === 1 && diasAtras(p.criada, agora) >= 2);
+  const sumidos = usaram.filter((p) => {
+    const u = ultimaAcao(p);
+    return u && diasAtras(u, agora) >= 3;
+  });
+  const chefia = pessoas.filter(ehChefia);
+  const chefiaAtiva = chefia.filter((p) => noPeriodo(p).length);
+  const passouQuiz = pessoas.filter((p) => noPeriodo(p).some((e) => e.type === 'quiz_pass'));
+
+  // Ritmo: de cada duas ações seguidas na mesma sessão, quantas vieram em menos
+  // de um minuto? A pílula tem ~45s — abaixo disso não deu tempo de consumir.
+  let intervalos = 0;
+  let corridos = 0;
+  for (const p of usaram) {
+    for (const ses of sessoes(noPeriodo(p))) {
+      for (let i = 1; i < ses.length; i += 1) {
+        intervalos += 1;
+        if ((ses[i].at - ses[i - 1].at) / 1000 < 60) corridos += 1;
+      }
+    }
+  }
+
+  P('─'.repeat(58));
+  P('A LEITURA');
+  P('─'.repeat(58));
+  P(`  ${usaram.length} de ${pessoas.length} pessoas usaram o app no período.`);
+  if (nucleo.length) {
+    P(`  O núcleo são ${plural(nucleo.length, 'pessoa', 'pessoas')} — usaram em 3 dias ou mais: ${nucleo.map(curto).join(', ')}.`);
+  }
+  if (umDiaSo.length) {
+    P(`  ${plural(umDiaSo.length, 'pessoa entrou', 'pessoas entraram')} num dia só e não ${umDiaSo.length === 1 ? 'voltou' : 'voltaram'}: ${umDiaSo.map(curto).join(', ')}.`);
+  }
+  if (sumidos.length) {
+    P(`  Sem aparecer há 3 dias ou mais: ${sumidos.map((p) => `${curto(p)} (${diasAtras(ultimaAcao(p), agora)}d)`).join(', ')}.`);
+  }
+  if (chefia.length) {
+    const fora = chefia.filter((p) => !noPeriodo(p).length).map(curto);
+    P(`  Chefia: ${chefiaAtiva.length} de ${chefia.length} ${chefiaAtiva.length === 1 ? 'usou' : 'usaram'}${fora.length ? ` — fora: ${fora.join(', ')}` : ''}.`);
+  }
+  P(`  Quiz: ${passouQuiz.length} de ${pessoas.length} passaram em pelo menos um.`);
+  if (intervalos >= 10) {
+    P(`  Ritmo: ${Math.round((corridos / intervalos) * 100)}% das ações vieram em menos de 1 minuto da anterior — ${corridos / intervalos > 0.5 ? 'é reconhecimento, não estudo' : 'a maioria teve tempo de consumir'}.`);
+  }
+  P();
+
+  // ── dia a dia ──
+  //
+  // A tabela que mostra a CURVA. Pessoa a pessoa diz quem; isto diz quando —
+  // se o uso está subindo, se caiu depois de um treinamento, se fim de semana
+  // some. É o que o número total esconde.
+  const dias = new Map();
+  for (const p of pessoas) {
+    for (const e of noPeriodo(p)) {
+      const k = br(e.at).toISOString().slice(0, 10);
+      const d = dias.get(k) || { pessoas: new Set(), acoes: 0, quiz: 0, dia: e.at };
+      d.pessoas.add(p.email);
+      d.acoes += 1;
+      if (e.type === 'quiz_pass') d.quiz += 1;
+      dias.set(k, d);
+    }
+  }
+  if (dias.size) {
+    P('─'.repeat(58));
+    P('DIA A DIA');
+    P('─'.repeat(58));
+    const chaves = [...dias.keys()].sort();
+    const maxP = Math.max(...[...dias.values()].map((d) => d.pessoas.size));
+    // Inclui os dias SEM ninguém: um buraco no meio da semana é informação, e
+    // some quando o relatório só lista os dias que tiveram uso.
+    const um = 86400000;
+    const ini = new Date(chaves[0] + 'T12:00:00Z');
+    // Vai até HOJE, e não até o último dia com uso: um dia vazio no fim é a
+    // informação mais importante da tabela — o time parou.
+    const fim = new Date(br(agora).toISOString().slice(0, 10) + 'T12:00:00Z');
+    for (let t = +ini; t <= +fim; t += um) {
+      const k = new Date(t).toISOString().slice(0, 10);
+      const d = dias.get(k);
+      const data = new Date(t);
+      const rot = `${k.slice(8, 10)}/${k.slice(5, 7)} ${DIAS[data.getUTCDay()]}`;
+      if (!d) { P(`  ${rot.padEnd(10)} —`); continue; }
+      const n = d.pessoas.size;
+      P(`  ${rot.padEnd(10)} ${'▇'.repeat(Math.max(1, Math.round((n / maxP) * 18))).padEnd(18)} ${String(n).padStart(2)} ${n === 1 ? 'pessoa ' : 'pessoas'} · ${String(d.acoes).padStart(3)} ${d.acoes === 1 ? 'ação ' : 'ações'}${d.quiz ? ` · ${plural(d.quiz, 'quiz aprovado', 'quizzes aprovados')}` : ''}`);
+    }
+    P();
+  }
+
   // ── pessoa a pessoa ──
   P('─'.repeat(58));
   P('PESSOA A PESSOA');
@@ -541,7 +663,7 @@ function relatorioFundo({ pessoas, cat, docs, acess, de, ate, agora, P }) {
   P();
   P('─'.repeat(58));
   P('Fonte: Firebase ao vivo (Auth + elevaStats, últimos 200 eventos por pessoa).');
-  P('A conta da Vivian fica fora, e só entram contas com acesso à Ramasa.');
+  P('As contas de teste (Vivian e Silene) ficam fora, como no Painel.');
 }
 
 async function main() {
@@ -595,7 +717,7 @@ async function main() {
         quiz: eventos.filter((e) => e.type === 'quiz_pass').length,
       };
     })
-    .filter((p) => p.marcas.includes(MARCA) && p.email !== DONA);
+    .filter((p) => p.marcas.includes(MARCA) && !TESTE.has(p.email));
 
   const linhas = [];
   const P = (s = '') => linhas.push(s);
@@ -713,8 +835,8 @@ async function main() {
   }
   P();
   P('─'.repeat(58));
-  P('Fonte: Firebase ao vivo (Auth + elevaStats). A conta da Vivian fica fora');
-  P('da contagem, e só entram contas com acesso à Ramasa.');
+  P('Fonte: Firebase ao vivo (Auth + elevaStats). As contas de teste (Vivian e');
+  P('Silene) ficam fora da contagem, e só entram contas com acesso à Ramasa.');
 
   console.log(linhas.join('\n'));
 

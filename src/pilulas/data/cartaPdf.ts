@@ -141,6 +141,68 @@ const MODELOS: Array<[RegExp, string]> = [
  */
 const ACESSORIO = /kit\b|pel[íi]cula|vitrifica|PPF|acess[óo]rio|insulfilm|engate|som\b|protec|prote[çc][ãa]o|estribo|calha|tapete|rack|capa\b/i;
 
+/**
+ * O vocabulário de acessório, do mais específico pro mais genérico.
+ *
+ * Serve pra dar NOME à página. A tabela de preços não traz "LINHA OMODA 5" pra
+ * eu ler; traz "Rack de Teto", "Tapete Carpete Premium". Sem isto, as quatro
+ * páginas que o Lucas subiu viraram quatro cards com o mesmo título, e o
+ * vendedor tinha que abrir um por um pra achar a película.
+ *
+ * A ordem importa: "rack de teto" tem que ganhar de "rack", senão o título sai
+ * genérico justamente onde precisa ser específico.
+ */
+const ITENS_ACESSORIO: Array<[RegExp, string]> = [
+  [/rack\s+de\s+teto|rack\s+teto/i, 'rack de teto'],
+  [/rack\s+de\s+bike|suporte\s+de\s+bicicleta/i, 'rack de bike'],
+  [/bagageiro/i, 'bagageiro de teto'],
+  [/barras?\s+de\s+teto|barras?\s+longitudinais/i, 'barras de teto'],
+  [/rodas?\s+de\s+liga|rodas?\s+aro\s*\d+/i, 'rodas de liga leve'],
+  [/estribo/i, 'estribo'],
+  [/tapete/i, 'tapetes'],
+  [/lameiro|para\s?-?\s?barro/i, 'lameiro'],
+  [/pel[íi]cula|insulfilm/i, 'películas'],
+  [/vitrifica/i, 'vitrificação'],
+  [/\bppf\b|prote[çc][ãa]o\s+de\s+pintura/i, 'PPF'],
+  [/caixa\s+de\s+grave|subwoofer|som\b/i, 'som'],
+  [/engate/i, 'engate'],
+  [/calha\s+de\s+chuva|calhas?\b/i, 'calhas de chuva'],
+  [/soleira/i, 'soleiras'],
+  [/capa\s+de\s+banco|revestimento\s+de\s+banco/i, 'capas de banco'],
+  [/porta\s?-?\s?malas|bandeja/i, 'porta-malas'],
+  [/carregador|indu[çc][ãa]o/i, 'carregador'],
+  [/kit\s+prote[çc][ãa]o|prote[çc][ãa]o\s+interna/i, 'proteção interna'],
+];
+
+/**
+ * Nome da página a partir dos acessórios que ela lista.
+ *
+ * Pega os três primeiros na ORDEM EM QUE APARECEM na folha — é a ordem que a
+ * pessoa vê ao abrir, então o título bate com a imagem.
+ */
+function tituloDeAcessorios(texto: string): string {
+  const achados: Array<{ nome: string; onde: number }> = [];
+  for (const [re, nome] of ITENS_ACESSORIO) {
+    const m = texto.match(re);
+    if (m && m.index !== undefined && !achados.some((a) => a.nome === nome)) {
+      achados.push({ nome, onde: m.index });
+    }
+  }
+  if (!achados.length) return '';
+  // "PPF" costuma ser um item DENTRO do kit de proteção interna, não um
+  // acessório à parte. Com os dois, o título gastava uma vaga repetindo.
+  const temKit = achados.some((a) => a.nome === 'proteção interna');
+  const nomes = achados
+    .filter((a) => !(temKit && a.nome === 'PPF'))
+    .sort((a, b) => a.onde - b.onde)
+    .slice(0, 3)
+    .map((a) => a.nome);
+  const frase = nomes.length > 1
+    ? `${nomes.slice(0, -1).join(', ')} e ${nomes[nomes.length - 1]}`
+    : nomes[0];
+  return frase.charAt(0).toUpperCase() + frase.slice(1);
+}
+
 /** Linha de produto da montadora — carro, não acessório. */
 const LINHA_CARRO = /LINHA\s+(OMODA|JAECOO)/i;
 
@@ -157,7 +219,7 @@ export function pareceAcessorio(...textos: Array<string | undefined>): boolean {
 }
 
 /** O título que a folha ganha se ninguém mexer. */
-function tituloDaPagina(texto: string, n: number): string {
+export function tituloDaPagina(texto: string, n: number): string {
   // Duas páginas confundem, e cada uma engana pra um lado:
   //
   //   · a do E5 traz "Regras e Condições da opção bônus de emplacamento" no
@@ -187,6 +249,10 @@ function tituloDaPagina(texto: string, n: number): string {
       new RegExp(`${nome.replace(/\s/g, '\\s*')}\\s+${v}`, 'i').test(texto));
     return versoes.length ? `${nome} — ${versoes.join(' e ')}` : nome;
   }
+
+  // Tabela de acessórios: o nome sai dos itens que ela lista.
+  const porItens = tituloDeAcessorios(texto);
+  if (porItens) return porItens;
 
   return `Página ${n}`;
 }

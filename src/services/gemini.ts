@@ -61,7 +61,7 @@ let chat: ReturnType<ReturnType<ReturnType<typeof createAI>['getGenerativeModel'
 export async function sendMessage(message: string): Promise<string> {
   try {
     const genAI = createAI();
-    const model = genAI.getGenerativeModel({ model: 'gemini-flash-lite-latest' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
     if (!chat) {
       chat = model.startChat({

@@ -11,6 +11,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { requireAuth, checkRateLimit } from './_auth.js';
 import { guardBudget } from './_aiBudget.js';
+import { MODELO_RAPIDO } from './_modelos.js';
 
 const MAX_MESSAGE_CHARS = 4000;
 
@@ -71,7 +72,7 @@ export default async function handler(req, res) {
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-flash-lite-latest' });
+    const model = genAI.getGenerativeModel({ model: MODELO_RAPIDO });
 
     const result = await model.generateContent(
       ANALYSIS_PROMPT(message, String(context).slice(0, 200), String(channel).slice(0, 60))

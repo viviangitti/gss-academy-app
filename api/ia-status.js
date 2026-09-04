@@ -6,6 +6,7 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { requireAdmin } from './_auth.js';
+import { MODELO_RAPIDO, MODELOS } from './_modelos.js';
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -56,7 +57,7 @@ export default async function handler(req, res) {
 
   try {
     const genAI = new GoogleGenerativeAI(key);
-    const model = genAI.getGenerativeModel({ model: 'gemini-flash-lite-latest' });
+    const model = genAI.getGenerativeModel({ model: MODELO_RAPIDO });
     const r = await model.generateContent('Responda apenas: ok');
     const txt = (r.response.text() || '').trim().slice(0, 20);
     return res.status(200).json({ ...info, ok: true, diagnostico: 'chave VÁLIDA, Gemini respondeu', resposta: txt });
@@ -86,7 +87,7 @@ export default async function handler(req, res) {
     // A biblioteca falhou. Tenta na mão (REST puro) pra saber se o problema é a
     // biblioteca antiga ou o modelo mesmo.
     const testeDireto = {};
-    for (const mdl of ['gemini-flash-lite-latest', 'gemini-flash-lite-latest', 'gemini-2.0-flash-lite']) {
+    for (const mdl of MODELOS) {
       for (const v of ['v1beta', 'v1']) {
         try {
           const r = await fetch(

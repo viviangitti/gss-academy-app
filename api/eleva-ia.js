@@ -16,23 +16,10 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { requireAuth, checkRateLimit } from './_auth.js';
 import { guardBudget } from './_aiBudget.js';
 import { montarConversa } from './_coach.js';
+import { MODELOS } from './_modelos.js';
 
-// Dois modelos: o principal e o de reserva. Se o primeiro engasgar por
-// congestionamento (429/503), a pergunta é refeita no segundo — o vendedor não
-// fica esperando nem leva erro na cara no meio de um atendimento.
-//
-// A ORDEM foi medida, não escolhida no olho. Em 04/09/2026, cinco chamadas em
-// cada um:
-//
-//   gemini-flash-lite-latest   1 de 5 · e a que passou levou 124 SEGUNDOS
-//   gemini-flash-latest        5 de 5 · ~7s
-//   gemini-3.1-flash-lite      4 de 5 · ~3,5s
-//
-// O 'flash-lite-latest' era o PRINCIPAL: toda pergunta batia nele primeiro,
-// falhava, e só então tentava o reserva. Quando não falhava era pior — a função
-// da Vercel morre antes dos 124s e o vendedor leva erro depois de esperar. Era
-// isto que estava quebrado, não a chave nem o prompt.
-const MODELOS = ['gemini-3.1-flash-lite', 'gemini-flash-latest'];
+// A fila de modelos vive em _modelos.js — pinada e num lugar só, porque o
+// apelido '-latest' já derrubou esta IA duas vezes (ver o arquivo).
 
 // Teto por tentativa. Modelo que pendura é pior que modelo que erra: com dois
 // na fila, um pendurado consome a janela inteira da função e o reserva nunca

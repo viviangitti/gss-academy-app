@@ -259,7 +259,7 @@ export default function MeetingAnalysis() {
 
     try {
       const genAI = createAI();
-      const model = genAI.getGenerativeModel({ model: 'gemini-flash-lite-latest' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
       const result = await model.generateContent(ANALYSIS_PROMPT(fullText));
       const text = result.response.text().trim();
       const cleaned = text.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();

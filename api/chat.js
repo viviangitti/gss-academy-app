@@ -4,6 +4,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { requireAuth, checkRateLimit } from './_auth.js';
 import { guardBudget } from './_aiBudget.js';
+import { MODELO_RAPIDO } from './_modelos.js';
 
 const BUSINESS_CONTEXT = `
 Você é a **Silvia**, assistente pessoal de IA da Silene, co-fundadora da GSS Academy.
@@ -149,7 +150,7 @@ export default async function handler(req, res) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: 'gemini-flash-lite-latest',
+      model: MODELO_RAPIDO,
       systemInstruction: BUSINESS_CONTEXT,
     });
 

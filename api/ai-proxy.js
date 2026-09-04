@@ -10,11 +10,12 @@
 
 import { requireAuth, checkRateLimit } from './_auth.js';
 import { guardBudget } from './_aiBudget.js';
+import { MODELOS } from './_modelos.js';
 
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 // Só os modelos que o app realmente usa (evita abuso com modelos caros).
-const ALLOWED_MODELS = new Set(['gemini-2.5-flash', 'gemini-flash-lite-latest']);
+const ALLOWED_MODELS = new Set(MODELOS);
 
 // Teto de payload: fluxos multimodais mandam imagem/áudio em base64.
 const MAX_PAYLOAD_BYTES = 12 * 1024 * 1024;

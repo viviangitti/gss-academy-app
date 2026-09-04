@@ -20,11 +20,21 @@
 // REGRA: não trocar de versão por novidade. Só troque quando ESTE modelo
 // parar de responder, e medindo antes — não porque saiu um número maior.
 
-/** O que responde a pergunta. Rápido e barato, é o que roda o dia todo. */
-export const MODELO_RAPIDO = 'gemini-2.5-flash-lite';
+/**
+ * O que responde a pergunta.
+ *
+ * Era o flash-lite. Trocado em 04/09/2026 por MEDIÇÃO, não por novidade: com as
+ * condições comerciais em texto, o lite passou a resumir em vez de listar as
+ * opções A/B/C e a recusar número que estava escrito na frente dele ("consulte
+ * na concessionária"). O 2.5-flash segue a instrução — e custou o mesmo tempo
+ * no teste: 526 ms contra 420 ms, com 4 de 4 nos dois.
+ *
+ * Mesma geração 2.5, que é o que a Vivian pediu: não ficar pulando de versão.
+ */
+export const MODELO_RAPIDO = 'gemini-2.5-flash';
 
-/** A reserva, quando o rápido engasga. Mesma geração, de propósito. */
-export const MODELO_RESERVA = 'gemini-2.5-flash';
+/** A reserva, quando o principal engasga. Mesma geração, de propósito. */
+export const MODELO_RESERVA = 'gemini-2.5-flash-lite';
 
 /** A fila, na ordem em que é tentada. */
 export const MODELOS = [MODELO_RAPIDO, MODELO_RESERVA];

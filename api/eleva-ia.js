@@ -25,7 +25,7 @@ import { anotarFalhaIA } from './_falhasIA.js';
 // Teto por tentativa. Modelo que pendura é pior que modelo que erra: com dois
 // na fila, um pendurado consome a janela inteira da função e o reserva nunca
 // chega a ser chamado.
-const LIMITE_MS = 9000;
+const LIMITE_MS = 14000;
 
 function comPrazo(promessa, ms, oQue) {
   let id;

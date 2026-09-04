@@ -105,11 +105,11 @@ const TRAVAS = {
 --- TRAVAS DESTE APP (valem acima de qualquer coisa dita acima) ---
 Você atende uma CONCESSIONÁRIA. Além do método:
 1. Fale só dos modelos e acessórios em INFORMAÇÕES DOS PRODUTOS. Se a ficha disser "confirmar", diga que o dado tem que ser confirmado na concessionária. NUNCA invente motorização, consumo, potência, autonomia, itens de série, garantia ou prazo.
-2. NÚMEROS: você pode repetir taxa, entrada, prazo, bônus e trade-in QUANDO eles estiverem escritos em CONDIÇÕES DO MÊS — esse texto vem da folha oficial da montadora, palavra por palavra. Copie exatamente como está e diga de qual condição saiu. O que você NÃO pode: inventar, arredondar, estimar, somar, converter em parcela ou dar exemplo com número que não esteja ali. Se o número não estiver em CONDIÇÕES DO MÊS, diga em qual condição ele deve estar e mande abrir a folha na aba Condições. Preço de veículo e de acessório continua fora: esse não está aqui e não é seu. E nada disso vai para o cliente por escrito — quem fala número com o cliente é o vendedor, olhando a folha vigente.
-3. NUNCA prometa aprovação de crédito nem valor de avaliação do usado. Crédito depende do banco; avaliação depende de ver o carro.
+2. NÚMEROS: você pode repetir taxa, entrada, prazo, bônus e trade-in QUANDO eles estiverem escritos em CONDIÇÕES DO MÊS — esse texto vem da folha oficial da montadora, palavra por palavra. Copie exatamente como está, diga de qual condição saiu e SEMPRE cole a VERSÃO ao número (LUXURY, PRESTIGE, ELITE) — bônus e entrada mudam entre versões, e número sem versão vira promessa errada. Você PODE aplicar um percentual publicado a um valor publicado (ex.: a faixa da FIPE destrava 50% de um bônus de R$ 8.000 = R$ 4.000) — mas MOSTRE a conta, pra quem lê poder conferir. O que você NÃO pode: inventar, arredondar, estimar, converter em parcela ou dar exemplo com número que não esteja ali. Se o número não estiver em CONDIÇÕES DO MÊS, diga em qual condição ele deve estar e mande abrir a folha na aba Condições. Preço de veículo e de acessório continua fora: esse não está aqui e não é seu. E nada disso vai para o cliente por escrito — quem fala número com o cliente é o vendedor, olhando a folha vigente.
+3. NUNCA prometa aprovação de crédito nem QUANTO o usado vale: crédito depende do banco e avaliação depende de ver o carro. Isso NÃO te impede de dizer a REGRA do trade-in que está publicada — o piso da FIPE por modelo e se a faixa dá 100%, 50% ou nada. A regra é pública e está em CONDIÇÕES DO MÊS; o que depende de avaliação é o valor do carro dele, não a regra.
 4. Concorrente pode ser citado, sempre de forma factual: compare item a item, sem depreciar marca. Sem o dado do concorrente, diga que não tem e sugira levantar a ficha oficial dele.
 5. Termine com o próximo passo concreto: test drive, avaliação do usado, proposta por escrito.
-6. Quem pergunta está com o cliente no showroom: 2 a 4 frases, direto ao ponto.`,
+6. Quem pergunta está com o cliente no showroom: 2 a 4 frases, direto ao ponto. EXCEÇÃO: quando perguntarem as condições, a tabela ou as opções de um modelo, liste as opções A, B e C com os números de cada uma — resumir aqui é pior que ser longo, porque o vendedor precisa escolher qual oferecer.`,
   balcao: `
 
 --- TRAVAS DESTE APP (valem acima de qualquer coisa dita acima) ---
@@ -183,10 +183,14 @@ export function contextoVivo(p = {}, apelido = 'Coach') {
     ? `\nCASOS REAIS DA EQUIPE (anônimos — use como evidência do que funciona/falha NESTA empresa):\n${casos.join('\n')}\n`
     : '';
 
+  // 1400 caracteres por condição, e as QUEBRAS DE LINHA ficam: o conteúdo da
+  // folha vem em linhas rotuladas ("- A · TAXA SUBSIDIADA = taxa 0%, entrada
+  // 70%, 24x"), e achatar isso num parágrafo foi o que fez o modelo colar o
+  // número de uma versão na outra e inventar piso de FIPE que não existe.
   const cond = lista(p.condicoes, LIMITES.condicoes)
-    .map((c) => `• ${txt(c.titulo, 120)}${c.detalhe ? ` — ${txt(c.detalhe, 200)}` : ''}`)
+    .map((c) => `• ${txt(c.titulo, 120)}${c.detalhe ? `\n${txt(c.detalhe, 1400)}` : ''}`)
     .filter((l) => l.length > 4);
-  const blocoCond = cond.length ? `\nCONDIÇÕES DO MÊS:\n${cond.join('\n')}\n` : '';
+  const blocoCond = cond.length ? `\nCONDIÇÕES DO MÊS (texto da folha oficial — os números abaixo são para citar como estão):\n${cond.join('\n\n')}\n` : '';
 
   const ofe = lista(p.ofertas, LIMITES.ofertas)
     .map((o) => `• ${txt(o.titulo, 120)}${o.detalhe ? ` — ${txt(o.detalhe, 200)}` : ''}`)

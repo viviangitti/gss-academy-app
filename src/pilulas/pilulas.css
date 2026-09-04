@@ -1043,6 +1043,11 @@
 .wp-login-caret { color: var(--wp-pink); font-size: 26px; margin-left: 2px; transform: translateY(-6px); }
 .wp-login-tag { color: #6b6473; font-size: 14px; margin: 6px 0 26px; text-align: center; }
 .wp-login-card {
+  /* Sem box-border a conta não fecha: 100% de largura + 22px de padding de cada
+     lado dá 379px numa tela de 375, e o campo de senha (com padding e borda
+     próprios) passava 41px da direita — o olhinho de "mostrar senha" ficava
+     cortado. É a PRIMEIRA tela que as vinte pessoas veem. */
+  box-sizing: border-box;
   width: 100%;
   max-width: 400px;
   background: var(--wp-surface);
@@ -1052,6 +1057,7 @@
 }
 .wp-login-label { display: block; font-size: 12px; font-weight: 800; color: var(--wp-soft); margin: 4px 0 7px; }
 .wp-login-card input {
+  box-sizing: border-box;
   width: 100%; border: 1.5px solid #e3e6ec; border-radius: 11px;
   padding: 12px 14px; font-size: 15px; font-family: inherit; color: var(--wp-text);
   outline: none; margin-bottom: 16px; background: var(--wp-surface);

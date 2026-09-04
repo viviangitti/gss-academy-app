@@ -6,7 +6,7 @@ service cloud.firestore {
     // muda aqui — senão a pessoa vê os campos de vídeo mas não salva na nuvem.
     function isGestor() {
       return request.auth != null &&
-        request.auth.token.email in ['maria26@gmail.com', 'mari.briso@merakifarma.com.br', 'silene.mendesdesouza@gmail.com', 'silene.mendesangelodesouza@gmail.com', 'silene_mendes@hotmail.com', 'viviangitti@gmail.com', 'viviangitti23@gmail.com', 'mariana@gruporamasa.com', 'silmara.ccrgerente@lincetoyota.com'];
+        request.auth.token.email in ['maria26@gmail.com', 'mari.briso@merakifarma.com.br', 'silene.mendesdesouza@gmail.com', 'silene.mendesangelodesouza@gmail.com', 'silene_mendes@hotmail.com', 'viviangitti@gmail.com', 'viviangitti23@gmail.com', 'mariana@gruporamasa.com', 'silmara.ccrgerente@lincetoyota.com', 'lucas.cardoso@lincetoyota.com'];
     }
     // Perfil do usuário: cada pessoa lê e grava SÓ o próprio doc (papel/nome/canal).
     match /elevaUsers/{uid} {

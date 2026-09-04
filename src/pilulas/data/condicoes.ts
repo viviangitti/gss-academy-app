@@ -193,6 +193,36 @@ export async function publicarCondicao(c: Omit<Condicao, 'id' | 'criadoEm'>): Pr
   await setDoc(doc(db, COL, id), nova);
 }
 
+/**
+ * Corrige uma condição que já está no ar.
+ *
+ * Existia só publicar e apagar. Errou a data de validade, o título ou a
+ * prateleira? Apagar e subir de novo — e nesse meio-tempo a condição some da
+ * tela do time, no meio do expediente. Pior: quem apaga por engano perde a
+ * folha, porque o arquivo vai junto.
+ *
+ * `arquivo` é opcional: sem ele, a folha que já estava fica. É o caso comum —
+ * quase toda correção é de texto ou de data, não da imagem.
+ */
+export async function atualizarCondicao(
+  id: string,
+  mudancas: Partial<Omit<Condicao, 'id' | 'criadoEm'>>,
+): Promise<void> {
+  const { arquivo, ...ficha } = mudancas;
+  const atual = lerCache().find((c) => c.id === id);
+  if (!atual) return;
+  const nova: Condicao = { ...atual, ...ficha };
+  if (arquivo) baixados.set(id, arquivo);
+  gravarCache(lerCache().map((c) => (c.id === id ? nova : c)));
+  if (!db) return;
+  // A folha primeiro, como na publicação: se ela falhar, a ficha antiga segue
+  // apontando pra folha antiga — que abre. O contrário deixaria a condição
+  // dizendo uma coisa e mostrando outra.
+  if (arquivo) await setDoc(doc(db, COL, id, SUB, PECA), { arquivo });
+  const { arquivo: _fora, ...paraNuvem } = nova;
+  await setDoc(doc(db, COL, id), paraNuvem, { merge: true });
+}
+
 export async function apagarCondicao(id: string): Promise<void> {
   gravarCache(lerCache().filter((c) => c.id !== id));
   baixados.delete(id);

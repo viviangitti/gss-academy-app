@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, X } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, X } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { cargoLabel } from './data/cargos';
@@ -17,6 +17,7 @@ import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, a
 import { DOCUMENTOS, PRATELEIRAS, type PrateleiraId } from './data/documentos';
 import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, type DocNuvem } from './data/docsUpload';
 import { carregarOcultos, ocultosDaMarca, alternarOculto, useDocsOcultos } from './data/docsOcultos';
+import { atualizarCondicao, type Condicao } from './data/condicoes';
 import { lerCarta, pareceAcessorio, textoDeValidade, type PaginaCarta } from './data/cartaPdf';
 import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, estaVencida, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
@@ -807,20 +808,25 @@ function OfferForm({ brand, onDone }: { brand: string; onDone: (t: string) => vo
 // Ele já recebe o print no grupo ou o PDF da campanha. Fazer ele traduzir
 // aquilo em "% de desconto" custa tempo e erra número — e número errado no
 // showroom vira promessa que a concessionária não cumpre.
-function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) => void }) {
-  const [titulo, setTitulo] = useState('');
-  const [validade, setValidade] = useState('');
-  const [observacao, setObservacao] = useState('');
-  const [categoria, setCategoria] = useState<'veiculo' | 'acessorio' | 'campanha'>('veiculo');
-  const [venceEm, setVenceEm] = useState('');
+function CondicaoForm({ brand, editando, onDone }: {
+  brand: BrandId;
+  /** Quando vem preenchido, o formulário CORRIGE em vez de publicar. */
+  editando?: Condicao;
+  onDone: (t: string) => void;
+}) {
+  const [titulo, setTitulo] = useState(editando?.titulo || '');
+  const [validade, setValidade] = useState(editando?.validade || '');
+  const [observacao, setObservacao] = useState(editando?.observacao || '');
+  const [categoria, setCategoria] = useState<'veiculo' | 'acessorio' | 'campanha'>(editando?.categoria || 'veiculo');
+  const [venceEm, setVenceEm] = useState(editando?.venceEm || '');
   // O texto de validade nasce da data. Eram dois campos dizendo a mesma coisa,
   // e o gerente tinha que escrever à mão o que a carta já diz — some quando ele
   // decide escrever o dele.
-  const [escreveuValidade, setEscreveuValidade] = useState(false);
+  const [escreveuValidade, setEscreveuValidade] = useState(!!editando?.validade);
   // Enquanto ninguém escolher à mão, o app decide pelo título e pelo nome do
   // arquivo. A arte de kit chega como print, sem texto pra ler — mas o nome
   // ("kit-premium-sound.jpg") e o título que a pessoa digita dizem tudo.
-  const [escolheuCategoria, setEscolheuCategoria] = useState(false);
+  const [escolheuCategoria, setEscolheuCategoria] = useState(!!editando);
   const [arq, setArq] = useState<ArquivoPronto | null>(null);
   const [erro, setErro] = useState('');
   const [subindo, setSubindo] = useState(false);
@@ -893,13 +899,27 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
     }
   };
 
-  const valid = titulo.trim().length > 2 && !!arq;
+  // Corrigindo, o arquivo é opcional: quase toda correção é de texto ou data.
+  const valid = titulo.trim().length > 2 && (!!arq || !!editando);
 
   const submit = async () => {
-    if (!valid || !arq) return;
+    if (!valid) return;
     setSubindo(true);
     setErro('');
     try {
+      if (editando) {
+        await atualizarCondicao(editando.id, {
+          titulo: titulo.trim(),
+          validade: validade.trim() || 'confirmar validade com a gerência',
+          observacao: observacao.trim() || undefined,
+          categoria,
+          venceEm: venceEm || undefined,
+          ...(arq ? { arquivo: arq.arquivo, tipo: arq.tipo, nomeArquivo: arq.nomeArquivo } : {}),
+        });
+        onDone(titulo.trim());
+        return;
+      }
+      if (!arq) return;
       await publicarCondicao({
         brand,
         titulo: titulo.trim(),
@@ -912,8 +932,20 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
         nomeArquivo: arq.nomeArquivo,
       });
       onDone(titulo.trim());
-    } catch {
-      setErro('Não consegui publicar agora. Confira a internet e tente de novo.');
+    } catch (e) {
+      // SEM PERMISSÃO NÃO É SEM INTERNET.
+      //
+      // Quem tem cargo de gerente abre o Painel e o formulário, mas só grava se
+      // o e-mail estiver liberado nas regras do Firestore. Sem separar os dois
+      // casos, o gerente lê "confira a internet", troca de wi-fi, tenta de novo
+      // e conclui que o app está quebrado — quando o que falta é uma linha que
+      // só eu posso soltar.
+      const semPermissao = (e as { code?: string })?.code === 'permission-denied';
+      setErro(semPermissao
+        ? 'Seu acesso ainda não libera publicar aqui. Avise a Vivian para soltar o seu e-mail — o resto do app segue funcionando.'
+        : editando
+          ? 'Não consegui salvar a correção. Confira a internet e tente de novo.'
+          : 'Não consegui publicar agora. Confira a internet e tente de novo.');
     } finally {
       setSubindo(false);
     }
@@ -921,15 +953,18 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
 
   return (
     <div className="wp-gz-form">
-      <label className="wp-gz-label">Print ou PDF da tabela</label>
+      <label className="wp-gz-label">
+        {editando ? 'Trocar a folha (opcional)' : 'Print ou PDF da tabela'}
+      </label>
       <input
         type="file"
         accept="image/*,application/pdf"
         onChange={(e) => escolher(e.target.files?.[0])}
       />
       <p className="wp-gz-hint">
-        Pode ser o print do grupo, a foto da planilha ou o PDF da campanha. A imagem é
-        reduzida automaticamente para abrir rápido no celular do time.
+        {editando
+          ? 'Deixe em branco para manter a folha que já está no ar. Só escolha um arquivo se a imagem mudou.'
+          : 'Pode ser o print do grupo, a foto da planilha ou o PDF da campanha. A imagem é reduzida automaticamente para abrir rápido no celular do time.'}
       </p>
       {lendo && <p className="wp-gz-hint">Lendo o arquivo…</p>}
 
@@ -1064,7 +1099,10 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
         </button>
       ) : (
         <button className="wp-gz-submit" disabled={!valid || subindo} onClick={submit}>
-          <Check size={16} className="wp-ico" /> {subindo ? 'Publicando…' : 'Publicar condição'}
+          <Check size={16} className="wp-ico" />
+          {editando
+            ? (subindo ? 'Salvando…' : 'Salvar alterações')
+            : (subindo ? 'Publicando…' : 'Publicar condição')}
         </button>
       )}
     </div>
@@ -1425,6 +1463,8 @@ export default function Gestor() {
   useStore();
   const { brand, brandId } = useBrand();
   const [openForm, setOpenForm] = useState<'produto' | 'oferta' | 'condicao' | 'documento' | 'calendario' | 'tendencia' | null>(null);
+  // Qual condição está aberta para correção (o formulário abre abaixo dela).
+  const [editandoCond, setEditandoCond] = useState<string | null>(null);
   const [toast, setToast] = useState('');
   const [tab, setTab] = useState<'resultados' | 'vendas' | 'conteudo'>('resultados');
 
@@ -1448,10 +1488,10 @@ export default function Gestor() {
   const trends = allTrends(brandId);
   const buscas = topSearches(5, brandId);
 
-  const done = (label: string, what: string, naNuvem = true) => {
+  const done = (label: string, what: string, naNuvem = true, verbo = 'publicado') => {
     setOpenForm(null);
     setToast(naNuvem
-      ? `${what} "${label}" publicado — o time já vê.`
+      ? `${what} "${label}" ${verbo} — o time já vê.`
       : `"${label}" foi salvo só neste aparelho: a nuvem não respondeu. Abra de novo com internet para publicar pro time.`);
     setTimeout(() => setToast(''), naNuvem ? 4000 : 8000);
   };
@@ -1524,25 +1564,50 @@ export default function Gestor() {
               <UploadCloud size={15} className="wp-ico" /> Subir tabela
             </button>
           </div>
-          {openForm === 'condicao' && <CondicaoForm brand={brandId} onDone={(t) => done(t, 'Condição')} />}
+          {openForm === 'condicao' && !editandoCond && (
+            <CondicaoForm brand={brandId} onDone={(t) => done(t, 'Condição')} />
+          )}
           <div className="wp-gz-list">
             {condicoes.map((c) => (
-              <div key={c.id} className={`wp-gz-item ${estaVencida(c) ? 'wp-gz-item-off' : ''}`}>
-                <span className="wp-gz-item-name">
-                  {c.titulo}
-                  {estaVencida(c) && <span className="wp-gz-fora">vencida — fora do ar</span>}
-                </span>
-                <span className="wp-gz-item-meta">
-                  {c.validade}
-                  <button
-                    type="button"
-                    className="wp-gz-del"
-                    aria-label={`Apagar ${c.titulo}`}
-                    onClick={() => { if (confirm(`Apagar "${c.titulo}"? O time deixa de ver esta tabela.`)) apagarCondicao(c.id); }}
-                  >
-                    <Trash2 size={14} className="wp-ico" />
-                  </button>
-                </span>
+              <div key={c.id}>
+                <div className={`wp-gz-item ${estaVencida(c) ? 'wp-gz-item-off' : ''}`}>
+                  <span className="wp-gz-item-name">
+                    {c.titulo}
+                    {estaVencida(c) && <span className="wp-gz-fora">vencida — fora do ar</span>}
+                  </span>
+                  <span className="wp-gz-item-meta">
+                    {c.validade}
+                    {/* CORRIGIR sem apagar. Antes, errar a data ou o título
+                        custava apagar e subir de novo — e a condição sumia da
+                        tela do time no meio do expediente, junto com a folha. */}
+                    <button
+                      type="button"
+                      className="wp-gz-del"
+                      aria-label={`Editar ${c.titulo}`}
+                      title="Editar"
+                      onClick={() => { setOpenForm(null); setEditandoCond(editandoCond === c.id ? null : c.id); }}
+                    >
+                      <Pencil size={14} className="wp-ico" />
+                    </button>
+                    <button
+                      type="button"
+                      className="wp-gz-del"
+                      aria-label={`Apagar ${c.titulo}`}
+                      title="Apagar"
+                      onClick={() => { if (confirm(`Apagar "${c.titulo}"? O time deixa de ver esta tabela.`)) apagarCondicao(c.id); }}
+                    >
+                      <Trash2 size={14} className="wp-ico" />
+                    </button>
+                  </span>
+                </div>
+                {editandoCond === c.id && (
+                  <CondicaoForm
+                    key={`edit-${c.id}`}
+                    brand={brandId}
+                    editando={c}
+                    onDone={(t) => { setEditandoCond(null); done(t, 'Condição', true, 'corrigida'); }}
+                  />
+                )}
               </div>
             ))}
           </div>

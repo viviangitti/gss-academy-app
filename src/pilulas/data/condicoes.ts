@@ -50,17 +50,18 @@ export interface Condicao {
    */
   venceEm?: string;
   /**
-   * Condição de carro ou de acessório?
+   * Condição de carro, de acessório, ou campanha da casa?
    *
-   * São duas conversas diferentes e dois momentos diferentes: a condição do
-   * carro entra na negociação, a do acessório entra DEPOIS do sim. Misturadas
-   * numa lista só, o vendedor rolava kit de proteção para achar a taxa do
-   * Jaecoo — com o cliente esperando.
+   * São conversas diferentes em momentos diferentes: a do carro entra na
+   * negociação, a do acessório entra DEPOIS do sim, e a campanha não é conversa
+   * com cliente nenhum — é a meta e a premiação do mês, que o vendedor abre
+   * antes de entrar no salão. Misturadas numa lista só, ele rolava kit de
+   * proteção para achar a taxa do Jaecoo, com o cliente esperando.
    *
    * Sem valor, vale 'veiculo': é o que a gerência sobe na maior parte das
    * vezes, e errar para o lado do carro não esconde nada de ninguém.
    */
-  categoria?: 'veiculo' | 'acessorio';
+  categoria?: 'veiculo' | 'acessorio' | 'campanha';
   /**
    * O arquivo — data URL (imagem comprimida ou PDF).
    *

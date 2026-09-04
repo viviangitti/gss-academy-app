@@ -811,7 +811,7 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
   const [titulo, setTitulo] = useState('');
   const [validade, setValidade] = useState('');
   const [observacao, setObservacao] = useState('');
-  const [categoria, setCategoria] = useState<'veiculo' | 'acessorio'>('veiculo');
+  const [categoria, setCategoria] = useState<'veiculo' | 'acessorio' | 'campanha'>('veiculo');
   const [venceEm, setVenceEm] = useState('');
   // O texto de validade nasce da data. Eram dois campos dizendo a mesma coisa,
   // e o gerente tinha que escrever à mão o que a carta já diz — some quando ele
@@ -959,12 +959,13 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
                 />
                 <select
                   value={p.categoria}
-                  onChange={(e) => mexer(p.n, { categoria: e.target.value as 'veiculo' | 'acessorio' })}
+                  onChange={(e) => mexer(p.n, { categoria: e.target.value as 'veiculo' | 'acessorio' | 'campanha' })}
                   disabled={!p.incluir}
                   aria-label={`Categoria da página ${p.n}`}
                 >
                   <option value="veiculo">Veículo</option>
                   <option value="acessorio">Acessório</option>
+                  <option value="campanha">Campanha</option>
                 </select>
                 <span className="wp-gz-pg-meta">
                   {Math.round(p.bytes / 1024)} KB
@@ -1032,10 +1033,11 @@ function CondicaoForm({ brand, onDone }: { brand: BrandId; onDone: (t: string) =
         <label className="wp-gz-label">É condição de quê?</label>
         <select
           value={categoria}
-          onChange={(e) => { setEscolheuCategoria(true); setCategoria(e.target.value as 'veiculo' | 'acessorio'); }}
+          onChange={(e) => { setEscolheuCategoria(true); setCategoria(e.target.value as 'veiculo' | 'acessorio' | 'campanha'); }}
         >
           <option value="veiculo">Veículo — taxa, entrada, bônus, trade-in</option>
           <option value="acessorio">Acessório — kit, película, proteção, som</option>
+          <option value="campanha">Campanha da casa — meta, premiação, ação interna</option>
         </select>
         <p className="wp-gz-hint">
           {escolheuCategoria ? 'Você escolheu — ' : 'Sugerido pelo título e pelo arquivo, dá pra trocar. '}

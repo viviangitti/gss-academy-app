@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, Megaphone, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
@@ -31,6 +31,8 @@ const GRUPOS = [
     sub: 'Taxa, entrada, bônus e trade-in. É o que entra na negociação do carro.' },
   { chave: 'acessorio' as const, titulo: 'Acessórios', Icone: Wrench,
     sub: 'Kits, proteção, som e película. Entram depois do sim, na mesma visita.' },
+  { chave: 'campanha' as const, titulo: 'Campanhas da casa', Icone: Megaphone,
+    sub: 'Meta, premiação e ação interna do mês. Não é conversa com cliente — é o que você disputa.' },
 ];
 
 function quando(ts: number): string {
@@ -100,7 +102,7 @@ export default function Ofertas() {
   const { user } = useAuth();
   const auto = isAuto(brandId);
   const [aberta, setAberta] = useState<Condicao | null>(null);
-  const [grupo, setGrupo] = useState<'veiculo' | 'acessorio' | null>(null);
+  const [grupo, setGrupo] = useState<'veiculo' | 'acessorio' | 'campanha' | null>(null);
 
   useEffect(() => { carregarCondicoes(brandId); }, [brandId]);
 

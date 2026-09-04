@@ -20,6 +20,7 @@ import FormArgumentos from './FormArgumentos';
 import Landing from './Landing';
 import Onboarding from './Onboarding';
 import BottomNav from './BottomNav';
+import AvisosApp from './AvisosApp';
 import { BrandProvider, useBrand } from './BrandContext';
 import { AuthProvider, useAuth, audienceOf } from './AuthContext';
 import Perfil from './Perfil';
@@ -361,6 +362,7 @@ function Shell() {
           <Route path="*" element={<Navigate to="/eleva" replace />} />
         </Routes>
       </main>
+      <AvisosApp />
       {!onProduct && <BottomNav />}
     </div>
   );

@@ -3494,3 +3494,38 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-gz-avancado > summary::before { content: '+ '; font-weight: 700; }
 .wp-gz-avancado[open] > summary::before { content: '– '; }
 .wp-gz-avancado[open] { padding-bottom: 10px; }
+
+/* AVISOS DO APP — versão nova e convite de instalar.
+   Ficam acima da barra de abas, fixos, onde o polegar já está. Nenhum some
+   sozinho: aviso que desaparece é aviso que ninguém leu. */
+.wp-aviso {
+  position: fixed; left: 10px; right: 10px; z-index: 60;
+  bottom: calc(var(--wp-nav-h, 62px) + 10px + env(safe-area-inset-bottom, 0px));
+  display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 10px;
+  padding: 12px 12px 12px 14px; border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(8, 11, 20, .28);
+  font-size: 13px; line-height: 1.35;
+}
+.wp-aviso > .wp-ico { flex: 0 0 auto; }
+.wp-aviso span { display: block; min-width: 0; }
+.wp-aviso span b { display: block; font-weight: 800; }
+.wp-aviso span i {
+  display: block; font-style: normal; font-size: 12px; opacity: .82; margin-top: 2px;
+}
+.wp-aviso span i b { display: inline; font-weight: 800; }
+.wp-aviso span i .wp-ico { vertical-align: -2px; }
+.wp-aviso-btn {
+  font-family: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer;
+  border: 0; border-radius: 999px; padding: 8px 14px; white-space: nowrap;
+}
+.wp-aviso-x {
+  background: none; border: 0; padding: 4px; cursor: pointer; opacity: .7; line-height: 0;
+}
+.wp-aviso-versao { background: #1f3a8a; color: #fff; }
+.wp-aviso-versao .wp-aviso-btn { background: #fff; color: #1f3a8a; }
+.wp-aviso-instalar { background: var(--wp-text); color: #fff; }
+.wp-aviso-instalar .wp-aviso-btn { background: #fff; color: var(--wp-text); }
+.wp-aviso-instalar .wp-aviso-x { color: #fff; }
+/* Sem botão (iPhone): o texto ocupa o lugar dele. */
+.wp-aviso-instalar span { grid-column: 2 / 4; }
+.wp-aviso-instalar .wp-aviso-btn ~ .wp-aviso-x { grid-column: auto; }

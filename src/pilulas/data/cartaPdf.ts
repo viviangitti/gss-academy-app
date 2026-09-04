@@ -24,7 +24,7 @@ import type { BrandId } from './brands';
 export interface PaginaCarta {
   n: number;
   titulo: string;
-  categoria: 'veiculo' | 'acessorio';
+  categoria: 'veiculo' | 'acessorio' | 'campanha';
   arquivo: string;
   bytes: number;
   /** Quantos blocos de rebate foram cobertos — a tela mostra pra dar confiança. */

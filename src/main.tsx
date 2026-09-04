@@ -39,13 +39,17 @@ if ('serviceWorker' in navigator) {
       // SW registration failed silently
     });
 
+    // AVISA, NÃO RECARREGA.
+    //
+    // Recarregar sozinho parecia mágica boa até fazer isso no meio de uma
+    // pergunta ao Tira-dúvida e apagar o que a pessoa tinha digitado — com o
+    // cliente do lado. Agora aparece uma barra e ela escolhe a hora.
     const tinhaVersaoRodando = !!navigator.serviceWorker.controller;
-    let recarregando = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!tinhaVersaoRodando || recarregando) return;
-      recarregando = true; // sem isso, dois eventos viram dois reloads
-      window.location.reload();
+      if (!tinhaVersaoRodando) return; // primeira visita: não é "versão nova"
+      import('./pilulas/data/versaoApp').then((m) => m.avisarVersaoNova());
     });
+    import('./pilulas/data/versaoApp').then((m) => m.escutarInstalacao());
   });
 }
 

@@ -19,6 +19,8 @@ import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, ty
 import { carregarOcultos, ocultosDaMarca, alternarOculto, useDocsOcultos } from './data/docsOcultos';
 import { atualizarCondicao, type Condicao } from './data/condicoes';
 import { lerCarta, pareceAcessorio, textoDeValidade, type PaginaCarta } from './data/cartaPdf';
+import { ACESSORIOS, precoLabel, precoDe, type Acessorio } from './data/acessorios';
+import { carregarPrecos, salvarPreco, usePrecosAcessorios } from './data/precosAcessorios';
 import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, estaVencida, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
@@ -1440,6 +1442,75 @@ function VideosPorPublico({ products: todos }: { products: Product[] }) {
   );
 }
 
+
+// UMA LINHA DE ACESSÓRIO, com o preço editável ali mesmo.
+//
+// Sem tela nova e sem formulário: o preço é o único campo que muda toda hora, e
+// mandar a gerência abrir um formulário pra trocar um número é o tipo de
+// fricção que faz ela não trocar — e o vendedor mostrar valor velho.
+function LinhaAcessorio({ a, brand }: { a: Acessorio; brand: BrandId }) {
+  const [editando, setEditando] = useState(false);
+  const [valor, setValor] = useState('');
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState('');
+
+  const abrir = () => {
+    setErro('');
+    setValor(String(precoDe(a) ?? ''));
+    setEditando(true);
+  };
+
+  const salvar = async () => {
+    setSalvando(true);
+    setErro('');
+    try {
+      const n = Number(String(valor).replace(/[^\d]/g, ''));
+      await salvarPreco(brand, a.id, Number.isFinite(n) && n > 0 ? n : undefined);
+      setEditando(false);
+    } catch (e) {
+      setErro((e as { code?: string })?.code === 'permission-denied'
+        ? 'Seu acesso ainda não libera mexer em preço. Avise a Vivian.'
+        : 'Não consegui salvar. Confira a internet.');
+    } finally {
+      setSalvando(false);
+    }
+  };
+
+  if (!editando) {
+    return (
+      <div className="wp-gz-item">
+        <span className="wp-gz-item-name">{a.nome}</span>
+        <span className="wp-gz-item-meta">
+          <button type="button" className="wp-gz-preco" onClick={abrir}>
+            {precoLabel(a)} <Pencil size={12} className="wp-ico" />
+          </button>
+        </span>
+      </div>
+    );
+  }
+  return (
+    <div className="wp-gz-item wp-gz-item-edit">
+      <span className="wp-gz-item-name">{a.nome}</span>
+      <span className="wp-gz-preco-form">
+        <input
+          type="text"
+          inputMode="numeric"
+          value={valor}
+          onChange={(e) => setValor(e.target.value)}
+          placeholder="em branco = sob consulta"
+          aria-label={`Preço de ${a.nome}`}
+          autoFocus
+        />
+        <button type="button" className="wp-gz-preco-ok" disabled={salvando} onClick={salvar}>
+          {salvando ? '…' : 'Salvar'}
+        </button>
+        <button type="button" className="wp-gz-preco-x" onClick={() => setEditando(false)}>Cancelar</button>
+        {erro && <small className="wp-gz-erro">{erro}</small>}
+      </span>
+    </div>
+  );
+}
+
 function ProductRow({ p }: { p: Product }) {
   useStore();
   const uploaded = hasVideo(p.id);
@@ -1493,6 +1564,9 @@ export default function Gestor() {
   useEffect(() => { carregarOcultos(brandId); }, [brandId]);
   const escondidos = ocultosDaMarca(brandId);
   const docsDoApp = DOCUMENTOS.filter((d) => d.brand === brandId);
+  usePrecosAcessorios();
+  useEffect(() => { carregarPrecos(brandId); }, [brandId]);
+  const acessoriosDaCasa = ACESSORIOS.filter((a) => a.brand === brandId);
   const auto = isAuto(brandId);
 
   const products = allProducts().filter((p) => p.brand === brandId);
@@ -1558,7 +1632,7 @@ export default function Gestor() {
       {/* Produtos */}
       <div className="wp-gz-block">
         <div className="wp-gz-block-head">
-          <span className="wp-gz-block-title"><Package size={17} className="wp-ico" /> {auto ? 'Carros e acessórios' : 'Produtos'} ({products.length})</span>
+          <span className="wp-gz-block-title"><Package size={17} className="wp-ico" /> {auto ? 'Carros' : 'Produtos'} ({products.length})</span>
           <button className="wp-gz-add" onClick={() => setOpenForm(openForm === 'produto' ? null : 'produto')}>
             <Plus size={15} className="wp-ico" /> {auto ? 'Novo item' : 'Novo produto'}
           </button>
@@ -1568,6 +1642,27 @@ export default function Gestor() {
           {products.map((p) => <ProductRow key={p.id} p={p} />)}
         </div>
       </div>
+
+      {/* ACESSÓRIOS — bloco próprio.
+          Antes o bloco se chamava "Carros e acessórios" e listava só os carros:
+          os 27 acessórios não apareciam em lugar nenhum do Painel, e o preço
+          deles só mudava se alguém me pedisse. */}
+      {auto && (
+        <div className="wp-gz-block">
+          <div className="wp-gz-block-head">
+            <span className="wp-gz-block-title"><Package size={17} className="wp-ico" /> Acessórios ({acessoriosDaCasa.length})</span>
+          </div>
+          <p className="wp-gz-help" style={{ marginTop: 0 }}>
+            Toque no preço para corrigir. Nome, benefício e código de peça são do catálogo —
+            se algum estiver errado, me avise.
+          </p>
+          <div className="wp-gz-list">
+            {acessoriosDaCasa.map((a) => (
+              <LinhaAcessorio key={a.id} a={a} brand={brandId} />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Condições comerciais (automotivo): a tabela sobe como print/PDF */}
       {auto && (

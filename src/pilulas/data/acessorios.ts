@@ -29,6 +29,7 @@
 // comunicados e NÃO entram no app: isso é informação da gerência, e vendedor
 // com custo na tela acaba negociando o desconto que não é dele pra dar.
 import type { BrandId } from './brands';
+import { precoCorrigido } from './precosAcessorios';
 
 export type OrigemAcessorio = 'fabrica' | 'loja';
 
@@ -500,9 +501,16 @@ export function acessoriosPara(produtoId: string): Acessorio[] {
   return ACESSORIOS.filter((a) => a.aplicaEm.includes(produtoId));
 }
 
+export function precoDe(a: Acessorio): number | undefined {
+  // A correção da gerência ganha do preço do código — é ela que viu a tabela
+  // nova. Sem correção, vale o catálogo.
+  return precoCorrigido(a.id) ?? a.preco;
+}
+
 export function precoLabel(a: Acessorio): string {
-  if (!a.preco) return 'sob consulta';
-  return a.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 });
+  const p = precoDe(a);
+  if (!p) return 'sob consulta';
+  return p.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 });
 }
 
 /**

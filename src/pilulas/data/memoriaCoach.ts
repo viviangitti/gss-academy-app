@@ -13,7 +13,7 @@ import { condicoesDaMarca, estaVencida } from './condicoes';
 import { allOffers } from './store';
 import { campanhaPara, ateLabel } from './campanha';
 import { getBrand, isAuto, type BrandId } from './brands';
-import { ACESSORIOS } from './acessorios';
+import { ACESSORIOS, precoLabel } from './acessorios';
 import { documentosDaMarca } from './documentos';
 import type { Role } from '../AuthContext';
 
@@ -165,9 +165,10 @@ export async function montarMemoria(opts: {
     acessorios: auto
       ? ACESSORIOS.filter((a) => a.brand === brandId).map((a) => ({
           titulo: a.nome,
-          // PREÇO NÃO VAI. A regra do coach já proíbe falar valor, e o jeito
-          // mais seguro de ela não falar é ela não ter.
-          detalhe: [a.beneficio, a.comoOferecer].filter(Boolean).join(' · ') || undefined,
+          // O preço VAI, agora que a gerência mantém ele: a tabela de acessório
+          // é publicada pra loja, e "quanto é o rack?" é a pergunta número um.
+          // Preço de VEÍCULO continua fora — esse não existe aqui.
+          detalhe: [`preço ${precoLabel(a)}`, a.beneficio, a.comoOferecer].filter(Boolean).join(' · ') || undefined,
         }))
       : [],
     // Só o índice: título e pra que serve. Assim ela manda abrir o documento

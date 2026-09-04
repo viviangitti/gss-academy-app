@@ -106,8 +106,13 @@ export default function Noticias() {
     fetch(`${API}?q=${encodeURIComponent(q)}&limit=14`)
       .then((r) => r.json())
       .then((d) => {
-        if (d?.status === 'ok' && Array.isArray(d.items)) setItens(d.items);
-        else setErro('Não consegui carregar as notícias agora.');
+        if (d?.status === 'ok' && Array.isArray(d.items)) {
+          setItens(d.items);
+          // O servidor avisa quando a lista veio da última busca boa, ou quando
+          // o buscador não respondeu. Sem isso, "nada novo nesta frente" era a
+          // mesma frase pra "não tem notícia" e pra "a busca falhou".
+          if (d.aviso) setErro(String(d.aviso));
+        } else setErro('Não consegui carregar as notícias agora.');
       })
       .catch(() => setErro('Não consegui carregar as notícias agora.'))
       .finally(() => setCarregando(false));

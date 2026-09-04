@@ -12,6 +12,15 @@
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 min — alinhado ao cache do cliente
 const cache = new Map(); // key: `${q}` -> { ts, items }
 
+// A ÚLTIMA RESPOSTA BOA, sem prazo pra vencer.
+//
+// O Google às vezes devolve 200 com ZERO item pra esta função — ela roda num
+// datacenter dos EUA, e de lá o feed nem sempre vem. Sem isto, aquele vazio
+// entrava no cache e a tela ficava "Nada novo nesta frente" por 15 minutos,
+// com o feed cheio de notícia do dia. Notícia de 3 horas atrás é melhor que
+// tela vazia.
+const ultimoBom = new Map(); // key: `${q}` -> { ts, items }
+
 // Decodifica entidades HTML comuns que aparecem nos títulos do Google News
 function decodeEntities(str) {
   if (!str) return '';
@@ -100,13 +109,37 @@ export default async function handler(req, res) {
     });
 
     if (!upstream.ok) {
+      const guardado = ultimoBom.get(q);
+      if (guardado) {
+        res.setHeader('X-Cache', 'STALE');
+        return res.status(200).json({
+          status: 'ok',
+          items: guardado.items.slice(0, limit),
+          aviso: 'O buscador não respondeu agora; mostrando a última lista que veio.',
+        });
+      }
       return res.status(502).json({ status: 'error', message: `upstream ${upstream.status}`, items: [] });
     }
 
     const xml = await upstream.text();
     const items = parseRss(xml, 50); // guarda até 50 no cache, já em ordem de data
 
+    // VAZIO NÃO ENTRA NO CACHE. Uma falha de segundos não pode virar quinze
+    // minutos de tela vazia — foi exatamente o que aconteceu.
+    if (!items.length) {
+      const guardado = ultimoBom.get(q);
+      res.setHeader('X-Cache', guardado ? 'STALE' : 'EMPTY');
+      return res.status(200).json({
+        status: 'ok',
+        items: guardado ? guardado.items.slice(0, limit) : [],
+        aviso: guardado
+          ? 'O buscador não respondeu agora; mostrando a última lista que veio.'
+          : 'O buscador não respondeu agora. Toque em atualizar em instantes.',
+      });
+    }
+
     cache.set(q, { ts: Date.now(), items });
+    ultimoBom.set(q, { ts: Date.now(), items });
     res.setHeader('X-Cache', 'MISS');
     return res.status(200).json({ status: 'ok', items: items.slice(0, limit) });
   } catch (err) {

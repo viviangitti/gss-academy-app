@@ -73,13 +73,6 @@ export default function Login() {
   // lê. Com oito cargos numa lista, o primeiro da fila viraria o cargo de meia
   // concessionária — e o Painel passaria a agrupar gente no lugar errado.
   const [cargo, setCargo] = useState<CargoAuto | ''>('');
-  const toggleBrand = (id: BrandId) => {
-    setError('');
-    setBrands((cur) => (cur.includes(id)
-      ? cur.filter((b) => b !== id) // pode zerar: quem trava é o botão de criar
-      : [...cur, id]));
-  };
-
   const emailOk = /\S+@\S+\.\S+/.test(email);
   const valid =
     emailOk && password.length >= 6 &&
@@ -166,27 +159,37 @@ export default function Login() {
           </button>
         </div>
 
-        {/* Escolha de marca — a pessoa diz se é Meraki ou Sorocaps. Some se veio
-            por link de convite (?marca=), que já fixa a marca. */}
+        {/* Em qual EMPRESA a pessoa trabalha. Some se veio por link de convite
+            (?marca=), que já fixa a empresa.
+
+            Lista, e não caixinhas, pelo mesmo motivo do cargo: são três nomes
+            longos ("Sorocaps · Drogaria São Paulo") e em grade eles quebravam
+            em três linhas cada um, empurrando o resto do formulário pra fora da
+            tela. E começa VAZIA — foi um campo já respondido que fez uma
+            vendedora da Ramasa ser gravada como Meraki. */}
         {mode === 'criar' && !invBrand && (
           <>
-            <label className="wp-login-label">Qual marca você representa?</label>
-            <div className="wp-login-roles wp-login-roles--wrap">
+            <label className="wp-login-label">Em qual empresa você trabalha?</label>
+            <select
+              className="wp-login-select"
+              value={brands[0] || ''}
+              onChange={(e) => {
+                setError('');
+                const v = e.target.value as BrandId | '';
+                setBrands(v ? [v] : []);
+                // Trocou de empresa: o cargo da anterior não vale mais. Sem
+                // isto, quem escolhesse Ramasa, marcasse "Gerente de leads" e
+                // depois trocasse pra Meraki levava um cargo automotivo junto.
+                setCargo('');
+              }}
+            >
+              <option value="">Escolha a empresa…</option>
               {BRANDS.map((b) => (
-                <button
-                  key={b.id}
-                  type="button"
-                  className={`wp-login-role ${brands.includes(b.id) ? 'on' : ''}`}
-                  onClick={() => toggleBrand(b.id)}
-                >
-                  {brands.includes(b.id) && <Check size={13} className="wp-ico" />} {b.name}
-                </button>
+                <option key={b.id} value={b.id}>{b.name}</option>
               ))}
-            </div>
+            </select>
             <p className="wp-login-hint">
-              {effBrands.length === 0
-                ? 'Escolha a sua para continuar.'
-                : 'Trabalha com mais de uma? Pode marcar quantas quiser — você troca a qualquer momento.'}
+              Trabalha em mais de uma? Escolha a principal — a gerência libera as outras depois.
             </p>
           </>
         )}

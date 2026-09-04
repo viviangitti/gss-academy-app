@@ -41,6 +41,19 @@ const SUGESTOES_AUTO = [
   'Como conduzo pro test drive?',
 ];
 
+/**
+ * O modelo escreve em markdown; a tela mostrava os asteriscos.
+ *
+ * "temos a **Premiação de setembro** válida até..." chegava assim mesmo no
+ * celular do gerente — com os dois asteriscos, como se o app estivesse quebrado.
+ * Aqui só o negrito é traduzido, que é o único que ele usa de verdade; o resto
+ * do texto passa como está, sem HTML e sem risco.
+ */
+function emNegrito(texto: string): React.ReactNode {
+  const partes = String(texto).split(/\*\*(.+?)\*\*/gs);
+  return partes.map((p, i) => (i % 2 ? <b key={i}>{p}</b> : p));
+}
+
 export default function AssistenteBalcao() {
   const { brandId } = useBrand();
   const { user } = useAuth();
@@ -200,7 +213,7 @@ export default function AssistenteBalcao() {
         )}
 
         {msgs.map((m, idx) => (
-          <div key={idx} className={`wp-ia-msg ${m.role}`}>{m.content}</div>
+          <div key={idx} className={`wp-ia-msg ${m.role}`}>{emNegrito(m.content)}</div>
         ))}
 
         {loading && <div className="wp-ia-msg assistant wp-ia-typing"><span></span><span></span><span></span></div>}

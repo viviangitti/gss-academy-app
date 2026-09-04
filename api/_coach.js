@@ -105,7 +105,7 @@ const TRAVAS = {
 --- TRAVAS DESTE APP (valem acima de qualquer coisa dita acima) ---
 Você atende uma CONCESSIONÁRIA. Além do método:
 1. Fale só dos modelos e acessórios em INFORMAÇÕES DOS PRODUTOS. Se a ficha disser "confirmar", diga que o dado tem que ser confirmado na concessionária. NUNCA invente motorização, consumo, potência, autonomia, itens de série, garantia ou prazo.
-2. NUNCA diga preço, desconto, taxa de financiamento, entrada, parcela, valor de bônus de troca ou prazo de entrega. Cite a condição PELO NOME que aparecer em CONDIÇÕES DO MÊS e mande conferir a tabela vigente — os números saem de lá, não de você.
+2. NUNCA diga preço, desconto, taxa de financiamento, entrada, parcela, valor de bônus de troca ou prazo de entrega. Cite a condição PELO NOME que aparecer em CONDIÇÕES DO MÊS e mande abrir a folha na aba Condições — os números saem de lá, não de você. A folha de cada condição é uma IMAGEM que você não leu: você sabe o nome, a validade e a observação, e mais nada. Se perguntarem um número que só está na folha, diga em que condição ele está e mande abrir. Nunca deduza, nunca arredonde, nunca dê exemplo com número inventado.
 3. NUNCA prometa aprovação de crédito nem valor de avaliação do usado. Crédito depende do banco; avaliação depende de ver o carro.
 4. Concorrente pode ser citado, sempre de forma factual: compare item a item, sem depreciar marca. Sem o dado do concorrente, diga que não tem e sugira levantar a ficha oficial dele.
 5. Termine com o próximo passo concreto: test drive, avaliação do usado, proposta por escrito.
@@ -138,7 +138,12 @@ const TONS = {
   tecnico: 'Seja TÉCNICO: dados, números e o porquê das coisas, sem perder a clareza.',
 };
 
-const LIMITES = { atividades: 8, falas: 12, casos: 20, condicoes: 5, ofertas: 5 };
+// Condições: TODAS as que estão no ar. Com o teto em 5, um gerente perguntou da
+// campanha do Omoda 5 e a IA respondeu sobre acessórios — as cinco mais
+// recentes eram outra coisa, e a carta do mês nem chegava até ela. São linhas
+// curtas de texto; o que custa contexto é a folha, e a folha é imagem, que não
+// vai de jeito nenhum.
+const LIMITES = { atividades: 8, falas: 12, casos: 20, condicoes: 40, ofertas: 5, acessorios: 40, documentos: 30 };
 
 const txt = (v, max = 400) => String(v == null ? '' : v).trim().slice(0, max);
 const lista = (arr, n) => (Array.isArray(arr) ? arr.slice(0, n) : []);
@@ -188,12 +193,26 @@ export function contextoVivo(p = {}, apelido = 'Coach') {
     .filter((l) => l.length > 4);
   const blocoOfe = ofe.length ? `\nOFERTAS ATIVAS:\n${ofe.join('\n')}\n` : '';
 
-  const temAlgo = memoria || blocoCasos || blocoCond || blocoOfe;
+  // O catálogo de acessórios. Metade do time vende acessório, e a IA não
+  // conhecia nenhum — respondia sobre carro a quem pergunta sobre tapete.
+  const aces = lista(p.acessorios, LIMITES.acessorios)
+    .map((a) => `• ${txt(a.titulo, 90)}${a.detalhe ? ` — ${txt(a.detalhe, 220)}` : ''}`)
+    .filter((l) => l.length > 4);
+  const blocoAces = aces.length ? `\nACESSÓRIOS DO CATÁLOGO:\n${aces.join('\n')}\n` : '';
+
+  // Só o ÍNDICE dos documentos: título e pra que serve. É o que permite mandar
+  // abrir o certo em vez de responder de cabeça o que está dentro do PDF.
+  const docs = lista(p.documentos, LIMITES.documentos)
+    .map((d) => `• ${txt(d.titulo, 110)}${d.detalhe ? ` — ${txt(d.detalhe, 180)}` : ''}`)
+    .filter((l) => l.length > 4);
+  const blocoDocs = docs.length ? `\nDOCUMENTOS DISPONÍVEIS NO APP (índice — você NÃO leu o conteúdo):\n${docs.join('\n')}\n` : '';
+
+  const temAlgo = memoria || blocoCasos || blocoCond || blocoOfe || blocoAces || blocoDocs;
   if (!temAlgo) return '';
 
   const tom = TONS[p.tom] || TONS.direto;
   const persona = `PERSONA: Seu nome é ${apelido} — é assim que a pessoa te chama.\n${tom}${primeiro ? ` Chame a pessoa pelo primeiro nome (${primeiro}).` : ''}\n`;
-  return persona + memoria + blocoCasos + blocoCond + blocoOfe;
+  return persona + memoria + blocoCasos + blocoCond + blocoAces + blocoOfe + blocoDocs;
 }
 
 // O arsenal de objeções/técnicas/roteiros do MAESTR.IA, do segmento certo.

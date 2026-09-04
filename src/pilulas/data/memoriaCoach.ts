@@ -9,10 +9,12 @@
 // em api/_coach.js, e nunca passam pelo navegador.
 import { getStats } from './tracking';
 import { fetchObjections, fetchMyObjections, type TeamObjection } from './objections';
-import { condicoesDaMarca } from './condicoes';
+import { condicoesDaMarca, estaVencida } from './condicoes';
 import { allOffers } from './store';
 import { campanhaPara, ateLabel } from './campanha';
 import { getBrand, isAuto, type BrandId } from './brands';
+import { ACESSORIOS } from './acessorios';
+import { documentosDaMarca } from './documentos';
 import type { Role } from '../AuthContext';
 
 export type Tom = 'direto' | 'motivador' | 'tecnico';
@@ -43,6 +45,10 @@ export interface MemoriaCoach {
   casos: { rotulo: string; texto: string }[];
   condicoes: { titulo: string; detalhe?: string }[];
   ofertas: { titulo: string; detalhe?: string }[];
+  /** Acessórios do catálogo: o que é e o que resolve. */
+  acessorios: { titulo: string; detalhe?: string }[];
+  /** O que existe em Documentos — pra IA mandar abrir o certo, não inventar. */
+  documentos: { titulo: string; detalhe?: string }[];
 }
 
 const CARGO: Record<string, string> = {
@@ -133,9 +139,39 @@ export async function montarMemoria(opts: {
     atividades,
     falas,
     casos,
-    condicoes: condicoesDaMarca(brandId).slice(0, 5).map((c) => ({
-      titulo: c.titulo,
-      detalhe: [c.validade, c.observacao].filter(Boolean).join(' · ') || undefined,
+    // TODAS as condições no ar, não as cinco mais novas.
+    //
+    // Com o corte em 5, o Cristiano perguntou da campanha do Omoda 5 e a IA
+    // respondeu falando de acessórios: as cinco mais recentes eram a tabela de
+    // acessórios que o Lucas tinha acabado de subir, e a carta de setembro nem
+    // chegou até ela. São 14 linhas de texto curto — cabe.
+    //
+    // Vencida fica de fora: citar condição que saiu do ar é pior que não citar.
+    condicoes: condicoesDaMarca(brandId)
+      .filter((c) => !estaVencida(c))
+      .map((c) => ({
+        titulo: c.titulo,
+        detalhe: [
+          c.categoria === 'campanha' ? 'campanha interna' : c.categoria === 'acessorio' ? 'acessório' : 'veículo',
+          c.validade,
+          c.observacao,
+        ].filter(Boolean).join(' · ') || undefined,
+      })),
+    // O catálogo de acessórios: a IA não tinha nenhum, e o vendedor de
+    // acessórios é metade do time.
+    acessorios: auto
+      ? ACESSORIOS.filter((a) => a.brand === brandId).map((a) => ({
+          titulo: a.nome,
+          // PREÇO NÃO VAI. A regra do coach já proíbe falar valor, e o jeito
+          // mais seguro de ela não falar é ela não ter.
+          detalhe: [a.beneficio, a.comoOferecer].filter(Boolean).join(' · ') || undefined,
+        }))
+      : [],
+    // Só o índice: título e pra que serve. Assim ela manda abrir o documento
+    // certo em vez de tentar responder de cabeça o que está no PDF.
+    documentos: documentosDaMarca(brandId).map((d) => ({
+      titulo: d.titulo,
+      detalhe: [d.interno ? 'INTERNO' : '', d.paraQue].filter(Boolean).join(' · ') || undefined,
     })),
     // No automotivo não existe card de oferta: a condição é a tabela publicada.
     ofertas: auto

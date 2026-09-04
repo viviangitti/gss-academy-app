@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useBrand } from './BrandContext';
 import { ORIGENS, type Acessorio } from './data/acessorios';
 import { findProduct, getProductImageUrl, hasImage, ensureImageLoaded, useStore } from './data/store';
+import { nomeParaCliente } from './data/nomeArquivo';
 
 // A ficha do ACESSÓRIO — o mesmo papel que a do carro, para o mesmo uso: o
 // vendedor aperta "Salvar em PDF" e manda pro cliente no WhatsApp.
@@ -30,7 +31,7 @@ export default function FichaAcessorio({ a }: { a: Acessorio }) {
   // recebia um anexo com o nome do site. Restaura ao sair.
   useEffect(() => {
     const anterior = document.title;
-    document.title = `${a.nome} — ficha do acessório`;
+    document.title = nomeParaCliente(a.nome, 'ficha do acessório');
     return () => { document.title = anterior; };
   }, [a.nome]);
 

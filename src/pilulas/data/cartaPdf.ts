@@ -90,11 +90,6 @@ export function periodoDaCarta(texto: string): { inicio?: string; fim: string } 
   };
 }
 
-/** O número do comunicado — "VEN062/2026". É como a rede chama a carta. */
-export function numeroDaCarta(texto: string): string | undefined {
-  return texto.match(/\bVEN\s?\d{3}[-/]\d{4}\b/i)?.[0].replace(/\s/g, '').replace('-', '/');
-}
-
 /** dd/mm/aaaa a partir de aaaa-mm-dd — sem passar por Date, que muda de fuso. */
 function br(iso: string): string {
   const [a, m, d] = iso.split('-');
@@ -107,12 +102,16 @@ function br(iso: string): string {
  * Nasce das datas de propósito: eram dois campos dizendo a mesma coisa, e o
  * gerente tinha que escrever à mão o que a carta já diz. Um campo que ninguém
  * preenche fica desatualizado; um campo que nasce da data, não.
+ *
+ * NÃO leva o número do comunicado ("VEN062/2026"). É código interno da
+ * montadora: não diz nada pra quem vende, e ocupava o começo da linha justo
+ * onde tem que estar a data.
  */
-export function textoDeValidade(fim: string, inicio?: string, numero?: string): string {
+export function textoDeValidade(fim: string, inicio?: string): string {
   const base = inicio && inicio !== fim
     ? `válida de ${br(inicio)} a ${br(fim)}`
     : `válida até ${br(fim)}`;
-  return numero ? `Carta ${numero} — ${base}` : base.charAt(0).toUpperCase() + base.slice(1);
+  return base.charAt(0).toUpperCase() + base.slice(1);
 }
 
 const MODELOS: Array<[RegExp, string]> = [
@@ -315,6 +314,6 @@ export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]
   // A validade está escrita UMA vez, na capa — vale pra carta toda.
   const periodo = periodoDaCarta(textoTodo);
   if (!periodo) return paginas;
-  const validade = textoDeValidade(periodo.fim, periodo.inicio, numeroDaCarta(textoTodo));
+  const validade = textoDeValidade(periodo.fim, periodo.inicio);
   return paginas.map((p) => ({ ...p, venceEm: periodo.fim, validade }));
 }

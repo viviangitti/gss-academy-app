@@ -16,6 +16,7 @@
 // depende de biblioteca nova (o app não tem nenhuma de PDF, e não vale carregar
 // meio mega no celular do vendedor por causa disso).
 import type { Product } from './products';
+import { nomeParaCliente } from './nomeArquivo';
 
 export type Variante = 'cliente' | 'estudo';
 
@@ -502,8 +503,10 @@ export interface Material {
 export async function gerarMaterial(d: DadosOnePage): Promise<Material> {
   const c = await desenharOnePage(d);
   const pdf = await montaPdf(c);
-  const base = d.product.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase();
-  return { pdf, nome: d.variante === 'estudo' ? `${base}-estudo` : base };
+  // Sai em CAIXA ALTA: é o nome que aparece no WhatsApp do cliente. Antes era
+  // um slug — "jaecoo-7-shs-p.pdf" — que entrega que o arquivo saiu de uma
+  // ferramenta, não da concessionária.
+  return { pdf, nome: nomeParaCliente(d.product.name, d.variante === 'estudo' && 'uso interno') };
 }
 
 /**

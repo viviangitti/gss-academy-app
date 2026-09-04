@@ -15,6 +15,7 @@ import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, a
 import { pegarVideoPreparado, adotarVideo } from './data/videoGesture';
 import { getAfiliadoCode } from './data/afiliadoCode';
 import { recordView, isQuizDone, registraUso } from './data/tracking';
+import { nomeParaCliente } from './data/nomeArquivo';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { getBrand, isAuto, isBalcao } from './data/brands';
@@ -752,7 +753,7 @@ export default function Product() {
       setAvisoOp('');
       try {
         const blob = await (await fetch(product.fichaPdf)).blob();
-        const nome = `${product.name} - ficha tecnica.pdf`.replace(/[\\/:*?"<>|]/g, '');
+        const nome = `${nomeParaCliente(product.name, 'ficha técnica')}.pdf`;
         const arquivo = new File([blob], nome, { type: 'application/pdf' });
         const nav = navigator as Navigator & { canShare?: (d: { files?: File[] }) => boolean };
         if (nav.share && nav.canShare?.({ files: [arquivo] })) {

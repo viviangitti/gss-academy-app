@@ -9,6 +9,7 @@ import { isAuto } from './data/brands';
 import { useEffect } from 'react';
 import { ACESSORIOS } from './data/acessorios';
 import FichaAcessorio from './FichaAcessorio';
+import { nomeParaCliente } from './data/nomeArquivo';
 
 // Ficha do produto como DOCUMENTO — feita pra virar PDF (Imprimir > Salvar em PDF).
 // Renderiza dos mesmos dados do app: se a ficha mudar ali, o PDF muda junto.
@@ -38,7 +39,7 @@ export default function Ficha() {
   useEffect(() => {
     if (!product) return;
     const anterior = document.title;
-    document.title = `${product.name} — ${tipoFicha}`;
+    document.title = nomeParaCliente(product.name, tipoFicha);
     return () => { document.title = anterior; };
   }, [product, tipoFicha]);
 

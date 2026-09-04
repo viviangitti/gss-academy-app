@@ -36,9 +36,9 @@ export interface Condicao {
   /**
    * O último dia em que ela vale, como aaaa-mm-dd.
    *
-   * `validade` acima é texto pro vendedor ler ("Carta VEN062/2026 — válida de
-   * 03/09 a 02/10/2026"). Isto é data de verdade, pro app agir: passou, a
-   * condição some da tela do time sozinha.
+   * `validade` acima é texto pro vendedor ler ("Válida de 03/09/2026 a
+   * 02/10/2026"). Isto é data de verdade, pro app agir: passou, a condição
+   * some da tela do time sozinha.
    *
    * Existe porque a carta comercial vira no dia 2 e a nova chega no primeiro
    * dia útil. No intervalo, quem abrisse o app veria taxa e bônus que a loja

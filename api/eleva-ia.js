@@ -20,7 +20,34 @@ import { montarConversa } from './_coach.js';
 // Dois modelos: o principal e o de reserva. Se o primeiro engasgar por
 // congestionamento (429/503), a pergunta é refeita no segundo — o vendedor não
 // fica esperando nem leva erro na cara no meio de um atendimento.
-const MODELOS = ['gemini-flash-lite-latest', 'gemini-flash-latest'];
+//
+// A ORDEM foi medida, não escolhida no olho. Em 04/09/2026, cinco chamadas em
+// cada um:
+//
+//   gemini-flash-lite-latest   1 de 5 · e a que passou levou 124 SEGUNDOS
+//   gemini-flash-latest        5 de 5 · ~7s
+//   gemini-3.1-flash-lite      4 de 5 · ~3,5s
+//
+// O 'flash-lite-latest' era o PRINCIPAL: toda pergunta batia nele primeiro,
+// falhava, e só então tentava o reserva. Quando não falhava era pior — a função
+// da Vercel morre antes dos 124s e o vendedor leva erro depois de esperar. Era
+// isto que estava quebrado, não a chave nem o prompt.
+const MODELOS = ['gemini-3.1-flash-lite', 'gemini-flash-latest'];
+
+// Teto por tentativa. Modelo que pendura é pior que modelo que erra: com dois
+// na fila, um pendurado consome a janela inteira da função e o reserva nunca
+// chega a ser chamado.
+const LIMITE_MS = 9000;
+
+function comPrazo(promessa, ms, oQue) {
+  let id;
+  return Promise.race([
+    promessa.finally(() => clearTimeout(id)),
+    new Promise((_, rejeita) => {
+      id = setTimeout(() => rejeita(new Error(`503 tempo esgotado em ${oQue}`)), ms);
+    }),
+  ]);
+}
 
 // Erro que vale tentar de novo no outro modelo (congestionamento/instabilidade),
 // em oposição a erro de chave ou de payload, onde repetir só gasta.
@@ -36,7 +63,7 @@ async function responder(apiKey, conversa, mensagem) {
     try {
       const model = genAI.getGenerativeModel({ model: modelo });
       const chat = model.startChat({ history: conversa });
-      const r = await chat.sendMessage(mensagem);
+      const r = await comPrazo(chat.sendMessage(mensagem), LIMITE_MS, modelo);
       const texto = (r?.response?.text?.() || '').trim();
       // Resposta em branco é ERRO, não resposta. Deixar passar vira balão vazio
       // na tela — foi exatamente o que acontecia no MAESTR.IA.
@@ -112,6 +139,16 @@ export default async function handler(req, res) {
     return res.status(200).json({ reply: texto, modelo });
   } catch (err) {
     console.error('[api/eleva-ia] erro:', err);
+    // Congestionamento nos dois modelos não é bug do app, e a tela não pode
+    // dizer "erro ao processar" — o vendedor está com o cliente do lado e
+    // precisa saber se tenta de novo ou se procura em outro lugar.
+    const congestionado = /\b(429|503|504)\b|overload|unavailable|tempo esgotado/i.test(String(err?.message || ''));
+    if (congestionado) {
+      return res.status(503).json({
+        error: 'A IA está congestionada agora. Tente de novo em alguns segundos — '
+          + 'e, se o cliente estiver esperando, a resposta também está no carro, em Objeções.',
+      });
+    }
     return res.status(500).json({ error: 'Erro ao processar', details: err?.message || 'unknown' });
   }
 }

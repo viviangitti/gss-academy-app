@@ -32,5 +32,13 @@
       "source": "/eleva/(.*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/eleva-ia.js": {
+      "maxDuration": 30
+    },
+    "api/ai-proxy.js": {
+      "maxDuration": 30
+    }
+  }
 }

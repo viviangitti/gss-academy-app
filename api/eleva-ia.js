@@ -17,6 +17,7 @@ import { requireAuth, checkRateLimit } from './_auth.js';
 import { guardBudget } from './_aiBudget.js';
 import { montarConversa } from './_coach.js';
 import { MODELOS } from './_modelos.js';
+import { anotarFalhaIA } from './_falhasIA.js';
 
 // A fila de modelos vive em _modelos.js — pinada e num lugar só, porque o
 // apelido '-latest' já derrubou esta IA duas vezes (ver o arquivo).
@@ -79,6 +80,7 @@ export default async function handler(req, res) {
   const uid = await requireAuth(req, res);
   if (!uid) return;
   if (!checkRateLimit(uid)) {
+    await anotarFalhaIA({ uid, motivo: 'limite por minuto', status: 429 });
     return res.status(429).json({ error: 'Muitas requisições. Aguarde um minuto.' });
   }
 
@@ -130,6 +132,16 @@ export default async function handler(req, res) {
     // dizer "erro ao processar" — o vendedor está com o cliente do lado e
     // precisa saber se tenta de novo ou se procura em outro lugar.
     const congestionado = /\b(429|503|504)\b|overload|unavailable|tempo esgotado/i.test(String(err?.message || ''));
+    // Deixa rastro. Hoje o time avisou duas vezes que "não está funcionando" e
+    // as duas vezes eu tive que adivinhar: a tela dizia uma frase só e o
+    // servidor não guardava nada. Agora cada falha vira uma linha que eu leio
+    // em segundos — quem, quando e por quê.
+    await anotarFalhaIA({
+      uid,
+      motivo: String(err?.message || 'desconhecido').slice(0, 300),
+      status: congestionado ? 503 : 500,
+      modelos: MODELOS.join(' → '),
+    });
     if (congestionado) {
       return res.status(503).json({
         error: 'A IA está congestionada agora. Tente de novo em alguns segundos — '

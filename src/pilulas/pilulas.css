@@ -3546,3 +3546,11 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   background-position: right 14px center;
 }
 .wp-login-select:focus { border-color: var(--wp-pink); }
+
+/* Rodapé do card de condição: quando publicou, e o atalho de corrigir. */
+.wp-cond-rodape { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.wp-cond-editar {
+  display: inline-flex; align-items: center; gap: 5px; text-decoration: none;
+  font-size: 11.5px; font-weight: 700; color: var(--wp-soft);
+  border: 1px solid var(--wp-border); border-radius: 999px; padding: 4px 10px;
+}

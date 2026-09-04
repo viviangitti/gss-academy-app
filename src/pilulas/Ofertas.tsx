@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, Megaphone, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, Megaphone, Pencil, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
@@ -181,7 +182,17 @@ export default function Ofertas() {
                   </div>
                   <Folha c={c} onAbrir={setAberta} />
                   {c.observacao && <p className="wp-cond-obs">{c.observacao}</p>}
-                  <span className="wp-cond-quando">{quando(c.criadoEm)}</span>
+                  <span className="wp-cond-rodape">
+                    <span className="wp-cond-quando">{quando(c.criadoEm)}</span>
+                    {/* Quem publica vê o erro AQUI, na tela do time — não no
+                        Painel. Sem este atalho ele decorava o caminho
+                        (Painel › Conteúdo › rolar até a condição) ou desistia. */}
+                    {user?.role === 'gestor' && (
+                      <Link className="wp-cond-editar" to={`/eleva/gestor?editar=${c.id}`}>
+                        <Pencil size={13} className="wp-ico" /> Editar
+                      </Link>
+                    )}
+                  </span>
                 </div>
               ))}
             </div>

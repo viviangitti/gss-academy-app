@@ -1465,6 +1465,19 @@ export default function Gestor() {
   const [openForm, setOpenForm] = useState<'produto' | 'oferta' | 'condicao' | 'documento' | 'calendario' | 'tendencia' | null>(null);
   // Qual condição está aberta para correção (o formulário abre abaixo dela).
   const [editandoCond, setEditandoCond] = useState<string | null>(null);
+  // Veio de "Editar" lá da tela do time: abre na aba certa, com a condição
+  // aberta e rolada até ela. Sem isso o atalho jogava a pessoa no topo do
+  // Painel e ela tinha que procurar de novo.
+  useEffect(() => {
+    const alvo = new URLSearchParams(window.location.search).get('editar');
+    if (!alvo) return;
+    setTab('conteudo');
+    setEditandoCond(alvo);
+    const t = setTimeout(() => {
+      document.querySelector('.wp-gz-form')?.scrollIntoView({ block: 'center' });
+    }, 400);
+    return () => clearTimeout(t);
+  }, []);
   const [toast, setToast] = useState('');
   const [tab, setTab] = useState<'resultados' | 'vendas' | 'conteudo'>('resultados');
 

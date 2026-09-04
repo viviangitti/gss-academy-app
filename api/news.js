@@ -39,7 +39,7 @@ function parseRss(xml, limit) {
   const items = [];
   const blocks = xml.match(/<item>[\s\S]*?<\/item>/gi) || [];
   for (const block of blocks) {
-    if (items.length >= limit) break;
+    if (items.length >= limit * 2) break; // pega folga: a ordenação por data escolhe depois
     const title = decodeEntities(tag(block, 'title'));
     const link = decodeEntities(tag(block, 'link'));
     const pubDate = tag(block, 'pubDate');
@@ -50,7 +50,18 @@ function parseRss(xml, limit) {
       items.push({ title, link, pubDate, description });
     }
   }
-  return items;
+  // ORDENA PELA DATA, da mais nova pra mais velha.
+  //
+  // O Google News devolve por relevância dele, não por data — e o resultado é
+  // uma tela de notícias que abre com "há 4 dias" no topo e esconde a de 35h
+  // em sexto lugar. Quem abre a tela pergunta na hora por que não está
+  // atualizado, e tem razão: a informação estava lá, na ordem errada.
+  items.sort((a, b) => {
+    const da = Date.parse(a.pubDate) || 0;
+    const db = Date.parse(b.pubDate) || 0;
+    return db - da;
+  });
+  return items.slice(0, limit);
 }
 
 export default async function handler(req, res) {
@@ -93,7 +104,7 @@ export default async function handler(req, res) {
     }
 
     const xml = await upstream.text();
-    const items = parseRss(xml, 50); // guarda até 50 no cache, fatia no retorno
+    const items = parseRss(xml, 50); // guarda até 50 no cache, já em ordem de data
 
     cache.set(q, { ts: Date.now(), items });
     res.setHeader('X-Cache', 'MISS');

@@ -251,6 +251,8 @@ const CARGOS = {
   'gerente-acessorios': 'gerente de acessórios',
   'lider-acessorios': 'líder de acessórios',
   'gerente-qualidade': 'gerente de qualidade',
+  'executivo-leads': 'executivo de leads',
+  'gerente-leads': 'gerente de leads',
 };
 
 const identifica = (p) =>

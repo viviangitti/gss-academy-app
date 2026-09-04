@@ -23,6 +23,14 @@
 // para que o cadastro diga a verdade agora, e para que a separação por loja,
 // quando vier, tenha em que se apoiar.
 //
+// LEADS: a terceira frente, e a única que trabalha o cliente ANTES da loja.
+// O executivo recebe o lead que chegou pelo site, pelo anúncio ou pelo
+// WhatsApp e qualifica antes de virar visita; o gerente responde pela operação
+// inteira. Precisam do mesmo conteúdo de quem está no salão — a primeira
+// objeção do cliente chega por mensagem, não no showroom — mas a rotina é
+// outra, e sem o cargo a gerência não consegue separar o que veio da ponta de
+// atendimento do que veio do salão.
+//
 // QUALIDADE: não é par de ninguém. O gerente de qualidade não vende — ele
 // audita o que o grupo faz, então precisa enxergar o conteúdo inteiro e o uso
 // do time inteiro, sem recorte de loja nem de linha. É o único cargo aqui cuja
@@ -40,7 +48,9 @@ export type CargoAuto =
   | 'vendedor-acessorios'
   | 'gerente-acessorios'
   | 'lider-acessorios'
-  | 'gerente-qualidade';
+  | 'gerente-qualidade'
+  | 'executivo-leads'
+  | 'gerente-leads';
 
 export interface Cargo {
   id: CargoAuto;
@@ -78,6 +88,17 @@ export const CARGOS_AUTO: Cargo[] = [
   {
     id: 'gerente-qualidade',
     label: 'Gerente de qualidade',
+    role: 'gestor',
+  },
+  {
+    id: 'executivo-leads',
+    label: 'Executivo(a) de leads',
+    // Trabalha o cliente, não o time: vê o app como qualquer vendedor.
+    role: 'balconista',
+  },
+  {
+    id: 'gerente-leads',
+    label: 'Gerente de leads',
     role: 'gestor',
   },
 ];

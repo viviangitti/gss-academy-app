@@ -307,6 +307,43 @@ export default function Perfil() {
           </div>
         </div>
       )}
+
+      <VersaoDoApp />
     </div>
+  );
+}
+
+/**
+ * A versão que está rodando NESTE aparelho, e a que está no servidor.
+ *
+ * "Tá igual" é a reclamação mais difícil de responder: o conserto está no ar e
+ * a pessoa está com o pacote de horas atrás — e nem ela nem eu temos como
+ * saber. Com os dois números na tela, a conversa deixa de ser adivinhação.
+ */
+function VersaoDoApp() {
+  const [noServidor, setNoServidor] = useState<string | null>(null);
+  const aqui = typeof __VERSAO_APP__ === 'string' ? __VERSAO_APP__ : 'dev';
+
+  useEffect(() => {
+    let vivo = true;
+    // cache: 'no-store' porque justamente o cache é o que está em questão.
+    fetch('/sw.js', { cache: 'no-store' })
+      .then((r) => r.text())
+      .then((t) => { if (vivo) setNoServidor(t.match(/CACHE_NAME\s*=\s*'([^']+)'/)?.[1] || null); })
+      .catch(() => {});
+    return () => { vivo = false; };
+  }, []);
+
+  const atrasado = !!noServidor && noServidor !== aqui;
+  return (
+    <p className="wp-perfil-versao">
+      Versão do app: <b>{aqui}</b>
+      {atrasado && (
+        <>
+          {' · '}no servidor já tem a <b>{noServidor}</b>{' '}
+          <button type="button" onClick={() => window.location.reload()}>atualizar agora</button>
+        </>
+      )}
+    </p>
   );
 }

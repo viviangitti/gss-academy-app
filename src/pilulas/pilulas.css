@@ -3582,3 +3582,14 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-gz-preco-ok { background: var(--wp-text); color: #fff; }
 .wp-gz-preco-x { background: none; color: var(--wp-soft); border-color: var(--wp-border); }
 .wp-gz-preco-form small { flex: 1 1 100%; }
+
+/* Versão do app, no rodapé do Perfil. Serve pra responder "tá igual". */
+.wp-perfil-versao {
+  margin: 22px 0 8px; text-align: center;
+  font-size: 11.5px; line-height: 1.6; color: var(--wp-soft);
+}
+.wp-perfil-versao b { color: var(--wp-text); font-weight: 700; }
+.wp-perfil-versao button {
+  font-family: inherit; font-size: 11.5px; font-weight: 700; cursor: pointer;
+  color: #1f3a8a; background: none; border: 0; text-decoration: underline; padding: 0;
+}

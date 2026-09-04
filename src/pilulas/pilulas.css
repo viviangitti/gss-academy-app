@@ -3529,3 +3529,20 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 /* Sem botão (iPhone): o texto ocupa o lugar dele. */
 .wp-aviso-instalar span { grid-column: 2 / 4; }
 .wp-aviso-instalar .wp-aviso-btn ~ .wp-aviso-x { grid-column: auto; }
+
+/* Lista de cargo no cadastro. Eram oito caixinhas em grade, que tomavam metade
+   da primeira tela e empurravam nome, e-mail e senha pra fora dela. */
+.wp-login-select {
+  box-sizing: border-box; width: 100%;
+  border: 1.5px solid #e3e6ec; border-radius: 11px;
+  padding: 12px 38px 12px 14px; margin-bottom: 8px;
+  font-family: inherit; font-size: 15px; color: var(--wp-text);
+  background: var(--wp-surface); outline: none; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+  /* A seta some com appearance:none — esta é a de volta, desenhada à mão pra
+     não depender de arquivo nem de emoji. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+.wp-login-select:focus { border-color: var(--wp-pink); }

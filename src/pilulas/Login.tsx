@@ -69,7 +69,10 @@ export default function Login() {
   // TODAS as marcas escolhidas são automotivas — com a Meraki junto, a pessoa
   // volta pra lista de sempre, senão sumiriam opções que ela precisa.
   const auto = effBrands.length > 0 && effBrands.every((b) => isAuto(b));
-  const [cargo, setCargo] = useState<CargoAuto>('vendedor-veiculos');
+  // Começa VAZIO, pelo mesmo motivo da marca: campo já respondido a pessoa não
+  // lê. Com oito cargos numa lista, o primeiro da fila viraria o cargo de meia
+  // concessionária — e o Painel passaria a agrupar gente no lugar errado.
+  const [cargo, setCargo] = useState<CargoAuto | ''>('');
   const toggleBrand = (id: BrandId) => {
     setError('');
     setBrands((cur) => (cur.includes(id)
@@ -80,7 +83,8 @@ export default function Login() {
   const emailOk = /\S+@\S+\.\S+/.test(email);
   const valid =
     emailOk && password.length >= 6 &&
-    (mode === 'entrar' || (name.trim().length > 0 && aceite && effBrands.length > 0));
+    (mode === 'entrar'
+      || (name.trim().length > 0 && aceite && effBrands.length > 0 && (!auto || !!cargo)));
 
   const submit = async () => {
     if (!valid || busy) return;
@@ -95,7 +99,7 @@ export default function Login() {
         // Na concessionária o cargo é a origem do papel: vendedor vê o app,
         // gerente cai no painel. Nos dois casos o poder de verdade continua
         // vindo do e-mail autorizado — o cargo é declaração, não chave.
-        const finalRoles: Role[] = balcao ? ['balconista'] : auto ? [roleDoCargo(cargo)] : roles;
+        const finalRoles: Role[] = balcao ? ['balconista'] : auto ? [roleDoCargo(cargo || undefined)] : roles;
         const finalRole: Role = rolePrincipal(finalRoles);
         const at: AffiliateType | '' = finalRoles.includes('afiliado') ? affType : '';
         // Cache local (rápido) + conta cria.
@@ -109,7 +113,7 @@ export default function Login() {
         await setElevaProfile(fb.uid, {
           role: finalRole, roles: finalRoles, name: name.trim(),
           segment: '', affiliateType: at, brands: effBrands,
-          cargo: auto ? cargo : undefined,
+          cargo: auto && cargo ? cargo : undefined,
         });
       } else {
         await signInWithEmail(email.trim(), password);
@@ -200,18 +204,18 @@ export default function Login() {
         {mode === 'criar' && effBrands.length > 0 && !balcao && auto && (
           <>
             <label className="wp-login-label">Seu cargo na loja</label>
-            <div className="wp-login-roles wp-login-roles--wrap">
+            {/* Lista, não caixinhas: com oito cargos a grade tomava metade da
+                primeira tela e empurrava nome, e-mail e senha pra fora dela. */}
+            <select
+              className="wp-login-select"
+              value={cargo}
+              onChange={(e) => { setError(''); setCargo(e.target.value as CargoAuto); }}
+            >
+              <option value="">Escolha seu cargo…</option>
               {CARGOS_AUTO.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  className={`wp-login-role ${cargo === c.id ? 'on' : ''}`}
-                  onClick={() => { setError(''); setCargo(c.id); }}
-                >
-                  {cargo === c.id && <Check size={13} className="wp-ico" />} {c.label}
-                </button>
+                <option key={c.id} value={c.id}>{c.label}</option>
               ))}
-            </div>
+            </select>
             <p className="wp-login-hint">
               Vendedor de veículos e de acessórios veem o mesmo conteúdo — o cargo serve pra
               gerência saber quem é quem.

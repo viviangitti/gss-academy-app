@@ -3554,3 +3554,8 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   font-size: 11.5px; font-weight: 700; color: var(--wp-soft);
   border: 1px solid var(--wp-border); border-radius: 999px; padding: 4px 10px;
 }
+.wp-cond-acoes { display: inline-flex; gap: 6px; }
+.wp-cond-remover {
+  background: none; cursor: pointer; font-family: inherit;
+  color: #a33; border-color: #f0d6d6;
+}

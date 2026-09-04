@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, Megaphone, Pencil, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, Megaphone, Pencil, Trash2, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 import { allOffers, useStore } from './data/store';
-import { carregarCondicoes, condicoesDaMarca, abrirArquivo, estaVencida, useCondicoes, type Condicao } from './data/condicoes';
+import { carregarCondicoes, condicoesDaMarca, abrirArquivo, apagarCondicao, estaVencida, useCondicoes, type Condicao } from './data/condicoes';
 
 function shareOffer(text: string) {
   if (navigator.share) {
@@ -188,9 +188,25 @@ export default function Ofertas() {
                         Painel. Sem este atalho ele decorava o caminho
                         (Painel › Conteúdo › rolar até a condição) ou desistia. */}
                     {user?.role === 'gestor' && (
-                      <Link className="wp-cond-editar" to={`/eleva/gestor?editar=${c.id}`}>
-                        <Pencil size={13} className="wp-ico" /> Editar
-                      </Link>
+                      <span className="wp-cond-acoes">
+                        <Link className="wp-cond-editar" to={`/eleva/gestor?editar=${c.id}`}>
+                          <Pencil size={13} className="wp-ico" /> Editar
+                        </Link>
+                        {/* Apagar leva a FOLHA junto e não tem volta. Por isso a
+                            confirmação diz o que se perde, e não só "tem
+                            certeza?" — aqui é uma tela de consulta, onde a
+                            pessoa está com o polegar passando. */}
+                        <button
+                          type="button"
+                          className="wp-cond-editar wp-cond-remover"
+                          onClick={() => {
+                            if (!confirm(`Apagar "${c.titulo}"?\n\nO time deixa de ver, e a folha é apagada junto — não dá pra desfazer.\n\nSe é só porque venceu, use Editar e mude a data.`)) return;
+                            apagarCondicao(c.id);
+                          }}
+                        >
+                          <Trash2 size={13} className="wp-ico" /> Apagar
+                        </button>
+                      </span>
                     )}
                   </span>
                 </div>

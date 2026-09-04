@@ -63,6 +63,15 @@ export interface Condicao {
    */
   categoria?: 'veiculo' | 'acessorio' | 'campanha';
   /**
+   * O conteúdo da folha em TEXTO — só pra IA ler.
+   *
+   * A folha é imagem, então o Tira-dúvida só sabia o nome e mandava abrir.
+   * Quando a condição vem de um PDF, o texto sai do próprio arquivo (sem o
+   * rebate) e ele passa a responder com o número certo. Não aparece na tela do
+   * vendedor: lá vale a folha, que é o documento.
+   */
+  resumo?: string;
+  /**
    * O arquivo — data URL (imagem comprimida ou PDF).
    *
    * Opcional porque a lista chega SEM ele: desce só quando alguém abre esta

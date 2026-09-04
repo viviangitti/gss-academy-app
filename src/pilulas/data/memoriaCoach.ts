@@ -155,6 +155,9 @@ export async function montarMemoria(opts: {
           c.categoria === 'campanha' ? 'campanha interna' : c.categoria === 'acessorio' ? 'acessório' : 'veículo',
           c.validade,
           c.observacao,
+          // O conteúdo da folha, quando existe. É o que faz a IA responder
+          // "taxa 0%, entrada 70%" em vez de mandar abrir.
+          c.resumo,
         ].filter(Boolean).join(' · ') || undefined,
       })),
     // O catálogo de acessórios: a IA não tinha nenhum, e o vendedor de

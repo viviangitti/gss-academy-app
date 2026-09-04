@@ -885,6 +885,7 @@ function CondicaoForm({ brand, editando, onDone }: {
           observacao: observacao.trim() || undefined,
           categoria: p.categoria,
           venceEm: venceEm || undefined,
+          resumo: p.resumo,
           arquivo: p.arquivo,
           tipo: 'imagem',
           nomeArquivo: `${p.titulo.trim().slice(0, 60)}.jpg`,

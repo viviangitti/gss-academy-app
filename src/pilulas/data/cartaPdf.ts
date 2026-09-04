@@ -33,6 +33,15 @@ export interface PaginaCarta {
   venceEm?: string;
   /** O texto de validade já montado a partir do período da carta. */
   validade?: string;
+  /**
+   * O TEXTO da página, sem o rebate — é o que a IA lê.
+   *
+   * A folha é imagem: o Tira-dúvida sabia o nome da condição e mandava o
+   * vendedor abrir. Com o texto, ele responde "taxa 0%, entrada 70%, 24x" sem
+   * ninguém redigitar nada. Sai do MESMO pdf, então não há como divergir da
+   * folha; e sai sem o rebate, pelas mesmas coordenadas que tapam a imagem.
+   */
+  resumo?: string;
   incluir: boolean;
 }
 
@@ -299,8 +308,19 @@ export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]
     }
 
     textoTodo += ' ' + texto;
+
+    // O texto que a IA vai ler: tudo menos o que ficou debaixo das faixas.
+    const resumo = itens
+      .filter((it) => it.s && !faixas.some((f) => it.y >= f.topo && it.y <= f.topo + f.alt))
+      .map((it) => it.s)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 2600);
+
     paginas.push({
       n,
+      resumo: resumo.length > 40 ? resumo : undefined,
       titulo: tituloDaPagina(texto, n),
       categoria: pareceAcessorio(texto) ? 'acessorio' : 'veiculo',
       arquivo,

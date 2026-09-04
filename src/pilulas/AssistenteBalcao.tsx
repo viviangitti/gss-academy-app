@@ -119,11 +119,26 @@ export default function AssistenteBalcao() {
           app: 'Eleva',
         }),
       });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data?.error || 'falhou');
+      const data = await r.json().catch(() => null);
+      if (!r.ok) throw new Error(data?.error || `falha ${r.status}`);
+      if (!data?.reply) throw new Error('A IA respondeu em branco. Tenta perguntar de outro jeito.');
       setMsgs((m) => [...m, { role: 'assistant', content: data.reply }]);
-    } catch {
-      setErro('Não consegui responder agora. Tenta de novo em instantes.');
+    } catch (e) {
+      // MOSTRA O QUE O SERVIDOR DISSE.
+      //
+      // Antes toda falha virava a mesma frase — "Não consegui responder agora"
+      // — e o vendedor mandava print pra gerência, que mandava pra mim, e eu
+      // não tinha o que ler. Sem internet, congestionamento e teto do dia
+      // atingido pedem três atitudes diferentes; a tela precisa dizer qual é.
+      const msg = e instanceof Error ? e.message : '';
+      const semRede = typeof navigator !== 'undefined' && navigator.onLine === false;
+      setErro(
+        semRede
+          ? 'Você está sem internet. A resposta também está no carro, em Objeções.'
+          : msg && !/^falha \d+$/.test(msg)
+            ? msg
+            : 'Não consegui responder agora. Tenta de novo em instantes.',
+      );
     } finally {
       setLoading(false);
     }

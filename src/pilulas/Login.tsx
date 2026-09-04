@@ -11,8 +11,25 @@ import type { Role, AffiliateType } from './AuthContext';
 
 type Mode = 'entrar' | 'criar';
 
+/**
+ * O link de convite pode já abrir no "Criar conta".
+ *
+ * A gerência manda o link num grupo de WhatsApp, com vinte pessoas que ainda
+ * não têm conta, e a tela abre em "Entrar" — algumas tentam entrar, tomam erro
+ * de senha e desistem antes de achar a outra aba.
+ *
+ *   gsseleva.com.br/eleva?marca=ramasa&cadastro=1
+ */
+function abrirNoCadastro(): boolean {
+  try {
+    return new URLSearchParams(window.location.search).get('cadastro') === '1';
+  } catch {
+    return false;
+  }
+}
+
 export default function Login() {
-  const [mode, setMode] = useState<Mode>('entrar');
+  const [mode, setMode] = useState<Mode>(abrirNoCadastro() ? 'criar' : 'entrar');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

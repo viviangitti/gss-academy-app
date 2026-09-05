@@ -3845,3 +3845,17 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   /* Caixinha de marcar não tem texto dentro — 16px só a deixaria gigante. */
   input[type="checkbox"], input[type="radio"] { font-size: inherit !important; }
 }
+
+/* A LINHA DA CONDIÇÃO no Painel, em tela estreita.
+   Título longo ("PPF Full + vitrificação de bancos — R$ 17.899,99") e validade
+   ("confirmar validade com a gerência") disputavam a mesma linha e passavam por
+   cima um do outro. Empilha: título em cima, validade e ferramentas embaixo. */
+@media (max-width: 560px) {
+  .wp-gz-list > div > .wp-gz-item:not(.wp-gz-acitem) {
+    flex-direction: column; align-items: stretch; gap: 7px;
+  }
+  .wp-gz-list > div > .wp-gz-item:not(.wp-gz-acitem) .wp-gz-item-name { line-height: 1.3; }
+  .wp-gz-list > div > .wp-gz-item:not(.wp-gz-acitem) .wp-gz-item-meta {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+}

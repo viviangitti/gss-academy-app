@@ -54,6 +54,32 @@ export interface Nivel {
 }
 
 /**
+ * A CHAVE DO VÍDEO DE UM NÍVEL.
+ *
+ * Cada carro tem seis níveis, com seis roteiros diferentes — e até aqui tinha
+ * UM lugar só pra vídeo. Quem subisse o episódio "Contra o concorrente" via
+ * ele tocar nos seis, inclusive no nível 1, que fala de outra coisa.
+ *
+ * O nível 1 continua usando a chave do produto: é o vídeo padrão, o mesmo que
+ * já existia e que o vídeo por público sobrescreve. Do 2 em diante, chave
+ * própria — mesma ideia do `av:` dos públicos.
+ */
+export function nivelVideoKey(productId: string, n: number): string {
+  return n <= 1 ? productId : `nv:${productId}:${n}`;
+}
+
+/** Quantos níveis o produto tem. O 1 é o storyboard; o resto vem de `niveis`. */
+export function totalDeNiveis(p: Product): number {
+  return 1 + (p.niveis?.length || 0);
+}
+
+/** O nome do nível na tela do gestor: "Nível 3 — Contra o concorrente". */
+export function nivelLabel(p: Product, n: number): string {
+  const t = n === 1 ? 'O essencial' : p.niveis?.[n - 2]?.titulo;
+  return t ? `Nível ${n} — ${t}` : `Nível ${n}`;
+}
+
+/**
  * VERSÃO DO MODELO — o que muda de uma pra outra.
  *
  * Existe porque o carro não é um só. O Jaecoo 7 tem três versões e a diferença

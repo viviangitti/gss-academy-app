@@ -3720,3 +3720,6 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 /* Alvo de toque de verdade: o padrão da lista tem 9px só de um lado, e aqui
    são quatro botões seguidos no polegar de quem está em pé no showroom. */
 .wp-gz-acbtns .wp-gz-del { padding: 7px 8px; }
+/* "trilha 2/5" na linha do carro, no Painel: um carro com seis níveis e um
+   vídeo só parecia pronto na lista. */
+.wp-gz-eps { color: var(--wp-soft); font-weight: 700; }

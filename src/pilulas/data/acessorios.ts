@@ -53,12 +53,12 @@ export interface Acessorio {
   /** Foto do item. Acessório sem foto ninguém oferece: não dá pra imaginar. */
   foto?: string;
   /**
-   * MP4 de 45s do acessório. Fica em /public/videos/acessorios/.
+   * MP4 de 45s que veio JUNTO COM O APP, em /public/videos/acessorios/.
    *
-   * Não é upload pelo Painel de propósito: o Storage do projeto não está
-   * ligado, e vídeo subido pelo Painel hoje fica guardado só no aparelho de
-   * quem subiu — o time não vê. Foi assim que os vídeos da Mari entraram, e é
-   * assim que estes entram: o arquivo vem pra cá e vai junto com o app.
+   * Não é o único caminho: a gerência de acessórios sobe vídeo pela própria
+   * tela do item ("Foto e vídeo de..."), e esse vai pra nuvem, partido em
+   * pedaços no Firestore — o time inteiro vê. O que está aqui é o que nasce com
+   * o app; o que a gerência sobe ganha dele.
    */
   videoUrl?: string;
   /**

@@ -6,7 +6,7 @@ import { isAuto } from './data/brands';
 import { cargoLabel, podeMexerEmAcessorios } from './data/cargos';
 import { vocab } from './data/vocabulario';
 import { useAuth } from './AuthContext';
-import { CATEGORIES, CATEGORIAS_AUTO, CATEGORIAS_SAUDE, type Category, type Product } from './data/products';
+import { CATEGORIES, CATEGORIAS_AUTO, CATEGORIAS_SAUDE, nivelVideoKey, type Category, type Product } from './data/products';
 import type { OfferKind } from './data/offers';
 import { CHANNELS, type Channel } from './data/creatorContent';
 import { SEGMENTS, segmentLabel } from './data/segments';
@@ -1735,6 +1735,10 @@ function LinhaAcessorio({
 function ProductRow({ p }: { p: Product }) {
   useStore();
   const uploaded = hasVideo(p.id);
+  // Quantos episódios da trilha já têm vídeo. Sem isso, um carro com seis
+  // níveis e um vídeo só parecia pronto na lista do Painel.
+  const eps = (p.niveis || []).length;
+  const gravados = (p.niveis || []).filter((_, k) => hasVideo(nivelVideoKey(p.id, k + 2))).length;
   const meta = uploaded ? (
     <><Video size={12} className="wp-ico" /> vídeo MP4</>
   ) : p.instagramUrl ? (
@@ -1746,7 +1750,11 @@ function ProductRow({ p }: { p: Product }) {
   return (
     <Link to={`/eleva/produto/${p.id}`} className="wp-gz-item wp-gz-item-btn">
       <span className="wp-gz-item-name">{p.name}</span>
-      <span className="wp-gz-item-meta">{meta} <ChevronRight size={14} className="wp-ico" /></span>
+      <span className="wp-gz-item-meta">
+        {meta}
+        {eps > 0 && <span className="wp-gz-eps"> · trilha {gravados}/{eps}</span>}
+        {' '}<ChevronRight size={14} className="wp-ico" />
+      </span>
     </Link>
   );
 }

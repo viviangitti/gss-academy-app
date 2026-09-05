@@ -8,7 +8,7 @@ import {
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
 import { submitObjection, fetchMyObjections, fetchPublicadas, objectionDate, type TeamObjection } from './data/objections';
-import { buildShareVariants, buildFichaMessage, buyLinkFor, type BuyContext, type Product as ProductT } from './data/products';
+import { buildShareVariants, buildFichaMessage, buyLinkFor, nivelVideoKey, totalDeNiveis, nivelLabel, type BuyContext, type Product as ProductT } from './data/products';
 import Quiz from './Quiz';
 import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductIG, setProductVideo, clearProductVideo, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage, useStore } from './data/store';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
@@ -186,10 +186,15 @@ function Reel({ product, previewAudience, nivel }: { product: ProductT; previewA
   const audience = previewAudience ?? audienceOf(user);
   const avKey = audience ? audienceVideoKey(product.id, audience) : null;
 
+  // O vídeo DESTE nível. Do 2 em diante cada episódio tem o seu: o roteiro do
+  // nível 3 fala do concorrente, e mostrar o vídeo do nível 1 ali seria mentir
+  // pro vendedor sobre o que ele está assistindo.
+  const nvKey = nivelVideoKey(product.id, nivel);
   useEffect(() => {
     if (avKey && hasVideo(avKey)) ensureVideoLoaded(avKey);
     if (hasVideo(product.id)) ensureVideoLoaded(product.id);
-  }, [product.id, avKey]);
+    if (nivel > 1 && hasVideo(nvKey)) ensureVideoLoaded(nvKey);
+  }, [product.id, avKey, nvKey, nivel]);
 
   const variantMp4 = avKey ? getVideoObjectUrl(avKey) : undefined;
   const variantReel = audience ? getAudienceReel(product.id, audience) : undefined;
@@ -307,21 +312,31 @@ function Reel({ product, previewAudience, nivel }: { product: ProductT; previewA
   // Sai da pílula (ou troca pra vídeo) → cala a voz e mata o timer.
   useEffect(() => () => haltNarration(), []);
 
-  // Prioridade: [público] upload MP4 > reel do IG > MP4 pronto por público (bundled)
-  //           > [base] MP4 > reel base > storyboard animado.
-  if (variantMp4) return <VideoMp4 key={variantMp4} url={variantMp4} productId={product.id} />;
-  if (variantReel) {
-    return <div className="wp-reel wp-reel--ig"><InstagramEmbed url={variantReel} /></div>;
-  }
-  if (staticAudienceVid) return <VideoMp4 key={staticAudienceVid} url={staticAudienceVid} productId={product.id} />;
-  if (baseMp4) return <VideoMp4 key={baseMp4} url={baseMp4} productId={product.id} />;
+  // NÍVEL 2 EM DIANTE: só o vídeo DELE serve.
+  //
+  // Se o episódio ainda não foi gravado, cai no roteiro animado deste nível —
+  // NUNCA no vídeo do nível 1 nem no do público, que contam outra história. Era
+  // o que acontecia antes: um vídeo só, tocando nos seis níveis.
+  if (nivel > 1) {
+    const nvMp4 = getVideoObjectUrl(nvKey);
+    if (nvMp4) return <VideoMp4 key={nvMp4} url={nvMp4} productId={product.id} />;
+  } else {
+    // Prioridade: [público] upload MP4 > reel do IG > MP4 pronto por público (bundled)
+    //           > [base] MP4 > reel base > storyboard animado.
+    if (variantMp4) return <VideoMp4 key={variantMp4} url={variantMp4} productId={product.id} />;
+    if (variantReel) {
+      return <div className="wp-reel wp-reel--ig"><InstagramEmbed url={variantReel} /></div>;
+    }
+    if (staticAudienceVid) return <VideoMp4 key={staticAudienceVid} url={staticAudienceVid} productId={product.id} />;
+    if (baseMp4) return <VideoMp4 key={baseMp4} url={baseMp4} productId={product.id} />;
 
-  if (product.instagramUrl) {
-    return (
-      <div className="wp-reel wp-reel--ig">
-        <InstagramEmbed url={product.instagramUrl} />
-      </div>
-    );
+    if (product.instagramUrl) {
+      return (
+        <div className="wp-reel wp-reel--ig">
+          <InstagramEmbed url={product.instagramUrl} />
+        </div>
+      );
+    }
   }
 
   // Sem vídeo: o storyboard animado (a foto NÃO entra aqui — é só capa do catálogo).
@@ -594,6 +609,59 @@ function AudienceVideoRow({ productId, audience, label }: { productId: string; a
   );
 }
 
+// UMA LINHA POR EPISÓDIO da trilha do carro.
+//
+// Cada carro tem seis níveis, com seis roteiros — e até aqui existia UM lugar
+// só pra vídeo. Quem subisse o episódio do nível 3 via ele tocar nos seis.
+// Aqui cada nível tem o seu arquivo, e o que ainda não foi gravado continua
+// rodando o roteiro animado daquele nível — que é o conteúdo certo, só que sem
+// filmagem.
+//
+// Só MP4, sem link do Instagram: episódio de trilha é material interno gravado
+// pra isso; reel do IG é prova social, e o lugar dele é o vídeo padrão ali em
+// cima.
+function NivelVideoRow({ product, n }: { product: ProductT; n: number }) {
+  useStore();
+  const chave = nivelVideoKey(product.id, n);
+  const [pct, setPct] = useState<number | null>(null);
+  const [aviso, setAviso] = useState('');
+  const tem = hasVideo(chave);
+
+  const subir = (f: File) => {
+    setAviso('');
+    setPct(0);
+    setProductVideo(chave, f, setPct)
+      .then((naNuvem) => setAviso(naNuvem
+        ? 'Publicado — o time já vê neste nível.'
+        : 'Ficou só neste aparelho: a nuvem não respondeu. Suba de novo com internet melhor.'))
+      .finally(() => setPct(null));
+  };
+
+  return (
+    <div className="wp-avrow">
+      <p className="wp-avrow-lb">
+        {nivelLabel(product, n)}
+        <span className="wp-videdit-cap"> — {tem ? 'vídeo enviado' : 'sem vídeo (roda o roteiro animado)'}</span>
+      </p>
+      <label className="wp-videdit-mp4">
+        <UploadCloud size={16} className="wp-ico" />
+        {tem ? 'Trocar o vídeo deste nível' : 'Subir o vídeo deste nível'}
+        <input
+          type="file" accept="video/*" hidden disabled={pct !== null}
+          onChange={(e) => { const f = e.target.files?.[0]; if (f) subir(f); }}
+        />
+      </label>
+      {pct !== null && <div className="wp-gz-slot-barra"><span style={{ width: `${pct}%` }} /></div>}
+      {tem && pct === null && (
+        <button className="wp-videdit-remove" onClick={() => clearProductVideo(chave)}>
+          Tirar o vídeo deste nível
+        </button>
+      )}
+      {aviso && <p className="wp-videdit-help">{aviso}</p>}
+    </div>
+  );
+}
+
 // Editor de vídeo direto na pílula — SÓ o gestor vê. Trocar o vídeo aqui,
 // no próprio produto, sem ir ao painel.
 function GestorVideoEditor({ product }: { product: ProductT }) {
@@ -607,6 +675,8 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
   const videoAgora = uploaded ? 'vídeo MP4' : product.instagramUrl ? 'reel do Instagram' : 'prévia animada (padrão)';
   const capaUrl = getProductImageUrl(product.id) || product.imageUrl;
   const temCapa = !!capaUrl;
+  // Quantos episódios da trilha já têm vídeo (o nível 1 não conta: é o padrão).
+  const jaGravados = (product.niveis || []).filter((_, k) => hasVideo(nivelVideoKey(product.id, k + 2))).length;
   const flash = () => { setSaved(true); setTimeout(() => setSaved(false), 1800); };
   const salvarReel = () => { clearProductVideo(product.id); setProductIG(product.id, ig); flash(); };
   const subirMp4 = (f: File) => { setProductIG(product.id, ''); setProductVideo(product.id, f); setIg(''); flash(); };
@@ -646,6 +716,25 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
           {audiencesForLine(product.line, product.brand).map((a) => (
             <AudienceVideoRow key={a.id} productId={product.id} audience={a.id} label={a.label} />
           ))}
+
+          {/* A TRILHA DO CARRO, um vídeo por episódio. Só aparece em carro que
+              tem níveis — produto de farmácia tem um vídeo e pronto. */}
+          {totalDeNiveis(product) > 1 && (
+            <>
+              <div className="wp-videdit-divider" />
+              <p className="wp-videdit-now">
+                Vídeo de cada nível
+                <span className="wp-videdit-cap"> — {jaGravados}/{totalDeNiveis(product) - 1} episódios gravados</span>
+              </p>
+              <p className="wp-videdit-help">
+                O nível 1 é o vídeo padrão lá em cima. Do 2 em diante, cada episódio tem o seu
+                arquivo — o que ainda não foi gravado roda o roteiro animado daquele nível.
+              </p>
+              {(product.niveis || []).map((_, k) => (
+                <NivelVideoRow key={k + 2} product={product} n={k + 2} />
+              ))}
+            </>
+          )}
 
           <div className="wp-videdit-divider" />
           <p className="wp-videdit-now">Foto de capa <span className="wp-videdit-cap">— aparece no card do catálogo</span></p>

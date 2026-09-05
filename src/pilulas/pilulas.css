@@ -3773,3 +3773,30 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   .wp-cond-portas { gap: 9px; margin-bottom: 12px; }
   .wp-cond-porta { padding: 12px 13px; gap: 11px; }
 }
+
+/* ARTE PARA O CLIENTE — a peça de anúncio gerada a partir da condição. */
+.wp-cond-arte {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  font-family: inherit; font-size: 12.5px; font-weight: 700;
+  color: var(--wp-on-accent); background: var(--wp-pink);
+  border: none; border-radius: 999px; padding: 8px 14px; margin: 10px 0 2px;
+}
+.wp-arte-lb {
+  position: fixed; inset: 0; z-index: 120; overflow-y: auto;
+  background: rgba(8,8,16,.92);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 54px 14px 28px;
+}
+.wp-arte-corpo { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 10px; }
+/* A arte é 1080x1350; na tela ela vale por proporção, não por pixel. */
+.wp-arte-canvas { width: 100%; height: auto; border-radius: 14px; display: block; }
+.wp-arte-nota { color: rgba(255,255,255,.62); font-size: 11.5px; line-height: 1.45; margin: 0; text-align: center; }
+.wp-arte-acoes { display: flex; gap: 9px; }
+.wp-arte-btn {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  cursor: pointer; font-family: inherit; font-size: 13.5px; font-weight: 800;
+  color: #fff; background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 12px 14px;
+}
+.wp-arte-btn-main { background: var(--wp-pink); border-color: transparent; color: var(--wp-on-accent); }
+.wp-arte-btn:disabled { opacity: .5; cursor: default; }

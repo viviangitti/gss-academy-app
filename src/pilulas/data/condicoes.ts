@@ -88,6 +88,28 @@ export interface Condicao {
    */
   resumo?: string;
   /**
+   * A CHAMADA QUE PODE SER ANUNCIADA — e só ela vai para o cliente.
+   *
+   * A folha desta condição é uso interno: tem entrada, bônus de trade-in e o
+   * rebate da rede. Nada disso pode sair da loja. Mas existe um pedaço da
+   * mesma condição que a montadora ANUNCIA no Instagram dela — "Taxa 0% em até
+   * 24x" é a manchete da própria carta — e esse pedaço o vendedor precisa
+   * conseguir mandar.
+   *
+   * A gerência escreve aqui a frase aprovada, uma vez. É o único texto da
+   * condição que entra na arte do cliente; `resumo` e `observacao` NUNCA
+   * entram, por construção — não é uma escolha de tela, é o que o gerador lê.
+   *
+   * Sem chamada não há arte. É de propósito: silêncio é melhor que um vendedor
+   * decidindo sozinho o que dá pra anunciar.
+   */
+  chamada?: string;
+  /**
+   * De qual carro é esta condição — para a arte saber que foto e que destaques
+   * usar. A gerência escolhe na lista; o app sugere pelo título.
+   */
+  produtoId?: string;
+  /**
    * O arquivo — data URL (imagem comprimida ou PDF).
    *
    * Opcional porque a lista chega SEM ele: desce só quando alguém abre esta

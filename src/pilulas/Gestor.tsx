@@ -826,6 +826,11 @@ function CondicaoForm({ brand, editando, onDone }: {
   // Tira-dúvida responde errado com toda a confiança do mundo, e ninguém tinha
   // como descobrir: o campo não aparecia em lugar nenhum do app.
   const [resumoIA, setResumoIA] = useState(editando?.resumo || '');
+  // A CHAMADA QUE PODE SER ANUNCIADA, e de qual carro é. Só isto vira arte pro
+  // cliente — o miolo da folha (entrada, trade-in, rebate) não sai daqui.
+  const [chamada, setChamada] = useState(editando?.chamada || '');
+  const [produtoId, setProdutoId] = useState(editando?.produtoId || '');
+  const carrosDaCasa = allProducts().filter((p) => p.brand === brand);
   const [categoria, setCategoria] = useState<'veiculo' | 'acessorio' | 'campanha'>(editando?.categoria || 'veiculo');
   const [venceEm, setVenceEm] = useState(editando?.venceEm || '');
   // O texto de validade nasce da data. Eram dois campos dizendo a mesma coisa,
@@ -954,6 +959,8 @@ function CondicaoForm({ brand, editando, onDone }: {
           categoria,
           venceEm: venceEm || undefined,
           resumo: resumoIA.trim() || undefined,
+          chamada: chamada.trim() || undefined,
+          produtoId: produtoId || undefined,
           ...(arq ? { arquivo: arq.arquivo, tipo: arq.tipo, nomeArquivo: arq.nomeArquivo } : {}),
         });
         onDone(titulo.trim());
@@ -1159,6 +1166,46 @@ function CondicaoForm({ brand, editando, onDone }: {
 
       <label className="wp-gz-label">Observação para o time (opcional){paginas ? ' — vale para todas' : ''}</label>
       <textarea value={observacao} onChange={(e) => setObservacao(e.target.value)} rows={2} placeholder="Ex.: bônus de troca só com avaliação presencial." />
+
+      {/* A ARTE PRO CLIENTE. Fica junto da observação porque é a mesma pergunta
+          feita ao contrário: "o que o time precisa saber" e "o que o cliente
+          pode ver". Só na correção — na publicação em lote a pessoa está
+          subindo sete folhas de uma vez, e escrever sete chamadas ali faria ela
+          escrever sete frases ruins. */}
+      {editando && editando.categoria !== 'campanha' && (
+        <details className="wp-gz-avancado">
+          <summary>Arte para o cliente{chamada.trim() ? '' : ' — não liberada'}</summary>
+          <p className="wp-gz-hint" style={{ marginTop: 8 }}>
+            A folha desta condição é <b>interna</b> e continua sem botão de enviar. O que sai
+            daqui é uma peça de anúncio: foto do carro, três destaques e a frase que você
+            escrever abaixo. <b>Entrada, bônus de troca, rebate e preço não entram</b> — nem por
+            engano, o gerador não recebe esses campos.
+          </p>
+
+          <label className="wp-gz-label">Chamada — a frase que pode ser anunciada</label>
+          <input
+            value={chamada}
+            maxLength={70}
+            onChange={(e) => setChamada(e.target.value)}
+            placeholder="Ex.: Taxa 0% em até 24x"
+          />
+          <p className="wp-gz-hint">
+            É a manchete da própria carta, a mesma que a montadora anuncia. Em branco, o
+            botão não aparece pro time — e é assim que tem que ser quando não há nada
+            aprovado pra anunciar.
+          </p>
+
+          <label className="wp-gz-label">De qual carro é</label>
+          <select value={produtoId} onChange={(e) => setProdutoId(e.target.value)}>
+            <option value="">— escolha o modelo —</option>
+            {carrosDaCasa.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+          <p className="wp-gz-hint">
+            De onde vêm a foto e os três destaques da arte. Sem modelo, a peça sai com o
+            título da condição e sem foto.
+          </p>
+        </details>
+      )}
 
       {/* O TEXTO QUE A IA LÊ. Só na correção — na publicação ele nasce sozinho
           da leitura do PDF.

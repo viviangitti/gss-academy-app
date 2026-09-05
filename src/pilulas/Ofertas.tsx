@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, Megaphone, Pencil, Trash2, CalendarClock, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, Megaphone, Pencil, Trash2, CalendarClock, ChevronRight, ChevronLeft, Image as ImageIcon } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
+import ArteCondicao, { dadosDaArte, type DadosArte } from './ArteCondicao';
 import { allOffers, useStore } from './data/store';
 import { carregarCondicoes, condicoesDaMarca, abrirArquivo, apagarCondicao, apagarVarias, atualizarVarias, estaVencida, useCondicoes, type Condicao } from './data/condicoes';
 
@@ -182,6 +183,8 @@ function Folha({ c, onAbrir }: { c: Condicao; onAbrir: (c: Condicao) => void }) 
 
 export default function Ofertas() {
   useStore(); // re-renderiza quando o gestor cria oferta
+  // Qual arte está aberta. Uma por vez — é uma peça pra mandar, não uma galeria.
+  const [arte, setArte] = useState<DadosArte | null>(null);
   useCondicoes();
   const { brandId } = useBrand();
   const { user } = useAuth();
@@ -209,6 +212,7 @@ export default function Ofertas() {
 
   return (
     <div className="wp-ofertas">
+      {arte && <ArteCondicao dados={arte} onFechar={() => setArte(null)} />}
       <div className="wp-of-hero">
         <h1 className="wp-of-title"><Tag size={19} className="wp-ico" /> {auto ? 'Condições comerciais' : 'Ofertas da semana'}</h1>
         <p className="wp-of-sub">
@@ -267,6 +271,19 @@ export default function Ofertas() {
                   </div>
                   <Folha c={c} onAbrir={setAberta} />
                   {c.observacao && <p className="wp-cond-obs">{c.observacao}</p>}
+                  {/* ARTE PRO CLIENTE. Só aparece quando a gerência escreveu a
+                      chamada aprovada — sem ela não há o que anunciar, e o
+                      vendedor não decide isso sozinho. A folha continua sem
+                      botão de enviar: ela é interna e segue interna. */}
+                  {dadosDaArte(c, brandId) && (
+                    <button
+                      type="button"
+                      className="wp-cond-arte"
+                      onClick={() => setArte(dadosDaArte(c, brandId))}
+                    >
+                      <ImageIcon size={14} className="wp-ico" /> Arte para o cliente
+                    </button>
+                  )}
                   <span className="wp-cond-rodape">
                     <span className="wp-cond-quando">{quando(c.criadoEm)}</span>
                     {/* Quem publica vê o erro AQUI, na tela do time — não no

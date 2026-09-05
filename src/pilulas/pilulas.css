@@ -3820,3 +3820,28 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   border: 1px solid var(--wp-border); border-radius: 999px; padding: 7px 12px;
 }
 .wp-gz-virada i { font-style: normal; font-weight: 800; color: var(--wp-ink); }
+
+/* ===== CAMPOS EM 16px NO CELULAR =====
+   O iOS dá zoom sozinho quando o dedo toca num campo com fonte menor que 16px,
+   e deixa a tela torta depois. A "solução" antiga era travar o zoom da página
+   inteira no index.html — o que também tirou o zoom da folha da condição, do
+   PDF e da foto do acessório, justo o que o vendedor precisa aproximar com o
+   cliente do lado.
+
+   16px resolve pelo lado certo: o iOS não mexe na tela, e o pinça-pra-ampliar
+   volta a funcionar no app todo.
+
+   A regra é CEGA de propósito — pega todo campo de digitar, não uma lista de
+   classes. Lista some de vista: a próxima tela nova nasceria com 14px e o
+   zoom-sozinho voltaria só ali, que é o tipo de bug que ninguém reporta direito.
+   Só em tela estreita; no desktop 14px lê melhor.
+
+   O !important é de propósito, e é o único do arquivo: as telas definem o
+   tamanho por classe (.wp-gz-form input, .wp-ia-input...), que ganha de um
+   seletor de elemento. Sem ele a regra existe e não vale nada — foi o que
+   aconteceu na primeira tentativa. */
+@media (max-width: 820px) {
+  input, textarea, select { font-size: 16px !important; }
+  /* Caixinha de marcar não tem texto dentro — 16px só a deixaria gigante. */
+  input[type="checkbox"], input[type="radio"] { font-size: inherit !important; }
+}

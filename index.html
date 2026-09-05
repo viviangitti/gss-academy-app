@@ -6,8 +6,21 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon-v2.png" />
     <!-- viewport-fit=cover: sem isto o env(safe-area-inset-bottom) vale ZERO, e a
      barra de abas fica embaixo da faixa do iPhone. No navegador não aparecia;
-     instalado na tela de início, sim — que é onde o time usa. -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+     instalado na tela de início, sim — que é onde o time usa.
+
+     SEM user-scalable=no E SEM maximum-scale. Eles estavam aqui, e eram o
+     motivo de NÃO DAR ZOOM em nada: nem na folha da condição, nem no PDF, nem
+     na foto do acessório. E de novo só quebrava instalado — o Safari ignora
+     essas duas no navegador desde o iOS 10, mas o modo tela cheia do app
+     instalado OBEDECE. Vendedor com o cliente do lado precisa aproximar um
+     número de tabela; travar o zoom é tirar isso dele, e é barreira de
+     acessibilidade pra quem enxerga pouco.
+
+     O motivo de existirem era o iOS dar zoom sozinho quando o dedo toca num
+     campo com fonte menor que 16px. Isso está resolvido pelo lado certo, no
+     CSS: campo de digitar é 16px no celular (ver "CAMPOS EM 16px" em
+     pilulas.css). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#1a1a2e" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

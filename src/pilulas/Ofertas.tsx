@@ -45,8 +45,35 @@ function quando(ts: number): string {
 }
 
 // A tabela aberta em tela cheia. No showroom o vendedor precisa dar zoom nos
-// números — por isso a imagem abre grande e o PDF vai pro visualizador nativo.
+// números, com o cliente do lado.
+//
+// IMAGEM dá zoom com dois dedos — desde que a página deixe, e por muito tempo
+// ela não deixava: o index.html tinha user-scalable=no. Instalado na tela de
+// início, o iOS obedece isso e a folha ficava travada no tamanho da tela.
+//
+// PDF é outra história, e o pinça não resolve: dentro de um <iframe> o iOS
+// desenha uma PRÉVIA estática da primeira página — não rola, não amplia, não
+// vira página. Por isso existe o botão abaixo: ele leva o arquivo pro
+// visualizador do sistema, que é onde o PDF se comporta como PDF.
 function Lightbox({ c, onFechar }: { c: Condicao; onFechar: () => void }) {
+  const abrirNoSistema = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!c.arquivo) return;
+    // data: URL não abre em aba nova (o navegador bloqueia). Vira blob, que abre.
+    try {
+      const [cab, dados] = c.arquivo.split(',');
+      const tipo = /:(.*?);/.exec(cab)?.[1] || 'application/pdf';
+      const bin = atob(dados);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const url = URL.createObjectURL(new Blob([bytes], { type: tipo }));
+      window.open(url, '_blank', 'noopener');
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch {
+      window.open(c.arquivo, '_blank', 'noopener');
+    }
+  };
+
   return (
     <div className="wp-cond-lb" onClick={onFechar} role="dialog" aria-label={c.titulo}>
       <button type="button" className="wp-cond-lb-x" onClick={onFechar} aria-label="Fechar">
@@ -55,7 +82,12 @@ function Lightbox({ c, onFechar }: { c: Condicao; onFechar: () => void }) {
       {c.tipo === 'imagem' ? (
         <img src={c.arquivo} alt={c.titulo} onClick={(e) => e.stopPropagation()} />
       ) : (
-        <iframe src={c.arquivo} title={c.titulo} onClick={(e) => e.stopPropagation()} />
+        <>
+          <iframe src={c.arquivo} title={c.titulo} onClick={(e) => e.stopPropagation()} />
+          <button type="button" className="wp-cond-lb-abrir" onClick={abrirNoSistema}>
+            <Maximize2 size={14} className="wp-ico" /> Abrir em tela cheia — aí dá zoom
+          </button>
+        </>
       )}
     </div>
   );

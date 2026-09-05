@@ -572,7 +572,10 @@
   display: flex;
   background: var(--wp-surface);
   border-top: 1px solid var(--wp-border);
-  padding-bottom: env(safe-area-inset-bottom);
+  /* A faixa do iPhone (home indicator) come 34px. Sem esta folga os rótulos
+     ficam POR BAIXO dela — "Ver como time" cortado ao meio. O max() garante um
+     respiro também onde não há faixa nenhuma. */
+  padding-bottom: max(env(safe-area-inset-bottom), 6px);
   box-shadow: 0 -4px 16px rgba(16, 24, 40, 0.06);
 }
 .wp-nav-item {
@@ -593,7 +596,10 @@
 /* Seis abas (automotivo, com Documentos) não cabem em 11px num celular de
    375px: "Documentos" e "Tira-dúvida" colavam uma na outra. O tamanho cai só
    quando são seis — nas marcas de farmácia, que têm cinco, nada muda. */
-.wp-nav--6 .wp-nav-item { font-size: 9.5px; letter-spacing: -.01em; }
+.wp-nav--6 .wp-nav-item { font-size: 9.5px; letter-spacing: -.02em; padding-left: 0; padding-right: 0; }
+/* Com seis abas em 390px sobra 65px por item. O rótulo não pode empurrar o
+   vizinho nem vazar pela direita — "Tira-dúvida" saía como "ra-dúvida". */
+.wp-nav--6 .wp-nav-item span { width: 100%; overflow-wrap: anywhere; hyphens: auto; }
 .wp-nav-item.active { color: var(--wp-pink-deep); }
 
 /* ===== Ranking ===== */

@@ -232,6 +232,34 @@ export async function atualizarCondicao(
   await setDoc(doc(db, COL, id), paraNuvem, { merge: true });
 }
 
+/**
+ * A MESMA MUDANÇA EM TODAS as condições de uma seção.
+ *
+ * Existe porque a carta comercial vira sete folhas: no fim do mês eram sete
+ * toques na lixeira, ou sete edições de data, uma por uma, no celular. Quem faz
+ * isso uma vez faz; na segunda, deixa a carta velha no ar.
+ *
+ * Devolve quantas mudaram — a tela avisa, e uma falha no meio não fica muda.
+ */
+export async function atualizarVarias(
+  ids: string[],
+  mudancas: Partial<Omit<Condicao, 'id' | 'criadoEm'>>,
+): Promise<number> {
+  let feitas = 0;
+  for (const id of ids) {
+    try { await atualizarCondicao(id, mudancas); feitas += 1; } catch { /* segue */ }
+  }
+  return feitas;
+}
+
+export async function apagarVarias(ids: string[]): Promise<number> {
+  let feitas = 0;
+  for (const id of ids) {
+    try { await apagarCondicao(id); feitas += 1; } catch { /* segue */ }
+  }
+  return feitas;
+}
+
 export async function apagarCondicao(id: string): Promise<void> {
   gravarCache(lerCache().filter((c) => c.id !== id));
   baixados.delete(id);

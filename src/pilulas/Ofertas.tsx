@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, Megaphone, Pencil, Trash2, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, Megaphone, Pencil, Trash2, CalendarClock, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 import { allOffers, useStore } from './data/store';
-import { carregarCondicoes, condicoesDaMarca, abrirArquivo, apagarCondicao, estaVencida, useCondicoes, type Condicao } from './data/condicoes';
+import { carregarCondicoes, condicoesDaMarca, abrirArquivo, apagarCondicao, apagarVarias, atualizarVarias, estaVencida, useCondicoes, type Condicao } from './data/condicoes';
 
 function shareOffer(text: string) {
   if (navigator.share) {
@@ -55,6 +55,90 @@ function Lightbox({ c, onFechar }: { c: Condicao; onFechar: () => void }) {
         <img src={c.arquivo} alt={c.titulo} onClick={(e) => e.stopPropagation()} />
       ) : (
         <iframe src={c.arquivo} title={c.titulo} onClick={(e) => e.stopPropagation()} />
+      )}
+    </div>
+  );
+}
+
+/**
+ * AS AÇÕES DA SEÇÃO INTEIRA.
+ *
+ * O lápis de cada card resolve corrigir UMA condição. O que não tinha jeito era
+ * a seção: a carta comercial vira sete folhas, e no fim do mês eram sete
+ * toques na lixeira, ou sete edições de data, uma por uma, no celular. Quem faz
+ * isso uma vez faz; na segunda, deixa a carta velha no ar.
+ *
+ * Fica fechada por padrão e só aparece pra gestor: é ação em lote, não é coisa
+ * pra estar no caminho de quem só quer consultar.
+ */
+function AcoesDaSecao({ titulo, itens }: { titulo: string; itens: Condicao[] }) {
+  const [aberta, setAberta] = useState(false);
+  const [data, setData] = useState('');
+  const [ocupado, setOcupado] = useState('');
+  const [aviso, setAviso] = useState('');
+  const ids = itens.map((c) => c.id);
+  const n = ids.length;
+  if (!n) return null;
+
+  const mudarValidade = async () => {
+    if (!data || ocupado) return;
+    setOcupado('data'); setAviso('');
+    const feitas = await atualizarVarias(ids, {
+      venceEm: data,
+      validade: `Válida até ${data.split('-').reverse().join('/')}`,
+    });
+    setOcupado('');
+    // Conta o que SUBIU, não o que mudou na tela. Se a nuvem recusar, a tela
+    // local já mudou e diria "pronto" mentindo — na próxima abertura o dado da
+    // nuvem volta por cima e a gerência acha que o app desfez sozinho.
+    setAviso(feitas === n
+      ? `Pronto: ${n} com validade até ${data.split('-').reverse().join('/')}.`
+      : feitas === 0
+        ? 'Não consegui salvar na nuvem. Confira a internet e tente de novo.'
+        : `${feitas} de ${n} salvas. Tente de novo para as que faltaram.`);
+  };
+
+  const apagarTudo = async () => {
+    if (ocupado) return;
+    const ok = confirm(
+      `Apagar TODAS as ${n} condições de ${titulo}?\n\n`
+      + `As folhas vão junto e não dá pra desfazer.\n\n`
+      + `Se é porque venceram, use a validade acima — elas somem da tela do time e ficam guardadas no Painel.`,
+    );
+    if (!ok) return;
+    setOcupado('apagar'); setAviso('');
+    const feitas = await apagarVarias(ids);
+    setOcupado('');
+    setAviso(feitas === n
+      ? `${n} apagadas.`
+      : feitas === 0
+        ? 'Não consegui apagar na nuvem. Confira a internet e tente de novo.'
+        : `${feitas} de ${n} apagadas. Tente de novo para as que faltaram.`);
+  };
+
+  return (
+    <div className="wp-cond-secao">
+      <button type="button" className="wp-cond-secao-abre" onClick={() => setAberta((o) => !o)}>
+        {aberta ? '–' : '+'} Mexer nas {n} de uma vez
+      </button>
+      {aberta && (
+        <div className="wp-cond-secao-corpo">
+          <label className="wp-cond-secao-rot"><CalendarClock size={13} className="wp-ico" /> Valem até quando</label>
+          <div className="wp-cond-secao-linha">
+            <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
+            <button type="button" disabled={!data || !!ocupado} onClick={mudarValidade}>
+              {ocupado === 'data' ? 'Aplicando…' : `Aplicar às ${n}`}
+            </button>
+          </div>
+          <p className="wp-cond-secao-dica">
+            Depois dessa data elas saem sozinhas da tela do time e ficam guardadas no Painel,
+            marcadas como vencidas. É o caminho para trocar a carta do mês.
+          </p>
+          <button type="button" className="wp-cond-secao-apagar" disabled={!!ocupado} onClick={apagarTudo}>
+            <Trash2 size={13} className="wp-ico" /> {ocupado === 'apagar' ? 'Apagando…' : `Apagar as ${n} de ${titulo}`}
+          </button>
+          {aviso && <p className="wp-cond-secao-aviso">{aviso}</p>}
+        </div>
       )}
     </div>
   );
@@ -165,6 +249,7 @@ export default function Ofertas() {
               <h2 className="wp-cond-grupo-tit"><g.Icone size={18} className="wp-ico" /> {g.titulo} <span>{doGrupo.length}</span></h2>
               <p className="wp-cond-grupo-sub">{g.sub}</p>
             </div>
+            {user?.role === 'gestor' && <AcoesDaSecao titulo={g.titulo} itens={doGrupo} />}
             {!doGrupo.length && (
               <p className="wp-cond-vazio">
                 Nada publicado em {g.titulo.toLowerCase()} ainda. A gerência sobe pelo Painel e aparece aqui na hora.

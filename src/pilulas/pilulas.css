@@ -3593,3 +3593,39 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   font-family: inherit; font-size: 11.5px; font-weight: 700; cursor: pointer;
   color: #1f3a8a; background: none; border: 0; text-decoration: underline; padding: 0;
 }
+
+/* Ações da seção inteira em Condições. Fechada por padrão: é lote, não é o
+   caminho de quem só quer consultar. */
+.wp-cond-secao { margin: -4px 0 14px; }
+.wp-cond-secao-abre {
+  font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+  color: var(--wp-soft); background: none; border: 1px dashed var(--wp-border);
+  border-radius: 999px; padding: 6px 12px;
+}
+.wp-cond-secao-corpo {
+  margin-top: 10px; padding: 14px; border-radius: 14px;
+  background: var(--wp-surface); border: 1px solid var(--wp-border);
+}
+.wp-cond-secao-rot {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11.5px; font-weight: 800; color: var(--wp-soft); margin-bottom: 7px;
+}
+.wp-cond-secao-linha { display: flex; gap: 8px; align-items: center; }
+.wp-cond-secao-linha input {
+  flex: 1; min-width: 0; box-sizing: border-box;
+  border: 1.5px solid var(--wp-border); border-radius: 10px; padding: 9px 11px;
+  font-family: inherit; font-size: 14px; background: var(--wp-bg); color: var(--wp-text);
+}
+.wp-cond-secao-linha button {
+  flex: 0 0 auto; font-family: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer;
+  color: #fff; background: var(--wp-text); border: 0; border-radius: 10px; padding: 10px 13px;
+}
+.wp-cond-secao-linha button:disabled { opacity: .45; cursor: default; }
+.wp-cond-secao-dica { font-size: 11.5px; line-height: 1.5; color: var(--wp-soft); margin: 8px 0 12px; }
+.wp-cond-secao-apagar {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
+  color: #a33; background: none; border: 1px solid #f0d6d6; border-radius: 10px; padding: 10px;
+}
+.wp-cond-secao-apagar:disabled { opacity: .5; cursor: default; }
+.wp-cond-secao-aviso { font-size: 12px; font-weight: 700; color: #1f7a52; margin: 10px 0 0; }

@@ -1831,12 +1831,32 @@ export function productKnowledge(products: Product[]): string {
         .map((o) => `  • Se o cliente diz ${o.trigger}: ${o.answer}`)
         .join('\n');
       const ficha = (p.ficha || []).map((r) => `  - ${r.label}: ${r.value}`).join('\n');
+      // AS VERSÕES. Sem elas a IA lia "JAECOO 7 ELITE = taxa 0%, entrada 80%"
+      // na carta comercial e não fazia ideia do que é uma ELITE, quais versões
+      // existem nem o que muda de uma pra outra — as cartas do mês são TODAS
+      // organizadas por versão, então era garantido não bater com a aba de
+      // Condições. A lista é cumulativa, e o `herda` vai junto: é assim que ela
+      // responde "tudo da Luxury, mais isso aqui" em vez de repetir trinta itens.
+      const versoes = (p.versoes || [])
+        .map((v) => [
+          `  - ${v.nome}: ${v.paraQuem}`,
+          v.herda ? `    herda tudo da ${v.herda} e acrescenta:` : '    vem com:',
+          `    ${v.vemCom.join(' · ')}`,
+        ].join('\n'))
+        .join('\n');
+      // Os 5 destaques: benefício + a ficha que sustenta. É o par que o cliente
+      // usa pra decidir, e a IA não tinha nenhum dos dois nesse formato.
+      const dest = (p.destaques || [])
+        .map((d) => `  - ${d.titulo}${d.prova ? ` (prova: ${d.prova})` : ''}`)
+        .join('\n');
       return [
         `### ${p.name}`,
         p.tagline ? `Resumo: ${p.tagline}` : '',
         `O que é: ${p.whatItIs}`,
         `Para quem: ${p.forWho}`,
         `Benefícios (linguagem permitida):\n${benefits}`,
+        dest ? `Destaques (benefício e a prova):\n${dest}` : '',
+        versoes ? `Versões do modelo, da de entrada para a de topo:\n${versoes}` : '',
         objs ? `Objeções comuns e como responder:\n${objs}` : '',
         ficha ? `Ficha:\n${ficha}` : '',
         p.compliance ? `Aviso de enquadramento: ${p.compliance}` : '',

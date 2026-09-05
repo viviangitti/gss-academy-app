@@ -183,12 +183,19 @@ export function contextoVivo(p = {}, apelido = 'Coach') {
     ? `\nCASOS REAIS DA EQUIPE (anônimos — use como evidência do que funciona/falha NESTA empresa):\n${casos.join('\n')}\n`
     : '';
 
-  // 1400 caracteres por condição, e as QUEBRAS DE LINHA ficam: o conteúdo da
+  // 3000 caracteres por condição, e as QUEBRAS DE LINHA ficam: o conteúdo da
   // folha vem em linhas rotuladas ("- A · TAXA SUBSIDIADA = taxa 0%, entrada
   // 70%, 24x"), e achatar isso num parágrafo foi o que fez o modelo colar o
   // número de uma versão na outra e inventar piso de FIPE que não existe.
+  //
+  // ERA 1400, E CORTAVA. Medido em 05/09/2026 contra o que está publicado: a
+  // folha de REGRAS DO TRADE-IN chegava sem a última linha — justamente "taxa
+  // subsidiada e bônus de trade-in NÃO são cumulativos", que muda a resposta —
+  // e a campanha do mês perdia "vender E FATURAR: venda que não vira nota não
+  // emplaca". A folha mais longa hoje dá 1489 caracteres; 3000 deixa a carta
+  // inteira passar com folga pro mês que vem ser maior.
   const cond = lista(p.condicoes, LIMITES.condicoes)
-    .map((c) => `• ${txt(c.titulo, 120)}${c.detalhe ? `\n${txt(c.detalhe, 1400)}` : ''}`)
+    .map((c) => `• ${txt(c.titulo, 120)}${c.detalhe ? `\n${txt(c.detalhe, 3000)}` : ''}`)
     .filter((l) => l.length > 4);
   const blocoCond = cond.length ? `\nCONDIÇÕES DO MÊS (texto da folha oficial — os números abaixo são para citar como estão):\n${cond.join('\n\n')}\n` : '';
 
@@ -288,9 +295,26 @@ function historicoLimpo(historico) {
  * como compromisso assumido: adere melhor ao papel e é mais difícil de tirar do
  * personagem no meio da conversa.
  */
+/**
+ * HOJE, no fuso de Brasília.
+ *
+ * Sem isto o modelo não sabe em que dia está. Ele lê "válida de 03/09 a
+ * 02/10/2026" e não tem como dizer se vale agora; lê "campeão da 1ª quinzena,
+ * 1 a 14 de setembro" e não sabe se já acabou. Pior: na falta da data ele chuta
+ * pela memória de treino, que é de outro ano — e aí a resposta não bate com a
+ * aba de Condições nem quando o número está certo.
+ */
+function hojeNoBrasil() {
+  return new Intl.DateTimeFormat('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
+  }).format(new Date());
+}
+
 export function montarConversa({ app, vertical, ehGestor, segmento, produtos, perfil, historico, apelido }) {
   const promptFinal = [
     METODO_GSS(app),
+    `\n\n## HOJE\nHoje é ${hojeNoBrasil()} (horário de Brasília). Use ESTA data para julgar prazo e validade — nunca a sua memória de treino, e nunca chute o ano. Condição com prazo já vencido não se cita como vigente: diga que venceu e mande conferir com a gerência. Prazo que ainda não chegou também não vale como "agora".\n`,
     ehGestor ? COMPLEMENTO_GESTOR : '',
     TRAVAS[vertical] || TRAVAS.revenda,
     arsenal(segmento),

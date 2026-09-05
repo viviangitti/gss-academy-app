@@ -3723,3 +3723,6 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 /* "trilha 2/5" na linha do carro, no Painel: um carro com seis níveis e um
    vídeo só parecia pronto na lista. */
 .wp-gz-eps { color: var(--wp-soft); font-weight: 700; }
+/* A explicação do "o que a IA lê" é instrução de trabalho, não legenda: lê-se
+   melhor alinhada à esquerda que centralizada. */
+.wp-gz-avancado .wp-gz-hint { text-align: left; }

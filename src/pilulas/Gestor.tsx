@@ -819,6 +819,13 @@ function CondicaoForm({ brand, editando, onDone }: {
   const [titulo, setTitulo] = useState(editando?.titulo || '');
   const [validade, setValidade] = useState(editando?.validade || '');
   const [observacao, setObservacao] = useState(editando?.observacao || '');
+  // O TEXTO QUE A IA LÊ desta folha.
+  //
+  // A folha é IMAGEM: o time olha e entende. A IA não enxerga imagem — ela lê
+  // este resumo, escrito quando a carta foi publicada. Se ele saiu errado, o
+  // Tira-dúvida responde errado com toda a confiança do mundo, e ninguém tinha
+  // como descobrir: o campo não aparecia em lugar nenhum do app.
+  const [resumoIA, setResumoIA] = useState(editando?.resumo || '');
   const [categoria, setCategoria] = useState<'veiculo' | 'acessorio' | 'campanha'>(editando?.categoria || 'veiculo');
   const [venceEm, setVenceEm] = useState(editando?.venceEm || '');
   // O texto de validade nasce da data. Eram dois campos dizendo a mesma coisa,
@@ -946,6 +953,7 @@ function CondicaoForm({ brand, editando, onDone }: {
           observacao: observacao.trim() || undefined,
           categoria,
           venceEm: venceEm || undefined,
+          resumo: resumoIA.trim() || undefined,
           ...(arq ? { arquivo: arq.arquivo, tipo: arq.tipo, nomeArquivo: arq.nomeArquivo } : {}),
         });
         onDone(titulo.trim());
@@ -1151,6 +1159,37 @@ function CondicaoForm({ brand, editando, onDone }: {
 
       <label className="wp-gz-label">Observação para o time (opcional){paginas ? ' — vale para todas' : ''}</label>
       <textarea value={observacao} onChange={(e) => setObservacao(e.target.value)} rows={2} placeholder="Ex.: bônus de troca só com avaliação presencial." />
+
+      {/* O TEXTO QUE A IA LÊ. Só na correção — na publicação ele nasce sozinho
+          da leitura do PDF.
+
+          A folha é IMAGEM: o time abre e entende. A IA não enxerga imagem, ela
+          lê ISTO. Enquanto o campo não aparecia em lugar nenhum, um número
+          errado aqui virava resposta errada com toda a confiança do mundo, e
+          não havia como descobrir a não ser perguntando pra ela e desconfiando.
+          Agora dá pra abrir a folha ao lado e conferir linha por linha. */}
+      {editando && (
+        <details className="wp-gz-avancado" open={!resumoIA.trim()}>
+          <summary>O que a IA lê desta folha{resumoIA.trim() ? '' : ' — vazio!'}</summary>
+          <p className="wp-gz-hint" style={{ marginTop: 8 }}>
+            A folha acima é imagem, e a IA não enxerga imagem: ela responde a partir
+            <b> deste texto</b>. Se o Tira-dúvida falar um número que não bate com a folha,
+            é aqui que se corrige. Compare com a folha e ajuste — vale a linha exata,
+            do jeito que está escrito lá.
+          </p>
+          <textarea
+            value={resumoIA}
+            onChange={(e) => setResumoIA(e.target.value)}
+            rows={10}
+            placeholder={'LINHA OMODA 5 — carta de setembro, válida de 03/09 a 02/10/2026.\n\n[OMODA 5 LUXURY]\n- A · TAXA SUBSIDIADA = Taxa 0%, entrada 70% · 24x\n- B · TRADE-IN = R$ 8.000, no seminovo do cliente'}
+          />
+          <p className="wp-gz-hint">
+            {resumoIA.trim()
+              ? `${resumoIA.trim().length} caracteres — cabem 3.000. Uma linha por opção, com o rótulo na frente, é o formato que a IA erra menos.`
+              : 'VAZIO: hoje a IA responde sobre esta folha só pelo título e pela observação. Cole aqui o conteúdo dela.'}
+          </p>
+        </details>
+      )}
 
       {erro && <p className="wp-gz-erro">{erro}</p>}
 

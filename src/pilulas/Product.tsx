@@ -25,6 +25,7 @@ import { acessoriosPara, precoLabel, type Acessorio } from './data/acessorios';
 import { carregarDestaques, destaquesDoTime, useDestaquesTime } from './data/destaquesTime';
 import { getElevaProfile } from './data/profile';
 import { auth } from '../services/firebase';
+import { usePrecosAcessorios } from './data/precosAcessorios';
 
 // Duração de cada cena a partir da marcação de tempo do roteiro ("0-4s" → 4s).
 function sceneMs(t: string): number {
@@ -664,6 +665,9 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
 }
 
 export default function Product() {
+  // Re-renderiza quando o preço corrigido chega da nuvem: sem isto a tela
+  // fica com o número do catálogo até alguém trocar de aba.
+  usePrecosAcessorios();
   useStore(); // re-renderiza quando o gestor troca o vídeo
   const { user } = useAuth();
   const { brandId } = useBrand();

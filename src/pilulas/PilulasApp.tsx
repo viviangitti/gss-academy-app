@@ -21,6 +21,7 @@ import Landing from './Landing';
 import Onboarding from './Onboarding';
 import BottomNav from './BottomNav';
 import AvisosApp from './AvisosApp';
+import { carregarPrecos } from './data/precosAcessorios';
 import { BrandProvider, useBrand } from './BrandContext';
 import { AuthProvider, useAuth, audienceOf } from './AuthContext';
 import Perfil from './Perfil';
@@ -188,7 +189,15 @@ function Shell() {
   const location = useLocation();
   const navigate = useNavigate();
   const onProduct = location.pathname.includes('/produto/');
-  const { brand } = useBrand();
+  const { brand, brandId } = useBrand();
+
+  // O PREÇO CORRIGIDO VALE PRO APP INTEIRO, não só pro Painel.
+  //
+  // O Lucas corrigiu o estribo e a Vivian continuou vendo o preço velho: a
+  // busca dos preços na nuvem só existia dentro do Painel, então quem abria a
+  // tela do acessório sem passar por lá ficava com o número do catálogo pra
+  // sempre. Correção que não chega na ponta é correção que não aconteceu.
+  useEffect(() => { carregarPrecos(brandId); }, [brandId]);
   const { user, loading } = useAuth();
   const [onboarded, setOnboarded] = useState<boolean>(() => {
     try { return !!localStorage.getItem('wp_onboarded'); } catch { return true; }

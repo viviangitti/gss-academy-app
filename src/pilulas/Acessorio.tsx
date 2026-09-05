@@ -8,6 +8,7 @@ import {
 } from './data/store';
 import { registraUso } from './data/tracking';
 import { useAuth } from './AuthContext';
+import { usePrecosAcessorios } from './data/precosAcessorios';
 
 /**
  * O editor de foto e vídeo do acessório, só pra gestão.
@@ -83,6 +84,9 @@ function EditorAcessorio({ id, nome }: { id: string; nome: string }) {
 // Aqui o conteúdo é o do acessório mesmo, na ordem em que ele se vende: o que
 // resolve pro cliente, como oferecer, em que carros entra e o código pra pedir.
 export default function Acessorio() {
+  // Re-renderiza quando o preço corrigido chega da nuvem: sem isto a tela
+  // fica com o número do catálogo até alguém trocar de aba.
+  usePrecosAcessorios();
   useStore(); // redesenha quando a foto ou o vídeo da nuvem chega
   const { id } = useParams();
   const { user } = useAuth();

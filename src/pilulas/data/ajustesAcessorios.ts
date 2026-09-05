@@ -48,16 +48,44 @@ export interface EdicaoAcessorio {
   origem?: OrigemEditavel;
 }
 
+/**
+ * UM ACESSÓRIO CRIADO PELA GERÊNCIA, que não existe no código.
+ *
+ * Os 27 do catálogo vieram dos comunicados da montadora e da tabela da loja.
+ * Mas a loja lança serviço novo o tempo todo — e até aqui isso virava pedido
+ * pra mim, com o acessório fora do app até eu ter tempo.
+ *
+ * A forma é a mesma do catálogo, de propósito: assim ele se comporta igual em
+ * toda tela (card, ficha, IA, condição), sem caminho separado pra manter.
+ *
+ * `foto` e vídeo não estão aqui: sobem pela tela do próprio acessório, do mesmo
+ * jeito que nos outros, e ficam guardados pela chave do id.
+ */
+export interface AcessorioNovo {
+  nome: string;
+  origem: OrigemEditavel;
+  beneficio: string;
+  comoOferecer: string;
+  preco?: number;
+  /** Ids dos carros em que ele entra — é o que o faz aparecer dentro do modelo. */
+  aplicaEm: string[];
+  codigos: { modelo: string; pn: string }[];
+  observacao?: string;
+  criadoEm: number;
+}
+
 export interface AjustesDaMarca {
   precos: Record<string, number>;
   edicoes: Record<string, EdicaoAcessorio>;
   ocultos: string[];
   ordem: string[];
+  /** Os que a gerência criou aqui, fora do catálogo do código. */
+  novos: Record<string, AcessorioNovo>;
 }
 
 type Mapa = Record<string, AjustesDaMarca>;
 
-const VAZIO: AjustesDaMarca = { precos: {}, edicoes: {}, ocultos: [], ordem: [] };
+const VAZIO: AjustesDaMarca = { precos: {}, edicoes: {}, ocultos: [], ordem: [], novos: {} };
 
 let version = 0;
 const ouvintes = new Set<() => void>();
@@ -83,6 +111,7 @@ function normalizar(x: unknown): AjustesDaMarca {
     edicoes: o.edicoes && typeof o.edicoes === 'object' ? o.edicoes : {},
     ocultos: Array.isArray(o.ocultos) ? o.ocultos : [],
     ordem: Array.isArray(o.ordem) ? o.ordem : [],
+    novos: o.novos && typeof o.novos === 'object' ? o.novos : {},
   };
 }
 
@@ -220,4 +249,64 @@ export async function ocultarAcessorio(brand: BrandId, id: string, oculto: boole
  */
 export async function salvarOrdemAcessorios(brand: BrandId, ids: string[]): Promise<void> {
   await salvar(brand, { ordem: ids });
+}
+
+
+/** Os acessórios que a gerência criou nesta marca. */
+export function novosDaMarca(brand: BrandId): Record<string, AcessorioNovo> {
+  return ajustesDaMarca(brand).novos;
+}
+
+/** Todos os criados, de qualquer marca — para achar um pelo id. */
+export function todosOsNovos(): Record<string, AcessorioNovo & { brand: string }> {
+  const m = lerCache();
+  const out: Record<string, AcessorioNovo & { brand: string }> = {};
+  for (const marca of Object.keys(m)) {
+    for (const [id, a] of Object.entries(m[marca]?.novos || {})) out[id] = { ...a, brand: marca };
+  }
+  return out;
+}
+
+/**
+ * Cria ou corrige um acessório da gerência.
+ *
+ * O id nasce do nome porque ele vira URL (/eleva/acessorio/<id>) e chave da
+ * foto: um id legível é o que permite achar a foto certa no Firestore seis
+ * meses depois. Colisão ganha um sufixo — dois "engate" na mesma loja é erro
+ * de cadastro, mas não pode sobrescrever o primeiro em silêncio.
+ */
+export async function salvarAcessorioNovo(
+  brand: BrandId, id: string, dados: AcessorioNovo,
+): Promise<void> {
+  const novos = { ...ajustesDaMarca(brand).novos, [id]: dados };
+  await salvar(brand, { novos });
+}
+
+export function idParaAcessorio(nome: string, jaExistem: string[]): string {
+  const base = nome.trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'acessorio';
+  if (!jaExistem.includes(base)) return base;
+  for (let i = 2; i < 50; i++) if (!jaExistem.includes(`${base}-${i}`)) return `${base}-${i}`;
+  return `${base}-${jaExistem.length}`;
+}
+
+/**
+ * Apaga DE VEZ um acessório criado aqui.
+ *
+ * Só vale pros criados: os do código não têm como sair do código, e pra eles
+ * existe o "tirar da vitrine", que volta atrás. Aqui não volta — por isso a
+ * tela pergunta antes.
+ */
+export async function apagarAcessorioNovo(brand: BrandId, id: string): Promise<void> {
+  const novos = { ...ajustesDaMarca(brand).novos };
+  delete novos[id];
+  const a = ajustesDaMarca(brand);
+  await salvar(brand, {
+    novos,
+    ocultos: a.ocultos.filter((x) => x !== id),
+    ordem: a.ordem.filter((x) => x !== id),
+    precos: Object.fromEntries(Object.entries(a.precos).filter(([k]) => k !== id)),
+    edicoes: Object.fromEntries(Object.entries(a.edicoes).filter(([k]) => k !== id)),
+  });
 }

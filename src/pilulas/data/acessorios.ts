@@ -29,7 +29,7 @@
 // comunicados e NÃO entram no app: isso é informação da gerência, e vendedor
 // com custo na tela acaba negociando o desconto que não é dele pra dar.
 import type { BrandId } from './brands';
-import { precoCorrigido, edicaoDe, estaOculto, ordemDaMarca } from './ajustesAcessorios';
+import { precoCorrigido, edicaoDe, estaOculto, ordemDaMarca, novosDaMarca, todosOsNovos } from './ajustesAcessorios';
 
 export type OrigemAcessorio = 'fabrica' | 'loja';
 
@@ -500,6 +500,31 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
   },
 ];
 
+/**
+ * A LISTA COMPLETA de uma marca: o catálogo do código MAIS o que a gerência
+ * criou pelo Painel.
+ *
+ * Os criados entram DEPOIS dos do código na ordem natural, e a ordem salva pela
+ * gerência manda sobre os dois. Sem isto, um acessório novo nasceria invisível
+ * — que é o mesmo que não ter criado.
+ */
+function todosDaMarca(brand: BrandId): Acessorio[] {
+  const doCodigo = CATALOGO_ACESSORIOS.filter((a) => a.brand === brand);
+  const daGerencia = Object.entries(novosDaMarca(brand)).map(([id, n]): Acessorio => ({
+    id,
+    brand,
+    nome: n.nome,
+    origem: n.origem,
+    beneficio: n.beneficio,
+    comoOferecer: n.comoOferecer,
+    preco: n.preco,
+    aplicaEm: n.aplicaEm || [],
+    codigos: n.codigos || [],
+    observacao: n.observacao,
+  }));
+  return [...doCodigo, ...daGerencia];
+}
+
 /** Aplica por cima do catálogo o que a gerência corrigiu. */
 function aplicar(a: Acessorio): Acessorio {
   const e = edicaoDe(a.id);
@@ -530,7 +555,14 @@ function ordenar(lista: Acessorio[], brand: BrandId): Acessorio[] {
 /** Um acessório com as correções aplicadas — inclusive se estiver fora do ar. */
 export function acessorioPorId(id: string): Acessorio | undefined {
   const a = CATALOGO_ACESSORIOS.find((x) => x.id === id);
-  return a ? aplicar(a) : undefined;
+  if (a) return aplicar(a);
+  const n = todosOsNovos()[id];
+  if (!n) return undefined;
+  return aplicar({
+    id, brand: n.brand as BrandId, nome: n.nome, origem: n.origem,
+    beneficio: n.beneficio, comoOferecer: n.comoOferecer, preco: n.preco,
+    aplicaEm: n.aplicaEm || [], codigos: n.codigos || [], observacao: n.observacao,
+  });
 }
 
 export { estaOculto as acessorioOculto };
@@ -540,10 +572,7 @@ export { estaOculto as acessorioOculto };
  * É esta função que todas as telas usam.
  */
 export function acessoriosDaMarca(brand: BrandId): Acessorio[] {
-  return ordenar(
-    CATALOGO_ACESSORIOS.filter((a) => a.brand === brand && !estaOculto(a.id)).map(aplicar),
-    brand,
-  );
+  return ordenar(todosDaMarca(brand).filter((a) => !estaOculto(a.id)).map(aplicar), brand);
 }
 
 /**
@@ -551,14 +580,20 @@ export function acessoriosDaMarca(brand: BrandId): Acessorio[] {
  * não haveria como trazer de volta um item removido por engano.
  */
 export function acessoriosParaGestao(brand: BrandId): Acessorio[] {
-  return ordenar(CATALOGO_ACESSORIOS.filter((a) => a.brand === brand).map(aplicar), brand);
+  return ordenar(todosDaMarca(brand).map(aplicar), brand);
 }
 
 /** Os que encaixam neste veículo — é o que aparece dentro do carro. */
 export function acessoriosPara(produtoId: string): Acessorio[] {
-  const lista = CATALOGO_ACESSORIOS
-    .filter((a) => a.aplicaEm.includes(produtoId) && !estaOculto(a.id))
-    .map(aplicar);
+  const todos = [
+    ...CATALOGO_ACESSORIOS,
+    ...Object.entries(todosOsNovos()).map(([id, n]): Acessorio => ({
+      id, brand: n.brand as BrandId, nome: n.nome, origem: n.origem,
+      beneficio: n.beneficio, comoOferecer: n.comoOferecer, preco: n.preco,
+      aplicaEm: n.aplicaEm || [], codigos: n.codigos || [], observacao: n.observacao,
+    })),
+  ];
+  const lista = todos.filter((a) => a.aplicaEm.includes(produtoId) && !estaOculto(a.id)).map(aplicar);
   return lista.length ? ordenar(lista, lista[0].brand) : lista;
 }
 

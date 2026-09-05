@@ -252,6 +252,9 @@ export default function Acessorio() {
         </div>
       )}
 
+      {/* Serviço da loja não tem código de peça — o bloco vazio ficava na tela
+          com um título e nada embaixo, parecendo que faltou carregar. */}
+      {a.codigos.length > 0 && (
       <div className="wp-block">
         <span className="wp-block-label">Código para pedir</span>
         <p className="wp-acp-texto">Toque para copiar. É o que você usa no sistema.</p>
@@ -267,6 +270,7 @@ export default function Acessorio() {
           ))}
         </ul>
       </div>
+      )}
 
       <p className="wp-news-foot">
         Preço público sugerido pela montadora. Confirme o valor e a disponibilidade vigentes

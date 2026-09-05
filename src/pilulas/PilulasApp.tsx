@@ -22,6 +22,7 @@ import Onboarding from './Onboarding';
 import BottomNav from './BottomNav';
 import AvisosApp from './AvisosApp';
 import { carregarPrecos } from './data/precosAcessorios';
+import { carregarIndiceImagens } from './data/imagensNuvem';
 import { BrandProvider, useBrand } from './BrandContext';
 import { AuthProvider, useAuth, audienceOf } from './AuthContext';
 import Perfil from './Perfil';
@@ -198,6 +199,12 @@ function Shell() {
   // tela do acessório sem passar por lá ficava com o número do catálogo pra
   // sempre. Correção que não chega na ponta é correção que não aconteceu.
   useEffect(() => { carregarPrecos(brandId); }, [brandId]);
+
+  // A FOTO QUE A GERÊNCIA SUBIU tem o mesmo problema que o preço tinha: o
+  // índice das fotos da nuvem não era buscado por ninguém, então a foto só
+  // existia no aparelho de quem subiu. Hoje não há nenhuma publicada — este
+  // efeito é o que garante que a primeira apareça pro time.
+  useEffect(() => { carregarIndiceImagens(); }, []);
   const { user, loading } = useAuth();
   const [onboarded, setOnboarded] = useState<boolean>(() => {
     try { return !!localStorage.getItem('wp_onboarded'); } catch { return true; }

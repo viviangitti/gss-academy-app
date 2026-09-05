@@ -78,6 +78,7 @@ export async function submitObjection(
 }
 
 /** Histórico completo de objeções da marca, mais novas primeiro (uso do gestor). */
+// so-gerencia: objeções cruas trazem relato de cliente; o time vê só as publicadas.
 export async function fetchObjections(brand: BrandId): Promise<TeamObjection[]> {
   if (!db) return [];
   try {

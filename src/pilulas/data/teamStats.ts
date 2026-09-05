@@ -73,6 +73,7 @@ function lastMonthIds(n: number): string[] {
   return out;
 }
 
+// so-gerencia: desempenho individual do time, com nome e e-mail.
 export async function fetchTeam(brand: string): Promise<TeamPerson[]> {
   if (!db) return [];
   const q = query(collection(db, 'elevaStats'), where('brand', '==', brand));

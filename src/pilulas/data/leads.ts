@@ -46,6 +46,7 @@ export async function enviarLead(l: NovoLead): Promise<boolean> {
   }
 }
 
+// so-gerencia: contatos da vitrine, dado pessoal de quem nem é do time.
 export async function buscarLeads(): Promise<Lead[]> {
   if (!db) return [];
   try {

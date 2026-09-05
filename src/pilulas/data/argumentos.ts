@@ -93,6 +93,7 @@ export async function enviarArgumento(o: {
 }
 
 /** Tudo o que o time respondeu — visão do gestor. */
+// so-gerencia: moderação — o texto cru tem nome e e-mail de quem respondeu.
 export async function buscarArgumentos(brand: BrandId): Promise<Argumento[]> {
   if (!db) return [];
   try {
@@ -103,18 +104,6 @@ export async function buscarArgumentos(brand: BrandId): Promise<Argumento[]> {
   }
 }
 
-/** Os que o gestor destacou — é o que o time inteiro vê dentro do carro. */
-export async function buscarDestacados(brand: BrandId): Promise<Argumento[]> {
-  if (!db) return [];
-  try {
-    const snap = await getDocs(
-      query(collection(db, COL), where('brand', '==', brand), where('destacado', '==', true)),
-    );
-    return snap.docs.map((d) => paraArgumento(d.id, d.data() as Record<string, unknown>)).sort(maisNovoPrimeiro);
-  } catch {
-    return [];
-  }
-}
 
 /** O que ESTA pessoa já respondeu deste carro — pra não pedir duas vezes. */
 export async function meuArgumento(productId: string, email?: string): Promise<Argumento | null> {

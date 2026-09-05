@@ -15,6 +15,7 @@ import { updateElevaName, updateElevaWhatsapp, updateElevaFoto, retratoParaDataU
 import { auth } from '../services/firebase';
 import { excluirConta } from './data/excluirConta';
 import { cargoLabel } from './data/cargos';
+import { jaInstalado, ehIOS, ehNavegadorDeApp, instalarAgora, dispensarInstalar } from './data/versaoApp';
 
 // Iniciais do nome pro avatar (ex.: "Ana Paula" -> "AP").
 function initials(name?: string): string {
@@ -308,7 +309,67 @@ export default function Perfil() {
         </div>
       )}
 
+      <ComoInstalar />
       <VersaoDoApp />
+    </div>
+  );
+}
+
+/**
+ * COMO DEIXAR O APP NA TELA DO CELULAR — sempre disponível.
+ *
+ * O convite de instalar era um card que some no X e não volta. Quem dispensou
+ * uma vez ficou sem caminho nenhum. E o motivo mais comum de "não instala" nem
+ * é esse: a pessoa abre o link do grupo e o WhatsApp mostra a página DENTRO
+ * dele, onde "adicionar à tela de início" não existe ou cria um atalho que
+ * reabre o WhatsApp. Ela tenta, não consegue, e conclui que o app não instala.
+ *
+ * Aqui a instrução é a do navegador em que ela está de verdade.
+ */
+function ComoInstalar() {
+  const [tentando, setTentando] = useState(false);
+  const [feito, setFeito] = useState(false);
+  if (jaInstalado() || feito) {
+    return <p className="wp-perfil-versao">O Eleva já está instalado neste aparelho.</p>;
+  }
+  const noApp = ehNavegadorDeApp();
+  const ios = ehIOS();
+
+  return (
+    <div className="wp-perfil-instalar">
+      <b>Deixe o Eleva na tela do celular</b>
+      {noApp ? (
+        <p>
+          Você abriu por dentro de outro aplicativo (WhatsApp, Instagram) — e daí não dá
+          para instalar. Toque nos três pontinhos e escolha <b>Abrir no navegador</b>
+          {ios ? ' (precisa ser o Safari)' : ''}, depois volte aqui.
+        </p>
+      ) : ios ? (
+        <p>
+          Toque em <b>Compartilhar</b> (o quadrado com a seta para cima), desça a lista e
+          escolha <b>Adicionar à Tela de Início</b>. Precisa ser pelo Safari.
+        </p>
+      ) : (
+        <>
+          <p>Abre como aplicativo, em tela cheia, sem procurar a aba no meio das outras.</p>
+          <button
+            type="button"
+            disabled={tentando}
+            onClick={async () => {
+              setTentando(true);
+              const ok = await instalarAgora();
+              setTentando(false);
+              if (ok) { setFeito(true); dispensarInstalar(); }
+            }}
+          >
+            {tentando ? 'Abrindo…' : 'Instalar agora'}
+          </button>
+          <p className="wp-perfil-instalar-alt">
+            Se o botão não fizer nada, toque nos três pontinhos do navegador e escolha
+            <b> Instalar aplicativo</b>.
+          </p>
+        </>
+      )}
     </div>
   );
 }

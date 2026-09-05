@@ -3646,3 +3646,18 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   color: #8a6516; background: #fdf3dd; border: 1px solid #efdcae; border-radius: 12px;
 }
 .wp-gz-del:disabled { opacity: .3; cursor: default; }
+
+/* Como instalar — fixo no Perfil, porque o card do rodapé some e não volta. */
+.wp-perfil-instalar {
+  margin: 26px 0 0; padding: 16px; border-radius: 14px;
+  background: var(--wp-surface); border: 1px solid var(--wp-border);
+}
+.wp-perfil-instalar > b { display: block; font-size: 14px; font-weight: 800; margin-bottom: 6px; }
+.wp-perfil-instalar p { margin: 0; font-size: 12.5px; line-height: 1.55; color: var(--wp-soft); }
+.wp-perfil-instalar button {
+  margin-top: 12px; width: 100%; font-family: inherit; font-size: 13.5px; font-weight: 800;
+  cursor: pointer; color: #fff; background: var(--wp-text); border: 0;
+  border-radius: 11px; padding: 11px;
+}
+.wp-perfil-instalar button:disabled { opacity: .6; cursor: default; }
+.wp-perfil-instalar-alt { margin-top: 10px !important; font-size: 11.5px !important; }

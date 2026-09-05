@@ -67,6 +67,21 @@ export function jaInstalado(): boolean {
   }
 }
 
+/**
+ * Está dentro do navegador de OUTRO app (WhatsApp, Instagram, Facebook)?
+ *
+ * É o caminho normal: a gerência manda o link no grupo, a pessoa toca e o
+ * WhatsApp abre a página DENTRO dele. Ali "adicionar à tela de início" não
+ * existe, ou cria um atalho que reabre o WhatsApp. A pessoa tenta, não
+ * consegue, e conclui que o app não instala.
+ */
+export function ehNavegadorDeApp(): boolean {
+  const ua = navigator.userAgent;
+  return /FBAN|FBAV|Instagram|Line\/|WhatsApp|GSA\//.test(ua)
+    // Chrome/Edge/Firefox no iPhone também não instalam: só o Safari.
+    || (ehIOS() && /CriOS|FxiOS|EdgiOS/.test(ua));
+}
+
 export function ehIOS(): boolean {
   const ua = navigator.userAgent;
   // iPad recente se apresenta como Mac; a pista é ter toque.

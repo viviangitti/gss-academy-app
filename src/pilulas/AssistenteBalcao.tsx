@@ -50,9 +50,23 @@ const SUGESTOES_AUTO = [
  * Aqui só o negrito é traduzido, que é o único que ele usa de verdade; o resto
  * do texto passa como está, sem HTML e sem risco.
  */
+/**
+ * O markdown que o modelo usa, virando texto de verdade.
+ *
+ * Só o **negrito** era tratado. O asterisco simples do itálico chegava cru na
+ * tela — a resposta saía com "*soma com a opção escolhida*" e "*mais*" no meio
+ * da frase, do jeito que o modelo escreveu. Parece erro do app.
+ *
+ * O itálico exige que não haja quebra de linha dentro: senão um "* item" de
+ * lista casaria com o asterisco da linha seguinte e comeria as duas.
+ */
 function emNegrito(texto: string): React.ReactNode {
-  const partes = String(texto).split(/\*\*(.+?)\*\*/gs);
-  return partes.map((p, i) => (i % 2 ? <b key={i}>{p}</b> : p));
+  const partes = String(texto).split(/(\*\*[^*]+\*\*|\*[^*\n]+\*)/g);
+  return partes.map((p, i) => {
+    if (p.length > 4 && p.startsWith('**') && p.endsWith('**')) return <b key={i}>{p.slice(2, -2)}</b>;
+    if (p.length > 2 && p.startsWith('*') && p.endsWith('*')) return <i key={i}>{p.slice(1, -1)}</i>;
+    return p;
+  });
 }
 
 export default function AssistenteBalcao() {

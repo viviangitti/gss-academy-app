@@ -8,7 +8,8 @@
     "build": "node scripts/check-leitura.mjs && tsc -b && vite build",
     "confere": "bash scripts/check-secrets.sh && node scripts/check-marcas.mjs && node scripts/check-leitura.mjs",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "confere-carta": "node scripts/confere-carta.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

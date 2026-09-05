@@ -87,8 +87,13 @@ export default function AssistenteBalcao() {
     ? `Pergunte sobre os produtos ${marca}. Responde só com o conteúdo aprovado — pra você atender rápido.`
     : `Pergunte sobre os produtos ${marca}. Responde só com o conteúdo aprovado — pra você vender com segurança.`;
   const vazioTitulo = ehAuto ? 'O que o cliente perguntou?' : ehBalcao ? 'Como posso ajudar no atendimento?' : 'O que a cliente perguntou?';
+  // O aviso de rodapé saiu na concessionária (pedido da Vivian, 05/09/2026).
+  // Ele repetia na tela uma regra que já é da IA: o que decide se ela pode ou
+  // não falar um número está no servidor, em api/_coach.js, e continua igual —
+  // tirar o texto daqui não solta nada. Na farmácia ele FICA: ali não é lembrete
+  // de processo, é o recado de que a IA não dá orientação médica.
   const aviso = ehAuto
-    ? 'Uso interno de apoio. Preço, taxa, bônus de troca e prazo de entrega saem da tabela vigente em Condições comerciais — nunca desta tela.'
+    ? ''
     : 'Uso interno de apoio. Não é orientação médica: dose, uso com remédios e doença ficam com o rótulo e o farmacêutico.';
   const perfilIA = ehAuto ? 'auto' : ehBalcao ? 'balcao' : 'revenda';
 
@@ -198,7 +203,7 @@ export default function AssistenteBalcao() {
         </div>
       </div>
 
-      <div className="wp-ia-disc">{aviso}</div>
+      {aviso && <div className="wp-ia-disc">{aviso}</div>}
 
       <div className="wp-ia-thread">
         {msgs.length === 0 && (

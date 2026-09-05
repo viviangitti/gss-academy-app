@@ -28,6 +28,21 @@ import { getBrand, type BrandId } from './data/brands';
 
 const W = 1080;
 const H = 1350;
+/**
+ * Desenha em 2x e entrega em 2x. Texto, cantos e a moldura dos destaques saem
+ * de verdade nítidos em tela retina — e o WhatsApp, que reduz a imagem no
+ * caminho, reduz a partir de mais pixel em vez de menos.
+ */
+const NITIDEZ = 2;
+/**
+ * A ALTURA DA FOTO — e o motivo dela ser 52% e não 62%.
+ *
+ * As fotos dos carros são 1400x788 (16:9). Numa faixa de 1080x837, preencher
+ * exigia AMPLIAR 6% e jogar fora 27% da largura: foto ampliada é foto borrada,
+ * e ainda por cima usando só o miolo dela. Em 1080x702 a mesma foto entra
+ * REDUZIDA (0,89), que é sempre mais nítido — e o recorte cai pela metade.
+ */
+const FOTO_H = Math.round(H * 0.52);
 
 /** Quebra o texto em linhas que cabem na largura, e devolve quantas usou. */
 function linhas(ctx: CanvasRenderingContext2D, texto: string, largura: number): string[] {
@@ -89,10 +104,15 @@ export interface DadosArte {
 }
 
 async function desenhar(canvas: HTMLCanvasElement, d: DadosArte) {
-  canvas.width = W;
-  canvas.height = H;
+  canvas.width = W * NITIDEZ;
+  canvas.height = H * NITIDEZ;
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
+  // Tudo abaixo continua pensando em 1080x1350; o scale cuida do resto.
+  ctx.scale(NITIDEZ, NITIDEZ);
+  ctx.imageSmoothingEnabled = true;
+  // O padrão do canvas é reamostragem barata — visível justo na foto do carro.
+  ctx.imageSmoothingQuality = 'high';
 
   // Fundo escuro. A foto entra por cima, e o degradê por cima dela — é o que
   // faz o texto ficar legível em qualquer foto, clara ou escura.
@@ -101,19 +121,19 @@ async function desenhar(canvas: HTMLCanvasElement, d: DadosArte) {
 
   const img = d.foto ? await carregar(d.foto) : null;
   if (img) {
-    cobrir(ctx, img, 0, 0, W, Math.round(H * 0.62));
-    const g = ctx.createLinearGradient(0, 0, 0, H * 0.62);
+    cobrir(ctx, img, 0, 0, W, FOTO_H);
+    const g = ctx.createLinearGradient(0, 0, 0, FOTO_H);
     g.addColorStop(0, 'rgba(13,13,24,0.55)');
     g.addColorStop(0.45, 'rgba(13,13,24,0.12)');
     g.addColorStop(1, 'rgba(13,13,24,1)');
     ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, Math.round(H * 0.62));
+    ctx.fillRect(0, 0, W, FOTO_H);
   } else {
-    const g = ctx.createLinearGradient(0, 0, W, H * 0.62);
+    const g = ctx.createLinearGradient(0, 0, W, FOTO_H);
     g.addColorStop(0, '#232344');
     g.addColorStop(1, '#0d0d18');
     ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, Math.round(H * 0.62));
+    ctx.fillRect(0, 0, W, FOTO_H);
   }
 
   // Assinatura da loja, no alto
@@ -128,14 +148,14 @@ async function desenhar(canvas: HTMLCanvasElement, d: DadosArte) {
   ctx.fillStyle = '#fff';
   ctx.font = '800 82px Arial, sans-serif';
   const nomeLinhas = linhas(ctx, d.modelo.toLocaleUpperCase('pt-BR'), W - 140);
-  let y = Math.round(H * 0.62) - 40 - (nomeLinhas.length - 1) * 88;
+  let y = FOTO_H - 40 - (nomeLinhas.length - 1) * 88;
   for (const l of nomeLinhas) {
     ctx.fillText(l, 70, y);
     y += 88;
   }
 
   // A CHAMADA aprovada — a única frase da condição que sai daqui
-  y = Math.round(H * 0.62) + 66;
+  y = FOTO_H + 78;
   ctx.fillStyle = '#4b8dff';
   ctx.font = '800 54px Arial, sans-serif';
   for (const l of linhas(ctx, d.chamada, W - 140)) {

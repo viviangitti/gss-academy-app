@@ -7,7 +7,7 @@ import { useAuth, audienceOf } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { useEffect } from 'react';
-import { ACESSORIOS } from './data/acessorios';
+import { acessorioPorId } from './data/acessorios';
 import FichaAcessorio from './FichaAcessorio';
 import { nomeParaCliente } from './data/nomeArquivo';
 
@@ -47,7 +47,7 @@ export default function Ficha() {
   // vendedor não precisa aprender dois caminhos, e o botão "Salvar em PDF"
   // é o mesmo. A montagem é outra porque o dado é outro — acessório não tem
   // motorização nem versão, tem o que resolve e em que carro entra.
-  const acessorio = id ? ACESSORIOS.find((x) => x.id === id) : undefined;
+  const acessorio = id ? acessorioPorId(id) : undefined;
   if (!product && acessorio) return <FichaAcessorio a={acessorio} />;
 
   // CARRO COM FOLHA OFICIAL NÃO PASSA POR AQUI.

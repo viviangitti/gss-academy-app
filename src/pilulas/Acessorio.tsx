@@ -1,14 +1,15 @@
 import { useParams, Link } from 'react-router-dom';
-import { ChevronLeft, Package, Copy, Check, Car, Maximize2, X, Image as ImageIcon, Video, FileText, Pencil } from 'lucide-react';
+import { ChevronLeft, Package, Copy, Check, Car, Maximize2, X, Image as ImageIcon, Video, FileText, Pencil, EyeOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { ACESSORIOS, ORIGENS, precoLabel } from './data/acessorios';
+import { acessorioPorId, acessorioOculto, ORIGENS, precoLabel } from './data/acessorios';
 import {
   findProduct, hasImage, getProductImageUrl, ensureImageLoaded, setProductImage, clearProductImage,
   hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProductVideo, clearProductVideo, useStore,
 } from './data/store';
 import { registraUso } from './data/tracking';
 import { useAuth } from './AuthContext';
-import { usePrecosAcessorios } from './data/precosAcessorios';
+import { useAjustesAcessorios } from './data/ajustesAcessorios';
+import { podeMexerEmAcessorios } from './data/cargos';
 
 /**
  * O editor de foto e vídeo do acessório, só pra gestão.
@@ -86,11 +87,11 @@ function EditorAcessorio({ id, nome }: { id: string; nome: string }) {
 export default function Acessorio() {
   // Re-renderiza quando o preço corrigido chega da nuvem: sem isto a tela
   // fica com o número do catálogo até alguém trocar de aba.
-  usePrecosAcessorios();
+  useAjustesAcessorios();
   useStore(); // redesenha quando a foto ou o vídeo da nuvem chega
   const { id } = useParams();
   const { user } = useAuth();
-  const a = ACESSORIOS.find((x) => x.id === id);
+  const a = id ? acessorioPorId(id) : undefined;
   const [copiado, setCopiado] = useState('');
   const [ampliada, setAmpliada] = useState(false);
 
@@ -127,13 +128,26 @@ export default function Acessorio() {
   // A foto publicada pela gerência ganha da que veio junto com o app.
   const foto = getProductImageUrl(a.id) || a.foto;
   const video = getVideoObjectUrl(a.id) || a.videoUrl;
-  const ehGestor = user?.role === 'gestor';
+  // Quem responde pelo catálogo de acessórios. Gerente de vendas e gerente de
+  // leads abrem o mesmo Painel, mas a tabela de acessório não é deles.
+  const podeMexer = podeMexerEmAcessorios(user);
+  const oculto = acessorioOculto(a.id);
 
   return (
     <div className="wp-acp">
       <Link to="/eleva/catalogo" className="wp-news-back">
         <ChevronLeft size={16} className="wp-ico" /> Voltar
       </Link>
+
+      {/* SAIU DA VITRINE. O link direto continua abrindo (alguém pode ter
+          salvo), então a tela avisa em vez de fingir que está tudo normal — e
+          o vendedor não oferece o que a loja não vende mais. */}
+      {oculto && (
+        <p className="wp-acp-fora">
+          <EyeOff size={14} className="wp-ico" /> Este acessório saiu da vitrine. Não ofereça
+          sem falar com a gerência de acessórios.
+        </p>
+      )}
 
       {foto && (
         <button type="button" className="wp-acp-foto" onClick={() => setAmpliada(true)} aria-label="Ampliar foto">
@@ -180,7 +194,16 @@ export default function Acessorio() {
         <FileText size={15} className="wp-ico" /> Ficha técnica para o cliente
       </Link>
 
-      {ehGestor && <EditorAcessorio id={a.id} nome={a.nome} />}
+      {/* EDITAR, igual às condições: o botão fica onde a pessoa está olhando o
+          item, não escondido no Painel. Leva pro Painel já com a ficha aberta. */}
+      {podeMexer && (
+        <div className="wp-acp-gestao">
+          <Link className="wp-cond-editar" to={`/eleva/gestor?acessorio=${a.id}`}>
+            <Pencil size={13} className="wp-ico" /> Editar nome, textos, preço e ordem
+          </Link>
+          <EditorAcessorio id={a.id} nome={a.nome} />
+        </div>
+      )}
 
       {video && (
         <div className="wp-block">

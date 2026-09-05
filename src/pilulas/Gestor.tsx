@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, ChevronUp, X } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, ChevronUp, X, RotateCcw, Undo2 } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
-import { cargoLabel } from './data/cargos';
+import { cargoLabel, podeMexerEmAcessorios } from './data/cargos';
 import { vocab } from './data/vocabulario';
 import { useAuth } from './AuthContext';
 import { CATEGORIES, CATEGORIAS_AUTO, CATEGORIAS_SAUDE, type Category, type Product } from './data/products';
@@ -19,8 +19,8 @@ import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, ty
 import { carregarOcultos, ocultosDaMarca, alternarOculto, useDocsOcultos } from './data/docsOcultos';
 import { atualizarCondicao, aposentarVarias, jaPublicada, abrirArquivo, type Condicao } from './data/condicoes';
 import { lerCarta, pareceAcessorio, textoDeValidade, type PaginaCarta } from './data/cartaPdf';
-import { ACESSORIOS, precoLabel, precoDe, type Acessorio } from './data/acessorios';
-import { carregarPrecos, salvarPreco, usePrecosAcessorios } from './data/precosAcessorios';
+import { acessoriosParaGestao, acessorioOculto, precoLabel, precoDe, ORIGENS, type Acessorio, type OrigemAcessorio } from './data/acessorios';
+import { carregarAjustesAcessorios, salvarPreco, salvarEdicao, ocultarAcessorio, salvarOrdemAcessorios, edicaoDe, useAjustesAcessorios } from './data/ajustesAcessorios';
 import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, estaVencida, useCondicoes, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
@@ -1504,70 +1504,230 @@ function VideosPorPublico({ products: todos }: { products: Product[] }) {
 }
 
 
-// UMA LINHA DE ACESSÓRIO, com o preço editável ali mesmo.
+// UMA LINHA DE ACESSÓRIO — preço no toque, e o resto atrás do lápis.
 //
-// Sem tela nova e sem formulário: o preço é o único campo que muda toda hora, e
-// mandar a gerência abrir um formulário pra trocar um número é o tipo de
-// fricção que faz ela não trocar — e o vendedor mostrar valor velho.
-function LinhaAcessorio({ a, brand }: { a: Acessorio; brand: BrandId }) {
-  const [editando, setEditando] = useState(false);
+// Começou só com o preço, porque é o campo que muda toda hora e mandar a
+// gerência abrir formulário pra trocar um número é a fricção que faz ela não
+// trocar. Isso continua: toque no valor e pronto.
+//
+// O que faltava era o RESTO. Nome errado, benefício desatualizado, item que a
+// loja parou de vender, a ordem da vitrine — nada disso tinha dono na tela, e
+// virava pedido pra mim. Agora tem: o lápis abre a ficha inteira, a lixeira
+// tira de cartaz e as setas arrumam a fila.
+//
+// O código de peça, a foto e os carros compatíveis NÃO estão aqui de propósito:
+// PN errado o vendedor pede a peça errada, e isso se confere no comunicado da
+// montadora, não no chute. Foto se troca na tela do próprio acessório.
+function LinhaAcessorio({
+  a, brand, i, total, onMover, abrirJa,
+}: {
+  a: Acessorio;
+  brand: BrandId;
+  i: number;
+  total: number;
+  onMover: (de: number, passo: number) => void;
+  /** Veio do botão "Editar" lá na tela do acessório: já abre a ficha. */
+  abrirJa?: boolean;
+}) {
+  const [modo, setModo] = useState<null | 'preco' | 'ficha'>(abrirJa ? 'ficha' : null);
   const [valor, setValor] = useState('');
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState('');
+  const oculto = acessorioOculto(a.id);
+  const editado = !!edicaoDe(a.id);
 
-  const abrir = () => {
+  // A ficha inteira, começando pelo que está na tela hoje (já corrigido).
+  const [f, setF] = useState({
+    nome: a.nome, beneficio: a.beneficio, comoOferecer: a.comoOferecer,
+    observacao: a.observacao || '', origem: a.origem as OrigemAcessorio,
+  });
+
+  const recado = (e: unknown) =>
+    (e as { code?: string })?.code === 'permission-denied'
+      ? 'Seu acesso ainda não libera mexer em acessório. Avise a Vivian.'
+      : 'Não consegui salvar. Confira a internet.';
+
+  const abrirPreco = () => {
     setErro('');
     setValor(String(precoDe(a) ?? ''));
-    setEditando(true);
+    setModo('preco');
   };
 
-  const salvar = async () => {
-    setSalvando(true);
+  const abrirFicha = () => {
     setErro('');
+    setF({
+      nome: a.nome, beneficio: a.beneficio, comoOferecer: a.comoOferecer,
+      observacao: a.observacao || '', origem: a.origem,
+    });
+    setModo('ficha');
+  };
+
+  const salvarValor = async () => {
+    setSalvando(true); setErro('');
     try {
       const n = Number(String(valor).replace(/[^\d]/g, ''));
       await salvarPreco(brand, a.id, Number.isFinite(n) && n > 0 ? n : undefined);
-      setEditando(false);
-    } catch (e) {
-      setErro((e as { code?: string })?.code === 'permission-denied'
-        ? 'Seu acesso ainda não libera mexer em preço. Avise a Vivian.'
-        : 'Não consegui salvar. Confira a internet.');
-    } finally {
-      setSalvando(false);
-    }
+      setModo(null);
+    } catch (e) { setErro(recado(e)); } finally { setSalvando(false); }
   };
 
-  if (!editando) {
-    return (
-      <div className="wp-gz-item">
-        <span className="wp-gz-item-name">{a.nome}</span>
-        <span className="wp-gz-item-meta">
-          <button type="button" className="wp-gz-preco" onClick={abrir}>
+  const salvarFicha = async () => {
+    if (!f.nome.trim()) { setErro('O nome não pode ficar vazio — é o que o time lê no card.'); return; }
+    setSalvando(true); setErro('');
+    try {
+      await salvarEdicao(brand, a.id, f);
+      setModo(null);
+    } catch (e) { setErro(recado(e)); } finally { setSalvando(false); }
+  };
+
+  const voltarAoOriginal = async () => {
+    if (!confirm(`Voltar "${a.nome}" ao texto original do catálogo? O preço corrigido continua.`)) return;
+    setSalvando(true); setErro('');
+    try {
+      await salvarEdicao(brand, a.id, null);
+      setModo(null);
+    } catch (e) { setErro(recado(e)); } finally { setSalvando(false); }
+  };
+
+  const tirarOuVoltar = async () => {
+    const pergunta = oculto
+      ? `Colocar "${a.nome}" de volta na vitrine? O time volta a ver.`
+      : `Tirar "${a.nome}" da vitrine? O time deixa de ver — no catálogo, dentro do carro e na IA. Você pode trazer de volta aqui.`;
+    if (!confirm(pergunta)) return;
+    try {
+      await ocultarAcessorio(brand, a.id, !oculto);
+    } catch (e) { setErro(recado(e)); }
+  };
+
+  return (
+    <div>
+      <div className={`wp-gz-item wp-gz-acitem ${oculto ? 'wp-gz-item-off' : ''}`}>
+        <span className="wp-gz-item-name">
+          {a.nome}
+          {oculto && <span className="wp-gz-fora">fora da vitrine</span>}
+          {!oculto && editado && <span className="wp-gz-fora wp-gz-fora--ok">editado</span>}
+        </span>
+        {/* Preço à esquerda, ferramentas à direita, em faixa própria: com o nome
+            na mesma linha os quatro ícones quebravam e a lixeira caía sozinha
+            embaixo, parecendo botão de outra coisa. */}
+        <span className="wp-gz-item-meta wp-gz-acmeta">
+          <button type="button" className="wp-gz-preco" onClick={abrirPreco}>
             {precoLabel(a)} <Pencil size={12} className="wp-ico" />
           </button>
+          <span className="wp-gz-acbtns">
+          <button
+            type="button" className="wp-gz-del" title="Subir na lista"
+            aria-label={`Subir ${a.nome} na lista`}
+            disabled={i === 0} onClick={() => onMover(i, -1)}
+          >
+            <ChevronUp size={14} className="wp-ico" />
+          </button>
+          <button
+            type="button" className="wp-gz-del" title="Descer na lista"
+            aria-label={`Descer ${a.nome} na lista`}
+            disabled={i === total - 1} onClick={() => onMover(i, 1)}
+          >
+            <ChevronDown size={14} className="wp-ico" />
+          </button>
+          <button
+            type="button" className="wp-gz-del" title="Editar nome e textos"
+            aria-label={`Editar ${a.nome}`}
+            onClick={() => (modo === 'ficha' ? setModo(null) : abrirFicha())}
+          >
+            <Pencil size={14} className="wp-ico" />
+          </button>
+          <button
+            type="button" className="wp-gz-del"
+            title={oculto ? 'Colocar de volta' : 'Tirar da vitrine'}
+            aria-label={oculto ? `Colocar ${a.nome} de volta` : `Tirar ${a.nome} da vitrine`}
+            onClick={tirarOuVoltar}
+          >
+            {oculto ? <Undo2 size={14} className="wp-ico" /> : <Trash2 size={14} className="wp-ico" />}
+          </button>
+          </span>
         </span>
       </div>
-    );
-  }
-  return (
-    <div className="wp-gz-item wp-gz-item-edit">
-      <span className="wp-gz-item-name">{a.nome}</span>
-      <span className="wp-gz-preco-form">
-        <input
-          type="text"
-          inputMode="numeric"
-          value={valor}
-          onChange={(e) => setValor(e.target.value)}
-          placeholder="em branco = sob consulta"
-          aria-label={`Preço de ${a.nome}`}
-          autoFocus
-        />
-        <button type="button" className="wp-gz-preco-ok" disabled={salvando} onClick={salvar}>
-          {salvando ? '…' : 'Salvar'}
-        </button>
-        <button type="button" className="wp-gz-preco-x" onClick={() => setEditando(false)}>Cancelar</button>
-        {erro && <small className="wp-gz-erro">{erro}</small>}
-      </span>
+
+      {modo === 'preco' && (
+        <span className="wp-gz-preco-form">
+          <input
+            type="text" inputMode="numeric" value={valor}
+            onChange={(e) => setValor(e.target.value)}
+            placeholder="em branco = sob consulta"
+            aria-label={`Preço de ${a.nome}`} autoFocus
+          />
+          <button type="button" className="wp-gz-preco-ok" disabled={salvando} onClick={salvarValor}>
+            {salvando ? '…' : 'Salvar'}
+          </button>
+          <button type="button" className="wp-gz-preco-x" onClick={() => setModo(null)}>Cancelar</button>
+          {erro && <small className="wp-gz-erro">{erro}</small>}
+        </span>
+      )}
+
+      {modo === 'ficha' && (
+        <div className="wp-gz-form wp-gz-acform">
+          <label className="wp-gz-label">Nome do acessório</label>
+          <input
+            value={f.nome} autoFocus
+            onChange={(e) => setF({ ...f, nome: e.target.value })}
+          />
+
+          <label className="wp-gz-label">O que resolve pro cliente</label>
+          <textarea
+            rows={2} value={f.beneficio}
+            onChange={(e) => setF({ ...f, beneficio: e.target.value })}
+          />
+          <p className="wp-gz-help">É a frase que aparece embaixo do nome no catálogo. Curta.</p>
+
+          <label className="wp-gz-label">Como oferecer</label>
+          <textarea
+            rows={4} value={f.comoOferecer}
+            onChange={(e) => setF({ ...f, comoOferecer: e.target.value })}
+          />
+          <p className="wp-gz-help">O que o vendedor lê antes de falar com o cliente. Diga a hora certa de oferecer.</p>
+
+          <label className="wp-gz-label">Observação (opcional)</label>
+          <input
+            value={f.observacao}
+            placeholder="ex.: só para as versões com teto solar"
+            onChange={(e) => setF({ ...f, observacao: e.target.value })}
+          />
+
+          <label className="wp-gz-label">De onde vem</label>
+          <select
+            value={f.origem}
+            onChange={(e) => setF({ ...f, origem: e.target.value as OrigemAcessorio })}
+          >
+            <option value="fabrica">{ORIGENS.fabrica.label} — pedida por código, entra na garantia</option>
+            <option value="loja">{ORIGENS.loja.label} — serviço que a loja instala</option>
+          </select>
+          <p className="wp-gz-help">
+            Muda o grupo em que ele aparece no catálogo. É o que evita o vendedor prometer
+            "sai hoje" numa peça que vem de pedido.
+          </p>
+
+          {/* O PREÇO não fica aqui de propósito: ele já tem um lugar só dele, no
+              toque em cima do valor. Dois campos pro mesmo número é como o preço
+              do tapete acabou velho na tela do time. */}
+          <p className="wp-gz-help">
+            O preço se corrige tocando no valor, ali em cima. Código de peça, foto e
+            carros compatíveis não se mexem aqui — PN errado faz o vendedor pedir a peça errada.
+          </p>
+
+          {erro && <p className="wp-gz-erro">{erro}</p>}
+          <div className="wp-gz-acform-fim">
+            <button type="button" className="wp-gz-preco-ok" disabled={salvando} onClick={salvarFicha}>
+              {salvando ? 'Salvando…' : 'Salvar — o time já vê'}
+            </button>
+            <button type="button" className="wp-gz-preco-x" onClick={() => setModo(null)}>Cancelar</button>
+            {editado && (
+              <button type="button" className="wp-gz-voltar" disabled={salvando} onClick={voltarAoOriginal}>
+                <RotateCcw size={13} className="wp-ico" /> Voltar ao original
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1611,6 +1771,18 @@ export default function Gestor() {
     }, 400);
     return () => clearTimeout(t);
   }, []);
+  // O mesmo atalho, vindo da tela do acessório.
+  const [acessorioAlvo, setAcessorioAlvo] = useState<string | null>(null);
+  useEffect(() => {
+    const alvo = new URLSearchParams(window.location.search).get('acessorio');
+    if (!alvo) return;
+    setTab('conteudo');
+    setAcessorioAlvo(alvo);
+    const t = setTimeout(() => {
+      document.querySelector('.wp-gz-acform')?.scrollIntoView({ block: 'center' });
+    }, 500);
+    return () => clearTimeout(t);
+  }, []);
   const [toast, setToast] = useState('');
   const [tab, setTab] = useState<'resultados' | 'vendas' | 'conteudo'>('resultados');
 
@@ -1625,9 +1797,13 @@ export default function Gestor() {
   useEffect(() => { carregarOcultos(brandId); }, [brandId]);
   const escondidos = ocultosDaMarca(brandId);
   const docsDoApp = DOCUMENTOS.filter((d) => d.brand === brandId);
-  usePrecosAcessorios();
-  useEffect(() => { carregarPrecos(brandId); }, [brandId]);
-  const acessoriosDaCasa = ACESSORIOS.filter((a) => a.brand === brandId);
+  useAjustesAcessorios();
+  useEffect(() => { carregarAjustesAcessorios(brandId); }, [brandId]);
+  const acessoriosDaCasa = acessoriosParaGestao(brandId);
+  // Mexer no catálogo de acessórios é do supervisor e do gerente de acessórios
+  // (ver data/cargos). Os outros gestores continuam VENDO a lista com os preços
+  // — é informação de trabalho — mas sem os botões.
+  const podeAcess = podeMexerEmAcessorios(user);
   const auto = isAuto(brandId);
 
   const products = allProducts().filter((p) => p.brand === brandId);
@@ -1650,6 +1826,24 @@ export default function Gestor() {
     const nova = [...lista];
     [nova[de], nova[para]] = [nova[para], nova[de]];
     nova.forEach((c, i) => { atualizarCondicao(c.id, { ordem: i }).catch(() => {}); });
+  };
+
+  /**
+   * Troca dois acessórios de lugar e GRAVA a fila inteira.
+   *
+   * A troca acontece DENTRO do grupo (fábrica ou loja), que é como o time vê no
+   * catálogo — mover um item de fábrica pra cima de um item de loja não mudaria
+   * nada na tela dele, e a gerência ficaria clicando à toa.
+   */
+  const moverAcessorio = (grupo: Acessorio[], gi: number, passo: number) => {
+    const alvo = grupo[gi + passo];
+    if (!alvo) return;
+    const ids = acessoriosDaCasa.map((x) => x.id);
+    const a = ids.indexOf(grupo[gi].id);
+    const b = ids.indexOf(alvo.id);
+    if (a < 0 || b < 0) return;
+    [ids[a], ids[b]] = [ids[b], ids[a]];
+    salvarOrdemAcessorios(brandId, ids).catch(() => {});
   };
 
   const done = (label: string, what: string, naNuvem = true, verbo = 'publicado') => {
@@ -1729,14 +1923,46 @@ export default function Gestor() {
             <span className="wp-gz-block-title"><Package size={17} className="wp-ico" /> Acessórios ({acessoriosDaCasa.length})</span>
           </div>
           <p className="wp-gz-help" style={{ marginTop: 0 }}>
-            Toque no preço para corrigir. Nome, benefício e código de peça são do catálogo —
-            se algum estiver errado, me avise.
+            {podeAcess
+              ? 'Toque no preço para corrigir. O lápis abre nome e textos, as setas arrumam a ordem da vitrine e a lixeira tira de cartaz sem apagar — dá pra trazer de volta.'
+              : 'A tabela de acessórios é mantida pelo supervisor e pelo gerente de acessórios. Aqui você consulta o valor vigente.'}
           </p>
-          <div className="wp-gz-list">
-            {acessoriosDaCasa.map((a) => (
-              <LinhaAcessorio key={a.id} a={a} brand={brandId} />
-            ))}
-          </div>
+          {/* AS DUAS LISTAS, iguais às do catálogo do time. Na tela deles a
+              separação evita prometer "sai hoje" numa peça de pedido; aqui ela
+              serve pra ordem fazer sentido — o que você sobe neste grupo é o que
+              sobe na vitrine dele. */}
+          {(['fabrica', 'loja'] as OrigemAcessorio[]).map((origem) => {
+            const grupo = acessoriosDaCasa.filter((a) => a.origem === origem);
+            if (!grupo.length) return null;
+            return (
+              <div key={origem} className="wp-gz-acgrupo">
+                <span className="wp-gz-acgrupo-nome">{ORIGENS[origem].label} ({grupo.length})</span>
+                <div className="wp-gz-list">
+                  {grupo.map((a, i) => (
+                    podeAcess ? (
+                      <LinhaAcessorio
+                        key={a.id}
+                        a={a}
+                        brand={brandId}
+                        i={i}
+                        total={grupo.length}
+                        abrirJa={acessorioAlvo === a.id}
+                        onMover={(de, passo) => moverAcessorio(grupo, de, passo)}
+                      />
+                    ) : (
+                      <div key={a.id} className={`wp-gz-item ${acessorioOculto(a.id) ? 'wp-gz-item-off' : ''}`}>
+                        <span className="wp-gz-item-name">
+                          {a.nome}
+                          {acessorioOculto(a.id) && <span className="wp-gz-fora">fora da vitrine</span>}
+                        </span>
+                        <span className="wp-gz-item-meta">{precoLabel(a)}</span>
+                      </div>
+                    )
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 

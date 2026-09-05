@@ -13,7 +13,7 @@ import { condicoesDaMarca, estaVencida } from './condicoes';
 import { allOffers } from './store';
 import { campanhaPara, ateLabel } from './campanha';
 import { getBrand, isAuto, type BrandId } from './brands';
-import { ACESSORIOS, precoLabel } from './acessorios';
+import { acessoriosDaMarca, precoLabel } from './acessorios';
 import { documentosDaMarca } from './documentos';
 import type { Role } from '../AuthContext';
 
@@ -162,8 +162,11 @@ export async function montarMemoria(opts: {
       })),
     // O catálogo de acessórios: a IA não tinha nenhum, e o vendedor de
     // acessórios é metade do time.
+    // Vai a lista CORRIGIDA pela gerência, e sem o que saiu de linha: a IA
+    // citando nome velho ou item que a loja não vende mais é a mesma falha do
+    // preço desatualizado na tela — só que com a voz de quem sabe.
     acessorios: auto
-      ? ACESSORIOS.filter((a) => a.brand === brandId).map((a) => ({
+      ? acessoriosDaMarca(brandId).map((a) => ({
           titulo: a.nome,
           // O preço VAI, agora que a gerência mantém ele: a tabela de acessório
           // é publicada pra loja, e "quanto é o rack?" é a pergunta número um.

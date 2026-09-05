@@ -21,7 +21,7 @@ import Landing from './Landing';
 import Onboarding from './Onboarding';
 import BottomNav from './BottomNav';
 import AvisosApp from './AvisosApp';
-import { carregarPrecos } from './data/precosAcessorios';
+import { carregarAjustesAcessorios } from './data/ajustesAcessorios';
 import { carregarIndiceImagens } from './data/imagensNuvem';
 import { BrandProvider, useBrand } from './BrandContext';
 import { AuthProvider, useAuth, audienceOf } from './AuthContext';
@@ -198,7 +198,7 @@ function Shell() {
   // busca dos preços na nuvem só existia dentro do Painel, então quem abria a
   // tela do acessório sem passar por lá ficava com o número do catálogo pra
   // sempre. Correção que não chega na ponta é correção que não aconteceu.
-  useEffect(() => { carregarPrecos(brandId); }, [brandId]);
+  useEffect(() => { carregarAjustesAcessorios(brandId); }, [brandId]);
 
   // A FOTO QUE A GERÊNCIA SUBIU tem o mesmo problema que o preço tinha: o
   // índice das fotos da nuvem não era buscado por ninguém, então a foto só

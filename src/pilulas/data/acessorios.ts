@@ -29,7 +29,7 @@
 // comunicados e NÃO entram no app: isso é informação da gerência, e vendedor
 // com custo na tela acaba negociando o desconto que não é dele pra dar.
 import type { BrandId } from './brands';
-import { precoCorrigido } from './precosAcessorios';
+import { precoCorrigido, edicaoDe, estaOculto, ordemDaMarca } from './ajustesAcessorios';
 
 export type OrigemAcessorio = 'fabrica' | 'loja';
 
@@ -77,7 +77,15 @@ const O5 = 'omoda-5-shs-h';
 const O7 = 'omoda-7-shs-p';
 const E5 = 'omoda-e5';
 
-export const ACESSORIOS: Acessorio[] = [
+/**
+ * O CATÁLOGO CRU, do jeito que está no código. Quase ninguém deve usar isto.
+ *
+ * Por cima dele a gerência de acessórios corrige texto, preço, ordem e o que
+ * saiu de linha (ver ajustesAcessorios.ts). Quem lê esta lista direto enxerga
+ * o app de antes das correções — foi exatamente assim que o preço do tapete
+ * ficou velho na tela do time. Use as funções lá embaixo.
+ */
+export const CATALOGO_ACESSORIOS: Acessorio[] = [
   {
     id: 'tapete-carpete-premium',
     brand: 'ramasa',
@@ -492,13 +500,66 @@ export const ACESSORIOS: Acessorio[] = [
   },
 ];
 
+/** Aplica por cima do catálogo o que a gerência corrigiu. */
+function aplicar(a: Acessorio): Acessorio {
+  const e = edicaoDe(a.id);
+  if (!e) return a;
+  return {
+    ...a,
+    nome: e.nome || a.nome,
+    beneficio: e.beneficio || a.beneficio,
+    comoOferecer: e.comoOferecer || a.comoOferecer,
+    observacao: e.observacao ?? a.observacao,
+    origem: e.origem || a.origem,
+  };
+}
+
+/**
+ * Põe na ordem que a gerência arrumou.
+ *
+ * Quem não está na lista de ordem vai pro fim, na ordem do catálogo — assim um
+ * acessório novo aparece, em vez de sumir por não ter posição.
+ */
+function ordenar(lista: Acessorio[], brand: BrandId): Acessorio[] {
+  const ordem = ordemDaMarca(brand);
+  if (!ordem.length) return lista;
+  const pos = new Map(ordem.map((id, i) => [id, i]));
+  return [...lista].sort((a, b) => (pos.get(a.id) ?? 9999) - (pos.get(b.id) ?? 9999));
+}
+
+/** Um acessório com as correções aplicadas — inclusive se estiver fora do ar. */
+export function acessorioPorId(id: string): Acessorio | undefined {
+  const a = CATALOGO_ACESSORIOS.find((x) => x.id === id);
+  return a ? aplicar(a) : undefined;
+}
+
+export { estaOculto as acessorioOculto };
+
+/**
+ * O que o TIME vê: corrigido, sem o que saiu de linha, na ordem da gerência.
+ * É esta função que todas as telas usam.
+ */
 export function acessoriosDaMarca(brand: BrandId): Acessorio[] {
-  return ACESSORIOS.filter((a) => a.brand === brand);
+  return ordenar(
+    CATALOGO_ACESSORIOS.filter((a) => a.brand === brand && !estaOculto(a.id)).map(aplicar),
+    brand,
+  );
+}
+
+/**
+ * O que a GERÊNCIA vê no Painel: tudo, inclusive o que está fora do ar — senão
+ * não haveria como trazer de volta um item removido por engano.
+ */
+export function acessoriosParaGestao(brand: BrandId): Acessorio[] {
+  return ordenar(CATALOGO_ACESSORIOS.filter((a) => a.brand === brand).map(aplicar), brand);
 }
 
 /** Os que encaixam neste veículo — é o que aparece dentro do carro. */
 export function acessoriosPara(produtoId: string): Acessorio[] {
-  return ACESSORIOS.filter((a) => a.aplicaEm.includes(produtoId));
+  const lista = CATALOGO_ACESSORIOS
+    .filter((a) => a.aplicaEm.includes(produtoId) && !estaOculto(a.id))
+    .map(aplicar);
+  return lista.length ? ordenar(lista, lista[0].brand) : lista;
 }
 
 export function precoDe(a: Acessorio): number | undefined {
@@ -533,4 +594,8 @@ export const ORIGENS: Record<OrigemAcessorio, { label: string; nota: string }> =
 
 export function acessoriosPorOrigem(brand: BrandId, origem: OrigemAcessorio): Acessorio[] {
   return acessoriosDaMarca(brand).filter((a) => a.origem === origem);
+}
+
+export function acessoriosPorOrigemGestao(brand: BrandId, origem: OrigemAcessorio): Acessorio[] {
+  return acessoriosParaGestao(brand).filter((a) => a.origem === origem);
 }

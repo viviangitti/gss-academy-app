@@ -124,3 +124,32 @@ export function cargoLabel(id?: string | null): string {
 export function roleDoCargo(id?: string | null): Role {
   return cargoPorId(id)?.role || 'balconista';
 }
+
+// QUEM MEXE NO CATÁLOGO DE ACESSÓRIOS.
+//
+// A Vivian foi explícita: editar, remover e ordenar acessório é do SUPERVISOR
+// e do GERENTE DE ACESSÓRIOS. Não é de qualquer gestor — gerente de vendas,
+// gerente de leads e qualidade abrem o mesmo Painel, e nenhum deles responde
+// pela tabela de acessórios. Deixar o botão aparecer pra todo mundo era
+// convite pra dois donos no mesmo dado.
+//
+// A administração do app entra junto (a Vivian), porque é ela quem conserta
+// quando algo sai errado — e ficar trancada do lado de fora do próprio app
+// não ajuda ninguém.
+//
+// ISTO É A TELA, NÃO A TRANCA. Cargo não viaja no login do Firebase, então a
+// regra do Firestore não consegue enxergar ele: lá a tranca continua sendo a
+// lista de e-mails autorizados (isGestor). Ou seja — o botão só aparece pra
+// quem responde pelo assunto, e a nuvem só aceita a gravação de quem está na
+// lista. São duas camadas, e a de baixo é a que vale contra quem insiste.
+const DONAS_DO_APP = ['viviangitti23@gmail.com', 'viviangitti@gmail.com'];
+
+const CARGOS_DE_ACESSORIOS: CargoAuto[] = ['gerente-acessorios', 'lider-acessorios'];
+
+export function podeMexerEmAcessorios(
+  user?: { role?: Role; cargo?: string | null; email?: string } | null,
+): boolean {
+  if (!user || user.role !== 'gestor') return false;
+  if (CARGOS_DE_ACESSORIOS.includes(user.cargo as CargoAuto)) return true;
+  return DONAS_DO_APP.includes((user.email || '').trim().toLowerCase());
+}

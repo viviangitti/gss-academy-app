@@ -8,7 +8,7 @@ import { ehNovo } from './data/novidades';
 import { acessoriosDaMarca, acessoriosPorOrigem, ORIGENS, precoLabel, type Acessorio, type OrigemAcessorio } from './data/acessorios';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
-import { usePrecosAcessorios } from './data/precosAcessorios';
+import { useAjustesAcessorios } from './data/ajustesAcessorios';
 
 // Ordem em que as categorias aparecem. Categoria fora desta lista NÃO é
 // renderizada — foi o que sumiu com o catálogo da Ramasa quando 'suv' entrou.
@@ -17,7 +17,7 @@ const ORDER: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmetico
 export default function Catalog() {
   // Re-renderiza quando o preço corrigido chega da nuvem: sem isto a tela
   // fica com o número do catálogo até alguém trocar de aba.
-  usePrecosAcessorios();
+  useAjustesAcessorios();
   useStore(); // re-renderiza quando o gestor cadastra produto
   const { brandId } = useBrand();
   const { user } = useAuth();

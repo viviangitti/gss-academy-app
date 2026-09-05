@@ -3667,3 +3667,56 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 }
 .wp-perfil-instalar button:disabled { opacity: .6; cursor: default; }
 .wp-perfil-instalar-alt { margin-top: 10px !important; font-size: 11.5px !important; }
+
+/* ===== ACESSÓRIOS: a gerência edita, remove e ordena =====
+   O Painel listava os 27 acessórios em fila única, com o preço como única
+   coisa clicável. Agora ele mostra os dois grupos que o time vê no catálogo —
+   se a ordem muda aqui, muda lá, e o mesmo item aparece no mesmo lugar. */
+.wp-gz-acgrupo { margin-top: 14px; }
+.wp-gz-acgrupo-nome {
+  display: block; font-size: 11px; font-weight: 800; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--wp-soft); margin: 0 0 6px 2px;
+}
+
+/* O selo "editado" usa o mesmo formato do "fora da vitrine", em verde: é
+   informação boa (alguém manteve o dado), não alerta. */
+.wp-gz-fora--ok { color: #1c6b3f; background: #e4f5ea; }
+
+/* A ficha aberta abaixo da linha. O fundo levemente afastado da lista deixa
+   claro qual acessório está sendo editado quando há 27 na tela. */
+.wp-gz-acform {
+  background: var(--wp-surface-2, #f7f8fa);
+  border: 1px solid var(--wp-border);
+  border-radius: 12px; padding: 12px 14px; margin: 6px 0 12px;
+}
+.wp-gz-acform-fim { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+.wp-gz-voltar {
+  display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
+  font-family: inherit; font-size: 11.5px; font-weight: 700;
+  color: var(--wp-soft); background: none;
+  border: 1px solid var(--wp-border); border-radius: 999px; padding: 6px 11px;
+}
+
+/* Na tela do acessório: o aviso de que ele saiu de linha, e o bloco de gestão.
+   O aviso é pra TODO MUNDO — o link direto continua abrindo, e vendedor que
+   caiu nele por um favorito antigo precisa saber antes de oferecer. */
+.wp-acp-fora {
+  display: flex; align-items: center; gap: 7px;
+  background: #fdf3dd; color: #8a6516; border-radius: 10px;
+  padding: 10px 12px; font-size: 12.5px; font-weight: 600; line-height: 1.4;
+  margin: 10px 0 2px;
+}
+.wp-acp-gestao { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 4px; }
+.wp-acp-gestao .wp-cond-editar { align-self: flex-start; }
+
+/* A linha do acessório tem mais coisa que as outras: nome, preço e quatro
+   ferramentas. Em 390px isso não cabe lado a lado — os ícones quebravam e a
+   lixeira caía sozinha na linha de baixo, parecendo botão de outra coisa.
+   Nome em cima, preço e ferramentas na faixa de baixo. */
+.wp-gz-acitem { flex-direction: column; align-items: stretch; gap: 8px; }
+.wp-gz-acitem .wp-gz-item-name { line-height: 1.3; }
+.wp-gz-acmeta { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.wp-gz-acbtns { display: inline-flex; align-items: center; gap: 2px; }
+/* Alvo de toque de verdade: o padrão da lista tem 9px só de um lado, e aqui
+   são quatro botões seguidos no polegar de quem está em pé no showroom. */
+.wp-gz-acbtns .wp-gz-del { padding: 7px 8px; }

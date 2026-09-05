@@ -86,6 +86,15 @@ const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType
   // é da Lince Toyota, mas o alcance dela não é de uma loja só — não confundir
   // o domínio com o escopo.
   'silmara.ccrgerente@lincetoyota.com': { role: 'gestor', brands: ['ramasa'], cargo: 'gerente-acessorios' },
+  // Lucas: SUPERVISOR DE ACESSÓRIOS do grupo — acima dos gerentes de loja na
+  // linha de acessórios.
+  //
+  // O e-mail dele já estava liberado nas regras do Firestore desde que passou a
+  // publicar condição, mas ele nunca teve CARGO aqui. E cargo é o que abre os
+  // botões de acessório (editar, ordenar, tirar da vitrine, criar): sem ele,
+  // Lucas via a lista de preços e mais nada — logo ele, que é quem responde
+  // pela tabela. Confirmado pela Vivian em 05/09/2026.
+  'lucas.cardoso@lincetoyota.com': { role: 'gestor', brands: ['ramasa'], cargo: 'lider-acessorios' },
 };
 
 function overrideFor(email: string) {

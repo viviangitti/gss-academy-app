@@ -185,11 +185,26 @@ async function desenhar(canvas: HTMLCanvasElement, d: DadosArte) {
   }
 }
 
+/**
+ * O NOME QUE O CLIENTE LÊ, sem o código de motorização.
+ *
+ * No catálogo o carro é "Omoda 5 SHS-H" — e tem que ser: o vendedor precisa
+ * saber qual trem de força está olhando, porque muda ficha, consumo e conversa.
+ * Numa peça de anúncio isso vira ruído: o cliente conhece "Omoda 5". Pedido da
+ * Vivian em 05/09/2026.
+ *
+ * Tira só o sufixo técnico do fim (SHS-H, SHS-P, PHEV...). "Omoda E5" continua
+ * inteiro — ali o E5 é o nome do carro, não o motor.
+ */
+function nomeComercial(nome: string): string {
+  return nome.replace(/\s+(SHS[-\s]?[A-Z]|PHEV|BEV|HEV|MHEV)\s*$/i, '').trim() || nome;
+}
+
 export function dadosDaArte(c: Condicao, brandId: BrandId): DadosArte | null {
   if (!c.chamada?.trim()) return null;
   const p = c.produtoId ? findProduct(c.produtoId) : null;
   return {
-    modelo: p?.name || c.titulo.replace(/^Carta de \w+ · /i, '').replace(/\s*\(.*\)\s*$/, ''),
+    modelo: p ? nomeComercial(p.name) : c.titulo.replace(/^Carta de \w+ · /i, '').replace(/\s*\(.*\)\s*$/, ''),
     chamada: c.chamada.trim(),
     // Os destaques são material de marketing, revisado — é o que a montadora
     // já publica. `resumo` e `observacao` não passam nem perto daqui.

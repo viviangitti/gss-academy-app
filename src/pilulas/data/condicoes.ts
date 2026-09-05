@@ -63,6 +63,22 @@ export interface Condicao {
    */
   categoria?: 'veiculo' | 'acessorio' | 'campanha';
   /**
+   * Assinatura do arquivo — para o app reconhecer folha repetida.
+   *
+   * A mesma tabela subida duas vezes vira dois cards iguais, e o vendedor não
+   * sabe qual é a boa. Guardo a assinatura na FICHA (não na folha) porque a
+   * folha só desce quando alguém abre; comparar teria que baixar tudo.
+   */
+  impressao?: string;
+  /**
+   * Posição na lista, quando a gerência quer mandar na ordem.
+   *
+   * Sem isto a lista sai por data de publicação — que é a ordem do PDF, não a
+   * que o vendedor precisa. O Jaecoo 7 é o carro mais consultado e pode cair em
+   * quinto só porque foi a quinta página do arquivo.
+   */
+  ordem?: number;
+  /**
    * O conteúdo da folha em TEXTO — só pra IA ler.
    *
    * A folha é imagem, então o Tira-dúvida só sabia o nome e mandava abrir.
@@ -142,7 +158,51 @@ export function condicoesDaMarca(brand: BrandId): Condicao[] {
   return lerCache()
     .filter((c) => c.brand === brand)
     .map((c) => (baixados.has(c.id) ? { ...c, arquivo: baixados.get(c.id) } : c))
-    .sort((a, b) => b.criadoEm - a.criadoEm);
+    // Quem tem ORDEM definida manda, na ordem que a gerência escolheu. O resto
+    // vem por data, da mais nova pra mais velha, como sempre foi.
+    .sort((a, b) => {
+      const oa = a.ordem ?? Number.MAX_SAFE_INTEGER;
+      const ob = b.ordem ?? Number.MAX_SAFE_INTEGER;
+      if (oa !== ob) return oa - ob;
+      return b.criadoEm - a.criadoEm;
+    });
+}
+
+/**
+ * Assinatura de um arquivo, pra reconhecer folha repetida.
+ *
+ * Hash simples sobre a data URL (FNV-1a de 32 bits) mais o tamanho. Não é
+ * criptografia: é pra dizer "este arquivo é o mesmo daquele", e dois arquivos
+ * diferentes darem a mesma assinatura E o mesmo tamanho é improvável o
+ * bastante — e o pior caso é um aviso à toa, que a pessoa ignora.
+ */
+export function impressaoDe(dataUrl: string): string {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < dataUrl.length; i += 1) {
+    h ^= dataUrl.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return `${(h >>> 0).toString(36)}-${dataUrl.length}`;
+}
+
+/** A condição já publicada que tem este mesmo arquivo, se houver. */
+export function jaPublicada(brand: BrandId, dataUrl: string, ignorarId?: string): Condicao | undefined {
+  const imp = impressaoDe(dataUrl);
+  return lerCache().find((c) => c.brand === brand && c.impressao === imp && c.id !== ignorarId);
+}
+
+/**
+ * Tira da tela do time sem apagar: a validade passa a ser ontem.
+ *
+ * É o que "substituir a carta do mês" faz com as folhas antigas — some da ponta
+ * na hora, continua no Painel marcada como vencida, e a folha não se perde.
+ */
+export async function aposentarVarias(ids: string[]): Promise<number> {
+  const ontem = new Date(Date.now() - 86400000);
+  const data = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(ontem);
+  return atualizarVarias(ids, { venceEm: data });
 }
 
 /**
@@ -192,7 +252,10 @@ export async function carregarCondicoes(brand: BrandId): Promise<void> {
 export async function publicarCondicao(c: Omit<Condicao, 'id' | 'criadoEm'>): Promise<void> {
   const id = 'c-' + Math.random().toString(36).slice(2, 10);
   const { arquivo, ...ficha } = c;
-  const nova: Condicao = { ...ficha, id, criadoEm: Date.now() };
+  const nova: Condicao = {
+    ...ficha, id, criadoEm: Date.now(),
+    ...(arquivo ? { impressao: impressaoDe(arquivo) } : {}),
+  };
   if (arquivo) baixados.set(id, arquivo);
   gravarCache([nova, ...lerCache()]);
   if (!db) return;
@@ -220,7 +283,7 @@ export async function atualizarCondicao(
   const { arquivo, ...ficha } = mudancas;
   const atual = lerCache().find((c) => c.id === id);
   if (!atual) return;
-  const nova: Condicao = { ...atual, ...ficha };
+  const nova: Condicao = { ...atual, ...ficha, ...(arquivo ? { impressao: impressaoDe(arquivo) } : {}) };
   if (arquivo) baixados.set(id, arquivo);
   gravarCache(lerCache().map((c) => (c.id === id ? nova : c)));
   if (!db) return;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, X } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, ChevronUp, X } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { cargoLabel } from './data/cargos';
@@ -17,7 +17,7 @@ import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, a
 import { DOCUMENTOS, PRATELEIRAS, type PrateleiraId } from './data/documentos';
 import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, type DocNuvem } from './data/docsUpload';
 import { carregarOcultos, ocultosDaMarca, alternarOculto, useDocsOcultos } from './data/docsOcultos';
-import { atualizarCondicao, type Condicao } from './data/condicoes';
+import { atualizarCondicao, aposentarVarias, jaPublicada, abrirArquivo, type Condicao } from './data/condicoes';
 import { lerCarta, pareceAcessorio, textoDeValidade, type PaginaCarta } from './data/cartaPdf';
 import { ACESSORIOS, precoLabel, precoDe, type Acessorio } from './data/acessorios';
 import { carregarPrecos, salvarPreco, usePrecosAcessorios } from './data/precosAcessorios';
@@ -832,10 +832,24 @@ function CondicaoForm({ brand, editando, onDone }: {
   const [arq, setArq] = useState<ArquivoPronto | null>(null);
   const [erro, setErro] = useState('');
   const [subindo, setSubindo] = useState(false);
+  // Folha repetida: o app reconhece o arquivo e pergunta antes de duplicar.
+  const [repetida, setRepetida] = useState<Condicao | null>(null);
+  // "Substituir a carta do mês": aposenta o que já está nesta prateleira.
+  const [substituir, setSubstituir] = useState(false);
+  // A folha que já está no ar — quem corrige o título precisa VER o que tem
+  // dentro. Sem isso é fechar, olhar, e abrir de novo.
+  const [folhaAtual, setFolhaAtual] = useState('');
   // Carta de várias páginas: uma folha por página, com título já sugerido.
   const [paginas, setPaginas] = useState<PaginaCarta[] | null>(null);
   const [lendo, setLendo] = useState(false);
   const [feitas, setFeitas] = useState(0);
+
+  useEffect(() => {
+    if (!editando) return;
+    let vivo = true;
+    abrirArquivo(editando).then((u) => { if (vivo && u) setFolhaAtual(u); });
+    return () => { vivo = false; };
+  }, [editando]);
 
   const escolher = async (f: File | undefined) => {
     if (!f) return;
@@ -850,6 +864,10 @@ function CondicaoForm({ brand, editando, onDone }: {
       const pgs = await lerCarta(f, brand).catch(() => [] as PaginaCarta[]);
       if (pgs.length > 1) {
         setPaginas(pgs);
+        // Reaproveitar o arquivo inteiro é o erro mais comum: subir de novo pra
+        // "corrigir o título" e acabar com o dobro de cards.
+        const repetidas = pgs.filter((pg) => jaPublicada(brand, pg.arquivo)).length;
+        if (repetidas) setRepetida({ ...(jaPublicada(brand, pgs[0].arquivo) as Condicao), titulo: `${repetidas} de ${pgs.length} páginas já estão publicadas` });
         // A carta diz de quando até quando vale: a data E o texto entram
         // preenchidos, e a gerência só confere.
         if (!venceEm && pgs[0].venceEm) setVenceEm(pgs[0].venceEm);
@@ -858,6 +876,7 @@ function CondicaoForm({ brand, editando, onDone }: {
       }
       const pronto = await prepararArquivo(f);
       setArq(pronto);
+      setRepetida(jaPublicada(brand, pronto.arquivo, editando?.id) || null);
       if (!escolheuCategoria) setCategoria(pareceAcessorio(pronto.nomeArquivo, titulo) ? 'acessorio' : 'veiculo');
     } catch (e) {
       setArq(null);
@@ -879,6 +898,16 @@ function CondicaoForm({ brand, editando, onDone }: {
     setErro('');
     setFeitas(0);
     try {
+      // SUBSTITUIR: aposenta o que já está na prateleira ANTES de publicar o
+      // novo. Antes era virar o mês em duas operações, e entre uma e outra o
+      // time via a carta velha e a nova ao mesmo tempo.
+      if (substituir) {
+        const prateleiras = new Set(escolhidas.map((p) => p.categoria));
+        const velhas = condicoesDaMarca(brand)
+          .filter((c) => prateleiras.has((c.categoria || 'veiculo') as typeof escolhidas[number]['categoria']))
+          .map((c) => c.id);
+        if (velhas.length) await aposentarVarias(velhas);
+      }
       for (const p of [...escolhidas].reverse()) {
         await publicarCondicao({
           brand,
@@ -971,6 +1000,25 @@ function CondicaoForm({ brand, editando, onDone }: {
       </p>
       {lendo && <p className="wp-gz-hint">Lendo o arquivo…</p>}
 
+      {/* A folha que já está no ar. Quem corrige o título precisa ver o que tem
+          dentro — sem isto é fechar, olhar e abrir de novo. */}
+      {editando && folhaAtual && (
+        <div className="wp-gz-folha-atual">
+          <img src={folhaAtual} alt="Folha publicada" />
+          <span>É esta folha que está no ar. Ela continua, a menos que você escolha outro arquivo.</span>
+        </div>
+      )}
+
+      {/* Folha repetida. Não bloqueia: avisa e deixa decidir — às vezes a
+          mesma arte vale pra duas prateleiras de propósito. */}
+      {repetida && (
+        <p className="wp-gz-repetida">
+          <b>Esta folha já está publicada</b> como “{repetida.titulo}”.
+          Se a ideia é corrigir, feche isto e use o lápis dela — publicar de novo
+          deixa as duas no ar, e o vendedor não sabe qual é a boa.
+        </p>
+      )}
+
       {paginas && (
         <div className="wp-gz-carta">
           <p className="wp-gz-carta-tit">
@@ -1037,6 +1085,19 @@ function CondicaoForm({ brand, editando, onDone }: {
           placeholder="Ex.: Tabela Jaecoo — campanha de agosto"
         />
       </>)}
+
+      {paginas && (
+        <label className="wp-gz-check">
+          <input type="checkbox" checked={substituir} onChange={(e) => setSubstituir(e.target.checked)} />
+          <span>
+            <b>Substituir o que já está nesta prateleira</b>
+            <small>
+              As condições que estão no ar saem da tela do time assim que estas subirem.
+              Elas não são apagadas: ficam aqui no Painel, marcadas como vencidas.
+            </small>
+          </span>
+        </label>
+      )}
 
       <label className="wp-gz-label">Vale até quando{paginas ? ' (vale para todas)' : ''}</label>
       <input
@@ -1576,6 +1637,21 @@ export default function Gestor() {
   const trends = allTrends(brandId);
   const buscas = topSearches(5, brandId);
 
+  /**
+   * Troca duas condições de lugar e GRAVA a posição de todas.
+   *
+   * Grava a lista inteira, não só as duas: metade com ordem e metade sem faz a
+   * lista dançar sozinha na próxima abertura, porque quem não tem ordem cai no
+   * critério de data.
+   */
+  const reordenar = (lista: Condicao[], de: number, passo: number) => {
+    const para = de + passo;
+    if (para < 0 || para >= lista.length) return;
+    const nova = [...lista];
+    [nova[de], nova[para]] = [nova[para], nova[de]];
+    nova.forEach((c, i) => { atualizarCondicao(c.id, { ordem: i }).catch(() => {}); });
+  };
+
   const done = (label: string, what: string, naNuvem = true, verbo = 'publicado') => {
     setOpenForm(null);
     setToast(naNuvem
@@ -1677,7 +1753,7 @@ export default function Gestor() {
             <CondicaoForm brand={brandId} onDone={(t) => done(t, 'Condição')} />
           )}
           <div className="wp-gz-list">
-            {condicoes.map((c) => (
+            {condicoes.map((c, i) => (
               <div key={c.id}>
                 <div className={`wp-gz-item ${estaVencida(c) ? 'wp-gz-item-off' : ''}`}>
                   <span className="wp-gz-item-name">
@@ -1689,6 +1765,30 @@ export default function Gestor() {
                     {/* CORRIGIR sem apagar. Antes, errar a data ou o título
                         custava apagar e subir de novo — e a condição sumia da
                         tela do time no meio do expediente, junto com a folha. */}
+                    {/* ORDEM. A lista sai por data de publicação, que é a ordem
+                        do PDF — não a que o vendedor precisa. O Jaecoo 7 é o
+                        carro mais consultado e caía em quinto só por ter sido a
+                        quinta página do arquivo. */}
+                    <button
+                      type="button"
+                      className="wp-gz-del"
+                      aria-label={`Subir ${c.titulo} na lista`}
+                      title="Subir na lista"
+                      disabled={i === 0}
+                      onClick={() => reordenar(condicoes, i, -1)}
+                    >
+                      <ChevronUp size={14} className="wp-ico" />
+                    </button>
+                    <button
+                      type="button"
+                      className="wp-gz-del"
+                      aria-label={`Descer ${c.titulo} na lista`}
+                      title="Descer na lista"
+                      disabled={i === condicoes.length - 1}
+                      onClick={() => reordenar(condicoes, i, 1)}
+                    >
+                      <ChevronDown size={14} className="wp-ico" />
+                    </button>
                     <button
                       type="button"
                       className="wp-gz-del"

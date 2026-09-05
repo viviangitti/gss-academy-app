@@ -3629,3 +3629,20 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 }
 .wp-cond-secao-apagar:disabled { opacity: .5; cursor: default; }
 .wp-cond-secao-aviso { font-size: 12px; font-weight: 700; color: #1f7a52; margin: 10px 0 0; }
+
+/* A folha que já está no ar, dentro do formulário de correção. */
+.wp-gz-folha-atual {
+  display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: center;
+  padding: 10px; margin-bottom: 12px;
+  border: 1px solid var(--wp-border); border-radius: 12px; background: var(--wp-bg);
+}
+.wp-gz-folha-atual img {
+  width: 96px; border-radius: 8px; border: 1px solid var(--wp-border); background: #fff; display: block;
+}
+.wp-gz-folha-atual span { font-size: 11.5px; line-height: 1.5; color: var(--wp-soft); }
+/* Aviso de folha repetida: chama atenção sem travar a publicação. */
+.wp-gz-repetida {
+  font-size: 12.5px; line-height: 1.55; margin: 0 0 12px; padding: 11px 13px;
+  color: #8a6516; background: #fdf3dd; border: 1px solid #efdcae; border-radius: 12px;
+}
+.wp-gz-del:disabled { opacity: .3; cursor: default; }

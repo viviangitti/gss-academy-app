@@ -39,12 +39,59 @@ export function avisarVersaoNova(): void {
   versao.definir(true);
 }
 
+/**
+ * PERGUNTA AO SERVIDOR SE ESTA CÓPIA ESTÁ VELHA.
+ *
+ * O aviso de versão dependia SÓ do evento `controllerchange` do service worker
+ * — ou seja, de o navegador achar o worker novo, instalar, ativar e assumir a
+ * página. Num app instalado na tela de início do iPhone isso às vezes não
+ * acontece por dias: o app fica suspenso em segundo plano e ninguém vai buscar
+ * nada. Foi assim que a Vivian ficou quinze versões atrás sem nenhum aviso na
+ * tela.
+ *
+ * Esta conferência não depende de worker nenhum: lê o número que está no
+ * servidor e compara com o que foi compilado NESTE pacote. Se for diferente,
+ * está velho — ponto. É a mesma conta que a tela de Perfil já fazia, só que
+ * agora ela roda pra todo mundo, na abertura e de tempos em tempos, em vez de
+ * só pra quem entra no Perfil.
+ */
+export async function conferirVersao(): Promise<void> {
+  const aqui = typeof __VERSAO_APP__ === 'string' ? __VERSAO_APP__ : '';
+  if (!aqui || aqui === 'dev') return;
+  try {
+    // no-store porque é justamente o cache que está sendo investigado.
+    const texto = await fetch('/sw.js', { cache: 'no-store' }).then((r) => r.text());
+    const noServidor = texto.match(/CACHE_NAME\s*=\s*'([^']+)'/)?.[1];
+    if (noServidor && noServidor !== aqui) versao.definir(true);
+  } catch {
+    /* sem rede: não é hora de avisar nada */
+  }
+}
+
 export function useVersaoNova(): boolean {
   return useSyncExternalStore(versao.assinar, versao.ler, () => false);
 }
 
+/**
+ * Recarrega pegando a versão nova de verdade.
+ *
+ * Só dar reload não bastava sempre: se o worker novo já tinha sido baixado mas
+ * estava ESPERANDO (o padrão, quando a página velha ainda está aberta), o
+ * reload voltava servido pelo worker velho e a pessoa via a mesma versão de
+ * novo — clicava em "Atualizar" e nada mudava, que é o pior tipo de botão.
+ * Aqui a gente manda o que está esperando assumir antes de recarregar.
+ */
 export function recarregarApp(): void {
-  window.location.reload();
+  const seguir = () => window.location.reload();
+  if (!('serviceWorker' in navigator)) return seguir();
+  navigator.serviceWorker.getRegistration()
+    .then((reg) => {
+      reg?.waiting?.postMessage({ tipo: 'assumir' });
+      // Não espera de graça: um segundo é o bastante pra troca acontecer, e
+      // depois disso recarregar é melhor que ficar parado.
+      setTimeout(seguir, reg?.waiting ? 900 : 0);
+    })
+    .catch(seguir);
 }
 
 // ---- instalação ----

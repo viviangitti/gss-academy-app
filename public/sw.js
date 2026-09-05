@@ -1,5 +1,5 @@
 // Service Worker — network first, sem cache de JS/CSS (evita versões travadas)
-const CACHE_NAME = 'gss-academy-v320';
+const CACHE_NAME = 'gss-academy-v321';
 const STATIC_CACHE = ['/', '/manifest.json'];
 
 self.addEventListener('install', (event) => {
@@ -8,6 +8,12 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_CACHE))
   );
+});
+
+// O app pede pro worker que está esperando assumir agora — é o que faz o botão
+// "Atualizar" realmente trocar de versão em vez de recarregar a mesma.
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.tipo === 'assumir') self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {

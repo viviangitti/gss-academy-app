@@ -31,10 +31,17 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').then((reg) => {
       const procuraVersaoNova = () => {
-        if (document.visibilityState === 'visible') reg.update().catch(() => {});
+        if (document.visibilityState !== 'visible') return;
+        reg.update().catch(() => {});
+        // E confere pelo número, sem depender do worker — ver conferirVersao().
+        import('./pilulas/data/versaoApp').then((m) => m.conferirVersao());
       };
+      procuraVersaoNova();
       document.addEventListener('visibilitychange', procuraVersaoNova);
       window.addEventListener('focus', procuraVersaoNova);
+      // App instalado fica aberto o dia inteiro sem nunca perder o foco. De
+      // vinte em vinte minutos ele pergunta se saiu versão nova.
+      setInterval(procuraVersaoNova, 20 * 60 * 1000);
     }).catch(() => {
       // SW registration failed silently
     });

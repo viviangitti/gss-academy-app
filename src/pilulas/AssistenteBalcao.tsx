@@ -1,12 +1,13 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, Send, Sparkles, Mic, Square } from 'lucide-react';
+import { ChevronLeft, Send, Sparkles, Mic, Square, RotateCcw } from 'lucide-react';
 import { allProducts } from './data/store';
 import { visibleProducts, productKnowledge } from './data/products';
 import { useBrand } from './BrandContext';
 import { useAuth } from './AuthContext';
 import { getBrand, isAuto, isBalcao } from './data/brands';
 import { aiAuthHeaders } from '../lib/aiProxy';
+import { lerConversa, gravarConversa, limparConversa, deQuandoEh } from './data/conversaIA';
 import { criarDitado, ditadoDisponivel } from './data/ditado';
 import { montarMemoria, type MemoriaCoach } from './data/memoriaCoach';
 import { carregarCondicoes } from './data/condicoes';
@@ -57,7 +58,10 @@ function emNegrito(texto: string): React.ReactNode {
 export default function AssistenteBalcao() {
   const { brandId } = useBrand();
   const { user } = useAuth();
+  // A conversa começa de onde parou. No showroom a pessoa pergunta, o cliente
+  // chega, ela volta dez minutos depois — e antes disso a conversa tinha sumido.
   const [msgs, setMsgs] = useState<Msg[]>([]);
+  const [conversaDe, setConversaDe] = useState('');
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
@@ -82,7 +86,8 @@ export default function AssistenteBalcao() {
   const SUGESTOES = ehAuto ? SUGESTOES_AUTO : ehBalcao ? SUGESTOES_BALCAO : SUGESTOES_REVENDA;
   const titulo = ehBalcao ? 'Tira-dúvida do balcão' : 'Tira-dúvida';
   const subtitulo = ehAuto
-    ? `Pergunte sobre os modelos e acessórios ${marca}, e sobre como conduzir a negociação. Responde só com o conteúdo aprovado.`
+    // Era três linhas de cabeçalho num celular, antes de qualquer conteúdo.
+    ? `Modelos, acessórios e condições ${marca} — e como conduzir a negociação.`
     : ehBalcao
     ? `Pergunte sobre os produtos ${marca}. Responde só com o conteúdo aprovado — pra você atender rápido.`
     : `Pergunte sobre os produtos ${marca}. Responde só com o conteúdo aprovado — pra você vender com segurança.`;
@@ -100,6 +105,34 @@ export default function AssistenteBalcao() {
   useEffect(() => {
     fimRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [msgs, loading]);
+
+  // Abre a conversa desta pessoa nesta marca. Trocar de conta ou de marca troca
+  // de conversa — não herda a que outra pessoa deixou aberta no mesmo aparelho.
+  useEffect(() => {
+    const { msgs: guardadas, em } = lerConversa(brandId, user?.email);
+    setMsgs(guardadas);
+    setConversaDe(deQuandoEh(em));
+  }, [brandId, user?.email]);
+
+  // Grava a cada troca. Duas guardas, e as duas custaram:
+  //
+  //  - enquanto CARREGA não grava: meia conversa, com a pergunta e sem a
+  //    resposta, é pior que nenhuma;
+  //  - VAZIO nunca grava. Na montagem o React roda este efeito com msgs ainda
+  //    em [] — antes de o efeito de cima devolver o que estava guardado — e ele
+  //    apagava o histórico exatamente na hora de restaurá-lo. Limpar é ato
+  //    explícito, e quem faz isso é o botão "Nova conversa".
+  useEffect(() => {
+    if (loading || !msgs.length) return;
+    gravarConversa(brandId, user?.email, msgs);
+  }, [msgs, loading, brandId, user?.email]);
+
+  const novaConversa = () => {
+    limparConversa(brandId, user?.email);
+    setMsgs([]);
+    setConversaDe('');
+    setErro('');
+  };
 
   // A memória (quem é a pessoa, o que ela viu, o que ouviu do cliente, a
   // condição vigente) é o que faz o coach parecer que conhece quem pergunta.
@@ -204,6 +237,18 @@ export default function AssistenteBalcao() {
       </div>
 
       {aviso && <div className="wp-ia-disc">{aviso}</div>}
+
+      {/* A conversa continua de onde parou. Quando ela é de outro dia a tela
+          diz — condição do mês passado citada como se fosse de hoje é o tipo de
+          erro que a pessoa não percebe sozinha. */}
+      {msgs.length > 0 && (
+        <div className="wp-ia-retomada">
+          <span>{conversaDe ? `Conversa de ${conversaDe}` : 'Continuando a conversa'}</span>
+          <button type="button" className="wp-ia-nova" onClick={novaConversa}>
+            <RotateCcw size={13} className="wp-ico" /> Nova conversa
+          </button>
+        </div>
+      )}
 
       <div className="wp-ia-thread">
         {msgs.length === 0 && (

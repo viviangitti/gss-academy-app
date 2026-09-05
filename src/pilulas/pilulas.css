@@ -67,6 +67,12 @@
   isolation: isolate;
   background: linear-gradient(120deg, var(--wp-ink), #26263f);
   color: #fff;
+  /* A FAIXA DE CIMA DO IPHONE.
+     Com viewport-fit=cover (que a barra de abas precisa pra não ficar debaixo
+     do home indicator), o app passa a ocupar a tela TODA — e aí a hora e a
+     bateria do iOS caem em cima do logo. Instalado na tela de início é onde
+     aparece; no navegador o Safari reserva sozinho. Uma coisa pediu a outra. */
+  padding-top: env(safe-area-inset-top, 0px);
 }
 .wp-header-inner {
   max-width: 480px;
@@ -2282,7 +2288,27 @@
 .wp-td-ia-chev { color: var(--wp-pink-deep); flex: none; }
 
 /* Tela do chat */
-.wp-ia { display: flex; flex-direction: column; min-height: calc(100vh - 120px); padding: 12px 16px 150px; }
+/* SEM min-height. Ela obrigava a tela a ter 692px de altura mesmo com quatro
+   sugestões na página: somado ao respiro de baixo, sobravam 230px de rolagem
+   vazia num iPhone. O respiro de baixo continua — ele é o que impede a última
+   resposta de ficar embaixo do campo de escrever. */
+.wp-ia {
+  display: flex; flex-direction: column; padding: 12px 16px 84px;
+  /* Ocupa a tela e PARA — o box-sizing faz o respiro de baixo caber dentro da
+     conta, em vez de somar e criar 230px de rolagem vazia num iPhone.
+     svh, não vh: no Safari o vh conta a barra de endereço escondida e sobra
+     rolagem justamente quando ela está aparecendo. */
+  box-sizing: border-box;
+  /* 54px do cabeçalho + 110px que a .wp-main já reserva pra barra de abas + a
+     folga do próprio campo de escrever. Era esse 110 que estava sendo contado
+     duas vezes e criava a rolagem vazia. */
+  min-height: calc(100vh - 190px);
+  min-height: calc(100svh - 190px);
+}
+/* Sem conversa, as sugestões descem pra perto do campo de escrever, em vez de
+   ficarem coladas no título com um vão embaixo. É onde o polegar já está. */
+.wp-ia-thread { flex: 1; }
+.wp-ia-empty { margin-top: auto; }
 .wp-ia-back {
   display: inline-flex; align-items: center; gap: 4px;
   color: var(--wp-pink-deep); text-decoration: none; font-weight: 700; font-size: 14px;
@@ -3726,3 +3752,24 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 /* A explicação do "o que a IA lê" é instrução de trabalho, não legenda: lê-se
    melhor alinhada à esquerda que centralizada. */
 .wp-gz-avancado .wp-gz-hint { text-align: left; }
+
+/* A conversa continua de onde parou — e a tela diz de quando ela é. */
+.wp-ia-retomada {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin: 0 0 10px; font-size: 11.5px; font-weight: 700; color: var(--wp-soft);
+}
+.wp-ia-nova {
+  display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
+  font-family: inherit; font-size: 11.5px; font-weight: 700; color: var(--wp-soft);
+  background: none; border: 1px solid var(--wp-border); border-radius: 999px; padding: 5px 11px;
+}
+
+/* CONDIÇÕES, no celular: menos ar entre as três portas.
+   O cartão escuro do topo e os cards têm respiro de tela grande; num iPhone
+   isso empurra a terceira porta ("Campanhas da casa") pra perto do fim da tela.
+   Só em telas estreitas — no desktop o espaço não incomoda ninguém. */
+@media (max-width: 430px) {
+  .wp-of-hero { padding-top: 14px; padding-bottom: 14px; margin-bottom: 12px; }
+  .wp-cond-portas { gap: 9px; margin-bottom: 12px; }
+  .wp-cond-porta { padding: 12px 13px; gap: 11px; }
+}

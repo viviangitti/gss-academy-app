@@ -153,3 +153,32 @@ export function podeMexerEmAcessorios(
   if (CARGOS_DE_ACESSORIOS.includes(user.cargo as CargoAuto)) return true;
   return DONAS_DO_APP.includes((user.email || '').trim().toLowerCase());
 }
+
+
+/**
+ * QUEM VÊ O TIME.
+ *
+ * O supervisor de acessórios responde pela TABELA, não pelas pessoas: ele
+ * publica folha, corrige preço, cria acessório e ordena a vitrine — tudo igual
+ * a um gerente. O que não é dele é a aba Resultados, onde estão nome, e-mail,
+ * quanto cada um usou, o que cada um respondeu e a objeção que cada um
+ * registrou. Decisão da Vivian em 05/09/2026: "acesso igual ao de gerente,
+ * porém sem ver o time".
+ *
+ * Não é desconfiança — é escopo. Quem responde pela linha de acessórios do
+ * grupo não precisa do desempenho individual de vendedor de loja pra fazer o
+ * trabalho dele, e dado de pessoa que ninguém precisa é dado que não devia
+ * estar na tela.
+ *
+ * ISTO É A TELA, NÃO A TRANCA — mesma limitação de sempre: cargo não viaja no
+ * login do Firebase, então a regra do Firestore não enxerga ele. Lá a leitura
+ * de elevaStats continua liberada para a lista de e-mails, que é a mesma que
+ * autoriza publicar. Fechar de verdade exigiria tirar o e-mail da lista, e aí
+ * ele perderia junto o que É dele.
+ */
+const CARGOS_SEM_TIME: CargoAuto[] = ['lider-acessorios'];
+
+export function podeVerOTime(user?: { role?: Role; cargo?: string | null } | null): boolean {
+  if (!user || user.role !== 'gestor') return false;
+  return !CARGOS_SEM_TIME.includes(user.cargo as CargoAuto);
+}

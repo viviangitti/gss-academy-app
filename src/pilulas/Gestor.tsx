@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, ChevronUp, X, RotateCcw, Undo2, CalendarClock } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
-import { cargoLabel, podeMexerEmAcessorios } from './data/cargos';
+import { cargoLabel, podeMexerEmAcessorios, podeVerOTime } from './data/cargos';
 import { vocab } from './data/vocabulario';
 import { useAuth } from './AuthContext';
 import { CATEGORIES, CATEGORIAS_AUTO, CATEGORIAS_SAUDE, nivelVideoKey, type Category, type Product } from './data/products';
@@ -2033,7 +2033,10 @@ export default function Gestor() {
     return () => clearTimeout(t);
   }, []);
   const [toast, setToast] = useState('');
-  const [tab, setTab] = useState<'resultados' | 'vendas' | 'conteudo'>('resultados');
+  // O supervisor de acessórios responde pela tabela, não pelas pessoas: cai
+  // direto em Conteúdo, e a aba de Resultados nem existe pra ele.
+  const veOTime = podeVerOTime(user);
+  const [tab, setTab] = useState<'resultados' | 'vendas' | 'conteudo'>(veOTime ? 'resultados' : 'conteudo');
 
   useCondicoes();
   useEffect(() => { carregarCondicoes(brandId); }, [brandId]);
@@ -2113,7 +2116,9 @@ export default function Gestor() {
         <h1 className="wp-gz-hero-title">Gestão da marca {brand.name}</h1>
         <p className="wp-gz-hero-sub">
           {auto
-            ? 'Cadastre carros e acessórios, envie vídeos e publique a tabela vigente. O que você publica aqui aparece na hora para o time.'
+            ? (veOTime
+                ? 'Cadastre carros e acessórios, envie vídeos e publique a tabela vigente. O que você publica aqui aparece na hora para o time.'
+                : 'Cadastre acessórios, corrija preço e publique a tabela vigente. O que você publica aqui aparece na hora para o time.')
             : 'Cadastre produtos, envie vídeos e crie ofertas. O que você publica aqui aparece na hora para o time.'}
         </p>
       </div>
@@ -2121,7 +2126,9 @@ export default function Gestor() {
       {toast && <div className="wp-gz-toast"><Check size={13} className="wp-ico" /> {toast} <Link to="/eleva/catalogo">ver no catálogo <ExternalLink size={12} className="wp-ico" /></Link></div>}
 
 
-      {/* Abas: o gestor tem dois trabalhos — ver resultado e colocar conteúdo. */}
+      {/* Abas: o gestor tem dois trabalhos — ver resultado e colocar conteúdo.
+          Quem não vê o time tem um só, e aba solitária é botão que não faz nada. */}
+      {veOTime && (
       <div className="wp-gz-tabs">
         <button className={`wp-gz-tab ${tab === 'resultados' ? 'on' : ''}`} onClick={() => setTab('resultados')}>
           <TrendingUp size={15} className="wp-ico" /> Resultados
@@ -2132,13 +2139,14 @@ export default function Gestor() {
           <span className={`wp-gz-tab-badge ${vids.feitos === vids.total ? 'full' : ''}`}>{vids.feitos}/{vids.total}</span>
         </button>
       </div>
+      )}
 
       {/* As objeções ficam FORA do <Resultados> de propósito: são outra fonte de
           dados. Estavam dentro, e quando a leitura dos números do time falhava
           (sem internet no showroom, ou uma soluçada do Firestore) o bloco
           inteiro sumia — o gestor perdia as objeções junto, sem entender por
           quê. Cada bloco cai sozinho agora. */}
-      {tab === 'resultados' && (
+      {veOTime && tab === 'resultados' && (
         <>
           <Interessados email={user?.email} />
           <Resultados brandId={brandId} products={products} buscas={buscas} />
@@ -2147,7 +2155,7 @@ export default function Gestor() {
         </>
       )}
 
-      {tab === 'conteudo' && (<>
+      {(!veOTime || tab === 'conteudo') && (<>
       {/* Vídeos por público vem PRIMEIRO — é a principal função do gestor */}
       <VideosPorPublico products={products} />
 

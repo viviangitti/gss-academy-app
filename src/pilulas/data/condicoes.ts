@@ -176,6 +176,49 @@ export function estaVencida(c: Condicao, agora = new Date()): boolean {
   return c.venceEm < hoje;
 }
 
+/**
+ * O 1º DIA ÚTIL — a data em que a carta do mês seguinte entra.
+ *
+ * A carta nova chega no primeiro dia útil, e é nesse dia que a velha tem que
+ * sair. Antes isso dependia de alguém lembrar, num sábado, de apagar sete
+ * folhas: enquanto não lembrasse, o vendedor via taxa e bônus que a loja já não
+ * praticava.
+ *
+ * Feriado conta: 1º de novembro num domingo empurra pra segunda 02/11, que é
+ * Finados — e aí o primeiro dia útil é 03/11. Só os fixos nacionais entram;
+ * Carnaval e Corpus Christi nunca caem no começo do mês.
+ */
+const FERIADOS = ['01-01', '04-21', '05-01', '09-07', '10-12', '11-02', '11-15', '11-20', '12-25'];
+
+export function primeiroDiaUtil(ano: number, mes: number): string {
+  const d = new Date(Date.UTC(ano, mes - 1, 1));
+  for (let i = 0; i < 12; i++) {
+    const dia = d.getUTCDay();
+    const md = `${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+    if (dia !== 0 && dia !== 6 && !FERIADOS.includes(md)) break;
+    d.setUTCDate(d.getUTCDate() + 1);
+  }
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * A data a gravar em `venceEm` pra condição sair sozinha quando a carta do mês
+ * seguinte entrar: o DIA ANTERIOR ao primeiro dia útil.
+ *
+ * `estaVencida` compara `venceEm < hoje`, então guardar o dia anterior faz ela
+ * sumir exatamente no primeiro dia útil — não um dia depois.
+ */
+export function vaiAteAVirada(base = new Date()): string {
+  const ref = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(base);
+  const [a, m] = ref.split('-').map(Number);
+  const primeiro = primeiroDiaUtil(m === 12 ? a + 1 : a, m === 12 ? 1 : m + 1);
+  const d = new Date(`${primeiro}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
 export function condicoesDaMarca(brand: BrandId): Condicao[] {
   return lerCache()
     .filter((c) => c.brand === brand)

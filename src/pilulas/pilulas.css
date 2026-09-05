@@ -3811,3 +3811,12 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 }
 .wp-gz-carro.on { color: var(--wp-on-accent); background: var(--wp-pink); border-color: transparent; }
 .wp-gz-carro input { width: auto; margin: 0; accent-color: currentColor; }
+
+/* "Até a virada do mês": um toque em vez de digitar a data todo mês. */
+.wp-gz-virada {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 7px;
+  cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700;
+  color: var(--wp-soft); background: none; margin-top: 8px;
+  border: 1px solid var(--wp-border); border-radius: 999px; padding: 7px 12px;
+}
+.wp-gz-virada i { font-style: normal; font-weight: 800; color: var(--wp-ink); }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, ChevronUp, X, RotateCcw, Undo2 } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, ChevronUp, X, RotateCcw, Undo2, CalendarClock } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { cargoLabel, podeMexerEmAcessorios } from './data/cargos';
@@ -21,7 +21,7 @@ import { atualizarCondicao, aposentarVarias, jaPublicada, abrirArquivo, type Con
 import { lerCarta, pareceAcessorio, textoDeValidade, type PaginaCarta } from './data/cartaPdf';
 import { acessoriosParaGestao, acessorioOculto, precoLabel, precoDe, ORIGENS, type Acessorio, type OrigemAcessorio } from './data/acessorios';
 import { carregarAjustesAcessorios, salvarPreco, salvarEdicao, ocultarAcessorio, salvarOrdemAcessorios, edicaoDe, useAjustesAcessorios, salvarAcessorioNovo, apagarAcessorioNovo, idParaAcessorio, novosDaMarca } from './data/ajustesAcessorios';
-import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, estaVencida, useCondicoes, type ArquivoPronto } from './data/condicoes';
+import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, estaVencida, useCondicoes, vaiAteAVirada, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
 import { buscarArgumentos, destacarArgumento, apagarArgumento, palavrasQueSeRepetem, type Argumento } from './data/argumentos';
@@ -1123,10 +1123,29 @@ function CondicaoForm({ brand, editando, onDone }: {
           if (!escreveuValidade) setValidade(e.target.value ? textoDeValidade(e.target.value) : '');
         }}
       />
+      {/* UM TOQUE PRA VIRADA DO MÊS.
+          A carta nova chega no primeiro dia útil, e é nesse dia que a velha tem
+          que sair. Digitar a data à mão todo mês é o tipo de coisa que se
+          esquece num sábado — e aí o vendedor abre o app na segunda com a taxa
+          do mês passado na tela. O botão calcula, inclusive pulando feriado. */}
+      <button
+        type="button"
+        className="wp-gz-virada"
+        onClick={() => {
+          const d = vaiAteAVirada();
+          setVenceEm(d);
+          if (!escreveuValidade) setValidade(textoDeValidade(d));
+        }}
+      >
+        <CalendarClock size={13} className="wp-ico" /> Até a virada do mês
+        <i>{vaiAteAVirada().split('-').reverse().join('/')}</i>
+      </button>
       <p className="wp-gz-hint">
         É o único campo que importa aqui. Depois desta data a condição <b>sai sozinha</b> da
         tela do time — ninguém precisa lembrar de apagar. Ela continua no Painel, marcada
         como vencida, pra você trocar pela nova. Em branco, fica no ar até você tirar.
+        O botão acima marca o dia certo pra ela sair quando a carta do mês seguinte
+        entrar — pulando fim de semana e feriado.
       </p>
 
       <details className="wp-gz-avancado">

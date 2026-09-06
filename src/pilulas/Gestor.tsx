@@ -205,29 +205,13 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
         ))}
       </div>
 
-      {/* QUEM AINDA NÃO MONTOU O CARTÃO.
-          O material que vai pro cliente sai com o contato do vendedor, e cada
-          um preenche o seu — a gerência não digita isso por ninguém. O que a
-          gerência precisa é saber quem ainda não fez, pra cobrar. */}
-      {auto && rep.semCartao.length > 0 && (
-        <div className="wp-gz-top">
-          <div className="wp-gz-top-head">
-            <Send size={12} className="wp-ico" /> Ainda sem contato no material do cliente
-          </div>
-          <p className="wp-gz-help" style={{ margin: '0 0 8px' }}>
-            O material que essas pessoas mandam sai sem WhatsApp — o cliente encaminha pra
-            família e ninguém sabe pra quem responder. Cada uma preenche o seu em Perfil.
-          </p>
-          {rep.semCartao.map((p) => (
-            <div key={p.name} className="wp-gz-item">
-              <span className="wp-gz-item-name">
-                {p.name}<i className="wp-gz-cargo">{comoChamar(p.role, p.cargo, auto)}</i>
-              </span>
-              <span className="wp-gz-item-meta">falta preencher</span>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* A LISTA DE "QUEM AINDA NÃO PREENCHEU O CONTATO" SAIU DAQUI.
+          Ela existia pra gerência cobrar pessoa por pessoa — doze nomes, todo
+          dia, no meio dos números do time. Cobrança que não muda nada é ruído:
+          ficou semanas assim e o número não andou.
+          Quem resolve agora é o próprio app, na hora de mandar o material: se
+          falta o WhatsApp, ele pergunta ali, com o campo na tela (ver a folha
+          em Product.tsx). A gerência não precisa mais correr atrás. */}
 
       {/* EM QUE NÍVEL CADA PESSOA ESTÁ.
           Prometi isso quando propus os níveis e tinha ficado de fora: sem esta

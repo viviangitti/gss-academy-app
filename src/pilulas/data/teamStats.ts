@@ -45,7 +45,6 @@ export interface TeamReport {
   topProducts: { id: string; views: number }[];
   ranking: { name: string; role: string; cargo?: string; points: number; views: number; quiz: number }[];
   semUso: TeamPerson[]; // cadastrou e nunca assistiu nada
-  semCartao: { name: string; role: string; cargo?: string }[]; // quem ainda não preencheu o contato do material do cliente
 }
 
 const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
@@ -165,9 +164,6 @@ export function buildReport(people: TeamPerson[], allowedIds?: Set<string>, mont
   // Quem ainda não montou o cartão do material do cliente. É a lista que a
   // gerência usa pra cobrar — sem ela, o vendedor manda material sem contato e
   // ninguém percebe.
-  const semCartao = people
-    .filter((p) => p.role !== 'gestor' && !p.cartaoPronto)
-    .map((p) => ({ name: p.name, role: p.role, cargo: p.cargo }));
 
   const topProducts = [...prodViews.entries()]
     .map(([id, views]) => ({ id, views }))
@@ -182,7 +178,6 @@ export function buildReport(people: TeamPerson[], allowedIds?: Set<string>, mont
     byRole: [...roles.entries()].map(([role, v]) => ({ role, ...v })).sort((a, b) => b.total - a.total),
     months: monthsOut,
     topProducts,
-    semCartao,
     ranking,
     semUso,
   };

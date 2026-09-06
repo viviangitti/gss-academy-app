@@ -23,7 +23,7 @@ import { vocab } from './data/vocabulario';
 import { gerarMaterial, compartilharMaterial } from './data/onePage';
 import { acessoriosPara, precoLabel, type Acessorio } from './data/acessorios';
 import { carregarDestaques, destaquesDoTime, useDestaquesTime } from './data/destaquesTime';
-import { getElevaProfile } from './data/profile';
+import { getElevaProfile, updateElevaWhatsapp } from './data/profile';
 import { auth } from '../services/firebase';
 import { useAjustesAcessorios } from './data/ajustesAcessorios';
 
@@ -793,6 +793,16 @@ export default function Product() {
     getElevaProfile(uid).then((pf) => { setWhats(pf?.whatsapp || ''); setFotoVend(pf?.foto || ''); }).catch(() => {});
   }, [user?.email]);
   const semContato = !whats.trim();
+  // A FOLHA QUE PERGUNTA O CONTATO ANTES DE MANDAR.
+  //
+  // O aviso "seu material vai sair sem contato" já existia aqui embaixo, com um
+  // atalho pro Perfil — e ficou semanas no ar com doze das quinze pessoas ainda
+  // sem preencher. Aviso que a pessoa lê, concorda e não age não é aviso, é
+  // decoração. Este pergunta no ÚNICO instante em que ela entende o custo: com
+  // o cliente na frente, o dedo já no botão de mandar.
+  const [pedindoZap, setPedindoZap] = useState(false);
+  const [zapNovo, setZapNovo] = useState('');
+  const [salvandoZap, setSalvandoZap] = useState(false);
   const acessorios = product ? acessoriosPara(product.id) : [];
   // Se a gerência montou os destaques a partir do que o time respondeu, é essa
   // lista que vale — na tela e no material do cliente.
@@ -883,8 +893,19 @@ export default function Product() {
 
   // Monta o one-page e manda. A foto usada é a capa que o gestor subiu; sem
   // capa, o desenho cai numa versão tipográfica (feia é não ter arquivo nenhum).
-  const material = async (variante: 'cliente' | 'estudo', textoPronto?: string) => {
+  const material = async (
+    variante: 'cliente' | 'estudo',
+    textoPronto?: string,
+    // undefined = ainda não perguntei · string = usa este · null = mandar sem
+    contato?: string | null,
+  ) => {
     if (!product || gerando) return;
+    if (variante === 'cliente' && contato === undefined && semContato) {
+      setZapNovo('');
+      setPedindoZap(true);
+      return;
+    }
+    const zap = contato === null ? '' : (contato ?? whats);
     setGerando(variante);
     setAvisoOp('');
     try {
@@ -894,7 +915,7 @@ export default function Product() {
         variante,
         marca: marca.name,
         vendedor: user?.name,
-        whatsapp: whats,
+        whatsapp: zap,
         fotoVendedor: fotoVend,
         capa: getProductImageUrl(product.id) || product.imageUrl,
         fotos: product.fotos,
@@ -1274,6 +1295,57 @@ export default function Product() {
             </p>
           )}
           {avisoOp && <p className="wp-op-aviso">{avisoOp}</p>}
+        </div>
+      )}
+
+      {/* Sobe do rodapé, onde o polegar já está. Não trava: quem está de pé com
+          o cliente esperando precisa poder mandar assim mesmo — o texto diz o
+          que custa, a escolha é dela. */}
+      {pedindoZap && (
+        <div className="wp-zap-lb" role="dialog" aria-label="Falta o seu WhatsApp">
+          <div className="wp-zap-folha" onClick={(e) => e.stopPropagation()}>
+            <span className="wp-zap-puxador" />
+            <b className="wp-zap-tit">Falta o seu WhatsApp</b>
+            <p className="wp-zap-txt">
+              O material sai com o seu contato no rodapé. Sem ele, o cliente encaminha
+              pra família e ninguém sabe pra quem responder.
+            </p>
+            <input
+              className="wp-zap-campo"
+              type="tel"
+              inputMode="tel"
+              autoFocus
+              value={zapNovo}
+              onChange={(e) => setZapNovo(e.target.value)}
+              placeholder="(11) 9 0000-0000"
+              aria-label="Seu WhatsApp"
+            />
+            <button
+              type="button"
+              className="wp-zap-ok"
+              disabled={zapNovo.replace(/\D/g, '').length < 10 || salvandoZap}
+              onClick={async () => {
+                const uid = auth?.currentUser?.uid;
+                setSalvandoZap(true);
+                const numero = zapNovo.trim();
+                if (uid) await updateElevaWhatsapp(uid, numero).catch(() => {});
+                setWhats(numero);
+                setSalvandoZap(false);
+                setPedindoZap(false);
+                material('cliente', undefined, numero);
+              }}
+            >
+              {salvandoZap ? 'Salvando…' : 'Salvar e mandar'}
+            </button>
+            <button
+              type="button"
+              className="wp-zap-pular"
+              onClick={() => { setPedindoZap(false); material('cliente', undefined, null); }}
+            >
+              Mandar sem o meu contato
+            </button>
+            <p className="wp-zap-nota">Preenche uma vez e vale pra todos os carros.</p>
+          </div>
         </div>
       )}
 

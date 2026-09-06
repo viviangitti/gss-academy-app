@@ -3859,3 +3859,45 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
   }
 }
+
+/* ===== "FALTA O SEU WHATSAPP" — a folha antes de mandar o material =====
+   Sobe do rodapé porque é onde o polegar está, e escurece o fundo pra deixar
+   claro que a pergunta é agora. Não trava: quem está com o cliente esperando
+   tem a saída logo abaixo do botão principal. */
+.wp-zap-lb {
+  position: fixed; inset: 0; z-index: 130;
+  background: rgba(10, 12, 20, .55);
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.wp-zap-folha {
+  width: 100%; max-width: 480px;
+  background: var(--wp-surface); color: var(--wp-text);
+  border-radius: 22px 22px 0 0;
+  padding: 14px 22px calc(24px + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column;
+}
+.wp-zap-puxador {
+  width: 52px; height: 5px; border-radius: 99px; background: var(--wp-border);
+  align-self: center; margin-bottom: 18px;
+}
+.wp-zap-tit { font-size: 21px; font-weight: 800; color: var(--wp-ink); }
+.wp-zap-txt { margin: 8px 0 16px; font-size: 14px; line-height: 1.45; color: var(--wp-soft); }
+.wp-zap-campo {
+  width: 100%; box-sizing: border-box;
+  border: 1.5px solid var(--wp-border); border-radius: 12px;
+  padding: 15px 14px; font-family: inherit; font-size: 16px; /* 16px: menos que isso e o iOS dá zoom sozinho */
+  color: var(--wp-text); background: var(--wp-bg); outline: none;
+}
+.wp-zap-campo:focus { border-color: var(--wp-pink); }
+.wp-zap-ok {
+  margin-top: 14px; border: none; border-radius: 12px; padding: 15px;
+  background: var(--wp-pink); color: var(--wp-on-accent);
+  font-family: inherit; font-size: 16px; font-weight: 800; cursor: pointer;
+}
+.wp-zap-ok:disabled { opacity: .45; cursor: default; }
+.wp-zap-pular {
+  margin-top: 6px; padding: 12px; border: none; background: none;
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  color: var(--wp-soft); cursor: pointer;
+}
+.wp-zap-nota { margin: 2px 0 0; text-align: center; font-size: 11.5px; color: var(--wp-soft); }

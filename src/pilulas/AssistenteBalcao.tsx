@@ -81,6 +81,8 @@ export default function AssistenteBalcao() {
   const [erro, setErro] = useState('');
   const [gravando, setGravando] = useState(false);
   const fimRef = useRef<HTMLDivElement | null>(null);
+  /** O começo da última resposta — é nele que a tela para. */
+  const respostaRef = useRef<HTMLDivElement | null>(null);
   const ditadoRef = useRef<ReturnType<typeof criarDitado> | null>(null);
 
   const produtos = useMemo(
@@ -116,8 +118,21 @@ export default function AssistenteBalcao() {
     : 'Uso interno de apoio. Não é orientação médica: dose, uso com remédios e doença ficam com o rótulo e o farmacêutico.';
   const perfilIA = ehAuto ? 'auto' : ehBalcao ? 'balcao' : 'revenda';
 
+  // ONDE A TELA PARA DEPOIS DE RESPONDER.
+  //
+  // Antes ela ia sempre pro FIM da conversa. Numa resposta longa — e as boas
+  // são longas — a pessoa caía no último parágrafo e tinha que rolar pra cima
+  // pra achar o começo. Foi a reclamação do time: "deveria ancorar no início e
+  // não no final da mensagem".
+  //
+  // Agora: enquanto a pergunta sobe e a IA está pensando, vai pro fim (é onde
+  // aparecem os três pontinhos). Quando a resposta chega, para no COMEÇO dela,
+  // que é por onde se lê.
   useEffect(() => {
-    fimRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const ultima = msgs[msgs.length - 1];
+    const paraLer = !loading && ultima?.role === 'assistant' && respostaRef.current;
+    const alvo = paraLer ? respostaRef.current : fimRef.current;
+    alvo?.scrollIntoView({ behavior: 'smooth', block: paraLer ? 'start' : 'end' });
   }, [msgs, loading]);
 
   // Abre a conversa desta pessoa nesta marca. Trocar de conta ou de marca troca
@@ -277,7 +292,13 @@ export default function AssistenteBalcao() {
         )}
 
         {msgs.map((m, idx) => (
-          <div key={idx} className={`wp-ia-msg ${m.role}`}>{emNegrito(m.content)}</div>
+          <div
+            key={idx}
+            ref={idx === msgs.length - 1 && m.role === 'assistant' ? respostaRef : undefined}
+            className={`wp-ia-msg ${m.role}`}
+          >
+            {emNegrito(m.content)}
+          </div>
         ))}
 
         {loading && <div className="wp-ia-msg assistant wp-ia-typing"><span></span><span></span><span></span></div>}

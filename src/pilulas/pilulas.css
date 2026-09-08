@@ -3914,3 +3914,7 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   color: var(--wp-soft); cursor: pointer;
 }
 .wp-zap-nota { margin: 2px 0 0; text-align: center; font-size: 11.5px; color: var(--wp-soft); }
+
+/* A resposta para logo abaixo do cabeçalho, não colada nele — o cabeçalho é
+   fixo e comeria a primeira linha. */
+.wp-ia-msg.assistant { scroll-margin-top: 74px; }

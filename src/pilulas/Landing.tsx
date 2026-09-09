@@ -74,6 +74,13 @@ function Fone() {
 }
 
 
+// Desligado em 09/09/2026. Quem preenchia não era marca querendo o Eleva: eram
+// vendedores da Ramasa que chegavam aqui procurando o acesso e achavam que o
+// formulário era o caminho de entrar. Os três contatos que existem no painel são
+// todos do time. Enquanto estiver `false`, a landing tem uma porta só — Entrar.
+// Para religar, basta trocar para `true`.
+const FORMULARIO_LIGADO: boolean = false;
+
 // Formulário de contato da marca interessada. Grava direto no Firestore — sem
 // depender de a pessoa ter cliente de e-mail configurado, que é o que faz muito
 // "fale conosco" por mailto não gerar contato nenhum.
@@ -174,9 +181,11 @@ export default function Landing({ onEntrar }: { onEntrar: () => void }) {
             <button type="button" className="wp-lp-btn wp-lp-btn--gold" onClick={onEntrar}>
               Entrar na minha conta <ArrowRight size={16} />
             </button>
-            <a className="wp-lp-btn wp-lp-btn--ghost" href="#contato">
-              Quero para a minha marca
-            </a>
+            {FORMULARIO_LIGADO && (
+              <a className="wp-lp-btn wp-lp-btn--ghost" href="#contato">
+                Quero para a minha marca
+              </a>
+            )}
           </div>
           <p className="wp-lp-nota">
             É isto que a sua vendedora vê. Rodando de verdade, com um produto da <b>Meraki</b>.
@@ -290,15 +299,30 @@ export default function Landing({ onEntrar }: { onEntrar: () => void }) {
       </section>
 
       <section className="wp-lp-final" id="contato">
-        <h2>Quer ver com os seus produtos?</h2>
-        <p>
-          Me diga qual linha você quer treinar. Eu monto uma pílula do seu produto e te mostro
-          funcionando — no seu celular, com a sua marca.
-        </p>
-        <Formulario />
-        <button type="button" className="wp-lp-jatenho" onClick={onEntrar}>
-          Já tenho conta — entrar
-        </button>
+        {FORMULARIO_LIGADO ? (
+          <>
+            <h2>Quer ver com os seus produtos?</h2>
+            <p>
+              Me diga qual linha você quer treinar. Eu monto uma pílula do seu produto e te mostro
+              funcionando — no seu celular, com a sua marca.
+            </p>
+            <Formulario />
+            <button type="button" className="wp-lp-jatenho" onClick={onEntrar}>
+              Já tenho conta — entrar
+            </button>
+          </>
+        ) : (
+          <>
+            <h2>Seu time já usa o Eleva?</h2>
+            <p>
+              Entre com o e-mail da sua empresa. Se você ainda não tem acesso, quem libera é a sua
+              gerência — fale com ela, não é aqui que se cadastra.
+            </p>
+            <button type="button" className="wp-lp-btn wp-lp-btn--gold" onClick={onEntrar}>
+              Entrar no app <ArrowRight size={16} />
+            </button>
+          </>
+        )}
       </section>
 
       <footer className="wp-lp-rodape">

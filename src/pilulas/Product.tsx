@@ -1360,7 +1360,12 @@ export default function Product() {
           </p>
           <button className="wp-share" onClick={share} disabled={!!gerando}>
             <ArrowUpRight size={18} className="wp-ico" />
-            {gerando ? 'Preparando o material…' : `Compartilhar com ${v.aCliente}`}
+            {/* "resumo" só no automotivo: é lá que o botão manda o one-page, que
+                é literalmente um resumo do carro numa página. Na revenda ele
+                manda mensagem e vídeo — chamar aquilo de resumo seria mentira. */}
+            {gerando
+              ? 'Preparando o material…'
+              : auto ? 'Compartilhar resumo com o cliente' : `Compartilhar com ${v.aCliente}`}
           </button>
         </>
       )}

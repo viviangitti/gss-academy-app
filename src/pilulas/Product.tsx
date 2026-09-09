@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText,
-  ArrowUpRight, Play, Pause, Plus, Minus, Camera,
-  Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon,
-  Volume2, FileDown, BookOpen, Users, Lock, ChevronRight, Package, Maximize2, Layers, X } from 'lucide-react';
+  MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText, ArrowUpRight, Play, Pause, Plus, Minus, Camera, Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon, Volume2, BookOpen, Users, Lock, Package, Maximize2, Layers, X,
+} from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
 import { submitObjection, fetchMyObjections, fetchPublicadas, objectionDate, type TeamObjection } from './data/objections';
@@ -1269,31 +1267,27 @@ export default function Product() {
         </div>
       )}
 
-      {/* O ONE-PAGE. No automotivo é o material que o vendedor manda de verdade:
-          sai com o nome e o WhatsApp DELE, então ele quer mandar. */}
+      {/* PRA VOCÊ ESTUDAR — e só isso.
+          Aqui havia um bloco "Material pronto" com DOIS botões: um mandava o
+          one-page pro cliente e o outro gerava a versão de estudo. O de cliente
+          fazia exatamente o mesmo que o botão verde do rodapé — a mesma função,
+          o mesmo arquivo — e o vendedor tinha que escolher entre dois caminhos
+          idênticos. Ficou o verde, que é o que ele acha primeiro.
+          A versão de estudo continua: é usada de verdade (15 de 46 materiais
+          gerados). O que mudou é que ela saiu de debaixo de um título que dizia
+          "material pronto", colada no botão do cliente. Ela não vai pro cliente,
+          e agora a tela diz isso. */}
       {auto && (
         <div className="wp-op">
-          <span className="wp-block-label"><FileDown size={14} className="wp-ico" /> Material pronto</span>
-          <button className="wp-op-btn wp-op-btn--main" onClick={() => material('cliente')} disabled={!!gerando}>
-            <Send size={17} className="wp-ico" />
-            {gerando === 'cliente' ? 'Preparando…' : 'Mandar one-page pro cliente'}
-          </button>
+          <span className="wp-block-label"><BookOpen size={14} className="wp-ico" /> Pra você estudar</span>
+          <p className="wp-op-nota">
+            Um PDF com as objeções e a resposta pronta deste carro, pra você ler antes de
+            atender. <b>Não é o material do cliente</b> — esse sai no botão verde, no rodapé.
+          </p>
           <button className="wp-op-btn" onClick={() => material('estudo')} disabled={!!gerando}>
             <BookOpen size={16} className="wp-ico" />
-            {gerando === 'estudo' ? 'Preparando…' : 'Versão de estudo (uso interno)'}
+            {gerando === 'estudo' ? 'Preparando…' : 'Gerar o material de estudo'}
           </button>
-          {semContato ? (
-            // Texto solto não resolve: a pessoa lê, concorda e não vai. O caminho
-            // tem que estar aqui, no momento em que ela quer mandar o material.
-            <Link to="/eleva/perfil" className="wp-op-falta">
-              <span>Seu material vai sair sem contato. Preencha uma vez e vale pra todos os carros.</span>
-              <b>Completar meu cartão <ChevronRight size={14} className="wp-ico" /></b>
-            </Link>
-          ) : (
-            <p className="wp-op-hint">
-              O PDF já chega com a folha em miniatura na conversa — e é o que o cliente imprime e leva pra casa.
-            </p>
-          )}
           {avisoOp && <p className="wp-op-aviso">{avisoOp}</p>}
         </div>
       )}

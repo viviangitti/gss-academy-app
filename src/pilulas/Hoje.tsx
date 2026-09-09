@@ -10,6 +10,8 @@ import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
 import { isAuto, isBalcao } from './data/brands';
 import { vocab } from './data/vocabulario';
+import { mandarMaterial } from './data/materialCliente';
+import { auth } from '../services/firebase';
 import { naoVistos } from './data/novidades';
 import { campanhaPara, prazoLabel, diasRestantes } from './data/campanha';
 import { getAbout } from './data/about';
@@ -181,14 +183,40 @@ export default function Hoje() {
   const post = CALENDAR.find((c) => c.day === today) || CALENDAR[0];
   const channel = CHANNELS.find((c) => c.id === post.channel);
 
-  const sharePill = () => {
-    if (!pill) return;
+  // MANDA O MESMO MATERIAL DA TELA DO CARRO.
+  //
+  // Este botão mandava só um texto de WhatsApp — sem PDF, sem foto, sem os
+  // destaques e sem o contato do vendedor. Na tela do carro, o botão de mesmo
+  // nome mandava o one-page completo. O cliente recebia material bom ou material
+  // pobre conforme a tela em que o vendedor tocou, e ninguém tinha como saber:
+  // o caminho da tela inicial nem registrava evento.
+  //
+  // A montagem virou um módulo só (data/materialCliente), e as duas telas
+  // chamam de lá. No automotivo vai o one-page; na farmácia segue o texto, que
+  // é o que faz sentido lá.
+  const [mandando, setMandando] = useState(false);
+  const [avisoEnvio, setAvisoEnvio] = useState('');
+  const sharePill = async () => {
+    if (!pill || mandando) return;
     const text = buildShareMessage(pill, { medium: audienceOf(user) ?? user?.role, code: getAfiliadoCode(user?.email) });
-    if (navigator.share) {
-      navigator.share({ text, title: pill.name }).catch(() => {});
+    if (!auto) {
+      if (navigator.share) { navigator.share({ text, title: pill.name }).catch(() => {}); return; }
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
       return;
     }
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    setMandando(true);
+    setAvisoEnvio('');
+    try {
+      const r = await mandarMaterial({
+        product: pill, brandId, variante: 'cliente',
+        vendedor: user?.name, uid: auth?.currentUser?.uid, texto: text,
+      });
+      if (r === 'baixou') setAvisoEnvio('PDF baixado: está na sua pasta de downloads.');
+    } catch {
+      setAvisoEnvio('Não consegui montar o material agora. Tente pela tela do carro.');
+    } finally {
+      setMandando(false);
+    }
   };
 
   return (
@@ -315,11 +343,13 @@ export default function Hoje() {
                   <Play size={15} className="wp-ico" /> Assistir agora
                 </Link>
                 {!balcao && (
-                  <button className="wp-td-btn" onClick={sharePill}>
-                    <Send size={15} className="wp-ico" /> {auto ? 'Enviar ao cliente' : 'Enviar à cliente'}
+                  <button className="wp-td-btn" onClick={sharePill} disabled={mandando}>
+                    <Send size={15} className="wp-ico" />
+                    {mandando ? 'Preparando…' : (auto ? 'Enviar ao cliente' : 'Enviar à cliente')}
                   </button>
                 )}
               </div>
+              {avisoEnvio && <p className="wp-td-aviso">{avisoEnvio}</p>}
             </div>
           )}
 

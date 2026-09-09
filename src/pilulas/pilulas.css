@@ -3918,3 +3918,10 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 /* A resposta para logo abaixo do cabeçalho, não colada nele — o cabeçalho é
    fixo e comeria a primeira linha. */
 .wp-ia-msg.assistant { scroll-margin-top: 74px; }
+
+/* "Pra você estudar": o bloco perdeu o botão de cliente, então a nota explica
+   o que sobrou e para onde foi o outro. */
+.wp-op-nota { margin: 4px 0 10px; font-size: 12px; line-height: 1.45; color: var(--wp-soft); }
+/* Recado do envio na tela inicial — o PDF pode cair no download em vez de abrir
+   o compartilhar, e sem aviso a pessoa acha que não aconteceu nada. */
+.wp-td-aviso { margin: 8px 0 0; font-size: 11.5px; color: var(--wp-soft); }

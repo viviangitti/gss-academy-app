@@ -222,7 +222,11 @@ export default function Ofertas() {
   const { user } = useAuth();
   const auto = isAuto(brandId);
   const [aberta, setAberta] = useState<Condicao | null>(null);
-  const [grupo, setGrupo] = useState<'veiculo' | 'acessorio' | 'campanha' | null>(null);
+  // Chegou pelo lembrete da campanha, na tela inicial? Já abre nas campanhas.
+  const [grupo, setGrupo] = useState<'veiculo' | 'acessorio' | 'campanha' | null>(() => {
+    const g = new URLSearchParams(window.location.search).get('grupo');
+    return g === 'veiculo' || g === 'acessorio' || g === 'campanha' ? g : null;
+  });
 
   useEffect(() => { carregarCondicoes(brandId); }, [brandId]);
 

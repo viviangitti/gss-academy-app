@@ -27,6 +27,18 @@ import {
 import { db } from '../../services/firebase';
 import type { BrandId } from './brands';
 
+/** Uma corrida de uma campanha da casa: "1ª quinzena", até 14/09, Air Fryer. */
+export interface Disputa {
+  /** Como aparece pro time: "1ª quinzena". */
+  nome: string;
+  /** Último dia da disputa, inclusive (aaaa-mm-dd). */
+  ate: string;
+  /** O prêmio: "Air Fryer Elgin 5 L". */
+  premio: string;
+  /** O que conta pra ganhar, numa linha: "mais notas fiscais emitidas de 1 a 14/09". */
+  regra?: string;
+}
+
 export interface Condicao {
   id: string;
   brand: BrandId;
@@ -62,6 +74,15 @@ export interface Condicao {
    * vezes, e errar para o lado do carro não esconde nada de ninguém.
    */
   categoria?: 'veiculo' | 'acessorio' | 'campanha';
+  /**
+   * AS DISPUTAS de uma campanha da casa — só vale para categoria 'campanha'.
+   *
+   * A campanha de setembro tinha quatro corridas (1ª quinzena, 2ª quinzena, mês
+   * e leads), cada uma com prazo e prêmio próprios, e tudo isso morava no texto
+   * corrido do PDF. A IA lia; o app não. Com a data de cada corrida aqui, a tela
+   * inicial do vendedor mostra a que está valendo e quanto falta.
+   */
+  disputas?: Disputa[];
   /**
    * Assinatura do arquivo — para o app reconhecer folha repetida.
    *

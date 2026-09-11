@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon, Sparkles, Trophy } from 'lucide-react';
+import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon, Sparkles, Trophy, X } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
 import { buildShareMessage, visibleProducts, duracaoLabel, type Product } from './data/products';
 import { getAfiliadoCode } from './data/afiliadoCode';
@@ -20,6 +20,8 @@ import { logSearch } from './data/insights';
 import { useBrand } from './BrandContext';
 import { useAuth } from './AuthContext';
 import PrimeirosPassos from './PrimeirosPassos';
+import { carregarCondicoes, useCondicoes } from './data/condicoes';
+import { lembreteCampanha, mostrarPopupHoje, dispensarPopupHoje, quando, diaMes, frase } from './data/lembreteCampanha';
 
 // ---------- Busca "Me salva": acha a resposta pronta pelo que a cliente falou ----------
 function norm(s: string): string {
@@ -175,6 +177,18 @@ export default function Hoje() {
   const didToday = watchedToday();
   const firstName = (user?.name || '').split(' ')[0] || 'Você';
 
+  // A CAMPANHA DA CASA, lida das condições que a gerência publicou. A faixa fica
+  // enquanto houver disputa aberta; o pop-up só na reta final, uma vez por dia,
+  // e nunca pro gestor — ele publicou, não precisa ser lembrado.
+  useCondicoes();
+  useEffect(() => { if (auto) carregarCondicoes(brandId); }, [brandId, auto]);
+  const lembrete = auto ? lembreteCampanha(brandId) : null;
+  const [popup, setPopup] = useState(false);
+  useEffect(() => {
+    setPopup(user?.role !== 'gestor' && mostrarPopupHoje(lembrete));
+  }, [lembrete?.condicao.id, lembrete?.disputa.ate, user?.role]); // eslint-disable-line react-hooks/exhaustive-deps
+  const fecharPopup = () => { if (lembrete) dispensarPopupHoje(lembrete); setPopup(false); };
+
   // Pílula do dia: gira todo dia, determinística (mesmo produto o dia todo)
   const pill = products.length ? products[dayOfYear() % products.length] : undefined;
 
@@ -221,6 +235,25 @@ export default function Hoje() {
 
   return (
     <div className="wp-today">
+      {popup && lembrete && (
+        <div className="wp-camppop-fundo" role="dialog" aria-modal="true" aria-label="Lembrete da campanha" onClick={fecharPopup}>
+          <div className="wp-camppop" onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="wp-camppop-x" onClick={fecharPopup} aria-label="Fechar"><X size={18} className="wp-ico" /></button>
+            <span className="wp-camppop-ic"><Trophy size={28} className="wp-ico" /></span>
+            <span className="wp-camppop-prazo">
+              {lembrete.dias === 0 ? 'Último dia' : lembrete.dias === 1 ? 'Falta 1 dia' : `Faltam ${lembrete.dias} dias`}
+            </span>
+            <h3>{lembrete.disputa.nome}</h3>
+            {lembrete.disputa.regra && <p>{frase(lembrete.disputa.regra)}</p>}
+            <p>Fecha {quando(lembrete)}, {diaMes(lembrete.disputa.ate)}.</p>
+            {lembrete.disputa.premio && (
+              <div className="wp-camppop-premio">Prêmio<b>{lembrete.disputa.premio}</b></div>
+            )}
+            <Link to="/eleva/ofertas?grupo=campanha" className="wp-camppop-ok" onClick={fecharPopup}>Ver a campanha</Link>
+            <button type="button" className="wp-camppop-nao" onClick={fecharPopup}>Agora não</button>
+          </div>
+        </div>
+      )}
       <div className="wp-td-head">
         <div>
           <h1 className="wp-td-hi">Oi, {firstName}!</h1>
@@ -251,6 +284,24 @@ export default function Hoje() {
 
       {!q.trim() && (
         <>
+          {/* A CAMPANHA DA CASA — a disputa que está valendo agora. Toca e cai
+              direto nas campanhas, na aba Condições. */}
+          {lembrete && (
+            <Link to="/eleva/ofertas?grupo=campanha" className="wp-td-campfaixa">
+              <span className="wp-td-campfaixa-ic"><Trophy size={20} className="wp-ico" /></span>
+              <span className="wp-td-campfaixa-txt">
+                <b>{lembrete.disputa.nome} {lembrete.dias === 0 ? 'termina hoje' : `termina ${quando(lembrete)}`}</b>
+                <i>
+                  {lembrete.disputa.regra ? frase(lembrete.disputa.regra) + ' ' : ''}
+                  {lembrete.disputa.premio ? `Prêmio: ${lembrete.disputa.premio}.` : ''}
+                </i>
+              </span>
+              <span className="wp-td-campfaixa-dias">
+                {lembrete.dias === 0 ? <b>hoje</b> : <><b>{lembrete.dias}</b>{lembrete.dias === 1 ? 'dia' : 'dias'}</>}
+              </span>
+            </Link>
+          )}
+
           {/* Lembrete diário — mantém a ofensiva viva */}
           <div className="wp-td-lembrete">
             <span className="wp-td-lb-flame"><Flame size={18} className="wp-ico" /> {stats.streak}</span>

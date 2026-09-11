@@ -21,7 +21,7 @@ import { atualizarCondicao, aposentarVarias, jaPublicada, abrirArquivo, type Con
 import { lerCarta, pareceAcessorio, textoDeValidade, type PaginaCarta } from './data/cartaPdf';
 import { acessoriosParaGestao, acessorioOculto, precoLabel, precoDe, ORIGENS, type Acessorio, type OrigemAcessorio } from './data/acessorios';
 import { carregarAjustesAcessorios, salvarPreco, salvarEdicao, ocultarAcessorio, salvarOrdemAcessorios, edicaoDe, useAjustesAcessorios, salvarAcessorioNovo, apagarAcessorioNovo, idParaAcessorio, novosDaMarca } from './data/ajustesAcessorios';
-import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, estaVencida, useCondicoes, vaiAteAVirada, type ArquivoPronto } from './data/condicoes';
+import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, estaVencida, useCondicoes, vaiAteAVirada, type Disputa, type ArquivoPronto } from './data/condicoes';
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { fetchObjections, objectionDate, responderObjecao, type TeamObjection } from './data/objections';
 import { buscarArgumentos, destacarArgumento, apagarArgumento, palavrasQueSeRepetem, type Argumento } from './data/argumentos';
@@ -817,6 +817,14 @@ function CondicaoForm({ brand, editando, onDone }: {
   const carrosDaCasa = allProducts().filter((p) => p.brand === brand);
   const [categoria, setCategoria] = useState<'veiculo' | 'acessorio' | 'campanha'>(editando?.categoria || 'veiculo');
   const [venceEm, setVenceEm] = useState(editando?.venceEm || '');
+  // AS DISPUTAS da campanha da casa: nome, prazo e prêmio de cada corrida. É
+  // daqui que sai o lembrete da tela inicial do vendedor.
+  const [disputas, setDisputas] = useState<Disputa[]>(editando?.disputas || []);
+  const mexerDisputa = (i: number, m: Partial<Disputa>) =>
+    setDisputas((ds) => ds.map((d, j) => (j === i ? { ...d, ...m } : d)));
+  const disputasOk: Disputa[] = disputas
+    .filter((d) => d.nome.trim() && d.ate)
+    .map((d) => ({ nome: d.nome.trim(), ate: d.ate, premio: d.premio.trim(), ...(d.regra?.trim() ? { regra: d.regra.trim() } : {}) }));
   // O texto de validade nasce da data. Eram dois campos dizendo a mesma coisa,
   // e o gerente tinha que escrever à mão o que a carta já diz — some quando ele
   // decide escrever o dele.
@@ -945,6 +953,7 @@ function CondicaoForm({ brand, editando, onDone }: {
           resumo: resumoIA.trim() || undefined,
           chamada: chamada.trim() || undefined,
           produtoId: produtoId || undefined,
+          ...(categoria === 'campanha' ? { disputas: disputasOk } : {}),
           ...(arq ? { arquivo: arq.arquivo, tipo: arq.tipo, nomeArquivo: arq.nomeArquivo } : {}),
         });
         onDone(titulo.trim());
@@ -958,6 +967,7 @@ function CondicaoForm({ brand, editando, onDone }: {
         observacao: observacao.trim() || undefined,
         categoria,
         venceEm: venceEm || undefined,
+        ...(categoria === 'campanha' ? { disputas: disputasOk } : {}),
         arquivo: arq.arquivo,
         tipo: arq.tipo,
         nomeArquivo: arq.nomeArquivo,
@@ -1162,6 +1172,35 @@ function CondicaoForm({ brand, editando, onDone }: {
           acessório entra depois do sim.
         </p>
       </>)}
+
+      {/* AS DISPUTAS DA CAMPANHA — viram o lembrete na tela inicial do time. */}
+      {!paginas && categoria === 'campanha' && (
+        <div className="wp-gz-disputas">
+          <label className="wp-gz-label">Disputas desta campanha</label>
+          <p className="wp-gz-hint">
+            Cada corrida com o seu prazo e o seu prêmio. O time vê na tela inicial a que está
+            valendo e quantos dias faltam; nos três últimos dias, aparece um aviso ao abrir o
+            app. Sem disputa cadastrada, não aparece lembrete nenhum.
+          </p>
+          {disputas.map((d, i) => (
+            <div key={i} className="wp-gz-disputa">
+              <input value={d.nome} maxLength={40} aria-label="Nome da disputa" onChange={(e) => mexerDisputa(i, { nome: e.target.value })} placeholder="Nome — ex.: 1ª quinzena" />
+              <label className="wp-gz-disputa-rot">
+                Último dia
+                <input type="date" value={d.ate} onChange={(e) => mexerDisputa(i, { ate: e.target.value })} />
+              </label>
+              <input value={d.premio} maxLength={60} aria-label="Prêmio" onChange={(e) => mexerDisputa(i, { premio: e.target.value })} placeholder="Prêmio — ex.: Air Fryer Elgin 5 L" />
+              <input value={d.regra || ''} maxLength={90} onChange={(e) => mexerDisputa(i, { regra: e.target.value })} placeholder="O que conta — ex.: mais notas fiscais de 1 a 14/09" />
+              <button type="button" className="wp-gz-disputa-tirar" onClick={() => setDisputas((ds) => ds.filter((_, j) => j !== i))}>
+                Tirar esta disputa
+              </button>
+            </div>
+          ))}
+          <button type="button" className="wp-gz-virada" onClick={() => setDisputas((ds) => [...ds, { nome: '', ate: '', premio: '' }])}>
+            + Adicionar disputa
+          </button>
+        </div>
+      )}
       <p className="wp-gz-hint">
         Toda condição publicada aqui é <b>interna</b>. O app não oferece encaminhar
         nenhuma delas — o vendedor passa o número ao cliente, não a folha.

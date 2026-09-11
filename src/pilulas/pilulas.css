@@ -3925,3 +3925,71 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 /* Recado do envio na tela inicial — o PDF pode cair no download em vez de abrir
    o compartilhar, e sem aviso a pessoa acha que não aconteceu nada. */
 .wp-td-aviso { margin: 8px 0 0; font-size: 11.5px; color: var(--wp-soft); }
+
+/* ---- Lembrete da campanha da casa (tela inicial) ---- */
+.wp-td-campfaixa {
+  display: flex; align-items: center; gap: 12px; text-decoration: none; color: #fff;
+  background: linear-gradient(135deg, var(--wp-pink), var(--wp-pink-deep));
+  border-radius: 16px; padding: 13px 14px; margin-bottom: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+}
+.wp-td-campfaixa-ic {
+  width: 42px; height: 42px; flex: none; border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18); display: flex; align-items: center; justify-content: center;
+}
+.wp-td-campfaixa-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.wp-td-campfaixa-txt b { font-size: 14px; line-height: 1.25; }
+.wp-td-campfaixa-txt i { font-style: normal; font-size: 12px; opacity: 0.92; margin-top: 3px; line-height: 1.35; }
+.wp-td-campfaixa-dias {
+  flex: none; background: #fff; color: var(--wp-pink-deep); border-radius: 12px;
+  padding: 5px 9px; text-align: center; font-size: 11px; font-weight: 800; line-height: 1.15;
+}
+.wp-td-campfaixa-dias b { display: block; font-size: 17px; }
+
+.wp-camppop-fundo {
+  position: fixed; inset: 0; z-index: 9999; background: rgba(10, 14, 25, 0.55);
+  display: flex; align-items: center; justify-content: center; padding: 22px;
+}
+.wp-camppop {
+  position: relative; width: 100%; max-width: 330px; background: #fff; border-radius: 22px;
+  padding: 24px 20px 12px; text-align: center; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+}
+.wp-camppop-x { position: absolute; top: 8px; right: 8px; border: 0; background: none; color: var(--wp-soft); padding: 8px; cursor: pointer; }
+.wp-camppop-ic {
+  width: 58px; height: 58px; margin: 0 auto 12px; border-radius: 17px; color: #fff;
+  background: linear-gradient(135deg, var(--wp-pink), var(--wp-pink-deep));
+  display: flex; align-items: center; justify-content: center;
+}
+.wp-camppop-prazo {
+  display: block; font-size: 11.5px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--wp-pink-deep); margin-bottom: 4px;
+}
+.wp-camppop h3 { margin: 0 0 8px; font-size: 20px; font-weight: 800; color: var(--wp-ink); }
+.wp-camppop p { margin: 0 0 4px; font-size: 13.5px; color: var(--wp-soft); line-height: 1.5; }
+.wp-camppop-premio {
+  background: #f3f5f9; border-radius: 12px; padding: 9px 12px; margin: 12px 0 14px;
+  font-size: 12.5px; color: var(--wp-soft);
+}
+.wp-camppop-premio b { display: block; font-size: 15px; color: var(--wp-ink); }
+.wp-camppop-ok {
+  display: block; background: var(--wp-pink); color: #fff; border-radius: 13px;
+  padding: 13px; font-size: 14.5px; font-weight: 700; text-decoration: none;
+}
+.wp-camppop-nao {
+  display: block; width: 100%; border: 0; background: none; color: var(--wp-soft);
+  font-size: 12.5px; padding: 11px 0 2px; cursor: pointer;
+}
+
+/* ---- Painel: disputas da campanha ---- */
+.wp-gz-disputas { margin: 14px 0 4px; }
+.wp-gz-disputa {
+  border: 1px solid var(--wp-border); border-radius: 12px; padding: 10px;
+  margin: 8px 0; display: flex; flex-direction: column; gap: 6px;
+}
+.wp-gz-disputa input { width: 100%; box-sizing: border-box; min-width: 0; margin: 0; }
+.wp-gz-disputa-rot { display: flex; align-items: center; gap: 10px; font-size: 12.5px; font-weight: 700; color: var(--wp-soft); }
+.wp-gz-disputa-rot input { flex: 1; }
+.wp-gz-disputa-tirar {
+  align-self: flex-start; border: 0; background: none; color: #c04b4b;
+  font-size: 12px; font-weight: 700; padding: 2px 0; cursor: pointer;
+}

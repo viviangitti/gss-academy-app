@@ -214,7 +214,18 @@ function Shell() {
   const [verLogin, setVerLogin] = useState(false);
   // Marca/papel/nome viajam junto com os stats que vão pro Sistema de Gestão
   useEffect(() => {
-    setStatsMeta({ brand: brand.id, role: user?.role, cargo: user?.cargo, name: user?.name });
+    // ESPERA saber a que empresa a pessoa pertence.
+    //
+    // Enquanto o login carrega, `user` é null e o BrandContext cai no primeiro
+    // da lista — que é a Meraki. Quem abria o app e tocava num carro dentro
+    // dessa janela gravava `brand: 'meraki'` no próprio registro de uso. O
+    // estrago era duplo e silencioso: o vendedor sumia do ranking da loja dele
+    // (o Painel filtra por marca) e aparecia no painel da OUTRA empresa.
+    //
+    // Seis vendedores da Ramasa estavam assim em 10/09/2026 — justamente os que
+    // abrem o app, fazem uma coisa só e saem: são os que ganham a corrida.
+    if (!user?.brands?.length) return;
+    setStatsMeta({ brand: brand.id, role: user.role, cargo: user.cargo, name: user.name });
     // "Cartão pronto" = tem WhatsApp preenchido. É o que o material do cliente
     // precisa pra sair com o contato certo, e o que a gerência precisa saber
     // pra cobrar quem ainda não fez.
@@ -224,7 +235,7 @@ function Shell() {
     // carrega depois deste efeito rodar. Sem a dependência, o cargo nunca era
     // gravado nos stats dessas pessoas e o Painel voltava a mostrar o papel
     // genérico — exatamente o problema que a gerência apontou.
-  }, [brand.id, user?.role, user?.cargo, user?.name]);
+  }, [brand.id, user, user?.role, user?.cargo, user?.name]);
   // Puxa da nuvem os vídeos que o gestor configurou por público — é o que faz o
   // link chegar no celular do time, e não só no aparelho de quem cadastrou.
   useEffect(() => {

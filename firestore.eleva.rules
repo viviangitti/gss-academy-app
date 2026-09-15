@@ -4,9 +4,14 @@ service cloud.firestore {
     // Gestores autorizados (espelha GESTOR_EMAILS do app).
     // Espelha GESTOR_EMAILS do app (src/pilulas/AuthContext.tsx). Mudou lá,
     // muda aqui — senão a pessoa vê os campos de vídeo mas não salva na nuvem.
+    // 15/09/2026: gerência da Ramasa (Raphaela, Letícia e Cristiano) entrou na lista —
+    // abriam o Painel mas nada do que publicavam chegava ao time.
+    // PENDENTE: esta lista não separa por empresa. Quem está nela alcança o conteúdo e
+    // os dados de TODAS as marcas pelas regras (o app só mostra a própria). Trocar por
+    // uma permissão por marca — ver memória gestor-por-empresa.
     function isGestor() {
       return request.auth != null &&
-        request.auth.token.email in ['maria26@gmail.com', 'mari.briso@merakifarma.com.br', 'silene.mendesdesouza@gmail.com', 'silene.mendesangelodesouza@gmail.com', 'silene_mendes@hotmail.com', 'viviangitti@gmail.com', 'viviangitti23@gmail.com', 'mariana@gruporamasa.com', 'silmara.ccrgerente@lincetoyota.com', 'lucas.cardoso@lincetoyota.com'];
+        request.auth.token.email in ['maria26@gmail.com', 'mari.briso@merakifarma.com.br', 'silene.mendesdesouza@gmail.com', 'silene.mendesangelodesouza@gmail.com', 'silene_mendes@hotmail.com', 'viviangitti@gmail.com', 'viviangitti23@gmail.com', 'mariana@gruporamasa.com', 'silmara.ccrgerente@lincetoyota.com', 'lucas.cardoso@lincetoyota.com', 'raphaela.machado@gruporamasa.com', 'leticia.alencar@gruporamasa.com', 'cristiano.maciel@gruporamasa.com'];
     }
     // Perfil do usuário: cada pessoa lê e grava SÓ o próprio doc (papel/nome/canal).
     match /elevaUsers/{uid} {

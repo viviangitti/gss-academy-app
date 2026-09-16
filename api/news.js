@@ -146,6 +146,19 @@ async function buscaNasFontes(q) {
     .sort((a, b) => (Date.parse(b.pubDate) || 0) - (Date.parse(a.pubDate) || 0));
 }
 
+// TRAVA DE IDADE. O Google também pode devolver a lista CHEIA e velha — foi o
+// caso das abas Tudo (notícia de 4 dias) e Mercado (16 dias) em 16/09/2026. O
+// plano B só entrava com a lista vazia, então a tela mostrava o velho sem aviso.
+// Passou do limite, as redações entram na lista junto, se tiverem algo mais novo.
+const LIMITE_IDADE_MS = 72 * 60 * 60 * 1000;
+const maisNova = (lista) => Math.max(0, ...lista.map((i) => Date.parse(i.pubDate) || 0));
+function juntar(...listas) {
+  const vistos = new Set();
+  return listas.flat()
+    .filter((i) => { const k = semAcento(i.title).slice(0, 60); if (vistos.has(k)) return false; vistos.add(k); return true; })
+    .sort((a, b) => (Date.parse(b.pubDate) || 0) - (Date.parse(a.pubDate) || 0));
+}
+
 export default async function handler(req, res) {
   // CORS — permite chamada do app (mesma origem em prod, mas libera dev/preview)
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -231,6 +244,17 @@ export default async function handler(req, res) {
         items: guardado ? guardado.items.slice(0, limit) : [],
         ...(guardado ? { aviso: 'O buscador não respondeu agora; mostrando a última lista que veio.' } : {}),
       });
+    }
+
+    if (Date.now() - maisNova(items) > LIMITE_IDADE_MS) {
+      const doBrasil = await buscaNasFontes(q).catch(() => []);
+      if (doBrasil.length && maisNova(doBrasil) > maisNova(items)) {
+        const juntos = juntar(doBrasil, items).slice(0, 50);
+        cache.set(q, { ts: Date.now(), items: juntos });
+        ultimoBom.set(q, { ts: Date.now(), items: juntos });
+        res.setHeader('X-Cache', 'MISTURA');
+        return res.status(200).json({ status: 'ok', items: juntos.slice(0, limit) });
+      }
     }
 
     cache.set(q, { ts: Date.now(), items });

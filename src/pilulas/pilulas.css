@@ -4181,3 +4181,32 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   line-height: 1.2;
 }
 .wp-jn-chip:active { border-color: var(--wp-pink); color: var(--wp-pink-deep); }
+/* Lembrete da entrega: é conferência do vendedor, não material de cliente —
+   por isso fundo âmbar, diferente de tudo o que se compartilha na tela. */
+.wp-jn-lembrete {
+  background: #fff8e8;
+  border: 1px solid #f0dcae;
+  border-radius: 14px;
+  padding: 11px 12px;
+}
+.wp-jn-lembrete .wp-jn-rotulo { color: #8a6a1a; }
+.wp-jn-check { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.wp-jn-check-item {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 6px 0;
+  text-align: left;
+  font-family: inherit;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #4a3c14;
+  cursor: pointer;
+}
+.wp-jn-check-item .wp-ico { flex: none; margin-top: 1px; color: #b08a2a; }
+.wp-jn-check-item.ok { color: #8a7a52; text-decoration: line-through; }
+.wp-jn-check-item.ok .wp-ico { color: #2e9e5b; }
+.wp-jn-lembrete-nota { margin: 8px 0 0; font-size: 11.5px; line-height: 1.5; color: #7a6428; }

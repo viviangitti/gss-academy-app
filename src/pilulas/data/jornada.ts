@@ -52,6 +52,12 @@ export interface Etapa {
   onePage: OnePage;
   /** Atalhos para telas do app, montados a partir de uma lista viva. */
   atalhos?: 'acessorios';
+  /**
+   * Lembrete INTERNO da etapa: o que conferir antes, não o que mandar.
+   * Nasceu do retorno da loja sobre a entrega — "é um momento de muita
+   * ansiedade, tem que ser mais especial e menos burocrático".
+   */
+  lembrete?: { titulo: string; itens: string[]; nota?: string };
 }
 
 /**
@@ -356,6 +362,18 @@ Eu cuido do resto e te aviso a cada passo. Quando estiver tudo certo, marcamos a
     porQue:
       'A lista fechada evita a ida e volta de documento que atrasa o faturamento por dias. Dizer que você avisa a cada passo é o que impede o cliente ansioso de ligar todo dia — e é o que ele lembra na hora de indicar você.',
     semResposta: `{cliente}, tudo certo por aí? Faltou só [documento] pra eu seguir com a sua análise. Assim que chegar, eu já toco.`,
+    lembrete: {
+      titulo: 'Antes da entrega, confira',
+      itens: [
+        'O carro está pronto: lavado, limpo por dentro e sem detalhe de pintura para resolver',
+        'Os acessórios que ele comprou estão instalados e conferidos',
+        'Você tem um detalhe do cliente para a entrega ficar especial: quem vem junto, se é o primeiro carro da família, o motivo da compra',
+        'A documentação está impressa e na ordem de assinatura — o cliente assina sem esperar você procurar papel',
+        'O caixa está avisado da forma de pagamento',
+        'O horário tem folga: entrega com fila atrás vira despacho',
+      ],
+      nota: 'A entrega é o momento de mais ansiedade do cliente — e é a lembrança que fica dela. Toda burocracia resolvida antes é o que faz a entrega parecer especial. Foi para isso que você pediu os documentos na conversa anterior.',
+    },
     onePage: {
       tipo: 'proprio',
       titulo: 'Sua entrega, passo a passo',

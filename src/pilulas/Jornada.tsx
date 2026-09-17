@@ -10,7 +10,7 @@
 // ninguém, e quem atende não quer digitar o próprio nome oito vezes por dia.
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronDown, Copy, Check, Share2, ArrowRight, Route as RotaIcon } from 'lucide-react';
+import { ChevronLeft, ChevronDown, Copy, Check, Share2, ArrowRight, Route as RotaIcon, Square, CheckSquare } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { getBrand } from './data/brands';
@@ -38,6 +38,9 @@ export default function Jornada() {
   });
   const [aberta, setAberta] = useState<string>(etapas[0]?.id || '');
   const [copiado, setCopiado] = useState('');
+  // O que já foi conferido no lembrete da entrega. Vale enquanto a tela está
+  // aberta: é uma conferência por cliente, não um estado que deva sobreviver.
+  const [conferido, setConferido] = useState<string[]>([]);
   const [gerando, setGerando] = useState('');
   const [aviso, setAviso] = useState('');
 
@@ -308,6 +311,33 @@ export default function Jornada() {
                           Ver os {acessorios.length} acessórios <ArrowRight size={15} className="wp-ico" />
                         </Link>
                       )}
+                    </div>
+                  )}
+
+                  {e.lembrete && (
+                    <div className="wp-jn-lembrete">
+                      <p className="wp-jn-rotulo">{e.lembrete.titulo} · só para você</p>
+                      <ul className="wp-jn-check">
+                        {e.lembrete.itens.map((it, i) => {
+                          const chave = `${e.id}:${i}`;
+                          const marcado = conferido.includes(chave);
+                          return (
+                            <li key={chave}>
+                              <button
+                                type="button"
+                                className={`wp-jn-check-item ${marcado ? 'ok' : ''}`}
+                                onClick={() =>
+                                  setConferido((c) => (marcado ? c.filter((x) => x !== chave) : [...c, chave]))
+                                }
+                              >
+                                {marcado ? <CheckSquare size={17} className="wp-ico" /> : <Square size={17} className="wp-ico" />}
+                                <span>{it}</span>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                      {e.lembrete.nota && <p className="wp-jn-lembrete-nota">{e.lembrete.nota}</p>}
                     </div>
                   )}
 

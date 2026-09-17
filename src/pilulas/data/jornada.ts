@@ -63,20 +63,20 @@ export const ETAPAS: Etapa[] = [
     numero: 1,
     titulo: 'Primeiro contato',
     tempo: 'Nos primeiros 5 minutos',
-    objetivo: 'Responder antes do concorrente e já sair com as três informações que definem o carro certo.',
+    objetivo: 'Responder antes do concorrente e sair com o uso, quem dirige e o que ele procura — sem falar de dinheiro.',
     sinal: 'O cliente respondeu pelo menos duas das três perguntas.',
     script: `Oi, {cliente}! Aqui é {vendedor}, da {loja}. Acabei de receber seu contato sobre o {carro}.
 
-Estou num atendimento presencial aqui na loja agora, mas não queria te deixar esperando. Pra adiantar, te faço três perguntas rápidas — assim eu volto com informação que serve pro seu caso, e não com o material que se manda pra todo mundo:
+Estou num atendimento presencial aqui na loja agora, mas não queria te deixar esperando. Para que eu possa ser mais assertivo no meu retorno, poderia me responder três perguntas rápidas?
 
-1. O carro vai rodar mais na cidade, na estrada, ou os dois?
-2. Tem carro na troca? Se tiver, qual modelo e ano?
-3. Você pensa em entrada mais parcelas, financiamento total ou à vista?
+1. O carro vai ser mais utilizado na cidade, na estrada ou os dois?
+2. Será conduzido principalmente por você ou por outro membro da família?
+3. Tem alguma coisa específica que você busca nesse modelo?
 
 Pode responder por aqui mesmo. Assim que eu terminar este atendimento, volto com tudo organizado pra você.`,
     porQue:
-      'Dizer que você está com um cliente na loja explica a demora antes que ela incomode, e mostra que você é procurado. As três perguntas cabem numa resposta só e definem modelo, forma de pagamento e urgência. E elas são justificadas pelo que o cliente ganha — não prometa a melhor opção antes de ouvir: prometer escolha antes de saber o uso é o que faz a mensagem soar a vendedor.',
-    semResposta: `Oi, {cliente}! Terminei o atendimento aqui. Consegue me responder aquelas três perguntinhas? Com elas eu já te mando o carro certo, sem você perder tempo olhando opção que não serve.`,
+      'Dizer que você está com um cliente na loja explica a demora antes que ela incomode, e mostra que você é procurado. As três perguntas cabem numa resposta só e dão uso, quem dirige e o que ele já decidiu que quer. Dinheiro fica de fora de propósito: pergunta de pagamento ou de carro na troca na PRIMEIRA mensagem assusta e derruba a conversa — isso vem depois, quando ele já está falando com você. E não prometa a melhor opção antes de ouvir: promessa antes de saber o uso é o que faz a mensagem soar a vendedor.',
+    semResposta: `Oi, {cliente}! Terminei o atendimento aqui. Consegue me responder aquelas três perguntas rápidas? Com elas meu retorno já vem certo pro seu caso, sem você perder tempo com carro que não tem a ver com o que você procura.`,
     onePage: {
       tipo: 'proprio',
       titulo: 'Como vai funcionar o seu atendimento',
@@ -110,16 +110,16 @@ Pode responder por aqui mesmo. Assim que eu terminar este atendimento, volto com
     tempo: 'Ainda no mesmo dia',
     objetivo: 'Fechar o perfil de uso para recomendar um carro só — e o certo.',
     sinal: 'Você sabe uso, tamanho de família, garagem e prazo de decisão.',
-    script: `{cliente}, obrigado! Com o que você me passou já dá pra separar as opções.
+    script: `{cliente}, obrigado! Com isso já dá pra eu preparar o que te mandar.
 
 Só mais duas coisas pra eu não errar:
 
 1. Quantas pessoas costumam andar no carro no dia a dia?
 2. Você tem garagem com tomada em casa? (isso muda se o híbrido compensa mais que o elétrico pro seu bolso)
 
-E me diz uma coisa: você está pensando em trocar de carro ainda este mês ou está começando a pesquisar agora? Os dois estão ótimos, é só pra eu te atender do jeito certo.`,
+E, se você já tem carro hoje e pensa em usar na troca, me passa modelo, ano e quilometragem: assim eu adianto a avaliação antes mesmo de você vir à loja.`,
     porQue:
-      'Tomada em casa e número de pessoas eliminam metade do catálogo em duas perguntas. E perguntar o prazo sem pressionar separa quem decide esta semana de quem está pesquisando — você atende os dois, mas de jeitos diferentes.',
+      'Tomada em casa e número de pessoas eliminam metade do catálogo em duas perguntas. O carro na troca entra só agora, e como vantagem: adiantar a avaliação é serviço, não sondagem de bolso. Na primeira mensagem, a mesma pergunta soa a cobrança.',
     semResposta: `{cliente}, tudo bem? Não quero te encher de mensagem. Me responde só isso: você está pesquisando agora ou já quer resolver este mês? Eu me adapto ao seu tempo.`,
     onePage: {
       tipo: 'proprio',

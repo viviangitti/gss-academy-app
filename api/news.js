@@ -151,6 +151,16 @@ async function buscaNasFontes(q) {
 // plano B só entrava com a lista vazia, então a tela mostrava o velho sem aviso.
 // Passou do limite, as redações entram na lista junto, se tiverem algo mais novo.
 const LIMITE_IDADE_MS = 72 * 60 * 60 * 1000;
+
+// BUSCAS APOSENTADAS. As abas Tudo e Mercado da Ramasa trocaram de texto em
+// 16/09/2026, mas o texto mora no app — e celular que não atualizou continua
+// mandando o antigo, que só traz notícia de dias atrás. Aqui o servidor troca
+// pelo novo, e a correção vale na hora para todo mundo.
+const BUSCAS_APOSENTADAS = {
+  'Jaecoo OR Omoda OR "Caoa Chery" OR Chery carro Brasil': 'Omoda OR Jaecoo OR "Caoa Chery"',
+  'mercado automotivo Brasil (emplacamentos OR Fenabrave OR "venda de carros" OR concessionárias OR "imposto de importação" carro)':
+    'emplacamentos OR Fenabrave OR "mercado automotivo" Brasil',
+};
 const maisNova = (lista) => Math.max(0, ...lista.map((i) => Date.parse(i.pubDate) || 0));
 function juntar(...listas) {
   const vistos = new Set();
@@ -165,7 +175,8 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(204).end();
 
-  const q = (req.query.q || '').toString().trim();
+  const pedida = (req.query.q || '').toString().trim();
+  const q = BUSCAS_APOSENTADAS[pedida] || pedida;
   const limit = Math.min(parseInt(req.query.limit, 10) || 25, 50);
 
   if (!q) {

@@ -8,7 +8,7 @@
 // Os nomes (cliente, carro, vendedor, loja) ficam no aparelho de quem atende,
 // em localStorage. O app não tem por que guardar no banco o nome do cliente de
 // ninguém, e quem atende não quer digitar o próprio nome oito vezes por dia.
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronDown, Copy, Check, Share2, ArrowRight, Route as RotaIcon } from 'lucide-react';
 import { useAuth } from './AuthContext';
@@ -60,6 +60,39 @@ export default function Jornada() {
       })
       .catch(() => setWhats(''));
   }, []);
+
+  /**
+   * Abre a etapa ancorando no COMEÇO dela.
+   *
+   * Sem isto a etapa abre e a tela fica no FIM da mensagem: o vendedor vê o
+   * último parágrafo e acha que o script começa ali. É a mesma reclamação que
+   * o time fez do Tira-dúvida ("deveria ancorar no início e não no final").
+   *
+   * A conta tem que acontecer DEPOIS que a etapa abriu. Na primeira tentativa
+   * eu rolava no mesmo clique, com requestAnimationFrame: o texto ainda não
+   * estava na tela, a posição era a do tamanho antigo e a etapa parava 578px
+   * acima do topo — pior do que antes. Por isso vive num efeito, que roda com
+   * o tamanho final já montado.
+   *
+   * O desconto de 66px é o cabeçalho fixo de 54px mais um respiro; sem ele o
+   * título abre escondido atrás dele. E o `tocou` evita rolar sozinho quando a
+   * tela abre com a etapa 1 já aberta — aí o lugar certo é o topo da página.
+   */
+  const tocou = useRef(false);
+
+  const abrir = (id: string) => {
+    const fechando = aberta === id;
+    tocou.current = !fechando;
+    setAberta(fechando ? '' : id);
+  };
+
+  useEffect(() => {
+    if (!tocou.current || !aberta) return;
+    tocou.current = false;
+    const el = document.getElementById(`etapa-${aberta}`);
+    if (!el) return;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 66, behavior: 'smooth' });
+  }, [aberta]);
 
   const guardar = (chave: string, valor: string) => {
     const novo = { ...campos, [chave]: valor };
@@ -185,9 +218,9 @@ export default function Jornada() {
           const script = preencher(e.script);
           const retomada = preencher(e.semResposta);
           return (
-            <li className={`wp-jn-etapa ${abertaAgora ? 'open' : ''}`} key={e.id}>
+            <li className={`wp-jn-etapa ${abertaAgora ? 'open' : ''}`} key={e.id} id={`etapa-${e.id}`}>
               <span className="wp-jn-num">{e.numero}</span>
-              <button type="button" className="wp-jn-cab" onClick={() => setAberta(abertaAgora ? '' : e.id)}>
+              <button type="button" className="wp-jn-cab" onClick={() => abrir(e.id)}>
                 <span className="wp-jn-cab-txt">
                   <b>{e.titulo}</b>
                   <i>{e.tempo}</i>

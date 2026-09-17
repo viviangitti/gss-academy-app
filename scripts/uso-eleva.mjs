@@ -311,6 +311,10 @@ function descreve(e, cat, docs = {}, acess = {}) {
     case 'objecao': return `consultou a objeção “${detalhe || '—'}” — ${nome}`;
     case 'acessorio': return `abriu o acessório — ${nome}`;
     case 'mission_done': return `missão — ${nome}`;
+    // Jornada do atendimento: o id é a etapa (`primeiro-contato`), e `|retomada`
+    // marca a mensagem de quando o cliente some.
+    case 'jornada_script': return `copiou o script da jornada — ${base.replace(/-/g, ' ')}${detalhe === 'retomada' ? ' (retomada)' : ''}`;
+    case 'jornada_onepage': return `mandou o one page da jornada — ${base.replace(/-/g, ' ')}`;
     default: return nome;
   }
 }

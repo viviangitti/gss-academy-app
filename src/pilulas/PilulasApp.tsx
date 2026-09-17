@@ -14,6 +14,7 @@ import Gestor from './Gestor';
 import Login from './Login';
 import Privacidade from './Privacidade';
 import Noticias from './Noticias';
+import Jornada from './Jornada';
 import Documentos from './Documentos';
 import Acessorio from './Acessorio';
 import FormArgumentos from './FormArgumentos';
@@ -120,6 +121,18 @@ function BlockBalcao({ children }: { children: React.ReactElement }) {
 function BlockAuto({ children }: { children: React.ReactElement }) {
   const { brandId } = useBrand();
   return isAuto(brandId) ? <Navigate to="/eleva" replace /> : children;
+}
+
+/**
+ * Só concessionária.
+ *
+ * A jornada é escrita em linguagem de showroom — test drive, carro na troca,
+ * avaliação. Esconder a aba não fecha a porta: sem esta guarda, quem digita a
+ * URL na farmácia ou na revenda cai numa tela que não é da empresa dele.
+ */
+function SoAuto({ children }: { children: React.ReactElement }) {
+  const { brandId } = useBrand();
+  return isAuto(brandId) ? children : <Navigate to="/eleva" replace />;
 }
 
 function Header() {
@@ -381,6 +394,7 @@ function Shell() {
           <Route path="/eleva/gestor" element={<RequireGestor><Gestor /></RequireGestor>} />
           <Route path="/eleva/privacidade" element={<Privacidade />} />
           <Route path="/eleva/noticias" element={<Noticias />} />
+          <Route path="/eleva/jornada" element={<SoAuto><Jornada /></SoAuto>} />
           <Route path="/eleva/documentos" element={<Documentos />} />
           <Route path="/eleva/acessorio/:id" element={<Acessorio />} />
           <Route path="/pilulas/*" element={<Navigate to="/eleva" replace />} />

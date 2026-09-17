@@ -42,7 +42,12 @@ export type ElevaEventType =
   | 'doc_open'
   | 'onepage'
   | 'objecao'
-  | 'acessorio';
+  | 'acessorio'
+  // Jornada do atendimento: copiar o script de uma etapa e mandar o one page
+  // dela. Tipos próprios de propósito — entrassem como 'onepage' e o relatório
+  // semanal contaria folha de etapa como material de carro enviado ao cliente.
+  | 'jornada_script'
+  | 'jornada_onepage';
 
 // Um doc do Firestore para em 1 MB. Cada evento pesa ~120 bytes, então o teto
 // real seria perto de 8 mil — mas quando estourasse, o setDoc passaria a falhar

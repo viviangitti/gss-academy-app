@@ -43,7 +43,9 @@ export interface DadosOnePage {
 
 // ---------------------------------------------------------------- desenho ---
 
-function carregaImagem(url: string): Promise<HTMLImageElement | null> {
+// Exportados para data/jornadaPagina.ts: a folha da etapa é desenhada com os
+// MESMOS ajudantes, para o cliente receber tudo com a mesma cara.
+export function carregaImagem(url: string): Promise<HTMLImageElement | null> {
   return new Promise((ok) => {
     const img = new Image();
     // Sem isso, foto de outro domínio "suja" o canvas e o export falha. Com
@@ -72,7 +74,7 @@ function linhas(ctx: CanvasRenderingContext2D, texto: string, largura: number): 
   return out;
 }
 
-function escreve(
+export function escreve(
   ctx: CanvasRenderingContext2D,
   texto: string,
   x: number,
@@ -86,7 +88,7 @@ function escreve(
   return y + ls.length * alturaLinha;
 }
 
-function retanguloArredondado(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+export function retanguloArredondado(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
   ctx.arcTo(x + w, y, x + w, y + h, r);
@@ -96,7 +98,7 @@ function retanguloArredondado(ctx: CanvasRenderingContext2D, x: number, y: numbe
   ctx.closePath();
 }
 
-const SANS = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+export const SANS = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 
 export async function desenharOnePage(d: DadosOnePage): Promise<HTMLCanvasElement> {
   const { variante } = d;
@@ -136,7 +138,7 @@ export async function desenharOnePage(d: DadosOnePage): Promise<HTMLCanvasElemen
 }
 
 // Preenche a área cortando o excesso — nada de carro esticado.
-function cobre(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number) {
+export function cobre(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number) {
   const escala = Math.max(w / img.width, h / img.height);
   const iw = img.width * escala;
   const ih = img.height * escala;
@@ -453,7 +455,7 @@ function paraBlob(c: HTMLCanvasElement, tipo: string, q?: number): Promise<Blob>
  * imagem. O que exige cuidado é o `xref`: as posições são em BYTES, então tudo
  * é montado em Uint8Array (contar caractere quebraria com acento).
  */
-async function montaPdf(c: HTMLCanvasElement): Promise<Blob> {
+export async function montaPdf(c: HTMLCanvasElement): Promise<Blob> {
   const jpeg = new Uint8Array(await (await paraBlob(c, 'image/jpeg', 0.92)).arrayBuffer());
   const LARG = 595.28, ALT = 841.89; // A4 em pontos
 

@@ -56,7 +56,8 @@ export function montar(D) {
   const docs = (() => { const o = {}; for (const [k, v] of D.docs) o[nomeDoc(k)] = (o[nomeDoc(k)] || 0) + v; return Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, 5); })();
   const totCarros = D.carros.reduce((s, [, v]) => s + v, 0);
   const mixN = { pill_view: ['Abriu um carro', '#0f0f1e'], objecao: ['Consultou objeção', '#c9853c'], doc_open: ['Abriu documento', '#4a6fa5'], onepage: ['Gerou material', '#2e9e5b'],
-    quiz_start: ['Começou quiz', '#b9bfcd'], quiz_pass: ['Passou no quiz', '#c9a84c'], quiz_fail: ['Errou o quiz', '#d9d2c0'], acessorio: ['Abriu acessório', '#7a5ea8'] };
+    quiz_start: ['Começou quiz', '#b9bfcd'], quiz_pass: ['Passou no quiz', '#c9a84c'], quiz_fail: ['Errou o quiz', '#d9d2c0'], acessorio: ['Abriu acessório', '#7a5ea8'],
+    jornada_script: ['Copiou script da jornada', '#5b7fb0'], jornada_onepage: ['Mandou one page da jornada', '#2e9e5b'] };
   const mix = Object.entries(D.tipos).sort((a, b) => b[1] - a[1]);
   const pct = (a, b) => (b ? Math.round((1 - a / b) * 100) : 0);
   const variacao = S.acoes === A.acoes ? 'igual à semana anterior' : S.acoes > A.acoes ? `${Math.round((S.acoes / Math.max(1, A.acoes) - 1) * 100)}% a mais que na semana anterior` : `${pct(S.acoes, A.acoes)}% a menos que na semana anterior`;

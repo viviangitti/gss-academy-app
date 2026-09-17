@@ -1,3 +1,4 @@
+import { buscaDa, afrouxar, MARCAS_AUTO } from './_buscasNoticias.js';
 // Vercel Serverless Function — Notícias via Google News RSS
 // Endpoint: GET /api/news?q=<query>&limit=<n>
 //
@@ -169,18 +170,55 @@ function juntar(...listas) {
     .sort((a, b) => (Date.parse(b.pubDate) || 0) - (Date.parse(a.pubDate) || 0));
 }
 
+async function buscaNoGoogle(q) {
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=pt-BR&gl=BR&ceid=BR:pt-419`;
+  const r = await fetch(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36',
+      Accept: 'application/rss+xml, application/xml, text/xml',
+    },
+  });
+  if (!r.ok) return [];
+  return parseRss(await r.text(), 50);
+}
+
+// Lista velha: tenta a busca afrouxada e as redações, e fica com o que for mais
+// novo. Devolve null quando nada superou a lista que já veio.
+async function renovar(q, items, comRedacoes) {
+  const solta = afrouxar(q);
+  const [maisSolta, doBrasil] = await Promise.all([
+    solta ? buscaNoGoogle(solta).catch(() => []) : [],
+    comRedacoes ? buscaNasFontes(q).catch(() => []) : [],
+  ]);
+  const atual = maisNova(items);
+  const usouSolta = maisSolta.length && maisNova(maisSolta) > atual;
+  const usouFontes = doBrasil.length && maisNova(doBrasil) > atual;
+  if (!usouSolta && !usouFontes) return null;
+  return {
+    items: juntar(usouSolta ? maisSolta : [], usouFontes ? doBrasil : [], items).slice(0, 50),
+    origem: usouSolta ? 'AFROUXADA' : 'MISTURA',
+  };
+}
+
 export default async function handler(req, res) {
   // CORS — permite chamada do app (mesma origem em prod, mas libera dev/preview)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(204).end();
 
+  const marca = (req.query.marca || '').toString().trim();
+  const frente = (req.query.frente || '').toString().trim();
+  const nome = (req.query.nome || '').toString().trim();
   const pedida = (req.query.q || '').toString().trim();
-  const q = BUSCAS_APOSENTADAS[pedida] || pedida;
+  // App novo manda marca e aba; app antigo ainda manda o texto da busca.
+  const q = (marca && frente && buscaDa(marca, frente, nome)) || BUSCAS_APOSENTADAS[pedida] || pedida;
+  // As redações do plano B são automotivas: não servem para farmácia. App
+  // antigo não manda a marca, e aí vale o comportamento de antes.
+  const comRedacoes = !marca || MARCAS_AUTO.includes(marca);
   const limit = Math.min(parseInt(req.query.limit, 10) || 25, 50);
 
   if (!q) {
-    return res.status(400).json({ status: 'error', message: 'parâmetro q obrigatório', items: [] });
+    return res.status(400).json({ status: 'error', message: 'informe marca e frente (ou q)', items: [] });
   }
 
   // Cache em memória por query
@@ -238,8 +276,16 @@ export default async function handler(req, res) {
     // VAZIO NÃO ENTRA NO CACHE. Uma falha de segundos não pode virar quinze
     // minutos de tela vazia — foi exatamente o que aconteceu.
     if (!items.length) {
-      // O Google veio vazio: busca direto nas redações.
-      const doBrasil = await buscaNasFontes(q).catch(() => []);
+      // O Google veio vazio: tenta a busca afrouxada, depois as redações.
+      const solta = afrouxar(q);
+      const maisSolta = solta ? await buscaNoGoogle(solta).catch(() => []) : [];
+      if (maisSolta.length) {
+        cache.set(q, { ts: Date.now(), items: maisSolta });
+        ultimoBom.set(q, { ts: Date.now(), items: maisSolta });
+        res.setHeader('X-Cache', 'AFROUXADA');
+        return res.status(200).json({ status: 'ok', items: maisSolta.slice(0, limit) });
+      }
+      const doBrasil = comRedacoes ? await buscaNasFontes(q).catch(() => []) : [];
       if (doBrasil.length) {
         cache.set(q, { ts: Date.now(), items: doBrasil });
         ultimoBom.set(q, { ts: Date.now(), items: doBrasil });
@@ -258,13 +304,12 @@ export default async function handler(req, res) {
     }
 
     if (Date.now() - maisNova(items) > LIMITE_IDADE_MS) {
-      const doBrasil = await buscaNasFontes(q).catch(() => []);
-      if (doBrasil.length && maisNova(doBrasil) > maisNova(items)) {
-        const juntos = juntar(doBrasil, items).slice(0, 50);
-        cache.set(q, { ts: Date.now(), items: juntos });
-        ultimoBom.set(q, { ts: Date.now(), items: juntos });
-        res.setHeader('X-Cache', 'MISTURA');
-        return res.status(200).json({ status: 'ok', items: juntos.slice(0, limit) });
+      const novo = await renovar(q, items, comRedacoes);
+      if (novo) {
+        cache.set(q, { ts: Date.now(), items: novo.items });
+        ultimoBom.set(q, { ts: Date.now(), items: novo.items });
+        res.setHeader('X-Cache', novo.origem);
+        return res.status(200).json({ status: 'ok', items: novo.items.slice(0, limit) });
       }
     }
 

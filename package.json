@@ -9,7 +9,8 @@
     "confere": "bash scripts/check-secrets.sh && node scripts/check-marcas.mjs && node scripts/check-leitura.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "confere-carta": "node scripts/confere-carta.mjs"
+    "confere-carta": "node scripts/confere-carta.mjs",
+    "confere-noticias": "node scripts/confere-noticias.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

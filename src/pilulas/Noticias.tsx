@@ -36,41 +36,9 @@ const FRENTES: { id: Frente; label: string; Icon: LucideIcon }[] = [
   { id: 'eletrificados', label: 'Elétricos e híbridos', Icon: Zap },
 ];
 
-// As buscas por marca e por frente.
-//
-// 'tudo' e 'lancamentos' falam da marca que a pessoa vende. 'concorrencia' fala
-// de QUEM DISPUTA o mesmo cliente — no caso do Jaecoo/Omoda, os SUVs chineses e
-// os japoneses/americanos da mesma faixa. Mercado e condições são do setor.
-const BUSCAS: Record<string, Record<Frente, string>> = {
-  ramasa: {
-    // Tudo e Mercado estavam trazendo notícia de 4 e 16 dias (16/09/2026): as
-    // alternativas vinham junto de palavras soltas ("Chery carro Brasil",
-    // "mercado automotivo Brasil (...)") que o Google passa a exigir TODAS, e só
-    // sobrava texto antigo. Sem as palavras soltas, a mais nova veio de horas.
-    tudo: 'Omoda OR Jaecoo OR "Caoa Chery"',
-    concorrencia:
-      '(GWM OR Haval OR BYD OR "Great Wall" OR "Jeep Compass" OR "Corolla Cross" OR "Honda HR-V" OR "Volkswagen T-Cross") SUV Brasil',
-    mercado: 'emplacamentos OR Fenabrave OR "mercado automotivo" Brasil',
-    lancamentos: '(lançamento OR estreia OR "chega ao Brasil") (SUV OR carro) Brasil 2026',
-    condicoes:
-      '(desconto OR "taxa zero" OR financiamento OR "tabela de preços" OR promoção) carro OR SUV Brasil',
-    eletrificados: '(carro elétrico OR híbrido OR eletrificado) Brasil (venda OR preço OR recarga OR autonomia)',
-  },
-};
-
-// Marca sem busca configurada ainda: usa o nome dela e o assunto do setor.
-function buscaPadrao(nome: string, f: Frente): string {
-  const base = `"${nome.split('·')[0].trim()}"`;
-  const porFrente: Record<Frente, string> = {
-    tudo: base,
-    concorrencia: `${base} concorrente OR mercado`,
-    mercado: `${base} mercado OR setor`,
-    lancamentos: `${base} lançamento`,
-    condicoes: `${base} promoção OR desconto`,
-    eletrificados: base,
-  };
-  return porFrente[f];
-}
+// As buscas de cada aba moram no servidor (api/_buscasNoticias.js): o app só
+// diz a marca e a aba. Assim um ajuste de busca vale na hora para todo mundo,
+// sem esperar ninguém atualizar o app.
 
 const API = import.meta.env.DEV ? 'https://eleva-five.vercel.app/api/news' : '/api/news';
 
@@ -102,11 +70,10 @@ export default function Noticias() {
   const [erro, setErro] = useState('');
 
   const buscar = (f: Frente) => {
-    const q = BUSCAS[brandId]?.[f] || buscaPadrao(marca, f);
     setCarregando(true);
     setErro('');
     setItens([]);
-    fetch(`${API}?q=${encodeURIComponent(q)}&limit=14`)
+    fetch(`${API}?marca=${encodeURIComponent(brandId)}&frente=${f}&nome=${encodeURIComponent(marca)}&limit=14`)
       .then((r) => r.json())
       .then((d) => {
         if (d?.status === 'ok' && Array.isArray(d.items)) {

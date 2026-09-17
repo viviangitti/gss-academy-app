@@ -24,6 +24,13 @@ export interface OnePage {
   titulo: string;
   linha: string;
   blocos?: OnePageBloco[];
+  /**
+   * Quando os blocos vêm de uma lista viva do app em vez do texto daqui.
+   * 'acessorios' monta a folha com o catálogo da marca — inclusive o que a
+   * gerência corrigiu ou tirou do ar. Copiar os nomes para cá deixaria a folha
+   * do cliente velha no dia seguinte.
+   */
+  fonte?: 'acessorios';
   rodape?: string;
   /** Para tipo diferente de 'proprio': para onde mandar o vendedor, e o que ele faz lá. */
   leva?: { rota: string; botao: string; comoFazer: string };
@@ -43,6 +50,8 @@ export interface Etapa {
   /** O que mandar quando o cliente não responde. Toda etapa tem a sua. */
   semResposta: string;
   onePage: OnePage;
+  /** Atalhos para telas do app, montados a partir de uma lista viva. */
+  atalhos?: 'acessorios';
 }
 
 /**
@@ -302,8 +311,36 @@ Se precisar de qualquer ajuste, me fala que eu levo pra gerência.`,
     },
   },
   {
-    id: 'fechamento',
+    id: 'acessorios',
     numero: 8,
+    titulo: 'Oferecer os acessórios',
+    tempo: 'Junto da proposta, antes de fechar',
+    objetivo: 'Entregar o carro do jeito que ele imaginou — e aumentar o valor da venda sem mexer no desconto.',
+    sinal: 'O cliente escolheu pelo menos um item, ou pediu para ver de novo na entrega.',
+    script: `{cliente}, antes de a gente fechar, uma coisa que faz diferença: tem item que é bem mais simples de instalar agora, junto com o carro, do que depois — e o carro já sai da loja pronto.
+
+São três famílias:
+
+• Proteger: película, proteção de pintura, tapete e revestimento
+• Facilitar o dia a dia: soleira, bandeja de porta-malas, engate, rack
+• Mudar a cara do carro: kit de aparência, estribo iluminado, acabamentos
+
+Me diz como você usa o carro que eu separo só o que faz sentido pro seu caso. Tudo instalado aqui, com garantia da loja, e entra na mesma negociação.`,
+    porQue:
+      'Acessório oferecido na entrega vira transtorno: o cliente já levou o carro e não quer voltar. Oferecido junto da proposta, entra no mesmo negócio e o carro sai pronto — é como o valor da venda sobe sem tocar no desconto do carro. Preço você fala com a tabela na mão; na mensagem, nenhum número.',
+    semResposta: `{cliente}, separei os itens que encaixam no seu {carro}. Quer que eu mande só os de proteção? São os que mais valem a pena instalar junto com o carro novo, antes do primeiro arranhão.`,
+    onePage: {
+      tipo: 'proprio',
+      titulo: 'Seu carro do seu jeito',
+      linha: 'O que dá para instalar junto com o carro, com garantia da loja.',
+      fonte: 'acessorios',
+      rodape: 'Valores e prazo de instalação eu passo junto da proposta.',
+    },
+    atalhos: 'acessorios',
+  },
+  {
+    id: 'fechamento',
+    numero: 9,
     titulo: 'Fechar e entregar',
     tempo: 'Do aceite até 30 dias depois',
     objetivo: 'Tirar atrito do fechamento e transformar a entrega em indicação.',

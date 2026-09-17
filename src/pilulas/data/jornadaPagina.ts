@@ -30,6 +30,8 @@ export interface DadosPagina {
   blocos: BlocoPagina[];
   rodape?: string;
   marca: string;
+  /** A loja de quem atende ("Tiger Omoda"). É o nome grande no topo. */
+  loja?: string;
   accent: string;
   accentDeep: string;
   vendedor?: string;
@@ -113,21 +115,29 @@ export async function desenharPagina(d: DadosPagina): Promise<HTMLCanvasElement>
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, L, hCapa);
 
-  ctx.fillStyle = 'rgba(255,255,255,.72)';
-  ctx.font = `700 24px ${SANS}`;
-  ctx.fillText(d.marca.toUpperCase(), M, 118);
+  // A loja em cima e grande: é o nome que o cliente reconhece. A marca do
+  // grupo vem embaixo, menor. Antes os dois dividiam uma linha de 24px e a
+  // folha chegava sem dono — parecia material genérico de montadora.
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `800 52px ${SANS}`;
+  ctx.fillText((d.loja || d.marca.split('·')[0].trim()).toUpperCase(), M, 132);
+
+  ctx.fillStyle = 'rgba(255,255,255,.75)';
+  ctx.font = `600 26px ${SANS}`;
+  ctx.fillText(d.marca, M, 178);
 
   ctx.fillStyle = '#ffffff';
-  ctx.font = `800 64px ${SANS}`;
-  const yTit = escreve(ctx, d.titulo, M, 222, L - M * 2, 76, 2);
-
-  ctx.fillStyle = 'rgba(255,255,255,.86)';
-  ctx.font = `400 30px ${SANS}`;
-  escreve(ctx, d.linha, M, yTit + 26, L - M * 2, 40, 2);
+  ctx.font = `800 60px ${SANS}`;
+  escreve(ctx, d.titulo, M, 280, L - M * 2, 70, 2);
 
   const hRodape = 236;
   const yRodape = A - hRodape;
-  let y = hCapa + 92;
+
+  // A linha de apoio saiu de dentro da capa: com o nome da loja grande, ela
+  // não cabia mais lá sem encostar no título.
+  ctx.fillStyle = '#5a6478';
+  ctx.font = `400 29px ${SANS}`;
+  let y = escreve(ctx, d.linha, M, hCapa + 68, L - M * 2, 40, 2) + 54;
 
   for (const b of d.blocos.slice(0, 4)) {
     // Não invade o rodapé: melhor uma folha com três blocos do que texto

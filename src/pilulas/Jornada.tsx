@@ -15,6 +15,7 @@ import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { getBrand } from './data/brands';
 import { CAMPOS, etapasDaMarca, type Etapa } from './data/jornada';
+import { acessoriosDaMarca, ORIGENS } from './data/acessorios';
 import { mandarPagina } from './data/jornadaPagina';
 import { getElevaProfile, updateElevaWhatsapp } from './data/profile';
 import { registraUso } from './data/tracking';
@@ -117,6 +118,22 @@ export default function Jornada() {
 
   const preencher = (t: string) => t.replace(/\{(\w+)\}/g, (_, c: string) => valor(c));
 
+  // Os acessórios vêm da lista viva — com o que a gerência corrigiu e sem o
+  // que ela tirou do ar. Nome só: preço não vai em material de cliente.
+  const acessorios = etapas.length ? acessoriosDaMarca(brandId) : [];
+
+  const blocosDoOnePage = (e: Etapa) => {
+    if (e.onePage.fonte === 'acessorios') {
+      return (['fabrica', 'loja'] as const)
+        .map((o) => ({
+          titulo: ORIGENS[o].label,
+          itens: acessorios.filter((a) => a.origem === o).slice(0, 5).map((a) => a.nome),
+        }))
+        .filter((b) => b.itens.length);
+    }
+    return (e.onePage.blocos || []).map((b) => ({ titulo: b.titulo, itens: b.itens.map(preencher) }));
+  };
+
   const copiar = (texto: string, marcador: string, etapaId: string) => {
     navigator.clipboard?.writeText(texto).then(
       () => {
@@ -144,9 +161,10 @@ export default function Jornada() {
         {
           titulo: op.titulo,
           linha: preencher(op.linha),
-          blocos: (op.blocos || []).map((b) => ({ titulo: b.titulo, itens: b.itens.map(preencher) })),
+          blocos: blocosDoOnePage(e),
           rodape: op.rodape ? preencher(op.rodape) : undefined,
           marca: marca.name,
+          loja: valor('loja'),
           accent: marca.accent,
           accentDeep: marca.accentDeep,
           vendedor: valor('vendedor'),
@@ -271,6 +289,27 @@ export default function Jornada() {
                       </>
                     )}
                   </div>
+
+                  {e.atalhos === 'acessorios' && acessorios.length > 0 && (
+                    <div className="wp-jn-bloco">
+                      <p className="wp-jn-rotulo">Abrir o acessório no app</p>
+                      <p className="wp-jn-op-linha">
+                        Cada um abre com foto, o que resolve pro cliente e como oferecer — e dá pra mandar de lá mesmo.
+                      </p>
+                      <div className="wp-jn-chips">
+                        {acessorios.slice(0, 12).map((a) => (
+                          <Link className="wp-jn-chip" key={a.id} to={`/eleva/acessorio/${a.id}`}>
+                            {a.nome}
+                          </Link>
+                        ))}
+                      </div>
+                      {acessorios.length > 12 && (
+                        <Link className="wp-jn-mandar wp-jn-mandar--leva" to="/eleva/catalogo">
+                          Ver os {acessorios.length} acessórios <ArrowRight size={15} className="wp-ico" />
+                        </Link>
+                      )}
+                    </div>
+                  )}
 
                   <p className="wp-jn-por">
                     <b>Por que funciona.</b> {e.porQue}

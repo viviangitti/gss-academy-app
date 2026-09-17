@@ -4166,3 +4166,18 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   color: var(--wp-soft);
   text-align: center;
 }
+/* Atalhos de acessório: o vendedor acha o item pelo nome, sem sair da etapa. */
+.wp-jn-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 9px 0 0; }
+.wp-jn-chip {
+  display: inline-block;
+  background: var(--wp-bg);
+  border: 1.5px solid var(--wp-border);
+  border-radius: 99px;
+  padding: 7px 11px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--wp-ink);
+  text-decoration: none;
+  line-height: 1.2;
+}
+.wp-jn-chip:active { border-color: var(--wp-pink); color: var(--wp-pink-deep); }

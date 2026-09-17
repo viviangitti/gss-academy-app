@@ -67,7 +67,7 @@ export const ETAPAS: Etapa[] = [
     sinal: 'O cliente respondeu pelo menos duas das três perguntas.',
     script: `Oi, {cliente}! Aqui é {vendedor}, da {loja}. Acabei de receber seu contato sobre o {carro}.
 
-Estou num atendimento presencial aqui na loja agora, mas não queria te deixar esperando. Pra adiantar, já te faço três perguntas rápidas e separo a melhor opção pra você:
+Estou num atendimento presencial aqui na loja agora, mas não queria te deixar esperando. Pra adiantar, te faço três perguntas rápidas — assim eu volto com informação que serve pro seu caso, e não com o material que se manda pra todo mundo:
 
 1. O carro vai rodar mais na cidade, na estrada, ou os dois?
 2. Tem carro na troca? Se tiver, qual modelo e ano?
@@ -75,7 +75,7 @@ Estou num atendimento presencial aqui na loja agora, mas não queria te deixar e
 
 Pode responder por aqui mesmo. Assim que eu terminar este atendimento, volto com tudo organizado pra você.`,
     porQue:
-      'Dizer que você está com um cliente na loja explica a demora antes que ela incomode, e mostra que você é procurado. As três perguntas cabem numa resposta só e definem modelo, forma de pagamento e urgência — sem parecer interrogatório.',
+      'Dizer que você está com um cliente na loja explica a demora antes que ela incomode, e mostra que você é procurado. As três perguntas cabem numa resposta só e definem modelo, forma de pagamento e urgência. E elas são justificadas pelo que o cliente ganha — não prometa a melhor opção antes de ouvir: prometer escolha antes de saber o uso é o que faz a mensagem soar a vendedor.',
     semResposta: `Oi, {cliente}! Terminei o atendimento aqui. Consegue me responder aquelas três perguntinhas? Com elas eu já te mando o carro certo, sem você perder tempo olhando opção que não serve.`,
     onePage: {
       tipo: 'proprio',

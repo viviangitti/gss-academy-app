@@ -38,7 +38,8 @@ const ROLE_LB: Record<string, string> = {
   // Cargos da concessionária — o agrupamento passa a vir por cargo quando ele
   // existe (ver buildReport).
   'vendedor-veiculos': 'Vendedores de veículos', 'vendedor-acessorios': 'Vendedores de acessórios',
-  'gerente-veiculos': 'Gerentes de vendas', 'gerente-acessorios': 'Gerentes de acessórios',
+  'gerente-veiculos': 'Gerentes de vendas', 'supervisor-vendas': 'Supervisores de vendas',
+  'gerente-acessorios': 'Gerentes de acessórios',
   'lider-acessorios': 'Supervisores de acessórios', 'gerente-qualidade': 'Qualidade',
   'executivo-leads': 'Executivos de leads', 'gerente-leads': 'Gerentes de leads',
 };
@@ -234,7 +235,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
             return (
               <div key={`n${r.name}${i}`} className="wp-gz-niv">
                 <span className="wp-gz-niv-nome">
-                  {r.name}<i className="wp-gz-cargo">{comoChamar(r.role, r.cargo, auto)}</i>
+                  {r.name}<i className="wp-gz-cargo">{comoChamar(r.role, r.cargo, auto)}{r.loja ? ` · ${lojaLabel(r.loja)}` : ''}</i>
                 </span>
                 <span className="wp-gz-niv-barra"><i style={{ width: `${pct}%` }} /></span>
                 <span className="wp-gz-niv-val">
@@ -254,7 +255,7 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
           {rep.ranking.map((r, i) => (
             <div key={r.name + i} className="wp-gz-rk">
               <span className="wp-gz-rk-pos">{i + 1}</span>
-              <span className="wp-gz-rk-name">{r.name}<i>{comoChamar(r.role, r.cargo, auto)}</i></span>
+              <span className="wp-gz-rk-name">{r.name}<i>{comoChamar(r.role, r.cargo, auto)}{r.loja ? ` · ${lojaLabel(r.loja)}` : ''}</i></span>
               <span className="wp-gz-rk-val">{r.points} pts<i>{r.views} {v.pilulas} · {r.quiz} dominados</i></span>
             </div>
           ))}

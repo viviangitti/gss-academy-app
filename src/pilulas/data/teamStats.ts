@@ -44,7 +44,7 @@ export interface TeamReport {
   byRole: { role: string; total: number; ativos: number }[]; // ativos = mexeram no mês corrente
   months: MonthBucket[]; // do mais antigo pro mais novo
   topProducts: { id: string; views: number }[];
-  ranking: { name: string; role: string; cargo?: string; points: number; views: number; quiz: number }[];
+  ranking: { name: string; role: string; cargo?: string; loja?: string; points: number; views: number; quiz: number }[];
   semUso: TeamPerson[]; // cadastrou e nunca assistiu nada
 }
 
@@ -156,6 +156,7 @@ export function buildReport(people: TeamPerson[], allowedIds?: Set<string>, mont
       name: p.name,
       role: p.role,
       cargo: p.cargo,
+      loja: p.loja,
       points: p.month.points,
       views: p.month.views,
       quiz: p.totals.quizPassed,

@@ -134,6 +134,15 @@ export interface Product {
   /** Galeria do modelo. A 1ª é a capa do material que vai pro cliente. */
   fotos?: string[];
   /**
+   * ETIQUETA FIXA do card e da tela do carro — hoje só o "Lançamento".
+   *
+   * Diferente do selo "novo", que é por pessoa e some quando ela abre o carro
+   * (ver novidades.ts): esta vale para todo mundo e só sai quando a gerência
+   * tirar daqui. É o que diferencia carro recém-chegado de carro que a pessoa
+   * ainda não viu.
+   */
+  etiqueta?: string;
+  /**
    * DESTAQUES — as 5 razões de compra, do jeito que o cliente lê.
    *
    * Cada uma tem duas partes de propósito: `titulo` é o BENEFÍCIO (o que muda
@@ -1261,6 +1270,7 @@ export const PRODUCTS: Product[] = [
     compliance:
       'Carro de lançamento: itens de série, versões e prazo de entrega ainda podem mudar por lote. Números desta pílula são da ficha técnica publicada da versão Comfort 1.5 HEV — confirme na tabela vigente e na condição do dia antes de prometer ao cliente.',
     fotos: ['/carros/jaecoo-5-1.jpg', '/carros/jaecoo-5-2.jpg', '/carros/jaecoo-5-3.jpg', '/carros/jaecoo-5-4.jpg'],
+    etiqueta: 'Lançamento',
     destaques: [
       { titulo: 'Economia de híbrido sem obra na garagem', prova: 'A bateria se recarrega sozinha, na condução e na frenagem' },
       { titulo: 'Um mês inteiro entre um posto e outro', prova: '791 km de autonomia urbana e tanque de 51 litros' },

@@ -143,6 +143,7 @@ export default function Catalog() {
                     <div className="wp-card-body">
                       <h3 className="wp-card-name">
                         {p.name}
+                        {p.etiqueta && <span className="wp-etiqueta">{p.etiqueta}</span>}
                         {ehNovo(p.id) && <span className="wp-novo">novo</span>}
                       </h3>
                       <p className="wp-card-tag">{p.hook}</p>

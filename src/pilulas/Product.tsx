@@ -1014,7 +1014,10 @@ export default function Product() {
       <Reel key={nivel} product={product} previewAudience={previewAud} nivel={nivel} />
       <GestorVideoEditor product={product} />
 
-      <h1 className="wp-prod-name">{product.name}</h1>
+      <h1 className="wp-prod-name">
+        {product.name}
+        {product.etiqueta && <span className="wp-etiqueta">{product.etiqueta}</span>}
+      </h1>
       <p className="wp-prod-tag">{product.tagline}</p>
 
       <div className="wp-block">

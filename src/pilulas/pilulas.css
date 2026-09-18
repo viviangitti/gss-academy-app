@@ -4324,3 +4324,21 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-rit-pronto .wp-rit-ic { margin: 0 auto 10px; }
 .wp-rit-pronto h3 { margin: 0 0 4px; }
 .wp-rit-pronto p { margin: 0; font-size: 12.5px; color: var(--wp-text); }
+
+/* Etiqueta fixa do carro (hoje só "Lançamento"). Dourada de propósito: o selo
+   "novo" é azul e some quando a pessoa abre o carro; esta fica, e as duas
+   precisam ser distinguíveis lado a lado. */
+.wp-etiqueta {
+  display: inline-block;
+  margin-left: 7px;
+  vertical-align: 2px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: #f4e3ad;
+  color: #6b4f0b;
+  border: 1px solid #e0c87e;
+}

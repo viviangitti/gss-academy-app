@@ -44,6 +44,17 @@ export const VENDEDOR = [
   { id: '14-ia-resposta', foco: `document.querySelector('.wp-ia-retomada')`, url: '/eleva/assistente', espera: 2600,
     acao: `document.querySelector('.wp-ia-thread')?.scrollIntoView({block:'start'})`,
     fala: 'Ele responde com o que está publicado — o número da carta do mês, não um chute. E a conversa continua de onde você parou quando o cliente te interromper.' },
+  { id: '14b-jornada', foco: `document.querySelector('.wp-jn-campos')`, url: '/eleva/jornada', espera: 2600,
+    fala: 'A Jornada é o atendimento inteiro na ordem, do primeiro contato à entrega. Você preenche uma vez o nome do cliente, o carro e a sua loja, e isso entra em todas as mensagens.' },
+  { id: '14c-jornada-script', foco: `document.querySelector('.wp-jn-copiar')`, url: '/eleva/jornada', espera: 2200,
+    acao: `document.querySelector('.wp-jn-script')?.scrollIntoView({block:'center'}); window.scrollBy(0,-40)`,
+    fala: 'Cada etapa traz a mensagem pronta para copiar e colar. A primeira avisa que você está num atendimento na loja e já faz três perguntas que cabem numa resposta só: onde o carro vai rodar, quem vai dirigir e o que ele procura. Nada de pagamento na primeira mensagem, que assusta.' },
+  { id: '14d-jornada-onepage', foco: `document.querySelector('.wp-jn-mandar')`, url: '/eleva/jornada', espera: 2200,
+    acao: `document.querySelector('.wp-jn-mandar')?.scrollIntoView({block:'center'}); window.scrollBy(0,-60)`,
+    fala: 'Embaixo da mensagem vem o one page: a folha que você manda para o cliente, com o nome da sua loja em cima e o seu WhatsApp no rodapé. Sem preço, porque número sai da tabela oficial.' },
+  { id: '14e-jornada-acessorios', foco: `document.querySelector('.wp-jn-chips')`, url: '/eleva/jornada', espera: 2400,
+    acao: `document.querySelectorAll('.wp-jn-cab')[7]?.click(); await new Promise(r=>setTimeout(r,1300)); document.querySelector('.wp-jn-chips')?.scrollIntoView({block:'center'})`,
+    fala: 'Na etapa dos acessórios, cada item abre direto no app, com foto e com o jeito de oferecer. Oferecido junto da proposta, ele entra no mesmo negócio: é assim que a venda cresce sem mexer no desconto do carro.' },
   { id: '15-noticias', foco: `document.querySelector('.wp-news-frentes')`, url: '/eleva/noticias', espera: 3000,
     fala: 'Em Notícias, repare nas abas de cima. Além de Tudo, tem Concorrência e Mercado — e arrastando para o lado, Lançamentos, Condições, e Elétricos e híbridos. São seis frentes.' },
   { id: '15b-concorrencia', url: '/eleva/noticias', espera: 3000,
@@ -53,6 +64,10 @@ export const VENDEDOR = [
   // TRANSFORMAR EM APP. Os dois primeiros passos não são tela do app — são do
   // Safari — então vêm desenhados (ver ilustra.py). O terceiro mostra o ícone
   // real na tela de início.
+  { id: '15c-ritual', url: '/eleva', espera: 2800, relogio: '2026-10-14T09:10:00-03:00',
+    acao: `document.querySelectorAll('.wp-rit-item').forEach((b) => b.click()); await new Promise(r=>setTimeout(r,500))`,
+    foco: `document.querySelector('.wp-rit')`,
+    fala: 'E duas vezes por mês, nos dias catorze e trinta, o app te lembra: a campanha está fechando. Você marca os três itens, dá o ok, e fica registrado que você viu.' },
   { id: '17-instalar', url: '/eleva/perfil', espera: 3200,
     // UA de iPhone: sem isso o cartão mostra o texto do Android ("Instalar
     // agora"), e o time é de iPhone. A instrução na tela tem que ser a que a
@@ -69,7 +84,7 @@ export const VENDEDOR = [
     fala: 'Pronto. O Eleva vira um ícone na tela do seu celular e abre em tela cheia, sem você procurar a aba no meio das outras.' },
 
   { id: '16-fim', foco: `(()=>{const a=[...document.querySelectorAll('*')].filter(e=>(e.textContent||'').trim().startsWith("SEU WHATSAPP")); const el=a[a.length-1]; return (el&&el.getBoundingClientRect().height>6)?el:null;})()`, url: '/eleva/perfil', espera: 2200,
-    fala: 'E no Perfil você confere a versão do app e instala ele na tela de início do celular. É isso: antes de cada atendimento, uma pílula, a condição do dia e a resposta pronta. Boa venda.' },
+    fala: 'E no Perfil você confere a versão do app e instala ele na tela de início do celular. É isso: antes de cada atendimento, uma pílula, a condição do dia e a resposta pronta. E durante o atendimento, a Jornada. Boa venda.' },
 ];
 
 export const GERENTE = [
@@ -122,17 +137,28 @@ export const GERENTE = [
   { id: '14-documentos', foco: `[...document.querySelectorAll('.wp-gz-add')].find(e=>/Publicar/.test(e.textContent))`, url: '/eleva/gestor', espera: 2400,
     acao: `${clicTexto('.wp-gz-tab', 'Conteúdo')}; await new Promise(r=>setTimeout(r,800)); const b=[...document.querySelectorAll('.wp-gz-block')].find(x=>/Documentos da marca/.test(x.textContent)); b.scrollIntoView({block:'start'}); window.scrollBy(0,-70)`,
     fala: 'Em Documentos você sobe PDF novo e tira do ar o que venceu. O que está marcado como interno o app nunca oferece pra encaminhar.' },
+  { id: '14b-ritual-condicoes', url: '/eleva/gestor', espera: 2800, relogio: '2026-10-02T09:10:00-03:00',
+    foco: `document.querySelector('.wp-rit')`,
+    fala: 'Do dia um ao dia cinco, o app te cobra o começo do mês: publicar a tabela da montadora, tirar do ar a do mês passado e atualizar as campanhas de incentivo. O botão só libera com os três itens marcados, e o ok fica gravado com o seu nome e a hora.' },
+  { id: '14c-ritual-qualidade', url: '/eleva', espera: 2800, relogio: '2026-10-01T09:20:00-03:00',
+    usuario: { uid: 'q', name: 'Silmara', email: 'qualidade.demo@gruporamasa.com', role: 'balconista', brands: ['ramasa'], cargo: 'gerente-qualidade' },
+    foco: `document.querySelector('.wp-rit')`,
+    fala: 'Cada cargo tem o seu. No primeiro dia útil, quem cuida da qualidade recebe a revisão do mês: carros, condições, acessórios, documentos e objeções, uma frente de cada vez. Quem mantém acessórios recebe a dele nos mesmos dias um a cinco.' },
   { id: '15-ver-como-time', foco: `[...document.querySelectorAll('.wp-nav-item')].find(e=>/Ver como time/.test(e.textContent))`, url: '/eleva/catalogo', espera: 2400,
     fala: 'E a aba Ver como time mostra o app exatamente como o vendedor vê. Antes de cobrar, confira aqui se o que você publicou chegou.' },
   // TRANSFORMAR EM APP. Os dois primeiros passos não são tela do app — são do
   // Safari — então vêm desenhados (ver ilustra.py). O terceiro mostra o ícone
   // real na tela de início.
+  { id: '15b-jornada-time', url: '/eleva/jornada', espera: 2600,
+    acao: `window.scrollTo(0, document.body.scrollHeight); await new Promise(r=>setTimeout(r,600))`,
+    foco: `document.querySelector('.wp-jn-linha')`,
+    fala: 'Vale conhecer a Jornada, que é a aba do time: nove etapas do atendimento do lead que chega pela internet, cada uma com a mensagem pronta e o material para mandar. É por ela que você cobra o passo a passo, em vez de cobrar só o resultado.' },
   { id: '17-instalar', url: '/eleva/perfil', espera: 2400,
     // UA de iPhone: sem isso o cartão mostra o texto do Android ("Instalar
     // agora"), e o time é de iPhone. A instrução na tela tem que ser a que a
     // pessoa vai seguir.
     ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1',
-    acao: `const c=[...document.querySelectorAll('*')].find(e=>/Deixe o Eleva na tela do celular/.test(e.textContent||'')&&e.children.length<5); c?.closest('div')?.scrollIntoView({block:'center'})`,
+    acao: `await new Promise(r=>setTimeout(r,1200)); const el=document.querySelector(".wp-perfil-instalar"); el?.scrollIntoView({block:"center"}); await new Promise(r=>setTimeout(r,600))`,
     foco: `document.querySelector('.wp-perfil-instalar')`,
     fala: 'Antes de terminar: transforme o Eleva em aplicativo no seu celular. A instrução está dentro do app, em Perfil. São três passos, e leva dez segundos.' },
   { id: '18-instalar-1', ilustracao: 'ilustracoes/inst-1.png',
@@ -143,5 +169,5 @@ export const GERENTE = [
     fala: 'Pronto. O Eleva vira um ícone na tela do seu celular e abre em tela cheia, sem você procurar a aba no meio das outras.' },
 
   { id: '16-fim', url: '/eleva/gestor', espera: 2200,
-    fala: 'Resumo: carro e acessório novos entram na aba Conteúdo. Preço e texto se corrigem na linha. A carta do mês sobe inteira e sai sozinha. E o que a inteligência artificial responde, você confere e corrige.' },
+    fala: 'Resumo: carro e acessório novos entram na aba Conteúdo. Preço e texto se corrigem na linha. A carta do mês sobe inteira e sai sozinha. O que a inteligência artificial responde, você confere e corrige. E no começo de cada mês o app te lembra do que precisa ser atualizado.' },
 ];

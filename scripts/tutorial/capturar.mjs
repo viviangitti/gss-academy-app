@@ -3,10 +3,18 @@ import { abrirChrome, conectar } from './cdp.mjs';
 import { VENDEDOR, GERENTE } from './roteiros.mjs';
 
 const QUAL = process.argv[2]; // 'vendedor' | 'gerente'
-const CENAS = QUAL === 'gerente' ? GERENTE : VENDEDOR;
+// Cenas avulsas: `node capturar.mjs gerente 17-instalar,16-fim` regrava só
+// essas e NÃO apaga a pasta. Sem isso, consertar o seletor de uma cena obrigava
+// a regravar as cinquenta — e a refazer o remendo temporário do Painel.
+const SO = (process.argv[3] || '').split(',').map((x) => x.trim()).filter(Boolean);
+const TODAS = QUAL === 'gerente' ? GERENTE : VENDEDOR;
+const CENAS = SO.length ? TODAS.filter((c) => SO.includes(c.id)) : TODAS;
 const SAIDA = `frames-${QUAL}`;
-fs.rmSync(SAIDA, { recursive: true, force: true });
+if (!SO.length) fs.rmSync(SAIDA, { recursive: true, force: true });
 fs.mkdirSync(SAIDA, { recursive: true });
+if (SO.length && CENAS.length !== SO.length) {
+  console.log('cenas não encontradas:', SO.filter((id) => !CENAS.some((c) => c.id === id)).join(', '));
+}
 
 const condicoes = JSON.parse(fs.readFileSync('condicoes-reais.json', 'utf8'));
 // O TIME REAL, pra aba Resultados do vídeo mostrar gente de verdade em vez de
@@ -27,6 +35,9 @@ const SEMENTE = `
   localStorage.setItem('wp_brand', 'ramasa');
   localStorage.setItem('wp_demo_time', ${JSON.stringify(JSON.stringify(TIME))});
   localStorage.setItem('wp_onboarded', '1');
+  // A Jornada com os campos preenchidos: no vídeo, script com "[nome do cliente]"
+  // no meio da frase parece defeito, não exemplo.
+  localStorage.setItem('wp_jornada_campos', JSON.stringify({ cliente: 'Marcos', carro: 'Jaecoo 7', vendedor: 'Walther', loja: 'Tiger Omoda' }));
   localStorage.setItem('wp_instalar_dispensado', '1');
   localStorage.setItem('wp_condicoes', ${JSON.stringify(JSON.stringify(comFolha))});
   // SÓ NA GRAVAÇÃO: esconde a barra de "tem versão nova".
@@ -93,8 +104,21 @@ for (const cena of CENAS) {
     idAcesso = null;
   }
   const quem = cena.usuario || USUARIO;
+  // O RELÓGIO DA CENA. Os rituais do mês só aparecem na janela do cargo — a
+  // revisão de qualidade no primeiro dia útil, a campanha nos dias 14 e 30. Sem
+  // adiantar o relógio, gravar essas telas só seria possível nesses dias.
+  // Entra no MESMO script do acesso porque os dois têm que valer antes de o app
+  // montar, e porque o removedor de scripts guarda um identificador só.
+  const relogio = cena.relogio ? `(() => {
+    const alvo = new Date(${JSON.stringify(cena.relogio)}).getTime();
+    const _D = Date; const delta = alvo - _D.now();
+    function D(...a) { return a.length ? new _D(...a) : new _D(_D.now() + delta); }
+    D.now = () => _D.now() + delta; D.parse = _D.parse; D.UTC = _D.UTC; D.prototype = _D.prototype;
+    Object.setPrototypeOf(D, _D); window.Date = D;
+  })();
+  localStorage.removeItem('wp_rituais_ok'); localStorage.removeItem('wp_ritual_adiado');` : '';
   const posto = await c.send('Page.addScriptToEvaluateOnNewDocument', {
-    source: `localStorage.setItem('wp_dev_user', ${JSON.stringify(JSON.stringify(quem))});`,
+    source: `localStorage.setItem('wp_dev_user', ${JSON.stringify(JSON.stringify(quem))}); ${relogio}`,
   });
   idAcesso = posto.identifier;
   await c.send('Page.navigate', { url: `http://[::1]:5173${cena.url}` });

@@ -15,6 +15,7 @@ import Login from './Login';
 import Privacidade from './Privacidade';
 import Noticias from './Noticias';
 import Jornada from './Jornada';
+import RitualDoMes from './RitualDoMes';
 import Documentos from './Documentos';
 import Acessorio from './Acessorio';
 import FormArgumentos from './FormArgumentos';
@@ -376,6 +377,9 @@ function Shell() {
         <Onboarding auto={isAuto(brand.id)} onFinish={() => { try { localStorage.setItem('wp_onboarded', '1'); } catch { /* ignore */ } setOnboarded(true); }} />
       )}
       <Header />
+      {/* O lembrete do mês vive aqui, e não numa tela: o vendedor abre no Hoje
+          e o gerente cai no Painel. */}
+      <RitualDoMes />
       <main className="wp-main">
         <Routes>
           {/* Gestor entra direto no painel (o trabalho dele é colocar conteúdo);

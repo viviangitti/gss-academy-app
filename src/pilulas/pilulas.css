@@ -4210,3 +4210,117 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-jn-check-item.ok { color: #8a7a52; text-decoration: line-through; }
 .wp-jn-check-item.ok .wp-ico { color: #2e9e5b; }
 .wp-jn-lembrete-nota { margin: 8px 0 0; font-size: 11.5px; line-height: 1.5; color: #7a6428; }
+
+/* ===== Ritual do mês (lembrete por cargo, com ok registrado) ===== */
+.wp-rit-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(12, 14, 22, .55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px;
+}
+@media (min-width: 520px) { .wp-rit-fundo { align-items: center; } }
+.wp-rit {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: var(--wp-surface);
+  border-radius: 20px;
+  padding: 18px 16px 14px;
+  box-shadow: 0 18px 50px rgba(12, 14, 22, .3);
+  max-height: 88vh;
+  overflow-y: auto;
+}
+.wp-rit-x {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--wp-soft);
+  cursor: pointer;
+  padding: 4px;
+}
+.wp-rit-ic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--wp-pink) 14%, transparent);
+  color: var(--wp-pink-deep);
+  margin-bottom: 10px;
+}
+.wp-rit-ic--ok { background: #e8f6ee; color: #1d6b3f; }
+.wp-rit-quando {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--wp-pink-deep);
+}
+.wp-rit h3 { margin: 4px 0 6px; font-size: 19px; letter-spacing: -.3px; }
+.wp-rit-por { margin: 0 0 12px; font-size: 12.5px; line-height: 1.5; color: var(--wp-text); }
+.wp-rit-lista { list-style: none; margin: 0 0 12px; padding: 0; }
+.wp-rit-item {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  background: var(--wp-bg);
+  border: 1.5px solid var(--wp-border);
+  border-radius: 12px;
+  padding: 10px 11px;
+  margin-bottom: 6px;
+  text-align: left;
+  font-family: inherit;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--wp-ink);
+  cursor: pointer;
+}
+.wp-rit-item .wp-ico { flex: none; margin-top: 1px; color: var(--wp-soft); }
+.wp-rit-item.ok { border-color: #bfe3cd; background: #f2faf5; color: #2c5c42; }
+.wp-rit-item.ok .wp-ico { color: #2e9e5b; }
+.wp-rit-ir {
+  display: block;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--wp-pink-deep);
+  text-decoration: none;
+  padding: 8px 0 10px;
+}
+.wp-rit-ok {
+  width: 100%;
+  border: none;
+  border-radius: 13px;
+  background: var(--wp-pink);
+  color: var(--wp-on-accent);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 13px 14px;
+  cursor: pointer;
+}
+.wp-rit-ok:disabled { background: var(--wp-bg); color: var(--wp-soft); border: 1.5px solid var(--wp-border); cursor: default; }
+.wp-rit-nao {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--wp-soft);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 10px 0 2px;
+  cursor: pointer;
+}
+.wp-rit-pronto { text-align: center; padding: 10px 0 6px; }
+.wp-rit-pronto .wp-rit-ic { margin: 0 auto 10px; }
+.wp-rit-pronto h3 { margin: 0 0 4px; }
+.wp-rit-pronto p { margin: 0; font-size: 12.5px; color: var(--wp-text); }

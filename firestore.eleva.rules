@@ -41,6 +41,15 @@ service cloud.firestore {
       allow read, list: if request.auth != null;
       allow write: if isGestor();
     }
+    // Rituais do mês (revisão de qualidade, condições, acessórios, campanha):
+    // cada pessoa grava SÓ o próprio ok. A gerência lê todos — sem isso não há
+    // como saber quem conferiu, e "achei que alguém tinha visto" foi
+    // exatamente o que deixou a tabela vencida no ar.
+    match /elevaRituais/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isGestor());
+      allow list: if isGestor();
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
     match /elevaPlacar/{uid} {
       allow read, list: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == uid;

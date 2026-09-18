@@ -14,6 +14,7 @@ import { ChevronLeft, ChevronDown, Copy, Check, Share2, ArrowRight, Route as Rot
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { getBrand } from './data/brands';
+import { lojaLabel } from './data/lojas';
 import { CAMPOS, etapasDaMarca, type Etapa } from './data/jornada';
 import { acessoriosDaMarca, ORIGENS } from './data/acessorios';
 import { mandarPagina } from './data/jornadaPagina';
@@ -114,7 +115,8 @@ export default function Jornada() {
     const digitado = (campos[chave] || '').trim();
     if (digitado) return digitado;
     if (chave === 'vendedor' && user?.name) return user.name.split(' ')[0];
-    if (chave === 'loja') return marca.name.split('·')[0].trim();
+    // A loja do cadastro ganha do nome do grupo: é ela que o cliente conhece.
+    if (chave === 'loja') return lojaLabel(user?.loja) || marca.name.split('·')[0].trim();
     const campo = CAMPOS.find((c) => c.chave === chave);
     return `[${campo ? campo.rotulo.toLowerCase() : chave}]`;
   };

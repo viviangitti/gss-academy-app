@@ -8,7 +8,8 @@ const imgOuNada = (arq) => { try { return img(arq); } catch { return ''; } };
 
 const CARRO = { 'jaecoo-7': 'Jaecoo 7 SHS-P', 'omoda-5-shs-h': 'Omoda 5 SHS-H', 'omoda-e5': 'Omoda E5', 'omoda-7-shs-p': 'Omoda 7 SHS-P' };
 const nomeCarro = (id) => CARRO[String(id).split('|')[0]] || String(id).split('|')[0];
-const CARGO = { 'vendedor-veiculos': 'vendedor de veículos', 'vendedor-acessorios': 'vendedor de acessórios', 'gerente-vendas': 'gerente de vendas',
+const LOJA = { 'tiger-goiania': 'Tiger Goiânia', 'tiger-anapolis': 'Tiger Anápolis', 'tiger-itumbiara': 'Tiger Itumbiara' };
+const CARGO = { 'vendedor-veiculos': 'vendedor de veículos', 'supervisor-vendas': 'supervisor de vendas', 'vendedor-acessorios': 'vendedor de acessórios', 'gerente-vendas': 'gerente de vendas',
   'gerente-veiculos': 'gerente de veículos', 'gerente-acessorios': 'gerente de acessórios', 'lider-acessorios': 'supervisor de acessórios',
   'executivo-leads': 'executivo de leads', 'gerente-leads': 'gerente de leads' };
 const cargo = (c) => CARGO[c] || '—';
@@ -161,6 +162,13 @@ table.t{width:100%;border-collapse:collapse;font-size:10px}.t th{text-align:left
     <tr><td>Materiais enviados a clientes</td><td class="r">${METAS.materiais}</td><td class="r"><b>${S.materiais}</b></td><td class="r">${A.materiais}</td><td class="r">${situacao(S.materiais, METAS.materiais, A.materiais)}</td></tr>
     <tr><td>Time de leads usando o app</td><td class="r">${D.totalLeads} de ${D.totalLeads}</td><td class="r"><b>${S.leads}</b></td><td class="r">${A.leads}</td><td class="r">${situacao(S.leads, D.totalLeads, A.leads)}</td></tr>
   </tbody></table>
+  ${D.lojas && D.lojas.length ? `<h3 style="margin-top:18px">Por loja</h3>
+  <p class="sub">Quem usou o app em cada unidade, na semana.</p>
+  <table class="t"><thead><tr><th>Loja</th><th class="r">Contas</th><th class="r">Usaram</th><th class="r">Ações</th><th class="r">Materiais</th></tr></thead><tbody>
+    ${D.lojas.map((l) => `<tr><td><b>${LOJA[l.loja] || l.loja}</b></td><td class="r">${l.contas}</td><td class="r">${l.pessoas}</td><td class="r">${l.acoes}</td><td class="r">${l.materiais}</td></tr>`).join('')}
+  </tbody></table>
+  ${D.semLoja ? `<p class="sub" style="margin-top:5px">${D.semLoja} ${D.semLoja === 1 ? 'pessoa ainda não escolheu' : 'pessoas ainda não escolheram'} a loja no perfil — elas não entram nesta conta.</p>` : ''}` : ''}
+
   <h3 style="margin-top:18px">Semana a semana, desde o lançamento</h3>
   <p class="sub">Ações por semana. A barra escura é esta semana; embaixo, quantas pessoas usaram.</p>
   ${colunas(semanasComDado.map((s) => ({ v: s.acoes, s })), (it) => `${dm(it.s.de)}`, (it) => `${it.s.pessoas} pessoas`, (it) => it.s.de === D.de)}

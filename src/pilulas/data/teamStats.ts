@@ -22,6 +22,7 @@ export interface TeamPerson {
   email: string;
   role: string;
   cargo?: string; // concessionária: o cargo real, quando existe
+  loja?: string;  // concessionária: a unidade do grupo
   totals: { views: number; missions: number; quizPassed: number; streak: number };
   cartaoPronto?: boolean; // já preencheu o contato que sai no material do cliente
   month: { id: string; views: number; points: number; missions: number };
@@ -89,6 +90,7 @@ export async function fetchTeam(brand: string): Promise<TeamPerson[]> {
       email: String(x.email || ''),
       role: String(x.role || ''),
       cargo: String(x.cargo || '') || undefined,
+      loja: String(x.loja || '') || undefined,
       totals: { views: t.views || 0, missions: t.missions || 0, quizPassed: t.quizPassed || 0, streak: t.streak || 0 },
       cartaoPronto: x.cartaoPronto === true,
       month: { id: String(m.id || ''), views: m.views || 0, points: m.points || 0, missions: m.missions || 0 },

@@ -72,7 +72,7 @@ export async function coletar(segunda) {
     const email = (u.email || '').toLowerCase(), p = perfis[u.localId] || {}, s = stats[u.localId] || {};
     const role = over[email]?.role || p.role || '', cargo = over[email]?.cargo || p.cargo || s.cargo || '';
     const eventos = (s.events || []).filter((e) => e.at && dia(e.at) <= ate).map((e) => ({ ...e, d: dia(e.at) }));
-    return { email, nome: arruma(u.displayName || s.name, email), cargo, role, marcas: p.brands || [],
+    return { email, nome: arruma(u.displayName || s.name, email), cargo, role, marcas: p.brands || [], loja: p.loja || s.loja || '',
       criada: dia(new Date(Number(u.createdAt)).toISOString()), eventos,
       gestor: role === 'gestor' || /gerente|lider/.test(cargo), podePublicar: publica.has(email) };
   }).filter((p) => p.marcas.includes(MARCA) && !TESTE.has(p.email) && p.criada <= ate);
@@ -129,6 +129,20 @@ export async function coletar(segunda) {
     materiaisPorCarro: conta(evSemana, (e) => e.type === 'onepage' && String(e.id).endsWith('|cliente')),
     docs: conta(evSemana, (e) => e.type === 'doc_open'), acessorios: conta(evSemana, (e) => e.type === 'acessorio'),
     ranking, aprovados, estreias, voltaram, pararam, nunca, gestores,
+    // Por unidade: sem isto, Goiânia, Anápolis e Itumbiara viram um número só,
+    // e a gerência não tem como saber qual loja parou de usar.
+    lojas: [...new Set(pessoas.map((p) => p.loja).filter(Boolean))].sort().map((loja) => {
+      const doGrupo = pessoas.filter((p) => p.loja === loja);
+      const ev = doGrupo.flatMap((p) => naJanela(p, de, ate));
+      return {
+        loja,
+        contas: doGrupo.length,
+        pessoas: doGrupo.filter((p) => naJanela(p, de, ate).length).length,
+        acoes: ev.length,
+        materiais: ev.filter((e) => e.type === 'onepage' && String(e.id).endsWith('|cliente')).length,
+      };
+    }),
+    semLoja: pessoas.filter((p) => !p.loja).length,
     desdeOInicio: { usaram: pessoas.filter((p) => p.eventos.length).length, acoes: pessoas.reduce((s, p) => s + p.eventos.length, 0) },
   };
 }

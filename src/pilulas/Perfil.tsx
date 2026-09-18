@@ -11,7 +11,8 @@ import { getStats } from './data/tracking';
 import { getTrilha } from './data/trilha';
 import { getAfiliadoCode, setAfiliadoCode } from './data/afiliadoCode';
 import { notifState, notifPref, enableNotif, disableNotif } from './data/lembrete';
-import { updateElevaName, updateElevaWhatsapp, updateElevaFoto, retratoParaDataUrl, getElevaProfile } from './data/profile';
+import { updateElevaName, updateElevaWhatsapp, updateElevaFoto, updateElevaLoja, retratoParaDataUrl, getElevaProfile } from './data/profile';
+import { lojasDaMarca } from './data/lojas';
 import { auth } from '../services/firebase';
 import { excluirConta } from './data/excluirConta';
 import { cargoLabel } from './data/cargos';
@@ -48,6 +49,8 @@ export default function Perfil() {
   const [zap, setZap] = useState('');
   const [zapBusy, setZapBusy] = useState(false);
   const [zapOk, setZapOk] = useState(false);
+  const [loja, setLoja] = useState(user?.loja || '');
+  const [lojaBusy, setLojaBusy] = useState(false);
   const [foto, setFoto] = useState('');
   const [fotoErro, setFotoErro] = useState('');
   useEffect(() => {
@@ -77,6 +80,17 @@ export default function Perfil() {
     setZapBusy(false);
     setZapOk(true);
     setTimeout(() => setZapOk(false), 2500);
+  };
+
+  const salvarLoja = async (nova: string) => {
+    const uid = auth?.currentUser?.uid;
+    setLoja(nova);
+    if (!uid || !nova) return;
+    setLojaBusy(true);
+    await updateElevaLoja(uid, nova);
+    // Recarrega como no nome: a loja entra no material do cliente e no painel,
+    // e meia tela com o valor velho confunde mais do que a espera.
+    window.location.reload();
   };
 
   const salvarNome = async () => {
@@ -137,6 +151,31 @@ export default function Perfil() {
           <span className="wp-perfil-brand">{brand.name}</span>
         </div>
       </div>
+
+      {/* A unidade do grupo. Separa o time no painel da gerência e entra
+          sozinha na Jornada, em vez de o vendedor digitar a loja toda vez. */}
+      {auto && (
+        <div className="wp-perfil-card">
+          <span className="wp-perfil-label">Sua loja</span>
+          <select
+            className="wp-perfil-input"
+            value={loja}
+            disabled={lojaBusy}
+            onChange={(e) => salvarLoja(e.target.value)}
+            aria-label="Sua loja"
+          >
+            <option value="">Escolha a sua unidade</option>
+            {lojasDaMarca(brandId).map((l) => (
+              <option key={l.id} value={l.id}>{l.nome}</option>
+            ))}
+          </select>
+          <p className="wp-perfil-hint">
+            {lojaBusy
+              ? 'Salvando…'
+              : 'É a unidade que aparece no painel da gerência e já entra preenchida nas mensagens da Jornada.'}
+          </p>
+        </div>
+      )}
 
       {/* O contato que sai no material mandado ao cliente. Sem isso o one-page
           vira panfleto da loja — com ele, vira o cartão de visita do vendedor. */}

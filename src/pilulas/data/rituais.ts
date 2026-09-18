@@ -95,7 +95,7 @@ export const RITUAIS: Ritual[] = [
   },
   {
     id: 'vendas-condicoes',
-    cargos: ['gerente-veiculos'],
+    cargos: ['gerente-veiculos', 'supervisor-vendas'],
     titulo: 'Condições do mês',
     quando: 'Entre os dias 1 e 5',
     porQue:

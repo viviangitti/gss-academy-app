@@ -50,6 +50,7 @@ import type { Role } from '../AuthContext';
 export type CargoAuto =
   | 'vendedor-veiculos'
   | 'gerente-veiculos'
+  | 'supervisor-vendas'
   | 'vendedor-acessorios'
   | 'gerente-acessorios'
   | 'lider-acessorios'
@@ -78,6 +79,14 @@ export const CARGOS_AUTO: Cargo[] = [
   {
     id: 'gerente-veiculos',
     label: 'Gerente de vendas',
+    role: 'gestor',
+  },
+  {
+    // O supervisor responde por uma unidade e pelo time dela: acesso de
+    // gerente, e a mesma cobrança de começo de mês. Antes ele entrava como
+    // "Gerente de vendas" e o painel dizia um cargo que a loja não usa.
+    id: 'supervisor-vendas',
+    label: 'Supervisor(a) de vendas',
     role: 'gestor',
   },
   {

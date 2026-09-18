@@ -28,7 +28,8 @@ export interface User {
   brands: BrandId[]; // empresas que a pessoa pode ver
   segment?: SegmentId; // canal de onde veio (etiqueta do link/QR de convite)
   affiliateType?: AffiliateType; // só para role === 'afiliado'
-  cargo?: CargoAuto; // concessionária: qual dos cinco cargos da loja
+  cargo?: CargoAuto; // concessionária: qual dos cargos da loja
+  loja?: string;     // concessionária: em qual unidade do grupo ela trabalha
 }
 
 // De qual público essa pessoa faz parte (pra escolher o vídeo do produto).
@@ -152,6 +153,7 @@ function toUser(fb: AuthUser, profile: ElevaProfile | null): User {
     segment: profile?.segment || mySegment(),
     affiliateType: role === 'afiliado' ? (affiliateTypeFor(email, profile) ?? 'geral') : undefined,
     cargo: overrideFor(email)?.cargo || profile?.cargo,
+    loja: profile?.loja,
   };
 }
 

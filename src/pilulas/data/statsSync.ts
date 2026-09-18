@@ -58,6 +58,8 @@ const MAX_EVENTS = 400;
 interface SyncMeta {
   brand?: string;
   role?: string;
+  /** A unidade do grupo. O painel separa o time por ela. */
+  loja?: string;
   /**
    * O cargo da concessionária (vendedor de veículos, gerente de acessórios…).
    *

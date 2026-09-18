@@ -16,6 +16,7 @@ export interface ElevaProfile {
   affiliateType?: AffiliateType | ''; // só quando role === 'afiliado'
   cargo?: CargoAuto; // concessionária: vendedor/gerente de veículos ou de acessórios
   brands?: BrandId[]; // marca(s) que a pessoa vê — ex.: ['dsp'] p/ Drogaria São Paulo
+  loja?: string;      // unidade do grupo (Tiger Goiânia, Anápolis, Itumbiara)
   whatsapp?: string;  // vai no material que ela manda pro cliente (só dela, nunca de terceiro)
   foto?: string;      // retrato do vendedor no material (data URL pequena)
 }
@@ -36,6 +37,7 @@ export async function getElevaProfile(uid: string): Promise<ElevaProfile | null>
       segment: typeof d.segment === 'string' ? (d.segment as SegmentId | '') : undefined,
       affiliateType: at === 'geral' || at === 'saude' ? at : undefined,
       cargo: ehCargoAuto(d.cargo) ? d.cargo : undefined,
+      loja: typeof d.loja === 'string' ? d.loja : undefined,
       whatsapp: typeof d.whatsapp === 'string' ? d.whatsapp : undefined,
       foto: typeof d.foto === 'string' ? d.foto : undefined,
       brands: brands && brands.length ? brands : undefined,
@@ -123,4 +125,15 @@ export async function setElevaProfile(uid: string, p: ElevaProfile): Promise<voi
   } catch {
     /* offline / sem permissão: o localStorage cobre neste aparelho */
   }
+}
+
+/**
+ * A loja da pessoa. Guardada na CONTA porque é ela que separa o time no painel
+ * e preenche a Jornada sem o vendedor digitar a própria unidade toda vez.
+ */
+export async function updateElevaLoja(uid: string, loja: string): Promise<void> {
+  if (!db) return;
+  try {
+    await setDoc(doc(db, 'elevaUsers', uid), { loja, updatedAt: serverTimestamp() }, { merge: true });
+  } catch { /* offline / sem permissão */ }
 }

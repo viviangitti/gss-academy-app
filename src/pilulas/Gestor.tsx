@@ -4,6 +4,7 @@ import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send,
 import { useBrand } from './BrandContext';
 import { isAuto } from './data/brands';
 import { cargoLabel, podeMexerEmAcessorios, podeVerOTime } from './data/cargos';
+import { lojaLabel } from './data/lojas';
 import { vocab } from './data/vocabulario';
 import { useAuth } from './AuthContext';
 import { CATEGORIES, CATEGORIAS_AUTO, CATEGORIAS_SAUDE, nivelVideoKey, type Category, type Product } from './data/products';
@@ -596,7 +597,7 @@ function CobrarPessoa({ p, campanhaNome, prazo, auto }: { p: TeamPerson; campanh
     <div className="wp-gz-cob">
       <span className="wp-gz-cob-info">
         <b>{p.name}</b>
-        <i>{comoChamar(p.role, p.cargo, auto)}{p.email ? ` · ${p.email}` : ''}</i>
+        <i>{comoChamar(p.role, p.cargo, auto)}{p.loja ? ` · ${lojaLabel(p.loja)}` : ''}{p.email ? ` · ${p.email}` : ''}</i>
       </span>
       <button className="wp-gz-cob-btn" onClick={copiar} title="Copiar mensagem pronta">
         {copiado ? <><Check size={13} className="wp-ico" /> Copiada</> : <><Copy size={13} className="wp-ico" /> Cobrar</>}

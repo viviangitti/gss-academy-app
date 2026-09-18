@@ -2,7 +2,7 @@ import fs from 'fs';
 const D = JSON.parse(fs.readFileSync('uso-detalhe.json', 'utf8'));
 const { todos, carros, docs, acess, NOMES } = D;
 
-const CARRO_NOME = { 'jaecoo-7':'Jaecoo 7 SHS-P', 'omoda-5-shs-h':'Omoda 5 SHS-H',
+const CARRO_NOME = { 'jaecoo-7':'Jaecoo 7 SHS-P', 'jaecoo-5':'Jaecoo 5 SHS-H', 'omoda-5-shs-h':'Omoda 5 SHS-H',
   'omoda-e5':'Omoda E5', 'omoda-7-shs-p':'Omoda 7 SHS-P', 're-hidraben':'Re-Hidraben (farmácia)' };
 const GRUPOS = [
   ['Vendedores de veículos', ['vendedor-veiculos']],

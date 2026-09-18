@@ -1,0 +1,106 @@
+[
+ {
+  "id": "01-abre",
+  "fala": "O Eleva coloca o produto na mão de quem vende: um vídeo curto, a resposta pronta para cada objeção, e a mensagem para mandar na hora. Vamos ver."
+ },
+ {
+  "id": "02-hoje",
+  "fala": "A tela de início mostra o que fazer hoje: os primeiros passos, os carros novos e o seu lugar no ranking. Não é enfeite, é a sua sequência."
+ },
+ {
+  "id": "03-catalogo",
+  "fala": "No Catálogo estão os carros e, embaixo deles, os acessórios. Toque num carro."
+ },
+ {
+  "id": "04-carro",
+  "fala": "Dentro do carro você tem a pílula de trinta segundos, o que destacar, e o que responder quando o cliente travar."
+ },
+ {
+  "id": "05-niveis",
+  "fala": "Os níveis vão do essencial até negociação difícil. Cada um abre depois que você acerta o quiz do anterior — é assim que você sobe de verdade, e não só assiste."
+ },
+ {
+  "id": "06-versoes",
+  "fala": "Mais abaixo: como abordar, pra que cliente é, e a quebra de objeção já escrita. E ali em cima, Versões, que responde a pergunta que o cliente sempre faz: e a de cima, o que muda?"
+ },
+ {
+  "id": "07-ficha",
+  "fala": "A ficha técnica fica aqui, linha por linha, pra você achar um número em dois segundos com o cliente do lado. E o que vai pro WhatsApp dele é a folha oficial da montadora, em PDF, com o nome em caixa alta."
+ },
+ {
+  "id": "08-acessorio",
+  "fala": "Acessório tem tela própria: o que resolve pro cliente, a hora certa de oferecer, e o código pra pedir no sistema. Toque no código que ele copia."
+ },
+ {
+  "id": "09-condicoes",
+  "fala": "Condições comerciais entram por três portas. Veículos, para a negociação do carro. Acessórios, para depois do sim. E campanhas da casa, que é o que você disputa."
+ },
+ {
+  "id": "10-veiculos",
+  "fala": "Cada carta é uma folha. Confira a validade antes de falar número com o cliente — ela sai sozinha quando vence."
+ },
+ {
+  "id": "11-folha",
+  "fala": "A folha abre em tela cheia e amplia com dois dedos. Esta folha é interna: você passa o número pro cliente, nunca a folha."
+ },
+ {
+  "id": "12-arte",
+  "fala": "O que vai pro cliente é isto: a arte da oferta, com o carro e a chamada aprovada. Um toque em enviar e ela vai no WhatsApp."
+ },
+ {
+  "id": "13-ia",
+  "fala": "O Tira-dúvida sabe tudo que está no app: os carros, os acessórios com preço, e as condições do mês com os números. Pergunte como você falaria com um colega."
+ },
+ {
+  "id": "14-ia-resposta",
+  "fala": "Ele responde com o que está publicado — o número da carta do mês, não um chute. E a conversa continua de onde você parou quando o cliente te interromper."
+ },
+ {
+  "id": "14b-jornada",
+  "fala": "A Jornada é o atendimento inteiro na ordem, do primeiro contato à entrega. Você preenche uma vez o nome do cliente, o carro e a sua loja, e isso entra em todas as mensagens."
+ },
+ {
+  "id": "14c-jornada-script",
+  "fala": "Cada etapa traz a mensagem pronta para copiar e colar. A primeira avisa que você está num atendimento na loja e já faz três perguntas que cabem numa resposta só: onde o carro vai rodar, quem vai dirigir e o que ele procura. Nada de pagamento na primeira mensagem, que assusta."
+ },
+ {
+  "id": "14d-jornada-onepage",
+  "fala": "Embaixo da mensagem vem o one page: a folha que você manda para o cliente, com o nome da sua loja em cima e o seu WhatsApp no rodapé. Sem preço, porque número sai da tabela oficial."
+ },
+ {
+  "id": "14e-jornada-acessorios",
+  "fala": "Na etapa dos acessórios, cada item abre direto no app, com foto e com o jeito de oferecer. Oferecido junto da proposta, ele entra no mesmo negócio: é assim que a venda cresce sem mexer no desconto do carro."
+ },
+ {
+  "id": "15-noticias",
+  "fala": "Em Notícias, repare nas abas de cima. Além de Tudo, tem Concorrência e Mercado — e arrastando para o lado, Lançamentos, Condições, e Elétricos e híbridos. São seis frentes."
+ },
+ {
+  "id": "15b-concorrencia",
+  "fala": "Concorrência é a que muda uma conversa: traz o que o GWM, a BYD, o Compass e o Corolla Cross anunciaram. É com isso que o cliente chega comparando."
+ },
+ {
+  "id": "15c-ritual",
+  "fala": "E duas vezes por mês, nos dias catorze e trinta, o app te lembra: a campanha está fechando. Você marca os três itens, dá o ok, e fica registrado que você viu."
+ },
+ {
+  "id": "17-instalar",
+  "fala": "Antes de terminar: transforme o Eleva em aplicativo no seu celular. A instrução está dentro do app, em Perfil. São três passos, e leva dez segundos."
+ },
+ {
+  "id": "18-instalar-1",
+  "fala": "Passo um: no Safari, toque em Compartilhar. É o quadrado com a seta para cima, na barra de baixo do navegador."
+ },
+ {
+  "id": "19-instalar-2",
+  "fala": "Passo dois: desça a lista e escolha Adicionar à Tela de Início. Precisa ser pelo Safari — se você abriu por dentro do WhatsApp, essa opção não aparece."
+ },
+ {
+  "id": "20-instalar-3",
+  "fala": "Pronto. O Eleva vira um ícone na tela do seu celular e abre em tela cheia, sem você procurar a aba no meio das outras."
+ },
+ {
+  "id": "16-fim",
+  "fala": "E no Perfil você confere a versão do app e instala ele na tela de início do celular. É isso: antes de cada atendimento, uma pílula, a condição do dia e a resposta pronta. E durante o atendimento, a Jornada. Boa venda."
+ }
+]

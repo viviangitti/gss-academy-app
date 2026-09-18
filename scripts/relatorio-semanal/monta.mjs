@@ -6,7 +6,7 @@ const ASSETS = new URL('./assets/', import.meta.url);
 const img = (arq) => 'data:image/' + (arq.endsWith('.png') ? 'png' : 'jpeg') + ';base64,' + readFileSync(new URL(arq, ASSETS)).toString('base64');
 const imgOuNada = (arq) => { try { return img(arq); } catch { return ''; } };
 
-const CARRO = { 'jaecoo-7': 'Jaecoo 7 SHS-P', 'omoda-5-shs-h': 'Omoda 5 SHS-H', 'omoda-e5': 'Omoda E5', 'omoda-7-shs-p': 'Omoda 7 SHS-P' };
+const CARRO = { 'jaecoo-7': 'Jaecoo 7 SHS-P', 'jaecoo-5': 'Jaecoo 5 SHS-H', 'omoda-5-shs-h': 'Omoda 5 SHS-H', 'omoda-e5': 'Omoda E5', 'omoda-7-shs-p': 'Omoda 7 SHS-P' };
 const nomeCarro = (id) => CARRO[String(id).split('|')[0]] || String(id).split('|')[0];
 const LOJA = { 'tiger-goiania': 'Tiger Goiânia', 'tiger-anapolis': 'Tiger Anápolis', 'tiger-itumbiara': 'Tiger Itumbiara' };
 const CARGO = { 'vendedor-veiculos': 'vendedor de veículos', 'supervisor-vendas': 'supervisor de vendas', 'vendedor-acessorios': 'vendedor de acessórios', 'gerente-vendas': 'gerente de vendas',

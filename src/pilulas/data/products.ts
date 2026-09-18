@@ -1193,6 +1193,193 @@ export const PRODUCTS: Product[] = [
   },
 
   {
+    // JAECOO 5 — o SUV compacto que abriu a pré-venda em setembro de 2026.
+    //
+    // O ponto de venda dele é diferente do 7: aqui o híbrido NÃO precisa de
+    // tomada. É o carro para o cliente que quer economia de híbrido e mora em
+    // apartamento sem ponto de recarga — a objeção que mais aparece no salão.
+    //
+    // Os números vêm da ficha do Carros na Web (versão Comfort 1.5 HEV) que a
+    // Vivian indicou, com o comprimento completado por segunda fonte. Carro de
+    // lançamento: confirme na tabela antes de prometer item de série.
+    id: 'jaecoo-5',
+    brand: 'ramasa',
+    category: 'jaecoo',
+    family: 'jaecoo5',
+    name: 'Jaecoo 5 SHS-H',
+    tagline: 'O SUV compacto da Jaecoo: híbrido de 224 cv que não precisa de tomada e faz quase 800 km de autonomia na cidade.',
+    hook: 'O cliente quer a economia do híbrido, mas mora em apartamento sem tomada — e acha que isso o obriga a continuar no carro a gasolina.',
+    whatItIs:
+      'O Jaecoo 5 é o SUV compacto da marca, com o sistema SHS híbrido pleno: motor 1.5 TGDI turbo somado a um elétrico de 204 cv, 224 cv combinados e câmbio DHT de uma marcha. A bateria de 1,83 kWh se recarrega sozinha, na condução e na frenagem: o carro nunca vê uma tomada. Chega abaixo do Jaecoo 7, para quem quer o mesmo pacote de tecnologia num carro de cidade.',
+    benefits: [
+      '224 cv combinados num SUV compacto — mais potência que a maioria dos rivais dessa faixa, que ficam entre 150 e 190 cv',
+      'Híbrido pleno de verdade: recarrega na condução e na frenagem, sem tomada, sem wallbox e sem conta de luz',
+      '15,5 km/l na cidade e 13,7 km/l na estrada — e a cidade, que costuma ser o pior número, aqui é o melhor',
+      '791 km de autonomia urbana com um tanque de 51 litros: quem roda 40 km por dia abastece uma vez por mês',
+      '0 a 100 km/h em 7,9 segundos — é o argumento do test drive, não da ficha',
+      'Câmera 360°, seis airbags, ADAS e freio de estacionamento eletrônico com auto hold já na versão com ficha publicada',
+      'Suspensão traseira independente multibraço, que a concorrência dessa faixa quase sempre entrega como eixo de torção',
+      'Plataforma T1X, a mesma família de arquitetura dos outros SUVs do grupo — peça e rede já existem no Brasil',
+    ],
+    howToUse:
+      'Comece perguntando onde ele mora e se tem garagem com tomada. Se a resposta for "não tenho onde carregar", o Jaecoo 5 é a resposta pronta: é o híbrido que não pede tomada. Depois leve para o test drive — 224 cv num compacto surpreendem, e a arrancada faz metade do trabalho.',
+    forWho:
+      'Cliente de SUV compacto que quer economia de combustível sem mudar a rotina: sem instalar carregador, sem planejar recarga, sem trocar o posto pela tomada.',
+    salesLine: 'Me diz quanto você roda por dia e onde estaciona à noite, que eu te mostro em números o que esse carro muda na sua conta do mês.',
+    objections: [
+      {
+        trigger: '"Híbrido não precisa de tomada?"',
+        answer:
+          'Esse não. O Jaecoo 5 é híbrido pleno: a bateria se recarrega sozinha, com o motor e com a frenagem. Você abastece no posto, como sempre fez, e a parte elétrica trabalha dentro do carro. Não tem wallbox, não tem obra na garagem e não tem conta de luz.',
+      },
+      {
+        trigger: '"E se a bateria acabar no meio do caminho?"',
+        answer:
+          'Ela não acaba como a de um elétrico, porque não é ela que leva o carro sozinha. A bateria é de 1,83 kWh — pequena de propósito — e o sistema fica enchendo e usando o tempo todo. Se estiver vazia, o motor a combustão assume e ela volta a carregar em minutos rodando. O que você tem que olhar é o tanque: 51 litros, 791 km na cidade.',
+      },
+      {
+        trigger: '"Não conheço a marca Jaecoo."',
+        answer:
+          'Justo, e é bom perguntar. A Jaecoo é do grupo Chery, que está no Brasil desde 2009 e vende em mais de 40 países. O centro de peças fica em Cajamar, São Paulo, e a revisão é aqui com a gente, com preço publicado pela marca. Se quiser, te mostro o Jaecoo 7, que é o irmão maior e já roda aqui — é a mesma engenharia.',
+      },
+      {
+        trigger: '"É pequeno demais para a minha família?"',
+        answer:
+          'Vamos medir em vez de estimar: 4,38 m de comprimento, 2,62 m entre-eixos e porta-malas de 410 litros. O entre-eixos é o número que decide o espaço de quem senta atrás, e ele é grande para a categoria. Traga o carrinho de bebê ou a mala que você mais usa no test drive — a gente coloca dentro e você decide olhando, não imaginando.',
+      },
+      {
+        trigger: '"Manutenção de híbrido é mais cara."',
+        answer:
+          'Na prática costuma ser o contrário: o motor elétrico ajuda na arrancada, o freio regenerativo poupa pastilha e o motor a combustão trabalha menos. A revisão é a mesma da rede, com preço publicado pela marca, e a gente pode ver o plano junto agora. O que encarece híbrido é bateria grande de plug-in — esta aqui é pequena.',
+      },
+      {
+        trigger: '"Por que não levo logo o Jaecoo 7?"',
+        answer:
+          'Pode levar, e eu te mostro os dois. A diferença é o uso: o 7 é plug-in, maior, e rende mais para quem tem onde carregar e faz muita estrada. O 5 é de cidade, não pede tomada e pesa menos no bolso na entrada. Me diz quantos quilômetros você roda por dia e onde o carro dorme, que a escolha se resolve sozinha.',
+      },
+    ],
+    compliance:
+      'Carro de lançamento: itens de série, versões e prazo de entrega ainda podem mudar por lote. Números desta pílula são da ficha técnica publicada da versão Comfort 1.5 HEV — confirme na tabela vigente e na condição do dia antes de prometer ao cliente.',
+    fotos: ['/carros/jaecoo-5-1.jpg', '/carros/jaecoo-5-2.jpg', '/carros/jaecoo-5-3.jpg', '/carros/jaecoo-5-4.jpg'],
+    destaques: [
+      { titulo: 'Economia de híbrido sem obra na garagem', prova: 'A bateria se recarrega sozinha, na condução e na frenagem' },
+      { titulo: 'Um mês inteiro entre um posto e outro', prova: '791 km de autonomia urbana e tanque de 51 litros' },
+      { titulo: 'Anda como carro grande quando você pisa', prova: '224 cv combinados e 0 a 100 km/h em 7,9 segundos' },
+      { titulo: 'A cidade deixou de ser o pior consumo', prova: '15,5 km/l no urbano, contra 13,7 na estrada' },
+      { titulo: 'Enxerga o que você não vê ao manobrar', prova: 'Câmera 360°, sensores na frente e atrás' },
+    ],
+    durationSec: 45,
+    gradient: ['#2f7fe0', '#12406f'],
+    versoes: [
+      {
+        nome: 'COMFORT 1.5 HEV',
+        paraQuem: 'A versão com ficha técnica publicada — é a que está na pré-venda.',
+        vemCom: [
+          'Sistema híbrido SHS: 1.5 TGDI + motor elétrico de 204 cv, 224 cv combinados',
+          'Câmbio automático DHT de 1 marcha, tração dianteira',
+          'Bateria de 1,83 kWh, recarregada pela condução e pela frenagem',
+          'Rodas de liga leve aro 18 com pneus 235/55 R18',
+          'Suspensão independente nas quatro rodas (McPherson e multibraço)',
+          'Freios a disco nas quatro rodas',
+          'Seis airbags — frontais, laterais, de cortina e central dianteiro',
+          'Câmera 360° e câmera de ré, com sensores dianteiros e traseiros',
+          'Controle de estabilidade e tração, assistente de partida em rampa e controle de descida',
+          'Faróis full LED com acendimento automático',
+          'Ar-condicionado automático de duas zonas com saídas traseiras',
+          'Chave presencial com partida remota do motor',
+          'Freio de estacionamento eletrônico com auto hold',
+          'Central multimídia com tela flutuante de cerca de 12" e espelhamento de celular',
+          'Painel de instrumentos digital',
+          'Porta-luvas climatizado, start-stop e monitoramento de pressão dos pneus',
+        ],
+      },
+    ],
+    fichaPdf: '/docs/ramasa/ficha-jaecoo-5.pdf',
+    ficha: [
+      { label: 'Marca', value: 'Jaecoo (grupo Chery)' },
+      { label: 'Versão com ficha publicada', value: 'Comfort 1.5 HEV' },
+      { label: 'Tipo', value: 'Híbrido pleno (SHS) — recarrega sozinho, nunca vê tomada' },
+      { label: 'Motor a combustão', value: '1.5 TGDI turbo, injeção direta — 20,4 kgfm a 2.500 rpm' },
+      { label: 'Motor elétrico', value: '204 cv e 31,6 kgfm, dianteiro' },
+      { label: 'Potência combinada', value: '224 cv' },
+      { label: 'Torque combinado', value: '30,1 kgfm' },
+      { label: 'Bateria', value: '1,83 kWh — pequena de propósito: ela trabalha o tempo todo, não guarda energia para a semana' },
+      { label: 'Câmbio', value: 'Automático DHT de 1 marcha, com embreagem multidisco' },
+      { label: '0 a 100 km/h', value: '7,9 segundos' },
+      { label: 'Velocidade máxima', value: '175 km/h' },
+      { label: 'Consumo', value: '15,5 km/l na cidade · 13,7 km/l na estrada' },
+      { label: 'Autonomia', value: '791 km urbana · 699 km rodoviária' },
+      { label: 'Tanque', value: '51 litros' },
+      { label: 'Dimensões', value: '4.380 mm de comprimento · 1.860 de largura · 1.650 de altura' },
+      { label: 'Entre-eixos', value: '2.620 mm' },
+      { label: 'Porta-malas', value: '410 litros' },
+      { label: 'Suspensão', value: 'Independente nas quatro rodas — McPherson na frente, multibraço atrás' },
+      { label: 'Rodas e pneus', value: 'Liga leve aro 18 · 235/55 R18 · estepe é kit de reparo' },
+      { label: 'Plataforma', value: 'T1X' },
+      { label: 'Lugares', value: '5' },
+      { label: 'Fonte dos números', value: 'Ficha técnica publicada da versão Comfort 1.5 HEV. Carro de lançamento: confirme o line-up e os itens na tabela vigente.' },
+    ],
+    storyboard: [
+      { t: '0-8s', label: 'A PERGUNTA QUE ABRE', line: 'Antes de falar do carro, pergunte: você tem onde carregar em casa? Se a resposta for não, o Jaecoo 5 é a resposta.' },
+      { t: '8-18s', label: 'SEM TOMADA', line: 'Híbrido pleno: a bateria se recarrega na condução e na frenagem. Nada de wallbox, obra na garagem ou conta de luz.' },
+      { t: '18-30s', label: 'O NÚMERO QUE SURPREENDE', line: '224 cv combinados num SUV compacto, e 0 a 100 em 7,9 segundos. A concorrência dessa faixa fica entre 150 e 190 cv.' },
+      { t: '30-40s', label: 'A CONTA DO MÊS', line: '15,5 km/l na cidade e 791 km de autonomia urbana. Quem roda 40 km por dia abastece uma vez por mês.' },
+      { t: '40-45s', label: 'O FECHAMENTO', line: 'Pergunte quanto ele roda por dia e onde o carro dorme. É com essas duas respostas que você mostra a economia em números.' },
+    ],
+    niveis: [
+      {
+        titulo: 'Por dentro',
+        foco: 'Passo 4 da montadora: o que o cliente sente ao sentar num compacto que não parece compacto.',
+        storyboard: [
+          { t: '0-8s', label: 'A REGRA', line: 'Deixe o cliente sentar e ficar em silêncio cinco segundos. É nesse tempo que ele decide se o carro parece caro ou barato.' },
+          { t: '8-20s', label: 'O ESPAÇO DE TRÁS', line: 'Sente atrás com ele. São 2,62 m entre-eixos: para um carro de 4,38 m, é onde o Jaecoo 5 ganha da categoria.' },
+          { t: '20-32s', label: 'O PORTA-MALAS', line: '410 litros. Peça para ele trazer o carrinho ou a mala de sempre no test drive: colocar dentro vale mais que dizer o número.' },
+          { t: '32-45s', label: 'O ACABAMENTO', line: 'Mostre o porta-luvas climatizado e o freio eletrônico com auto hold. São itens que a faixa costuma cobrar à parte.' },
+        ],
+      },
+      {
+        titulo: 'Cabine e tecnologia',
+        foco: 'Passo 5: o que as telas resolvem no dia a dia — não a lista de recursos.',
+        storyboard: [
+          { t: '0-10s', label: 'A TELA', line: 'Multimídia flutuante de cerca de 12 polegadas com espelhamento do celular. Ligue o Waze do cliente na tela antes de sair para o test drive.' },
+          { t: '10-24s', label: 'A MANOBRA', line: 'Câmera 360° com sensores na frente e atrás. Estacione com ele olhando a tela: é o item que mais converte em cliente que mora em prédio.' },
+          { t: '24-36s', label: 'O DIA A DIA', line: 'Chave presencial com partida remota: no calor, ele liga o ar do apartamento antes de descer. Conte isso, não o nome do recurso.' },
+          { t: '36-45s', label: 'A SEGURANÇA', line: 'Seis airbags, controle de estabilidade, assistente de rampa e controle de descida. Diga o que cada um evita, não a sigla.' },
+        ],
+      },
+      {
+        titulo: 'Motorização',
+        foco: 'Passo 6: o sistema SHS sem tomada — o argumento que fecha com quem mora em apartamento.',
+        storyboard: [
+          { t: '0-10s', label: 'COMO FUNCIONA', line: 'Dois motores: 1.5 turbo e um elétrico de 204 cv. O câmbio DHT tem uma marcha só, então não existe solavanco de troca.' },
+          { t: '10-22s', label: 'A BATERIA', line: '1,83 kWh. Pequena de propósito: ela enche e esvazia o tempo todo com a frenagem, em vez de guardar energia para a semana.' },
+          { t: '22-34s', label: 'O CONSUMO', line: '15,5 km/l na cidade contra 13,7 na estrada. Repare na inversão: no trânsito parado o elétrico trabalha, e é lá que ele economiza.' },
+          { t: '34-45s', label: 'A CONTA', line: 'Some tanque e consumo: 791 km urbanos. Faça a conta do mês com o quilômetro real do cliente, na frente dele.' },
+        ],
+      },
+      {
+        titulo: 'Contra o concorrente',
+        foco: 'Como responder quando ele chega comparando com os híbridos e os compactos da faixa.',
+        storyboard: [
+          { t: '0-10s', label: 'A POTÊNCIA', line: 'Os SUVs compactos da faixa entregam de 150 a 190 cv. O Jaecoo 5 faz 224 cv combinados, com 0 a 100 em 7,9 s.' },
+          { t: '10-22s', label: 'A SUSPENSÃO', line: 'Multibraço atrás, independente. Boa parte da concorrência nessa faixa usa eixo de torção — e isso se sente no banco de trás.' },
+          { t: '22-34s', label: 'O PLUG-IN DO LADO', line: 'Se o cliente comparar com plug-in, devolva a pergunta: você tem onde carregar? Sem tomada, o plug-in vira um híbrido mais caro e mais pesado.' },
+          { t: '34-45s', label: 'O QUE NÃO DIZER', line: 'Não ataque marca do concorrente. Compare número com número e deixe o test drive fazer o resto.' },
+        ],
+      },
+      {
+        titulo: 'Negociação difícil',
+        foco: 'O que fazer quando ele diz que vai pensar — sem prometer o que a loja não cumpre.',
+        storyboard: [
+          { t: '0-10s', label: 'O "VOU PENSAR"', line: 'Pergunte o que exatamente ficou em aberto: preço, prazo de entrega, ou a marca. Cada um tem uma resposta diferente, e adivinhar custa a venda.' },
+          { t: '10-22s', label: 'SE FOR A MARCA', line: 'Mostre o Jaecoo 7 rodando aqui, o centro de peças em Cajamar e a revisão com preço publicado. Marca nova se responde com estrutura, não com promessa.' },
+          { t: '22-34s', label: 'SE FOR PREÇO', line: 'Não invente desconto. Abra a condição vigente, faça a simulação com a entrada dele e ofereça a avaliação do carro na troca.' },
+          { t: '34-45s', label: 'O COMBINADO', line: 'Termine com data: test drive marcado ou retorno com a proposta por escrito. Atendimento sem próximo passo é atendimento perdido.' },
+        ],
+      },
+    ],
+  },
+  {
     id: 'omoda-5-shs-h',
     brand: 'ramasa',
     category: 'omoda',

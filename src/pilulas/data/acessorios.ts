@@ -76,6 +76,11 @@ const JAECOO = 'jaecoo-7';
 const O5 = 'omoda-5-shs-h';
 const O7 = 'omoda-7-shs-p';
 const E5 = 'omoda-e5';
+// O Jaecoo 5 entrou em set/2026. Ele só aparece nos acessórios INSTALADOS NA
+// LOJA: esses valem para qualquer carro. Os de fábrica dependem do código de
+// peça por modelo, e código eu não invento — entram quando a gerência de
+// acessórios publicar o PN do J5.
+const J5 = 'jaecoo-5';
 
 /**
  * O CATÁLOGO CRU, do jeito que está no código. Quase ninguém deve usar isto.
@@ -214,7 +219,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
       { t: '25-37s', label: 'A OBJEÇÃO', line: '"Lá fora é mais barato." É. E lá fora não tem garantia se descolar, dar bolha ou o vidro trincar na aplicação. Aqui, tem. E não mexe na garantia do carro.' },
       { t: '37-45s', label: 'QUANDO OFERECER', line: 'Junto da vitrificação, na hora de fechar. Quem aceita proteger por fora aceita proteger por dentro.' },
     ],
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [],
   },
   {
@@ -233,7 +238,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
       { t: '25–37s', label: 'A OBJEÇÃO', line: 'Celular na mão, tela pequena, ao lado da tela do carro. FALAR: “Ele vai dizer que usa o celular. Usa — numa tela de seis polegadas, segurando na mão. Aqui é a tela do carro, e a criança assiste sozinha.”' },
       { t: '37–45s', label: 'QUANDO OFERECER', line: 'Fecha na tela rodando. FALAR: “Deixe rodando quando ele entrar no carro. Esse é dos poucos que o cliente pede sem você oferecer.”' },
     ],
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [],
   },
   {
@@ -252,7 +257,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
       { t: '25–37s', label: 'A OBJEÇÃO', line: 'Pintura opaca e manchada de um seminovo do pátio. FALAR: “Ele vai perguntar se não é a mesma coisa que cera. Não é. Cera dura semanas. Isso dura anos, e é o que segura o valor do carro na hora da troca.”' },
       { t: '37–45s', label: 'QUANDO OFERECER', line: 'Fecha no reflexo do capô. FALAR: “Ofereça junto da película, no fechamento. Sai no mesmo dia da entrega.”' },
     ],
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [],
   },
   {
@@ -264,7 +269,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'Três perguntas: tem criança, tem cachorro, vai pra praia? Quem responde sim pra duas já comprou. O número que fecha é o custo de trocar o carpete depois — é múltiplo disto aqui.',
     preco: 1700,
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [],
     observacao: 'R$ 1.700 na linha Jaecoo e R$ 1.800 na linha Omoda.',
   },
@@ -284,7 +289,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
       { t: '25-37s', label: 'A OBJEÇÃO', line: '"Coloco depois num lugar qualquer." Aí é solda em carro novo, e o cliente perde a garantia da estrutura. Diga isso uma vez e deixe ele pensar.' },
       { t: '37-45s', label: 'QUANDO OFERECER', line: 'Na qualificação, junto de "o que você faz no fim de semana?". É o único da lista que entra cedo na conversa.' },
     ],
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [
       { modelo: 'Linha Jaecoo', pn: 'FR907' },
       { modelo: 'Linha Omoda', pn: 'FR916' },
@@ -306,7 +311,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
       { t: '25–37s', label: 'A OBJEÇÃO', line: 'Orçamento de repintura de capô na tela. FALAR: “Ele vai achar caro. Repintar um capô custa quase isso, e nunca fica no tom exato do resto do carro. O PPF sai depois e a pintura continua intacta embaixo.”' },
       { t: '37–45s', label: 'QUANDO OFERECER', line: 'Fecha no capô protegido. FALAR: “Depois do sim do carro. E se ele achar caro, ofereça a soleira e quina, por setecentos e cinquenta.”' },
     ],
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [],
   },
   {
@@ -325,7 +330,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
       { t: '25-37s', label: 'A OBJEÇÃO', line: '"Dezessete mil num carro novo?" O caminho não é o preço, é a revenda: pintura original é o que sustenta o valor na tabela. E se achar demais, o frontal resolve a parte que mais sofre.' },
       { t: '37-45s', label: 'QUANDO OFERECER', line: 'Depois do sim do carro, nunca antes. No meio da negociação vira mais um número e derruba a conversa toda.' },
     ],
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [],
   },
   {
@@ -337,7 +342,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'A prova está no pátio: mostre a soleira riscada de um seminovo. É o degrau de entrada da linha de proteção — quando o cliente achar o PPF frontal caro, este resolve o arranhão mais comum por uma fração.',
     preco: 750,
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [],
   },
   {
@@ -349,7 +354,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'Quase nunca é recusado. O momento é a entrega, junto do tapete premium: os dois protegem a mesma área e somam pouco na parcela.',
     preco: 500,
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [],
   },
   {
@@ -361,7 +366,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'Pergunte onde ele estaciona todo dia. Shopping, garagem de prédio e rua respondem sozinhos. É o seguro mais barato contra o amassado que ninguém assume.',
     preco: 700,
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [],
   },
   {
@@ -373,7 +378,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'Mostre encaixada no carro exposto: é peça moldada pro modelo, não tapete cortado. Fecha fácil na sequência do revestimento de assoalho — mesma dor, mesmo cliente.',
     preco: 1100,
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [{ modelo: 'Linha Omoda|Jaecoo', pn: '299090' }],
   },
   {
@@ -385,7 +390,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'É venda de gosto, não de necessidade, então mire em quem escolheu cor clara: o contraste é o que dá o efeito. Foto do antes e depois no mesmo modelo resolve a conversa.',
     preco: 2900,
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [],
   },
   {
@@ -397,7 +402,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'A hora certa é logo depois de fechar o ploter: "ficou ótimo, agora protege". Sem ele o sol come o vinil, e refazer custa mais que proteger.',
     preco: 3990,
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [],
   },
   {
@@ -409,7 +414,7 @@ export const CATALOGO_ACESSORIOS: Acessorio[] = [
     comoOferecer:
       'O cliente se identifica sozinho: quem sobe o volume no test drive é quem compra. Deixe tocando quando ele entrar no carro e espere a pergunta.',
     preco: 2000,
-    aplicaEm: [JAECOO, O5, O7, E5],
+    aplicaEm: [JAECOO, J5, O5, O7, E5],
     codigos: [],
   },
   {

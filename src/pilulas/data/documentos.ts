@@ -97,6 +97,12 @@ export const DOCUMENTOS: Documento[] = [
     arquivo: '/docs/ramasa/ficha-jaecoo-7.pdf', paginas: 3, atualizado: 'set/2026',
   },
   {
+    id: 'ficha-jaecoo-5', brand: 'ramasa', prateleira: 'ficha',
+    titulo: 'Ficha técnica — Jaecoo 5 SHS-H',
+    paraQue: 'O híbrido que não precisa de tomada, número por número: motor, consumo, autonomia e itens de série.',
+    arquivo: '/docs/ramasa/ficha-jaecoo-5.pdf', paginas: 2, atualizado: 'set/2026',
+  },
+  {
     id: 'ficha-omoda-5', brand: 'ramasa', prateleira: 'ficha',
     titulo: 'Ficha técnica — Omoda 5 SHS-H',
     paraQue: 'Luxury e Prestige lado a lado, com o que muda entre as duas.',

@@ -1,0 +1,98 @@
+[
+ {
+  "id": "01-abre",
+  "fala": "Este é o Painel do gestor. Daqui você vê o time, publica o conteúdo e mantém a tabela do mês. O que você publica aqui aparece no celular do time na hora."
+ },
+ {
+  "id": "02-resultados",
+  "fala": "O Painel tem duas abas. A primeira, Resultados, mostra quantas pessoas usaram o app no mês, quantos vídeos o time assistiu e como isso evoluiu mês a mês."
+ },
+ {
+  "id": "02b-ranking",
+  "fala": "Descendo nessa mesma aba: quem mais se dedica no mês, quantas pílulas cada um assistiu e quantos carros já domina. É por aqui que você vê com quem sentar."
+ },
+ {
+  "id": "03-conteudo",
+  "fala": "Na aba Conteúdo está o resto. Vamos pela ordem em que você vai usar."
+ },
+ {
+  "id": "04-novo-carro",
+  "fala": "Carro novo entra aqui, em Novo item. Nome, o que trava a venda, o que é o carro, os pontos fortes e a frase de fechamento. O vídeo pode ser um MP4 ou o link de um reel."
+ },
+ {
+  "id": "05-editar-carro",
+  "fala": "Para editar um carro que já existe, abra ele e toque em Trocar o vídeo daqui. É onde ficam o vídeo padrão, o vídeo de cada público e a foto de capa."
+ },
+ {
+  "id": "06-niveis-video",
+  "fala": "E aqui embaixo, o vídeo de cada nível da trilha. Cada carro tem seis episódios, e cada um tem o arquivo dele. O que ainda não foi gravado roda o roteiro animado daquele nível."
+ },
+ {
+  "id": "07-acessorios",
+  "fala": "Os acessórios ficam aqui. No acesso de gerente de vendas esta lista é de consulta: quem mantém a tabela é o supervisor e o gerente de acessórios. Vale conhecer a tela deles, que vem agora."
+ },
+ {
+  "id": "08-edita-acessorio",
+  "fala": "Na tela de quem mantém a tabela, o lápis corrige o que o time lê: o nome, o que resolve pro cliente, como oferecer e de onde vem a peça. As setas arrumam a ordem da vitrine e a lixeira tira de cartaz sem apagar. O preço fica de fora daqui de propósito: ele tem um lugar só, no toque em cima do valor."
+ },
+ {
+  "id": "09-novo-acessorio",
+  "fala": "E acessório novo entra em Novo acessório. Marque em quais carros ele entra: é isso que faz ele aparecer dentro do modelo, que é onde acessório se vende. Depois abra ele no catálogo e suba a foto."
+ },
+ {
+  "id": "10-condicoes",
+  "fala": "A carta do mês sobe em Subir tabela. Você joga o PDF inteiro, e o app separa uma condição por página, com o título já sugerido pelo modelo."
+ },
+ {
+  "id": "11-editar-cond",
+  "fala": "No lápis você corrige sem apagar. E tem um botão que evita o esquecimento do mês: até a virada do mês marca o dia em que ela sai sozinha, pulando fim de semana e feriado."
+ },
+ {
+  "id": "12-ia-le",
+  "fala": "Esta parte é importante. A folha é imagem, e a inteligência artificial não enxerga imagem: ela responde a partir deste texto. Se o Tira-dúvida falar um número que não bate com a folha, é aqui que se corrige."
+ },
+ {
+  "id": "13-arte",
+  "fala": "E aqui você libera a arte que o vendedor manda pro cliente. Você escreve uma vez a frase que pode ser anunciada, e o time inteiro manda a mesma coisa. Entrada, bônus de troca e rebate não entram nessa peça."
+ },
+ {
+  "id": "14-documentos",
+  "fala": "Em Documentos você sobe PDF novo e tira do ar o que venceu. O que está marcado como interno o app nunca oferece pra encaminhar."
+ },
+ {
+  "id": "14b-ritual-condicoes",
+  "fala": "Do dia um ao dia cinco, o app te cobra o começo do mês: publicar a tabela da montadora, tirar do ar a do mês passado e atualizar as campanhas de incentivo. O botão só libera com os três itens marcados, e o ok fica gravado com o seu nome e a hora."
+ },
+ {
+  "id": "14c-ritual-qualidade",
+  "fala": "Cada cargo tem o seu. No primeiro dia útil, quem cuida da qualidade recebe a revisão do mês: carros, condições, acessórios, documentos e objeções, uma frente de cada vez. Quem mantém acessórios recebe a dele nos mesmos dias um a cinco."
+ },
+ {
+  "id": "15-ver-como-time",
+  "fala": "E a aba Ver como time mostra o app exatamente como o vendedor vê. Antes de cobrar, confira aqui se o que você publicou chegou."
+ },
+ {
+  "id": "15b-jornada-time",
+  "fala": "Vale conhecer a Jornada, que é a aba do time: nove etapas do atendimento do lead que chega pela internet, cada uma com a mensagem pronta e o material para mandar. É por ela que você cobra o passo a passo, em vez de cobrar só o resultado."
+ },
+ {
+  "id": "17-instalar",
+  "fala": "Antes de terminar: transforme o Eleva em aplicativo no seu celular. A instrução está dentro do app, em Perfil. São três passos, e leva dez segundos."
+ },
+ {
+  "id": "18-instalar-1",
+  "fala": "Passo um: no Safari, toque em Compartilhar. É o quadrado com a seta para cima, na barra de baixo do navegador."
+ },
+ {
+  "id": "19-instalar-2",
+  "fala": "Passo dois: desça a lista e escolha Adicionar à Tela de Início. Precisa ser pelo Safari — se você abriu por dentro do WhatsApp, essa opção não aparece."
+ },
+ {
+  "id": "20-instalar-3",
+  "fala": "Pronto. O Eleva vira um ícone na tela do seu celular e abre em tela cheia, sem você procurar a aba no meio das outras."
+ },
+ {
+  "id": "16-fim",
+  "fala": "Resumo: carro e acessório novos entram na aba Conteúdo. Preço e texto se corrigem na linha. A carta do mês sobe inteira e sai sozinha. O que a inteligência artificial responde, você confere e corrige. E no começo de cada mês o app te lembra do que precisa ser atualizado."
+ }
+]

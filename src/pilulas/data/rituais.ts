@@ -74,7 +74,7 @@ export const RITUAIS: Ritual[] = [
   },
   {
     id: 'vendedor-campanha',
-    cargos: ['vendedor-veiculos', 'vendedor-acessorios', 'executivo-leads'],
+    cargos: ['vendedor-veiculos', 'vendedor-acessorios', 'fi', 'executivo-leads'],
     titulo: 'A campanha está fechando',
     quando: 'Nos dias 14 e 30',
     porQue:

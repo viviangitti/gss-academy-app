@@ -9,6 +9,7 @@ const gente = (st.documents || []).map((d) => ({ uid: d.name.split('/').pop(), .
 const CARGOS = {
   'vendedor-veiculos': 'Vendedor de veículos',
   'vendedor-acessorios': 'Vendedor de acessórios',
+  fi: 'F&I (financiamento e seguros)',
   'executivo-leads': 'Executivo de leads',
   'gerente-leads': 'Gerente de leads',
   'gerente-veiculos': 'Gerente de vendas',

@@ -52,6 +52,7 @@ export type CargoAuto =
   | 'gerente-veiculos'
   | 'supervisor-vendas'
   | 'vendedor-acessorios'
+  | 'fi'
   | 'gerente-acessorios'
   | 'lider-acessorios'
   | 'gerente-qualidade'
@@ -74,6 +75,15 @@ export const CARGOS_AUTO: Cargo[] = [
   {
     id: 'vendedor-acessorios',
     label: 'Vendedor(a) de acessórios',
+    role: 'balconista',
+  },
+  {
+    // F&I — financiamento e seguros. Veio da Tiger Itumbiara (21/09/2026): a
+    // pessoa que fecha o financiamento e o seguro depois do sim do cliente.
+    // Papel de vendedor de propósito: ela precisa do carro, da condição e da
+    // objeção inteiros, e não do painel de gerência.
+    id: 'fi',
+    label: 'F&I — financiamento e seguros',
     role: 'balconista',
   },
   {

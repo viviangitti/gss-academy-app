@@ -247,6 +247,7 @@ const LOJAS = {
 const CARGOS = {
   'vendedor-veiculos': 'vendedor de veículos',
   'vendedor-acessorios': 'vendedor de acessórios',
+  fi: 'F&I (financiamento e seguros)',
   'gerente-veiculos': 'gerente de vendas',
   'gerente-acessorios': 'gerente de acessórios',
   'lider-acessorios': 'supervisor de acessórios',

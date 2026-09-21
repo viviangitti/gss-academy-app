@@ -38,6 +38,7 @@ const ROLE_LB: Record<string, string> = {
   // Cargos da concessionária — o agrupamento passa a vir por cargo quando ele
   // existe (ver buildReport).
   'vendedor-veiculos': 'Vendedores de veículos', 'vendedor-acessorios': 'Vendedores de acessórios',
+  fi: 'F&I',
   'gerente-veiculos': 'Gerentes de vendas', 'supervisor-vendas': 'Supervisores de vendas',
   'gerente-acessorios': 'Gerentes de acessórios',
   'lider-acessorios': 'Supervisores de acessórios', 'gerente-qualidade': 'Qualidade',

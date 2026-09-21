@@ -7,6 +7,7 @@ const CARRO_NOME = { 'jaecoo-7':'Jaecoo 7 SHS-P', 'jaecoo-5':'Jaecoo 5 SHS-H', '
 const GRUPOS = [
   ['Vendedores de veículos', ['vendedor-veiculos']],
   ['Vendedores de acessórios', ['vendedor-acessorios']],
+  ['F&I (financiamento e seguros)', ['fi']],
   ['Leads', ['executivo-leads', 'gerente-leads']],
   ['Gestão', ['gerente-veiculos', 'gerente-acessorios', 'lider-acessorios', 'gerente-qualidade']],
   ['Sem cargo definido no cadastro', ['']],

@@ -51,7 +51,7 @@ export function primeiroDiaUtil(d: Date): number {
 export const RITUAIS: Ritual[] = [
   {
     id: 'qualidade-revisao',
-    cargos: ['gerente-qualidade'],
+    cargos: ['lider-qualidade', 'gerente-qualidade'],
     titulo: 'Revisão do mês',
     quando: 'No primeiro dia útil do mês',
     porQue:

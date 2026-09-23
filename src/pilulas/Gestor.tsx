@@ -41,7 +41,7 @@ const ROLE_LB: Record<string, string> = {
   fi: 'F&I',
   'gerente-veiculos': 'Gerentes de vendas', 'supervisor-vendas': 'Supervisores de vendas',
   'gerente-acessorios': 'Gerentes de acessórios',
-  'lider-acessorios': 'Supervisores de acessórios', 'gerente-qualidade': 'Qualidade',
+  'lider-acessorios': 'Supervisores de acessórios', 'lider-qualidade': 'Líderes de qualidade', 'gerente-qualidade': 'Qualidade',
   'executivo-leads': 'Executivos de leads', 'gerente-leads': 'Gerentes de leads',
 };
 // Singular certo por papel — antes o código tirava só o último "s" do plural, o

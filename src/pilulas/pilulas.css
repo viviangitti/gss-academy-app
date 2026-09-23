@@ -4342,3 +4342,20 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   color: #6b4f0b;
   border: 1px solid #e0c87e;
 }
+
+/* Filtro de lojas do Painel. Aparece só quando o time tem mais de uma unidade
+   — é o que permite comparar Goiânia com Itumbiara sem abrir relatório. */
+.wp-gz-lojas { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; }
+.wp-gz-loja {
+  border: 1.5px solid var(--wp-border);
+  background: var(--wp-bg);
+  color: var(--wp-text);
+  border-radius: 99px;
+  padding: 7px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.wp-gz-loja.on { background: var(--wp-pink); border-color: var(--wp-pink); color: var(--wp-on-accent); }
+.wp-gz-lojas-nota { margin: 7px 0 0; font-size: 11.5px; color: var(--wp-soft); }

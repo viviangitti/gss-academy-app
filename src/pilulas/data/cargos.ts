@@ -56,7 +56,7 @@ export type CargoAuto =
   | 'gerente-acessorios'
   | 'lider-acessorios'
   | 'lider-qualidade'
-  | 'gerente-qualidade'
+  | 'diretor-qualidade'
   | 'executivo-leads'
   | 'gerente-leads';
 
@@ -111,19 +111,19 @@ export const CARGOS_AUTO: Cargo[] = [
     role: 'gestor',
   },
   {
-    // Os dois cargos de qualidade, do jeito que a casa chama (23/09/2026):
-    // o líder toca a rotina, o gerente responde pela frente. Os dois abrem o
-    // Painel, porque precisam ver o mesmo: o conteúdo publicado e o uso do
-    // time. Nenhuma conta usava o id antigo, então os ids puderam ficar
-    // iguais ao nome — o que evita o mal-entendido de ler 'gerente' no banco
-    // e 'líder' na tela.
+    // Os dois cargos de qualidade da casa (23/09/2026): o líder toca a rotina
+    // de uma operação; o diretor responde pela qualidade do grupo e olha
+    // TODAS as lojas no Painel — é o único cargo cuja função é comparar uma
+    // unidade com a outra. Nenhuma conta usava o id antigo, então os ids
+    // ficaram iguais ao nome, em vez de dizer 'gerente' no banco e outra
+    // coisa na tela.
     id: 'lider-qualidade',
     label: 'Líder de qualidade',
     role: 'gestor',
   },
   {
-    id: 'gerente-qualidade',
-    label: 'Gerente de qualidade',
+    id: 'diretor-qualidade',
+    label: 'Diretor(a) de qualidade',
     role: 'gestor',
   },
   {

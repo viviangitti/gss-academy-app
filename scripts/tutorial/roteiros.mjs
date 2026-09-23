@@ -141,7 +141,7 @@ export const GERENTE = [
     foco: `document.querySelector('.wp-rit')`,
     fala: 'Do dia um ao dia cinco, o app te cobra o começo do mês: publicar a tabela da montadora, tirar do ar a do mês passado e atualizar as campanhas de incentivo. O botão só libera com os três itens marcados, e o ok fica gravado com o seu nome e a hora.' },
   { id: '14c-ritual-qualidade', url: '/eleva', espera: 2800, relogio: '2026-10-01T09:20:00-03:00',
-    usuario: { uid: 'q', name: 'Silmara', email: 'qualidade.demo@gruporamasa.com', role: 'balconista', brands: ['ramasa'], cargo: 'gerente-qualidade' },
+    usuario: { uid: 'q', name: 'Silmara', email: 'qualidade.demo@gruporamasa.com', role: 'balconista', brands: ['ramasa'], cargo: 'lider-qualidade' },
     foco: `document.querySelector('.wp-rit')`,
     fala: 'Cada cargo tem o seu. No primeiro dia útil, quem cuida da qualidade recebe a revisão do mês: carros, condições, acessórios, documentos e objeções, uma frente de cada vez. Quem mantém acessórios recebe a dele nos mesmos dias um a cinco.' },
   { id: '15-ver-como-time', foco: `[...document.querySelectorAll('.wp-nav-item')].find(e=>/Ver como time/.test(e.textContent))`, url: '/eleva/catalogo', espera: 2400,

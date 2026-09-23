@@ -16,7 +16,7 @@ const CARGOS = {
   'gerente-acessorios': 'Gerente de acessórios',
   'lider-acessorios': 'Supervisor de acessórios',
   'lider-qualidade': 'Líder de qualidade',
-  'gerente-qualidade': 'Gerente de qualidade',
+  'diretor-qualidade': 'Diretor de qualidade',
 };
 
 const todos = [];

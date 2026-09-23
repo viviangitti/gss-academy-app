@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, ChevronUp, X, RotateCcw, Undo2, CalendarClock } from 'lucide-react';
 import { useBrand } from './BrandContext';
@@ -12,7 +12,7 @@ import type { OfferKind } from './data/offers';
 import { CHANNELS, type Channel } from './data/creatorContent';
 import { SEGMENTS, segmentLabel } from './data/segments';
 import { topSearches } from './data/insights';
-import { fetchTeam, buildReport, type TeamReport, type TeamPerson } from './data/teamStats';
+import { fetchTeam, buildReport, type TeamPerson } from './data/teamStats';
 import { CAMPANHA, prazoLabel } from './data/campanha';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
 import { DOCUMENTOS, PRATELEIRAS, type PrateleiraId } from './data/documentos';
@@ -41,7 +41,7 @@ const ROLE_LB: Record<string, string> = {
   fi: 'F&I',
   'gerente-veiculos': 'Gerentes de vendas', 'supervisor-vendas': 'Supervisores de vendas',
   'gerente-acessorios': 'Gerentes de acessórios',
-  'lider-acessorios': 'Supervisores de acessórios', 'lider-qualidade': 'Líderes de qualidade', 'gerente-qualidade': 'Qualidade',
+  'lider-acessorios': 'Supervisores de acessórios', 'lider-qualidade': 'Líderes de qualidade', 'diretor-qualidade': 'Diretoria de qualidade',
   'executivo-leads': 'Executivos de leads', 'gerente-leads': 'Gerentes de leads',
 };
 // Singular certo por papel — antes o código tirava só o último "s" do plural, o
@@ -99,16 +99,17 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
   // Denominador: quantos itens têm nível pra destravar. Sem isso a barra
   // mediria contra o catálogo inteiro e ninguém chegaria a 100%.
   const niveis = { total: products.filter((p) => p.niveis?.length).length };
-  const [rep, setRep] = useState<TeamReport | null>(null);
+  const [pessoas, setPessoas] = useState<TeamPerson[] | null>(null);
+  // '' = todas as lojas · 'sem' = quem ainda não escolheu a unidade.
+  const [loja, setLoja] = useState('');
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
     let vivo = true;
     setCarregando(true);
-    const allowed = new Set(products.map((p) => p.id));
     fetchTeam(brandId)
-      .then((people) => { if (vivo) { setRep(buildReport(people, allowed)); setErro(''); } })
+      .then((people) => { if (vivo) { setPessoas(people); setErro(''); } })
       .catch((e: unknown) => {
         if (!vivo) return;
         // Duas falhas MUITO diferentes davam a mesma frase. "Sem internet" a
@@ -127,15 +128,56 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brandId]);
 
+  // O relatório é recalculado a partir do recorte de loja. Antes ele vinha
+  // pronto do fetch, e filtrar por unidade obrigaria a buscar tudo de novo.
+  const allowed = useMemo(() => new Set(products.map((p) => p.id)), [products]);
+  const lojasNoTime = useMemo(
+    () => [...new Set((pessoas || []).map((p) => p.loja).filter(Boolean) as string[])].sort(),
+    [pessoas],
+  );
+  const semLoja = (pessoas || []).some((p) => !p.loja);
+  const rep = useMemo(() => {
+    if (!pessoas) return null;
+    const recorte = !loja ? pessoas : loja === 'sem' ? pessoas.filter((p) => !p.loja) : pessoas.filter((p) => p.loja === loja);
+    return buildReport(recorte, allowed);
+  }, [pessoas, loja, allowed]);
+
+  // A barra de lojas só existe quando há mais de uma unidade no time — numa
+  // loja só, um filtro com uma opção é ruído.
+  const barraDeLojas = lojasNoTime.length > 1 ? (
+    <div className="wp-gz-lojas">
+      <button type="button" className={`wp-gz-loja ${!loja ? 'on' : ''}`} onClick={() => setLoja('')}>Todas as lojas</button>
+      {lojasNoTime.map((l) => (
+        <button type="button" key={l} className={`wp-gz-loja ${loja === l ? 'on' : ''}`} onClick={() => setLoja(l)}>{lojaLabel(l)}</button>
+      ))}
+      {semLoja && (
+        <button type="button" className={`wp-gz-loja ${loja === 'sem' ? 'on' : ''}`} onClick={() => setLoja('sem')}>Sem loja</button>
+      )}
+    </div>
+  ) : null;
+
   if (carregando) return <div className="wp-gz-metrics"><p className="wp-gz-help" style={{ margin: 0 }}>Carregando os dados do time…</p></div>;
   if (erro) return <div className="wp-gz-metrics"><p className="wp-gz-help" style={{ margin: 0 }}>{erro}</p></div>;
-  if (!rep || !rep.people.length) {
+  if (!rep || !pessoas || !pessoas.length) {
     return (
       <div className="wp-gz-metrics">
         <div className="wp-gz-metrics-head"><TrendingUp size={16} className="wp-ico" /> Resultados</div>
         <p className="wp-gz-help" style={{ margin: 0 }}>
           Ainda não há uso registrado. Assim que o time começar a assistir os vídeos, os números aparecem aqui —
           de verdade, sem exemplo.
+        </p>
+      </div>
+    );
+  }
+  // Recorte vazio não é "sem uso": é esta loja que não tem ninguém ainda. A
+  // barra continua na tela, senão a pessoa fica presa no filtro.
+  if (!rep.people.length) {
+    return (
+      <div className="wp-gz-metrics">
+        <div className="wp-gz-metrics-head"><TrendingUp size={16} className="wp-ico" /> Resultados</div>
+        {barraDeLojas}
+        <p className="wp-gz-help" style={{ margin: 0 }}>
+          Ninguém desta loja usou o app ainda. Toque em “Todas as lojas” para ver o grupo inteiro.
         </p>
       </div>
     );
@@ -157,6 +199,15 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
       <div className="wp-gz-metrics-head">
         <TrendingUp size={16} className="wp-ico" /> Resultados <span className="wp-gz-demo">· dado real</span>
       </div>
+
+      {barraDeLojas}
+      {barraDeLojas && (
+        <p className="wp-gz-lojas-nota">
+          {loja
+            ? `Os números abaixo são só de ${loja === 'sem' ? 'quem ainda não escolheu a loja' : lojaLabel(loja)}.`
+            : 'Os números abaixo somam todas as lojas do grupo.'}
+        </p>
+      )}
 
       <div className="wp-gz-kpis">
         <div className="wp-gz-kpi">

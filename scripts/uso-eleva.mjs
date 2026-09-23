@@ -251,7 +251,7 @@ const CARGOS = {
   'gerente-veiculos': 'gerente de vendas',
   'gerente-acessorios': 'gerente de acessórios',
   'lider-acessorios': 'supervisor de acessórios',
-  'gerente-qualidade': 'gerente de qualidade',
+  'gerente-qualidade': 'líder de qualidade',
   'executivo-leads': 'executivo de leads',
   'gerente-leads': 'gerente de leads',
 };

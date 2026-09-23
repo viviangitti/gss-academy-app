@@ -36,7 +36,7 @@
 // outra, e sem o cargo a gerência não consegue separar o que veio da ponta de
 // atendimento do que veio do salão.
 //
-// QUALIDADE: não é par de ninguém. O gerente de qualidade não vende — ele
+// QUALIDADE: não é par de ninguém. O líder de qualidade não vende — ele
 // audita o que o grupo faz, então precisa enxergar o conteúdo inteiro e o uso
 // do time inteiro, sem recorte de loja nem de linha. É o único cargo aqui cuja
 // razão de existir é justamente olhar o trabalho dos outros.
@@ -110,8 +110,11 @@ export const CARGOS_AUTO: Cargo[] = [
     role: 'gestor',
   },
   {
+    // O id continua 'gerente-qualidade' de propósito: é o que está gravado no
+    // banco. Na casa o cargo se chama LÍDER DE QUALIDADE (21/09/2026), e é o
+    // nome que a pessoa lê no cadastro.
     id: 'gerente-qualidade',
-    label: 'Gerente de qualidade',
+    label: 'Líder de qualidade',
     role: 'gestor',
   },
   {
@@ -148,7 +151,7 @@ export function roleDoCargo(id?: string | null): Role {
 //
 // A Vivian foi explícita: editar, remover e ordenar acessório é do SUPERVISOR
 // e do GERENTE DE ACESSÓRIOS. Não é de qualquer gestor — gerente de vendas,
-// gerente de leads e qualidade abrem o mesmo Painel, e nenhum deles responde
+// gerente de leads e líder de qualidade abrem o mesmo Painel, e nenhum responde
 // pela tabela de acessórios. Deixar o botão aparecer pra todo mundo era
 // convite pra dois donos no mesmo dado.
 //

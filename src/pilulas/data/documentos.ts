@@ -99,8 +99,17 @@ export const DOCUMENTOS: Documento[] = [
   {
     id: 'ficha-jaecoo-5', brand: 'ramasa', prateleira: 'ficha',
     titulo: 'Ficha técnica — Jaecoo 5 SHS-H',
-    paraQue: 'O híbrido que não precisa de tomada, número por número: motor, consumo, autonomia e itens de série.',
+    paraQue: 'O híbrido que não precisa de tomada, número por número — e os equipamentos da COMFORT e da PRESTIGE lado a lado, como a marca publicou.',
     arquivo: '/docs/ramasa/ficha-jaecoo-5.pdf', paginas: 2, atualizado: 'set/2026',
+  },
+  {
+    id: 'treinamento-jaecoo-5', brand: 'ramasa', prateleira: 'venda',
+    titulo: 'Jaecoo 5 — treinamento de lançamento',
+    paraQue: 'O que a marca apresentou na transmissão de 24/09: conteúdo por versão, cores, os dois comparativos e o roteiro dos 6 passos.',
+    arquivo: '/docs/ramasa/treinamento-jaecoo-5.pdf', paginas: 3, atualizado: 'set/2026',
+    // A própria marca carimbou "divulgação externa proibida" no rodapé, e o
+    // documento traz o comparativo com o concorrente. Não vai para o cliente.
+    interno: true,
   },
   {
     id: 'ficha-omoda-5', brand: 'ramasa', prateleira: 'ficha',

@@ -1219,14 +1219,15 @@ export const PRODUCTS: Product[] = [
     tagline: 'O SUV compacto da Jaecoo: híbrido de 224 cv que não precisa de tomada e faz quase 800 km de autonomia na cidade.',
     hook: 'O cliente quer a economia do híbrido, mas mora em apartamento sem tomada — e acha que isso o obriga a continuar no carro a gasolina.',
     whatItIs:
-      'O Jaecoo 5 é o SUV compacto da marca, com o sistema SHS híbrido pleno: motor 1.5 TGDI turbo somado a um elétrico de 204 cv, 224 cv combinados e câmbio DHT de uma marcha. A bateria de 1,83 kWh se recarrega sozinha, na condução e na frenagem: o carro nunca vê uma tomada. Chega abaixo do Jaecoo 7, para quem quer o mesmo pacote de tecnologia num carro de cidade.',
+      'O Jaecoo 5 é o SUV compacto da marca, com o sistema SHS híbrido pleno: motor 1.5 TGDI turbo somado a um elétrico de 204 cv, 224 cv combinados e câmbio DHT de uma marcha. A bateria de 1,83 kWh se recarrega sozinha, na condução e na frenagem: o carro nunca vê uma tomada. Chega em duas versões — COMFORT e PRESTIGE —, abaixo do Jaecoo 7, para quem quer o mesmo pacote de tecnologia num carro de cidade.',
     benefits: [
       '224 cv combinados num SUV compacto — mais potência que a maioria dos rivais dessa faixa, que ficam entre 150 e 190 cv',
       'Híbrido pleno de verdade: recarrega na condução e na frenagem, sem tomada, sem wallbox e sem conta de luz',
       '15,5 km/l na cidade e 13,7 km/l na estrada — e a cidade, que costuma ser o pior número, aqui é o melhor',
       '791 km de autonomia urbana com um tanque de 51 litros: quem roda 40 km por dia abastece uma vez por mês',
       '0 a 100 km/h em 7,9 segundos — é o argumento do test drive, não da ficha',
-      'Câmera 360°, seis airbags, ADAS e freio de estacionamento eletrônico com auto hold já na versão com ficha publicada',
+      'A versão de entrada já vem com rodas 18", ar dual zone, seis airbags, freio de estacionamento eletrônico com auto hold, sensor de chuva e partida sem botão',
+      'Na PRESTIGE: multimídia de 13,2" Ultra HD 2K, som Sony de 8 alto-falantes, câmera 540°, teto panorâmico Sky Screen, bancos ventilados e pacote ADAS 2.5 com 17 recursos',
       'Suspensão traseira independente multibraço, que a concorrência dessa faixa quase sempre entrega como eixo de torção',
       'Plataforma T1X, a mesma família de arquitetura dos outros SUVs do grupo — peça e rede já existem no Brasil',
     ],
@@ -1262,13 +1263,48 @@ export const PRODUCTS: Product[] = [
           'Na prática costuma ser o contrário: o motor elétrico ajuda na arrancada, o freio regenerativo poupa pastilha e o motor a combustão trabalha menos. A revisão é a mesma da rede, com preço publicado pela marca, e a gente pode ver o plano junto agora. O que encarece híbrido é bateria grande de plug-in — esta aqui é pequena.',
       },
       {
+        trigger: '"Na Comfort também tem teto panorâmico?"',
+        answer:
+          'Não. O teto panorâmico Sky Screen é da PRESTIGE — e essa é uma das perguntas que mais aparece, então é melhor responder antes que ele descubra na entrega. Na COMFORT o pacote de conforto é outro: ar-condicionado digital de duas zonas, sensor de chuva, acendimento automático dos faróis e freio de estacionamento eletrônico com auto hold, tudo de série.',
+      },
+      {
+        trigger: '"Quantas opções de roda tem?"',
+        answer:
+          'Uma só, e é a boa notícia: roda de liga leve aro 18" nas duas versões, com pneu 235/55 R18. No comparativo da própria marca, dos cinco concorrentes listados só o Renegade também entrega 18" — Creta, WR-V, Nivus e Atto 2 vêm de 17".',
+      },
+      {
+        trigger: '"Qual a diferença entre a Comfort e a Prestige?"',
+        answer:
+          'A PRESTIGE tem tudo da COMFORT e acrescenta o pacote de tecnologia e conforto: multimídia de 13,2" Ultra HD 2K, comando de voz, karaokê, câmera 540° com sensores na frente e atrás, teto Sky Screen, faróis Full LED, porta-malas elétrico, keyless entry, som Sony de 8 alto-falantes, bancos dianteiros elétricos e ventilados, ADAS 2.5 com 17 recursos, carregador por indução com ventilação, iluminação ambiente, rack de teto e retrovisores rebatíveis. Motor e câmbio são os mesmos nas duas.',
+      },
+      {
+        trigger: '"A partida da Comfort é igual à da Prestige?"',
+        answer:
+          'Parecida, mas não é a mesma coisa — e vale explicar. A COMFORT tem partida sem botão (Contactless Power-On): você entra com a chave no bolso e o carro liga. A chave presencial completa, o keyless entry, é da PRESTIGE. Na prática: nas duas você não usa a chave para ligar; na PRESTIGE você também não usa para destravar.',
+      },
+      {
+        trigger: '"Quais cores eu posso pedir?"',
+        answer:
+          'Cinco. Preto Andrômeda, Azul Gaia e Cinza Centaurus saem nas duas versões. O Branco Artic com teto preto é exclusivo da PRESTIGE, e o Branco Artic liso, só na COMFORT. O interior é sempre preto, com forro de teto claro — não existe outra combinação para escolher.',
+      },
+      {
+        trigger: '"Ele tem os assistentes de condução, o tal do ADAS?"',
+        answer:
+          'Na PRESTIGE, sim: pacote ADAS 2.5, com 17 recursos. Na COMFORT o que existe nessa linha é controle de velocidade de cruzeiro com limitador. Não prometa ADAS na COMFORT — esse é o tipo de item que o cliente vai procurar no primeiro fim de semana.',
+      },
+      {
+        trigger: '"Quanto ele mede? Cabe na minha garagem?"',
+        answer:
+          'São 4,38 m de comprimento, 1,86 m de largura e 1,65 m de altura, com 2,62 m entre-eixos e porta-malas de 410 litros. É compacto o bastante para manobrar e estacionar na cidade, com porte de SUV. Se a garagem for apertada, me manda a medida que eu confiro com você antes da visita.',
+      },
+      {
         trigger: '"Por que não levo logo o Jaecoo 7?"',
         answer:
           'Pode levar, e eu te mostro os dois. A diferença é o uso: o 7 é plug-in, maior, e rende mais para quem tem onde carregar e faz muita estrada. O 5 é de cidade, não pede tomada e pesa menos no bolso na entrada. Me diz quantos quilômetros você roda por dia e onde o carro dorme, que a escolha se resolve sozinha.',
       },
     ],
     compliance:
-      'Carro de lançamento: itens de série, versões e prazo de entrega ainda podem mudar por lote. Números desta pílula são da ficha técnica publicada da versão Comfort 1.5 HEV — confirme na tabela vigente e na condição do dia antes de prometer ao cliente.',
+      'Conteúdo por versão, cores e comparativos vieram do treinamento de lançamento da marca (24/09/2026). Carro de lançamento: itens, versões e prazo de entrega ainda podem mudar por lote — confirme na tabela vigente antes de prometer. Atenção a um número: a página de conteúdo do treinamento e a ficha técnica trazem 224 cv, e o slide do comparativo traz 279 cv. Enquanto a marca não confirmar, use 224 cv.',
     fotos: ['/carros/jaecoo-5-1.jpg', '/carros/jaecoo-5-2.jpg', '/carros/jaecoo-5-3.jpg', '/carros/jaecoo-5-4.jpg'],
     etiqueta: 'Lançamento',
     destaques: [
@@ -1276,38 +1312,67 @@ export const PRODUCTS: Product[] = [
       { titulo: 'Um mês inteiro entre um posto e outro', prova: '791 km de autonomia urbana e tanque de 51 litros' },
       { titulo: 'Anda como carro grande quando você pisa', prova: '224 cv combinados e 0 a 100 km/h em 7,9 segundos' },
       { titulo: 'A cidade deixou de ser o pior consumo', prova: '15,5 km/l no urbano, contra 13,7 na estrada' },
-      { titulo: 'Enxerga o que você não vê ao manobrar', prova: 'Câmera 360°, sensores na frente e atrás' },
+      { titulo: 'Enxerga o que você não vê ao manobrar', prova: 'Câmera 540° com sensores na frente e atrás na PRESTIGE; câmera de ré com linhas-guia e sensores traseiros na COMFORT' },
+      { titulo: 'Conteúdo de intermediária já na versão de entrada', prova: 'Rodas 18", ar dual zone, seis airbags e freio eletrônico com auto hold de série na COMFORT' },
     ],
     durationSec: 45,
     gradient: ['#2f7fe0', '#12406f'],
+    // AS DUAS VERSÕES, COMO A MARCA PUBLICOU NO TREINAMENTO DE LANÇAMENTO.
+    //
+    // Esta lista substituiu a que tinha sido montada pela ficha de internet, e
+    // não foi um detalhe: a de antes dava à COMFORT multimídia de 12", câmera
+    // 360°, faróis full LED e chave presencial. Nada disso é dela — é tudo da
+    // PRESTIGE. Vendedor que decora a lista errada promete na venda o que o
+    // cliente não acha na entrega.
     versoes: [
       {
-        nome: 'COMFORT 1.5 HEV',
-        paraQuem: 'A versão com ficha técnica publicada — é a que está na pré-venda.',
+        nome: 'COMFORT',
+        paraQuem: 'A versão de entrada — e já chega com o que a categoria costuma cobrar à parte.',
         vemCom: [
-          'Sistema híbrido SHS: 1.5 TGDI + motor elétrico de 204 cv, 224 cv combinados',
-          'Câmbio automático DHT de 1 marcha, tração dianteira',
-          'Bateria de 1,83 kWh, recarregada pela condução e pela frenagem',
-          'Rodas de liga leve aro 18 com pneus 235/55 R18',
-          'Suspensão independente nas quatro rodas (McPherson e multibraço)',
-          'Freios a disco nas quatro rodas',
-          'Seis airbags — frontais, laterais, de cortina e central dianteiro',
-          'Câmera 360° e câmera de ré, com sensores dianteiros e traseiros',
-          'Controle de estabilidade e tração, assistente de partida em rampa e controle de descida',
-          'Faróis full LED com acendimento automático',
-          'Ar-condicionado automático de duas zonas com saídas traseiras',
-          'Chave presencial com partida remota do motor',
-          'Freio de estacionamento eletrônico com auto hold',
-          'Central multimídia com tela flutuante de cerca de 12" e espelhamento de celular',
-          'Painel de instrumentos digital',
-          'Porta-luvas climatizado, start-stop e monitoramento de pressão dos pneus',
+          'Motorização SHS-H com 224 cv',
+          'Tanque de combustível de 51 L',
+          'Rodas de liga leve de 18"',
+          'Ar-condicionado automático digital Dual Zone',
+          'Sensor de chuva',
+          'Acendimento automático dos faróis',
+          'Bancos em tecido',
+          'Freio de estacionamento eletrônico com função Auto Hold',
+          '6 airbags',
+          'Partida sem botão (Contactless Power-On)',
+          'Câmera de ré com linhas-guia e sensores de estacionamento traseiros',
+          'Sistema de som com 6 alto-falantes',
+          'Multimídia de 9" Full HD com Android Auto / Apple CarPlay sem fio',
+          'Controle de velocidade de cruzeiro e limitador de velocidade',
+        ],
+      },
+      {
+        nome: 'PRESTIGE',
+        paraQuem: 'Para quem não abre mão de teto, som e tela grande — é onde estão os itens que o cliente mostra para os outros.',
+        herda: 'COMFORT',
+        vemCom: [
+          'Central multimídia de alta resolução com 13,2" (Ultra HD 2K, até 1.000 nits de brilho)',
+          'Sistema de voz para comandos do veículo',
+          'Sistema de karaokê',
+          'Câmera panorâmica 540° com sensores dianteiros e traseiros',
+          'Teto panorâmico Sky Screen',
+          'Faróis dianteiros Full LED',
+          'Porta-malas elétrico',
+          'Keyless entry (chave presencial)',
+          'Sistema de som premium Sony com 8 alto-falantes',
+          'Bancos e volante revestidos em material premium sintético (Organosilicone)',
+          'Bancos dianteiros elétricos e ventilados',
+          'Pacote ADAS 2.5 com 17 recursos',
+          'Carregador de celular por indução rápido com ventilação',
+          'Iluminação ambiente',
+          'Rack de teto longitudinal',
+          'Retrovisores rebatíveis eletricamente',
         ],
       },
     ],
     fichaPdf: '/docs/ramasa/ficha-jaecoo-5.pdf',
     ficha: [
       { label: 'Marca', value: 'Jaecoo (grupo Chery)' },
-      { label: 'Versão com ficha publicada', value: 'Comfort 1.5 HEV' },
+      { label: 'Versões', value: 'COMFORT e PRESTIGE — mesmo motor e mesmo câmbio nas duas' },
       { label: 'Tipo', value: 'Híbrido pleno (SHS) — recarrega sozinho, nunca vê tomada' },
       { label: 'Motor a combustão', value: '1.5 TGDI turbo, injeção direta — 20,4 kgfm a 2.500 rpm' },
       { label: 'Motor elétrico', value: '204 cv e 31,6 kgfm, dianteiro' },
@@ -1324,10 +1389,18 @@ export const PRODUCTS: Product[] = [
       { label: 'Entre-eixos', value: '2.620 mm' },
       { label: 'Porta-malas', value: '410 litros' },
       { label: 'Suspensão', value: 'Independente nas quatro rodas — McPherson na frente, multibraço atrás' },
-      { label: 'Rodas e pneus', value: 'Liga leve aro 18 · 235/55 R18 · estepe é kit de reparo' },
+      { label: 'Rodas e pneus', value: 'Liga leve aro 18" nas duas versões · 235/55 R18 · estepe é kit de reparo' },
+      { label: 'Multimídia', value: 'COMFORT: 9" Full HD com Android Auto e Apple CarPlay sem fio · PRESTIGE: 13,2" Ultra HD 2K, até 1.000 nits' },
+      { label: 'Som', value: 'COMFORT: 6 alto-falantes · PRESTIGE: Sony premium com 8 alto-falantes' },
+      { label: 'Câmeras e sensores', value: 'COMFORT: câmera de ré com linhas-guia e sensores traseiros · PRESTIGE: câmera 540° com sensores dianteiros e traseiros' },
+      { label: 'Assistência à condução', value: 'COMFORT: cruise control com limitador · PRESTIGE: pacote ADAS 2.5 com 17 recursos' },
+      { label: 'Teto', value: 'Panorâmico Sky Screen — só na PRESTIGE' },
+      { label: 'Bancos', value: 'COMFORT: tecido · PRESTIGE: material premium sintético (Organosilicone), dianteiros elétricos e ventilados' },
+      { label: 'Cores', value: 'Preto Andrômeda, Azul Gaia e Cinza Centaurus nas duas versões · Branco Artic com teto preto só na PRESTIGE · Branco Artic só na COMFORT' },
+      { label: 'Interior', value: 'Sempre preto, com forro de teto claro — não há outra combinação' },
       { label: 'Plataforma', value: 'T1X' },
       { label: 'Lugares', value: '5' },
-      { label: 'Fonte dos números', value: 'Ficha técnica publicada da versão Comfort 1.5 HEV. Carro de lançamento: confirme o line-up e os itens na tabela vigente.' },
+      { label: 'Fonte', value: 'Conteúdo por versão, cores e comparativos: treinamento de lançamento da marca, 24/09/2026. Números de motor, consumo e medidas: ficha técnica publicada. Carro de lançamento — confirme o line-up na tabela vigente.' },
     ],
     storyboard: [
       { t: '0-8s', label: 'A PERGUNTA QUE ABRE', line: 'Antes de falar do carro, pergunte: você tem onde carregar em casa? Se a resposta for não, o Jaecoo 5 é a resposta.' },
@@ -1336,45 +1409,61 @@ export const PRODUCTS: Product[] = [
       { t: '30-40s', label: 'A CONTA DO MÊS', line: '15,5 km/l na cidade e 791 km de autonomia urbana. Quem roda 40 km por dia abastece uma vez por mês.' },
       { t: '40-45s', label: 'O FECHAMENTO', line: 'Pergunte quanto ele roda por dia e onde o carro dorme. É com essas duas respostas que você mostra a economia em números.' },
     ],
+    // SEIS NÍVEIS, agora com a versão no meio de tudo.
+    //
+    // O treinamento de lançamento (24/09/2026) trouxe duas versões, o conteúdo
+    // item por item, as cores e dois comparativos. Os níveis 3 e 6 foram
+    // reescritos por causa disso — o que estava aqui dava à COMFORT itens que
+    // são da PRESTIGE — e o nível 5 nasceu com a pergunta que decide a venda.
     niveis: [
       {
         titulo: 'Por dentro',
-        foco: 'Passo 4 da montadora: o que o cliente sente ao sentar num compacto que não parece compacto.',
+        foco: 'Passo 3 da marca — a lateral: porte de SUV, as rodas de série e a segurança que já vem na versão de entrada.',
         storyboard: [
-          { t: '0-8s', label: 'A REGRA', line: 'Deixe o cliente sentar e ficar em silêncio cinco segundos. É nesse tempo que ele decide se o carro parece caro ou barato.' },
-          { t: '8-20s', label: 'O ESPAÇO DE TRÁS', line: 'Sente atrás com ele. São 2,62 m entre-eixos: para um carro de 4,38 m, é onde o Jaecoo 5 ganha da categoria.' },
-          { t: '20-32s', label: 'O PORTA-MALAS', line: '410 litros. Peça para ele trazer o carrinho ou a mala de sempre no test drive: colocar dentro vale mais que dizer o número.' },
-          { t: '32-45s', label: 'O ACABAMENTO', line: 'Mostre o porta-luvas climatizado e o freio eletrônico com auto hold. São itens que a faixa costuma cobrar à parte.' },
+          { t: '0-10s', label: 'A LATERAL', line: 'A linha de cintura alta dá o porte de SUV, e as linhas retas rendem espaço para gente e bagagem. As rodas 18 são de série nas duas versões — a categoria quase toda entrega 17.' },
+          { t: '10-22s', label: 'O ESPAÇO DE TRÁS', line: 'Sente atrás com ele. São 2,62 m entre-eixos para um carro de 4,38 m: é aí que o Jaecoo 5 ganha da categoria.' },
+          { t: '22-34s', label: 'O PORTA-MALAS', line: '410 litros. Peça para ele trazer o carrinho ou a mala de sempre no test drive: colocar dentro vale mais que dizer o número.' },
+          { t: '34-45s', label: 'SEGURANÇA DE SÉRIE', line: 'Seis airbags desde a COMFORT — frontais, laterais e de cortina. É proteção na versão de entrada, não item de versão cara.' },
         ],
       },
       {
         titulo: 'Cabine e tecnologia',
-        foco: 'Passo 5: o que as telas resolvem no dia a dia — não a lista de recursos.',
+        foco: 'Passo 6 da marca — a cabine, versão por versão. É aqui que o vendedor mais promete o que não é da COMFORT.',
         storyboard: [
-          { t: '0-10s', label: 'A TELA', line: 'Multimídia flutuante de cerca de 12 polegadas com espelhamento do celular. Ligue o Waze do cliente na tela antes de sair para o test drive.' },
-          { t: '10-24s', label: 'A MANOBRA', line: 'Câmera 360° com sensores na frente e atrás. Estacione com ele olhando a tela: é o item que mais converte em cliente que mora em prédio.' },
-          { t: '24-36s', label: 'O DIA A DIA', line: 'Chave presencial com partida remota: no calor, ele liga o ar do apartamento antes de descer. Conte isso, não o nome do recurso.' },
-          { t: '36-45s', label: 'A SEGURANÇA', line: 'Seis airbags, controle de estabilidade, assistente de rampa e controle de descida. Diga o que cada um evita, não a sigla.' },
+          { t: '0-12s', label: 'A TELA MUDA COM A VERSÃO', line: 'COMFORT: multimídia de 9 polegadas Full HD, com Android Auto e CarPlay sem fio. PRESTIGE: 13,2 polegadas, Ultra HD 2K e até mil nits — lê claro mesmo com sol batendo.' },
+          { t: '12-24s', label: 'A MANOBRA', line: 'COMFORT tem câmera de ré com linhas-guia e sensores atrás. PRESTIGE tem câmera panorâmica 540 com sensores na frente e atrás. Não prometa 540 na COMFORT.' },
+          { t: '24-34s', label: 'A CONDUÇÃO ASSISTIDA', line: 'O pacote ADAS 2.5, com 17 recursos, é da PRESTIGE. Na COMFORT o que existe nessa linha é o controle de cruzeiro com limitador.' },
+          { t: '34-45s', label: 'O QUE ELE VAI MOSTRAR AOS OUTROS', line: 'Na PRESTIGE: bancos dianteiros elétricos e ventilados, som Sony de 8 alto-falantes, teto Sky Screen, karaokê e carregador por indução com ventilação.' },
         ],
       },
       {
         titulo: 'Motorização',
-        foco: 'Passo 6: o sistema SHS sem tomada — o argumento que fecha com quem mora em apartamento.',
+        foco: 'O sistema SHS sem tomada — o argumento que fecha com quem mora em apartamento.',
         storyboard: [
           { t: '0-10s', label: 'COMO FUNCIONA', line: 'Dois motores: 1.5 turbo e um elétrico de 204 cv. O câmbio DHT tem uma marcha só, então não existe solavanco de troca.' },
           { t: '10-22s', label: 'A BATERIA', line: '1,83 kWh. Pequena de propósito: ela enche e esvazia o tempo todo com a frenagem, em vez de guardar energia para a semana.' },
           { t: '22-34s', label: 'O CONSUMO', line: '15,5 km/l na cidade contra 13,7 na estrada. Repare na inversão: no trânsito parado o elétrico trabalha, e é lá que ele economiza.' },
-          { t: '34-45s', label: 'A CONTA', line: 'Some tanque e consumo: 791 km urbanos. Faça a conta do mês com o quilômetro real do cliente, na frente dele.' },
+          { t: '34-45s', label: 'A CONTA', line: 'Some tanque e consumo: 791 km urbanos com 51 litros. Faça a conta do mês com o quilômetro real do cliente, na frente dele.' },
+        ],
+      },
+      {
+        titulo: 'COMFORT ou PRESTIGE',
+        foco: 'A pergunta que decide a venda agora que o carro tem duas versões — e as cores de cada uma.',
+        storyboard: [
+          { t: '0-10s', label: 'NÃO PERGUNTE A VERSÃO', line: 'Pergunte do que ele não abre mão: teto aberto, som bom ou tela grande. A resposta escolhe a versão sozinha — e você não vira tabelista.' },
+          { t: '10-22s', label: 'O QUE A COMFORT JÁ TEM', line: '224 cv, rodas 18, ar dual zone, seis airbags, freio eletrônico com auto hold, sensor de chuva e partida sem botão. É entrada com conteúdo de intermediária.' },
+          { t: '22-34s', label: 'O QUE SÓ A PRESTIGE TEM', line: 'Tela de 13,2, som Sony de 8 alto-falantes, câmera 540, teto Sky Screen, ADAS 2.5, bancos ventilados, porta-malas elétrico e keyless entry.' },
+          { t: '34-45s', label: 'AS CORES', line: 'Preto Andrômeda, Azul Gaia e Cinza Centaurus nas duas. Branco Artic com teto preto só na PRESTIGE; Branco Artic liso só na COMFORT. Interior sempre preto, forro de teto claro.' },
         ],
       },
       {
         titulo: 'Contra o concorrente',
-        foco: 'Como responder quando ele chega comparando com os híbridos e os compactos da faixa.',
+        foco: 'O comparativo oficial da marca, versão por versão — quem ela escolheu para comparar e onde ganha.',
         storyboard: [
-          { t: '0-10s', label: 'A POTÊNCIA', line: 'Os SUVs compactos da faixa entregam de 150 a 190 cv. O Jaecoo 5 faz 224 cv combinados, com 0 a 100 em 7,9 s.' },
-          { t: '10-22s', label: 'A SUSPENSÃO', line: 'Multibraço atrás, independente. Boa parte da concorrência nessa faixa usa eixo de torção — e isso se sente no banco de trás.' },
-          { t: '22-34s', label: 'O PLUG-IN DO LADO', line: 'Se o cliente comparar com plug-in, devolva a pergunta: você tem onde carregar? Sem tomada, o plug-in vira um híbrido mais caro e mais pesado.' },
-          { t: '34-45s', label: 'O QUE NÃO DIZER', line: 'Não ataque marca do concorrente. Compare número com número e deixe o test drive fazer o resto.' },
+          { t: '0-12s', label: 'A LISTA DA COMFORT', line: 'A marca compara com Creta Limited, WR-V EXL, Nivus Highline, Renegade Longitude e Atto 2 GL. Potência: 224 cv contra 120, 126, 128, 176 e 177.' },
+          { t: '12-24s', label: 'OS ITENS DA COMFORT', line: 'Rodas 18: só o Jaecoo e o Renegade. Ar dual zone, freio eletrônico e partida contactless: só o Jaecoo e o Atto 2 têm os três. Sensor de chuva com acendimento automático: Jaecoo e Nivus.' },
+          { t: '24-36s', label: 'A LISTA DA PRESTIGE', line: 'Contra Creta Platinum, HR-V EXL, T-Cross Highline, Renegade Willys e Atto 2 GS, cinco itens são só dele: som Sony de 8 alto-falantes, câmera 540, bancos ventilados, porta-malas elétrico e a tela de 13,2 — os outros vão de 8 a 12,8 polegadas.' },
+          { t: '36-45s', label: 'COMO USAR', line: 'Compare item com item, sem atacar a marca do outro. E não prometa na COMFORT o que é da PRESTIGE: é aí que o comparativo vira reclamação na entrega.' },
         ],
       },
       {

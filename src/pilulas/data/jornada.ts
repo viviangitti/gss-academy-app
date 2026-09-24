@@ -143,15 +143,27 @@ E, se você já tem carro hoje e pensa em usar na troca, me passa modelo, ano e 
       blocos: [
         {
           titulo: 'Roda muito na cidade, trajeto curto',
-          itens: ['Híbrido resolve: liga no elétrico, economiza no trânsito parado', 'Não depende de tomada em casa'],
+          itens: [
+            'Híbrido resolve: liga no elétrico, economiza no trânsito parado',
+            'Não depende de tomada em casa',
+            'Na loja: Jaecoo 5 e Omoda 5 — o Jaecoo 5 é o lançamento, com duas versões',
+          ],
         },
         {
           titulo: 'Tem garagem com tomada e roda pouco por dia',
-          itens: ['O 100% elétrico é o de menor custo por quilômetro', 'Recarrega dormindo, sem passar em posto'],
+          itens: [
+            'O 100% elétrico é o de menor custo por quilômetro',
+            'Recarrega dormindo, sem passar em posto',
+            'Na loja: Omoda E5',
+          ],
         },
         {
           titulo: 'Pega estrada com frequência',
-          itens: ['Híbrido com autonomia longa evita planejar parada', 'Porta-malas e conforto de rodovia pesam mais que consumo urbano'],
+          itens: [
+            'Híbrido com autonomia longa evita planejar parada',
+            'Porta-malas e conforto de rodovia pesam mais que consumo urbano',
+            'Na loja: Jaecoo 7 e Omoda 7',
+          ],
         },
         {
           titulo: 'Família grande ou carrinho de bebê todo dia',

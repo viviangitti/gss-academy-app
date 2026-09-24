@@ -18,6 +18,9 @@ export interface Loja {
 
 export const LOJAS: Loja[] = [
   { id: 'tiger-goiania', nome: 'Tiger Goiânia', brand: 'ramasa' },
+  // Em Goiânia o grupo tem duas operações, e elas são lojas diferentes para
+  // quem trabalha nelas (24/09/2026).
+  { id: 'omoda-goiania', nome: 'Omoda Goiânia', brand: 'ramasa' },
   { id: 'tiger-anapolis', nome: 'Tiger Anápolis', brand: 'ramasa' },
   { id: 'tiger-itumbiara', nome: 'Tiger Itumbiara', brand: 'ramasa' },
 ];

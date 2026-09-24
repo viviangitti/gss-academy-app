@@ -11,7 +11,7 @@
 //
 // Regra que vale para tudo o que sai daqui: nenhum preço, taxa ou prazo de
 // pagamento. Número vai só na tabela oficial que a gerência publica.
-import { montaPdf, compartilharMaterial, carregaImagem, cobre, escreve, retanguloArredondado, SANS } from './onePage';
+import { montaPdf, compartilharMaterial, salvarMaterial, carregaImagem, cobre, escreve, retanguloArredondado, SANS } from './onePage';
 import { nomeParaCliente } from './nomeArquivo';
 
 // A4 a 150 dpi, igual ao material do carro.
@@ -184,8 +184,14 @@ export async function desenharPagina(d: DadosPagina): Promise<HTMLCanvasElement>
 }
 
 /** Monta e manda. Devolve 'compartilhou' no celular e 'baixou' no computador. */
-export async function mandarPagina(d: DadosPagina, texto: string): Promise<'compartilhou' | 'baixou'> {
+export async function mandarPagina(
+  d: DadosPagina,
+  texto: string,
+  /** 'salvar' baixa direto, sem abrir o compartilhar do sistema. */
+  modo: 'mandar' | 'salvar' = 'mandar',
+): Promise<'compartilhou' | 'baixou'> {
   const c = await desenharPagina(d);
   const pdf = await montaPdf(c);
-  return compartilharMaterial({ pdf, nome: nomeParaCliente(d.titulo) }, texto);
+  const material = { pdf, nome: nomeParaCliente(d.titulo) };
+  return modo === 'salvar' ? salvarMaterial(material) : compartilharMaterial(material, texto);
 }

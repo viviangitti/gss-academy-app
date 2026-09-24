@@ -10,7 +10,7 @@
 // ninguém tinha como saber.
 //
 // Agora as duas telas chamam daqui.
-import { gerarMaterial, compartilharMaterial, type Variante } from './onePage';
+import { gerarMaterial, compartilharMaterial, salvarMaterial, type Variante } from './onePage';
 import { getProductImageUrl } from './store';
 import { getElevaProfile } from './profile';
 import { getBrand, type BrandId } from './brands';
@@ -29,6 +29,8 @@ export interface PedidoMaterial {
   texto?: string;
   /** O WhatsApp já conhecido. `null` manda sem contato; undefined busca no perfil. */
   whatsapp?: string | null;
+  /** 'salvar' baixa o PDF no aparelho em vez de abrir o compartilhar. */
+  modo?: 'mandar' | 'salvar';
 }
 
 /** Devolve 'compartilhou' | 'baixou'. Lança se não conseguir montar. */
@@ -67,7 +69,7 @@ export async function mandarMaterial(p: PedidoMaterial): Promise<'compartilhou' 
     ? `${p.product.name} — ${p.product.tagline}\n\n${p.product.salesLine}`
     : `${p.product.name} — material de estudo (uso interno).`);
 
-  const r = await compartilharMaterial(m, texto);
+  const r = p.modo === 'salvar' ? salvarMaterial(m) : await compartilharMaterial(m, texto);
   registraUso('onepage', `${p.product.id}|${p.variante}`);
   return r;
 }

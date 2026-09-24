@@ -512,6 +512,27 @@ export async function gerarMaterial(d: DadosOnePage): Promise<Material> {
 }
 
 /**
+ * SALVA O PDF NO APARELHO — sem passar pelo compartilhar do sistema.
+ *
+ * O botão de compartilhar abre a folha do sistema e obriga a escolher um
+ * destino na hora. Nem sempre é isso que a pessoa quer: às vezes ela está
+ * montando a proposta e só precisa do arquivo guardado pra mandar depois, ou
+ * quer imprimir, ou anexar num e-mail pelo computador. Aqui o arquivo cai
+ * direto na pasta de downloads, com o mesmo nome em caixa alta que o cliente
+ * veria no WhatsApp.
+ */
+export function salvarMaterial(m: Material): 'baixou' {
+  const f = new File([m.pdf], `${m.nome}.pdf`, { type: 'application/pdf' });
+  const url = URL.createObjectURL(f);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = f.name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  return 'baixou';
+}
+
+/**
  * Manda o material. No celular usa o compartilhar do sistema (WhatsApp, e-mail,
  * AirDrop) com o ARQUIVO em anexo; no computador, baixa. O texto vai junto pra
  * pessoa não ter que escrever nada.

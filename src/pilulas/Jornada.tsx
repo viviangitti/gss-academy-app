@@ -10,7 +10,7 @@
 // ninguém, e quem atende não quer digitar o próprio nome oito vezes por dia.
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronDown, Copy, Check, Share2, ArrowRight, Route as RotaIcon, Square, CheckSquare } from 'lucide-react';
+import { ChevronLeft, ChevronDown, Copy, Check, Share2, ArrowRight, Download, Route as RotaIcon, Square, CheckSquare } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { getBrand } from './data/brands';
@@ -128,6 +128,7 @@ export default function Jornada() {
   const acessorios = etapas.length ? acessoriosDaMarca(brandId) : [];
 
   const blocosDoOnePage = (e: Etapa) => {
+    if (!e.onePage) return [];
     if (e.onePage.fonte === 'acessorios') {
       return (['fabrica', 'loja'] as const)
         .map((o) => ({
@@ -150,9 +151,11 @@ export default function Jornada() {
     registraUso('jornada_script', etapaId);
   };
 
-  const mandar = async (e: Etapa, contato?: string | null) => {
-    if (gerando) return;
-    if (contato === undefined && whats === '') {
+  const mandar = async (e: Etapa, contato?: string | null, modo: 'mandar' | 'salvar' = 'mandar') => {
+    if (gerando || !e.onePage) return;
+    // Salvar não precisa do contato: o PDF fica no aparelho, não vai pra
+    // ninguém. Perguntar o WhatsApp aqui só atrasaria quem quer guardar.
+    if (modo === 'mandar' && contato === undefined && whats === '') {
       setZapNovo('');
       setPedindoZap(e);
       return;
@@ -177,9 +180,10 @@ export default function Jornada() {
           fotoVendedor: foto,
         },
         `${op.titulo} — ${preencher(op.linha)}`,
+        modo,
       );
       registraUso('jornada_onepage', e.id);
-      if (r === 'baixou') setAviso('PDF baixado: está na sua pasta de downloads.');
+      if (r === 'baixou') setAviso('PDF salvo: está na pasta de downloads do aparelho.');
     } catch {
       setAviso('Não consegui montar a folha agora. Tenta de novo em instantes.');
     } finally {
@@ -271,20 +275,28 @@ export default function Jornada() {
                     </button>
                   </div>
 
+                  {e.onePage && (
                   <div className="wp-jn-bloco">
                     <p className="wp-jn-rotulo">One page para o cliente</p>
                     <p className="wp-jn-op-tit">{e.onePage.titulo}</p>
                     <p className="wp-jn-op-linha">{preencher(e.onePage.linha)}</p>
                     {e.onePage.tipo === 'proprio' ? (
-                      <button type="button" className="wp-jn-mandar" disabled={gerando === e.id} onClick={() => mandar(e)}>
-                        {gerando === e.id ? (
-                          'Montando a folha…'
-                        ) : (
-                          <>
-                            <Share2 size={15} className="wp-ico" /> Compartilhar o one page
-                          </>
-                        )}
-                      </button>
+                      <>
+                        <button type="button" className="wp-jn-mandar" disabled={gerando === e.id} onClick={() => mandar(e)}>
+                          {gerando === e.id ? (
+                            'Montando a folha…'
+                          ) : (
+                            <>
+                              <Share2 size={15} className="wp-ico" /> Compartilhar o one page
+                            </>
+                          )}
+                        </button>
+                        {/* Salvar em vez de mandar: o vendedor guarda a folha no
+                            aparelho e manda depois, por onde ele quiser. */}
+                        <button type="button" className="wp-salvar-pdf" disabled={gerando === e.id} onClick={() => mandar(e, null, 'salvar')}>
+                          <Download size={15} className="wp-ico" /> Salvar PDF
+                        </button>
+                      </>
                     ) : (
                       <>
                         <p className="wp-jn-como">{e.onePage.leva?.comoFazer}</p>
@@ -294,6 +306,7 @@ export default function Jornada() {
                       </>
                     )}
                   </div>
+                  )}
 
                   {e.atalhos === 'acessorios' && acessorios.length > 0 && (
                     <div className="wp-jn-bloco">

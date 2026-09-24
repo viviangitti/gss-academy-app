@@ -4511,3 +4511,69 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
     z-index: -1;
   }
 }
+
+/* ===== "Salvar PDF" — o mesmo material, sem passar pelo compartilhar =====
+   Pedido da loja: o botão de compartilhar abre a folha do sistema e obriga a
+   escolher um destino na hora. Nem sempre é isso — às vezes a pessoa está
+   montando a proposta e só quer o arquivo guardado pra anexar depois, imprimir
+   ou mandar do computador. Este botão baixa o mesmo PDF que iria ao cliente. */
+.wp-salvar-pdf {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--wp-border);
+  background: var(--wp-surface);
+  color: var(--wp-ink);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.wp-salvar-pdf:active { transform: scale(0.98); }
+.wp-salvar-pdf:disabled { opacity: .6; cursor: default; }
+
+/* Na tela do carro o botão verde é FIXO no rodapé. O de salvar entra na MESMA
+   barra, à direita: solto acima dele, tapava o "Ouvir a locução". A barra é que
+   passa a ser fixa; os dois botões dentro dela viram estáticos. */
+.wp-share-fix {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 448px;
+  z-index: 30;
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.wp-share-fix .wp-share {
+  position: static;
+  transform: none;
+  width: auto;
+  max-width: none;
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Um ponto menor: com o botão do PDF ao lado, "Compartilhar resumo com o
+     cliente" quebrava em duas linhas. */
+  font-size: 14px;
+  padding-left: 10px;
+  padding-right: 10px;
+  gap: 6px;
+}
+.wp-share-fix .wp-share:active { transform: scale(0.97); }
+.wp-share-fix .wp-share:disabled:active { transform: none; }
+.wp-salvar-flut {
+  flex: 0 0 auto;
+  width: auto;
+  margin: 0;
+  padding: 0 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  box-shadow: 0 10px 26px rgba(16, 24, 40, 0.16);
+}

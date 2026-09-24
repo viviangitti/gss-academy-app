@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Play, Send, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon, Sparkles, Trophy, X } from 'lucide-react';
+import { Search, Play, Send, Download, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon, Sparkles, Trophy, X } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
 import { buildShareMessage, visibleProducts, duracaoLabel, type Product } from './data/products';
 import { getAfiliadoCode } from './data/afiliadoCode';
@@ -210,7 +210,7 @@ export default function Hoje() {
   // é o que faz sentido lá.
   const [mandando, setMandando] = useState(false);
   const [avisoEnvio, setAvisoEnvio] = useState('');
-  const sharePill = async () => {
+  const sharePill = async (modo: 'mandar' | 'salvar' = 'mandar') => {
     if (!pill || mandando) return;
     const text = buildShareMessage(pill, { medium: audienceOf(user) ?? user?.role, code: getAfiliadoCode(user?.email) });
     if (!auto) {
@@ -223,9 +223,9 @@ export default function Hoje() {
     try {
       const r = await mandarMaterial({
         product: pill, brandId, variante: 'cliente',
-        vendedor: user?.name, uid: auth?.currentUser?.uid, texto: text,
+        vendedor: user?.name, uid: auth?.currentUser?.uid, texto: text, modo,
       });
-      if (r === 'baixou') setAvisoEnvio('PDF baixado: está na sua pasta de downloads.');
+      if (r === 'baixou') setAvisoEnvio(modo === 'salvar' ? 'PDF salvo na pasta de downloads do aparelho.' : 'PDF baixado: está na sua pasta de downloads.');
     } catch {
       setAvisoEnvio('Não consegui montar o material agora. Tente pela tela do carro.');
     } finally {
@@ -394,12 +394,19 @@ export default function Hoje() {
                   <Play size={15} className="wp-ico" /> Assistir agora
                 </Link>
                 {!balcao && (
-                  <button className="wp-td-btn" onClick={sharePill} disabled={mandando}>
+                  <button className="wp-td-btn" onClick={() => sharePill()} disabled={mandando}>
                     <Send size={15} className="wp-ico" />
                     {mandando ? 'Preparando…' : (auto ? 'Enviar ao cliente' : 'Enviar à cliente')}
                   </button>
                 )}
               </div>
+              {/* Mesma folha, sem passar pelo compartilhar: o arquivo cai na
+                  pasta de downloads e o vendedor manda quando quiser. */}
+              {!balcao && auto && (
+                <button className="wp-salvar-pdf" onClick={() => sharePill('salvar')} disabled={mandando}>
+                  <Download size={15} className="wp-ico" /> Salvar PDF
+                </button>
+              )}
               {avisoEnvio && <p className="wp-td-aviso">{avisoEnvio}</p>}
             </div>
           )}

@@ -49,7 +49,13 @@ export interface Etapa {
   porQue: string;
   /** O que mandar quando o cliente não responde. Toda etapa tem a sua. */
   semResposta: string;
-  onePage: OnePage;
+  /**
+   * A folha para mandar ao cliente. OPCIONAL de propósito: nas duas primeiras
+   * etapas o que vai é só a mensagem. No primeiro contato e na qualificação o
+   * cliente ainda não pediu nada — mandar um PDF junto parece disparo de
+   * marketing e derruba a resposta.
+   */
+  onePage?: OnePage;
   /** Atalhos para telas do app, montados a partir de uma lista viva. */
   atalhos?: 'acessorios';
   /**
@@ -92,31 +98,6 @@ Pode responder por aqui mesmo. Assim que eu terminar este atendimento, volto com
     porQue:
       'Dizer que você está com um cliente na loja explica a demora antes que ela incomode, e mostra que você é procurado. As três perguntas cabem numa resposta só e dão uso, quem dirige e o que ele já decidiu que quer. Dinheiro fica de fora de propósito: pergunta de pagamento ou de carro na troca na PRIMEIRA mensagem assusta e derruba a conversa — isso vem depois, quando ele já está falando com você. E não prometa a melhor opção antes de ouvir: promessa antes de saber o uso é o que faz a mensagem soar a vendedor.',
     semResposta: `Oi, {cliente}! Terminei o atendimento aqui. Consegue me responder aquelas três perguntas rápidas? Com elas meu retorno já vem certo pro seu caso, sem você perder tempo com carro que não tem a ver com o que você procura.`,
-    onePage: {
-      tipo: 'proprio',
-      titulo: 'Como vai funcionar o seu atendimento',
-      linha: 'Quem vai te atender, e o que acontece a partir de agora.',
-      blocos: [
-        {
-          titulo: 'Quem está com você',
-          itens: ['{vendedor} — consultor de vendas na {loja}', 'Atendimento por WhatsApp, telefone ou presencial', 'Resposta no mesmo dia, sempre'],
-        },
-        {
-          titulo: 'Os próximos passos',
-          itens: [
-            '1. Você me conta como usa o carro no dia a dia',
-            '2. Eu te mando o modelo certo, com ficha, fotos e as respostas das dúvidas mais comuns',
-            '3. A condição vigente da loja, oficial, com a validade dela',
-            '4. Test drive marcado no horário que couber pra você',
-          ],
-        },
-        {
-          titulo: 'O que você não vai ter',
-          itens: ['Ligação insistente fora de hora', 'Resposta com “depende, passa aqui na loja”', 'Compromisso nenhum antes de você dirigir o carro'],
-        },
-      ],
-      rodape: 'Qualquer dúvida, é só responder esta mensagem.',
-    },
   },
   {
     id: 'diagnostico',
@@ -136,42 +117,6 @@ E, se você já tem carro hoje e pensa em usar na troca, me passa modelo, ano e 
     porQue:
       'Tomada em casa e número de pessoas eliminam metade do catálogo em duas perguntas. O carro na troca entra só agora, e como vantagem: adiantar a avaliação é serviço, não sondagem de bolso. Na primeira mensagem, a mesma pergunta soa a cobrança.',
     semResposta: `{cliente}, tudo bem? Não quero te encher de mensagem. Me responde só isso: você está pesquisando agora ou já quer resolver este mês? Eu me adapto ao seu tempo.`,
-    onePage: {
-      tipo: 'proprio',
-      titulo: 'Qual modelo combina com o seu dia a dia',
-      linha: 'Quatro perfis de uso, quatro respostas diferentes.',
-      blocos: [
-        {
-          titulo: 'Roda muito na cidade, trajeto curto',
-          itens: [
-            'Híbrido resolve: liga no elétrico, economiza no trânsito parado',
-            'Não depende de tomada em casa',
-            'Na loja: Jaecoo 5 e Omoda 5 — o Jaecoo 5 é o lançamento, com duas versões',
-          ],
-        },
-        {
-          titulo: 'Tem garagem com tomada e roda pouco por dia',
-          itens: [
-            'O 100% elétrico é o de menor custo por quilômetro',
-            'Recarrega dormindo, sem passar em posto',
-            'Na loja: Omoda E5',
-          ],
-        },
-        {
-          titulo: 'Pega estrada com frequência',
-          itens: [
-            'Híbrido com autonomia longa evita planejar parada',
-            'Porta-malas e conforto de rodovia pesam mais que consumo urbano',
-            'Na loja: Jaecoo 7 e Omoda 7',
-          ],
-        },
-        {
-          titulo: 'Família grande ou carrinho de bebê todo dia',
-          itens: ['O espaço interno e o porta-malas decidem antes do motor', 'Vale medir junto na visita, com o carrinho de verdade'],
-        },
-      ],
-      rodape: 'Me diga o seu caso que eu já separo o carro e o horário do test drive.',
-    },
   },
   {
     id: 'recomendacao',

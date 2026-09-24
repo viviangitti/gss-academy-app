@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText, ArrowUpRight, Play, Pause, Plus, Minus, Camera, Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon, Volume2, BookOpen, Users, Lock, Package, Maximize2, Layers, X,
+  MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText, ArrowUpRight, Play, Pause, Plus, Minus, Camera, Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon, Volume2, BookOpen, Users, Lock, Package, Maximize2, Layers, Download, X,
 } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
@@ -18,7 +18,7 @@ import { useAuth, audienceOf, type Audience } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { getBrand, isAuto, isBalcao } from './data/brands';
 import { vocab } from './data/vocabulario';
-import { gerarMaterial, compartilharMaterial } from './data/onePage';
+import { gerarMaterial, compartilharMaterial, salvarMaterial } from './data/onePage';
 import { acessoriosPara, precoLabel, type Acessorio } from './data/acessorios';
 import { carregarDestaques, destaquesDoTime, useDestaquesTime } from './data/destaquesTime';
 import { getElevaProfile, updateElevaWhatsapp } from './data/profile';
@@ -896,9 +896,13 @@ export default function Product() {
     textoPronto?: string,
     // undefined = ainda não perguntei · string = usa este · null = mandar sem
     contato?: string | null,
+    /** 'salvar' baixa o PDF no aparelho em vez de abrir o compartilhar. */
+    modo: 'mandar' | 'salvar' = 'mandar',
   ) => {
     if (!product || gerando) return;
-    if (variante === 'cliente' && contato === undefined && semContato) {
+    // Salvar não pede o WhatsApp: o arquivo fica no aparelho, não vai a
+    // ninguém. Perguntar o contato aqui só atrapalha quem quer guardar.
+    if (modo === 'mandar' && variante === 'cliente' && contato === undefined && semContato) {
       setZapNovo('');
       setPedindoZap(true);
       return;
@@ -924,11 +928,11 @@ export default function Product() {
       const texto = textoPronto ?? (variante === 'cliente'
         ? `${product.name} — ${product.tagline}\n\n${product.salesLine}`
         : `${product.name} — material de estudo (uso interno).`);
-      const r = await compartilharMaterial(m, texto);
+      const r = modo === 'salvar' ? salvarMaterial(m) : await compartilharMaterial(m, texto);
       // O one-page saindo para um cliente é o trabalho acontecendo — o único
       // sinal no app que não é estudo, e sim atendimento.
       registraUso('onepage', `${product.id}|${variante}`);
-      if (r === 'baixou') setAvisoOp('PDF baixado: está na sua pasta de downloads.');
+      if (r === 'baixou') setAvisoOp(modo === 'salvar' ? 'PDF salvo na pasta de downloads do aparelho.' : 'PDF baixado: está na sua pasta de downloads.');
     } catch {
       setAvisoOp('Não consegui montar o material agora. Tenta de novo em instantes.');
     } finally {
@@ -1116,10 +1120,18 @@ export default function Product() {
                   </button>
                 )}
                 {product.fichaPdf ? (
-                  <a className="wp-ficha-pdf" href={product.fichaPdf} target="_blank" rel="noopener noreferrer"
-                     onClick={() => registraUso('doc_open', `ficha-pdf|${product.id}`)}>
-                    <FileText size={15} className="wp-ico" /> Ver a folha oficial
-                  </a>
+                  <>
+                    <a className="wp-ficha-pdf" href={product.fichaPdf} target="_blank" rel="noopener noreferrer"
+                       onClick={() => registraUso('doc_open', `ficha-pdf|${product.id}`)}>
+                      <FileText size={15} className="wp-ico" /> Ver a folha oficial
+                    </a>
+                    {/* `download` no próprio link: a folha oficial é um arquivo
+                        que já existe no servidor, não precisa ser montada. */}
+                    <a className="wp-ficha-pdf" href={product.fichaPdf} download={`${product.name} — ficha técnica.pdf`}
+                       onClick={() => registraUso('doc_open', `ficha-pdf-salvou|${product.id}`)}>
+                      <Download size={15} className="wp-ico" /> Salvar PDF
+                    </a>
+                  </>
                 ) : (
                   <Link to={`/eleva/ficha/${product.id}`} className="wp-ficha-pdf">
                     <FileText size={15} className="wp-ico" /> {balcao ? 'Abrir ficha (PDF)' : 'Ver em PDF'}
@@ -1361,6 +1373,7 @@ export default function Product() {
               ? 'Vai o one-page em PDF com a mensagem. A cada toque a mensagem muda — assim você não repete o mesmo texto com clientes diferentes.'
               : 'A cada toque, o botão envia uma mensagem diferente — assim você não repete o mesmo texto com clientes diferentes.'}
           </p>
+          <div className="wp-share-fix">
           <button className="wp-share" onClick={share} disabled={!!gerando}>
             <ArrowUpRight size={18} className="wp-ico" />
             {/* "resumo" só no automotivo: é lá que o botão manda o one-page, que
@@ -1370,6 +1383,21 @@ export default function Product() {
               ? 'Preparando o material…'
               : auto ? 'Compartilhar resumo com o cliente' : `Compartilhar com ${v.aCliente}`}
           </button>
+          {/* SALVAR EM VEZ DE MANDAR. O compartilhar do sistema obriga a
+              escolher o destino na hora; às vezes a pessoa só quer o arquivo
+              guardado pra anexar depois, imprimir ou mandar do computador. */}
+          {auto && (
+            <button
+              className="wp-salvar-pdf wp-salvar-flut"
+              onClick={() => material('cliente', undefined, null, 'salvar')}
+              disabled={!!gerando}
+              aria-label="Salvar o PDF no aparelho"
+              title="Salvar o PDF no aparelho"
+            >
+              <Download size={16} className="wp-ico" /> PDF
+            </button>
+          )}
+          </div>
         </>
       )}
     </div>

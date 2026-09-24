@@ -277,6 +277,10 @@
 /* ---------- Reel ---------- */
 .wp-reel {
   position: relative;
+  /* border-box: com content-box o padding de 16px entrava POR FORA da largura e
+     a pílula ficava 32px mais larga que a coluna — o tempo ("0-5s") saía pela
+     direita. Aparecia de leve no celular; no computador ficava escancarado. */
+  box-sizing: border-box;
   width: 100%;
   aspect-ratio: 9 / 16;
   max-height: 62vh;
@@ -1400,7 +1404,9 @@
 .wp-td-search { position: relative; }
 .wp-td-search-ic { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--wp-soft); }
 .wp-td-search input {
-  width: 100%; border: 1.5px solid var(--wp-border); border-radius: 14px;
+  /* box-sizing: sem ele o padding de 42px + a borda entravam POR FORA dos 100%
+     e o campo vazava 59px pra direita do container. */
+  width: 100%; box-sizing: border-box; border: 1.5px solid var(--wp-border); border-radius: 14px;
   background: var(--wp-surface); padding: 14px 14px 14px 42px;
   font-size: 14.5px; font-family: inherit; color: var(--wp-text); outline: none;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
@@ -4359,3 +4365,149 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 }
 .wp-gz-loja.on { background: var(--wp-pink); border-color: var(--wp-pink); color: var(--wp-on-accent); }
 .wp-gz-lojas-nota { margin: 7px 0 0; font-size: 11.5px; color: var(--wp-soft); }
+
+/* ===== Computador (≥1024px) =====
+   Metade do time abre o Eleva no PC. Sem isto o app era uma coluna de celular de
+   480px parada no meio de um monitor de 1440, com o menu flutuando no meio de
+   baixo e dois terços da tela em branco.
+   Aqui o mesmo HTML vira layout de web: o menu de baixo deita como trilha
+   lateral, o cabeçalho atravessa a tela e os cartões espalham em mais colunas.
+   TUDO vive dentro deste @media — no celular nada muda.
+   O `:has(> .wp-nav)` é de propósito: as telas SEM menu (login, carregando e a
+   pílula, que é vídeo em pé) continuam como coluna centrada de 480px, que é o
+   formato certo pra elas. Navegador sem :has simplesmente ignora e cai no
+   layout de celular — feio, mas nunca quebrado. */
+@media (min-width: 1024px) {
+  .wp-app:has(> .wp-nav) {
+    max-width: none;
+    display: grid;
+    grid-template-columns: 246px minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .wp-app:has(> .wp-nav) > .wp-header { grid-column: 1 / -1; }
+  .wp-app:has(> .wp-nav) > .wp-nav { grid-column: 1; grid-row: 2; }
+  .wp-app:has(> .wp-nav) > .wp-main { grid-column: 2; grid-row: 2; }
+
+  .wp-app:has(> .wp-nav) .wp-header-inner {
+    max-width: none;
+    height: 62px;
+    padding: 0 30px;
+    gap: 14px;
+  }
+  .wp-app:has(> .wp-nav) .wp-logo-mark { font-size: 24px; }
+
+  /* O menu de abas deita: ícone e rótulo lado a lado, um por linha. */
+  .wp-app:has(> .wp-nav) > .wp-nav {
+    position: sticky;
+    top: 62px;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    width: auto;
+    max-width: none;
+    align-self: start;
+    height: calc(100dvh - 62px);
+    flex-direction: column;
+    gap: 3px;
+    padding: 20px 14px;
+    border-top: none;
+    border-right: 1px solid var(--wp-border);
+    box-shadow: none;
+    overflow-y: auto;
+  }
+  .wp-app:has(> .wp-nav) > .wp-nav .wp-nav-item {
+    flex: none;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 1.2;
+    text-align: left;
+  }
+  /* Os apertos de 6 e 7 abas existem pra caber em 375px de celular. Na lateral
+     sobra espaço: o rótulo volta ao normal e para de quebrar no meio. */
+  .wp-app:has(> .wp-nav) > .wp-nav .wp-nav-item span {
+    width: auto;
+    overflow-wrap: normal;
+    hyphens: manual;
+  }
+  .wp-app:has(> .wp-nav) > .wp-nav .wp-nav-item:hover { background: var(--wp-bg); }
+  .wp-app:has(> .wp-nav) > .wp-nav .wp-nav-item.active {
+    background: color-mix(in srgb, var(--wp-pink) 14%, #fff);
+  }
+
+  /* Conteúdo: usa a tela, mas não vira uma linha de texto de 1400px. */
+  .wp-app:has(> .wp-nav) > .wp-main { padding: 26px 30px 56px; }
+  .wp-app:has(> .wp-nav) > .wp-main > * { max-width: 1120px; }
+  .wp-app:has(> .wp-nav) .wp-priv,
+  .wp-app:has(> .wp-nav) .wp-news,
+  .wp-app:has(> .wp-nav) .wp-docs,
+  .wp-app:has(> .wp-nav) .wp-acp {
+    max-width: none;
+    margin: 0;
+    padding: 0 0 8px;
+  }
+  /* A Jornada é texto longo pra ler: largura de leitura, não de planilha. */
+  .wp-app:has(> .wp-nav) .wp-jn { max-width: 880px; margin: 0; padding: 0 0 8px; }
+  .wp-app:has(> .wp-nav) .wp-ranking,
+  .wp-app:has(> .wp-nav) .wp-catalog,
+  .wp-app:has(> .wp-nav) .wp-perfil { max-width: none; }
+
+  .wp-app:has(> .wp-nav) .wp-grid {
+    grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
+    gap: 16px;
+  }
+  .wp-app:has(> .wp-nav) .wp-of-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    align-items: start;
+  }
+
+  /* A barra do assistente era centrada na tela inteira; agora acompanha o
+     conteúdo, à direita da trilha. */
+  .wp-app:has(> .wp-nav) .wp-ia-bar {
+    left: 246px;
+    right: 0;
+    transform: none;
+    width: auto;
+    max-width: none;
+    padding: 12px 30px;
+  }
+
+  /* O convite de instalar fala em "tela do celular" e tapava o conteúdo no PC:
+     no computador ele não faz sentido. Os outros avisos continuam. */
+  .wp-aviso-instalar { display: none; }
+
+  /* Hoje é uma lista de atalhos: esticar a linha até 1120px deixa o texto na
+     esquerda e a setinha a meio metro dele. */
+  .wp-app:has(> .wp-nav) .wp-today { max-width: 920px; }
+
+  /* Documentos viram duas colunas — a lista de fichas ocupava a tela inteira
+     com uma linha só de altura. O título da prateleira atravessa as duas. */
+  .wp-app:has(> .wp-nav) .wp-docs-sec {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 14px;
+    align-content: start;
+  }
+  .wp-app:has(> .wp-nav) .wp-docs-sec > .wp-docs-sec-tit,
+  .wp-app:has(> .wp-nav) .wp-docs-sec > .wp-docs-sec-sub { grid-column: 1 / -1; }
+  .wp-app:has(> .wp-nav) .wp-docs-sec > .wp-docs-sec-sub { margin-bottom: 0; }
+  .wp-app:has(> .wp-nav) .wp-docs-sec > .wp-doc { margin: 0; }
+
+  /* A pílula é vídeo em pé: continua como coluna estreita (esticar viraria um
+     vídeo gigante). Só ganha um fundo atrás pra não parecer uma tira branca
+     solta no monitor. */
+  .wp-app.is-product { max-width: 520px; }
+  .wp-app.is-product::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: #e8eaf1;
+    z-index: -1;
+  }
+}

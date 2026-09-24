@@ -32,6 +32,22 @@ export interface Ritual {
 }
 
 const competencia = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+/**
+ * A semana do ano (padrão ISO), para os rituais que são SEMANAIS.
+ *
+ * Existe porque nem toda função tem prazo de mês: o supervisor e o gerente de
+ * leads trabalham em ciclo de semana — a reunião de segunda e o lead que não
+ * respondeu não esperam o dia 1º. O ciclo semanal faz o ok valer por AQUELA
+ * semana, e o lembrete voltar na segunda seguinte.
+ */
+const semanaDoAno = (d: Date) => {
+  const q = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const diaSemana = q.getUTCDay() || 7; // domingo = 7
+  q.setUTCDate(q.getUTCDate() + 4 - diaSemana); // quinta da mesma semana
+  const inicio = new Date(Date.UTC(q.getUTCFullYear(), 0, 1));
+  const n = Math.ceil(((q.getTime() - inicio.getTime()) / 86400000 + 1) / 7);
+  return `${q.getUTCFullYear()}-S${String(n).padStart(2, '0')}`;
+};
 const ultimoDiaDoMes = (d: Date) => new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
 
 /**
@@ -126,6 +142,43 @@ export const RITUAIS: Ritual[] = [
     ondeIr: { rota: '/eleva/gestor', rotulo: 'Abrir o painel' },
     janela: (hoje) => hoje.getDate() <= 5,
     ciclo: competencia,
+  },
+  // OS DOIS SEMANAIS ficam por último de propósito: numa segunda que também é
+  // dia 1 a 5, o ritual do mês (a tabela) é o que aparece — é o que trava a
+  // venda do time inteiro. O semanal volta na segunda seguinte.
+  {
+    id: 'supervisor-time',
+    cargos: ['supervisor-vendas'],
+    titulo: 'O time da semana',
+    quando: 'Toda segunda-feira',
+    porQue:
+      'Quem parou de estudar não avisa. A semana inteira passa, o vendedor atende sem a resposta pronta e a conta só aparece no fechamento do mês.',
+    itens: [
+      'Abri o Painel e vi quem estudou e quem parou nesta semana',
+      'Falei com quem está há mais de sete dias sem abrir o app',
+      'Levei para a reunião a objeção que o time mais consultou',
+    ],
+    botao: 'Falei com quem parou',
+    ondeIr: { rota: '/eleva/gestor', rotulo: 'Abrir o painel' },
+    janela: (hoje) => hoje.getDay() === 1,
+    ciclo: semanaDoAno,
+  },
+  {
+    id: 'leads-jornada',
+    cargos: ['gerente-leads'],
+    titulo: 'A Jornada da semana',
+    quando: 'Toda segunda-feira',
+    porQue:
+      'Lead online responde em minutos ou não responde mais. A Jornada existe para que ninguém invente a mensagem na hora — e para que a objeção que chega pelo funil vire resposta para todo mundo.',
+    itens: [
+      'Conferi se o time está usando a Jornada no atendimento online',
+      'Revi os leads sem resposta e devolvi para o executivo',
+      'Registrei no app as objeções novas que chegaram pelo funil',
+    ],
+    botao: 'Conferido',
+    ondeIr: { rota: '/eleva/jornada', rotulo: 'Abrir a Jornada' },
+    janela: (hoje) => hoje.getDay() === 1,
+    ciclo: semanaDoAno,
   },
 ];
 

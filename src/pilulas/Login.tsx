@@ -7,6 +7,7 @@ import { setElevaProfile } from './data/profile';
 import { invitedBrand } from './data/brandInvite';
 import { getBrand, isBalcao, isAuto, BRANDS, type BrandId } from './data/brands';
 import { CARGOS_AUTO, roleDoCargo, type CargoAuto } from './data/cargos';
+import { lojasDaMarca } from './data/lojas';
 import type { Role, AffiliateType } from './AuthContext';
 
 type Mode = 'entrar' | 'criar';
@@ -73,11 +74,18 @@ export default function Login() {
   // lê. Com oito cargos numa lista, o primeiro da fila viraria o cargo de meia
   // concessionária — e o Painel passaria a agrupar gente no lugar errado.
   const [cargo, setCargo] = useState<CargoAuto | ''>('');
+  // A unidade do grupo. Escolhida aqui, não depois: quem deixa para o Perfil
+  // não volta — treze contas ficaram sem loja assim.
+  const [loja, setLoja] = useState('');
   const emailOk = /\S+@\S+\.\S+/.test(email);
   const valid =
     emailOk && password.length >= 6 &&
     (mode === 'entrar'
-      || (name.trim().length > 0 && aceite && effBrands.length > 0 && (!auto || !!cargo)));
+      // A unidade é obrigatória na concessionária pelo mesmo motivo do cargo:
+      // conta sem loja não entra em recorte nenhum do painel nem do relatório,
+      // e quem deixa para depois não volta.
+      || (name.trim().length > 0 && aceite && effBrands.length > 0
+        && (!auto || (!!cargo && (lojasDaMarca(effBrands[0]).length === 0 || !!loja)))));
 
   const submit = async () => {
     if (!valid || busy) return;
@@ -107,6 +115,7 @@ export default function Login() {
           role: finalRole, roles: finalRoles, name: name.trim(),
           segment: '', affiliateType: at, brands: effBrands,
           cargo: auto && cargo ? cargo : undefined,
+          loja: auto && loja ? loja : undefined,
         });
       } else {
         await signInWithEmail(email.trim(), password);
@@ -167,12 +176,12 @@ export default function Login() {
             em três linhas cada um, empurrando o resto do formulário pra fora da
             tela. E começa VAZIA — foi um campo já respondido que fez uma
             vendedora da Ramasa ser gravada como Meraki. */}
-        {mode === 'criar' && !invBrand && (
+        {mode === 'criar' && (
           <>
             <label className="wp-login-label">Em qual empresa você trabalha?</label>
             <select
               className="wp-login-select"
-              value={brands[0] || ''}
+              value={brands[0] || invBrand || ''}
               onChange={(e) => {
                 setError('');
                 const v = e.target.value as BrandId | '';
@@ -201,6 +210,26 @@ export default function Login() {
             </div>
             <label className="wp-login-label">Seu nome</label>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Como te chamam?" />
+          </>
+        )}
+
+        {mode === 'criar' && effBrands.length > 0 && auto && lojasDaMarca(effBrands[0]).length > 0 && (
+          <>
+            <label className="wp-login-label">Sua unidade</label>
+            <select
+              className="wp-login-select"
+              value={loja}
+              onChange={(e) => { setError(''); setLoja(e.target.value); }}
+            >
+              <option value="">Escolha a unidade…</option>
+              {lojasDaMarca(effBrands[0]).map((l) => (
+                <option key={l.id} value={l.id}>{l.nome}</option>
+              ))}
+            </select>
+            <p className="wp-login-hint">
+              É a unidade que aparece no painel da gerência e já entra preenchida nas mensagens
+              da Jornada. Dá para trocar depois, no Perfil.
+            </p>
           </>
         )}
 

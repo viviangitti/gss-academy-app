@@ -8,10 +8,11 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Sparkles } from 'lucide-react';
+import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { useCarimbo, limparCarimbo } from './data/carimbo';
 import { getStats } from './data/tracking';
-import { PILARES, pilaresDe, temValores, valorDaSemana, valorPorId, pilar as pilarDe } from './data/valores';
+import { PILARES, linhaNoApp, pilaresDe, temValores, valorDaSemana, valorPorId, pilar as pilarDe } from './data/valores';
 
 /** O selo da ação. Fica três segundos e sai sozinho. */
 export function CarimboValor() {
@@ -40,6 +41,7 @@ export function CarimboValor() {
 /** O card do Hoje: o valor desta semana e o que ele quer dizer no app. */
 export function ValorDaSemana() {
   const { brandId } = useBrand();
+  const { user } = useAuth();
   if (!temValores(brandId)) return null;
   const valor = valorDaSemana();
   const p = pilarDe(valor.pilar);
@@ -52,7 +54,10 @@ export function ValorDaSemana() {
       </span>
       <b className="wp-valsem-nome">{valor.nome}</b>
       <span className="wp-valsem-texto">{valor.texto}</span>
-      <span className="wp-valsem-app"><Sparkles size={13} className="wp-ico" /> {valor.noApp}</span>
+      {/* A linha muda com o CARGO: o mesmo valor pede coisas diferentes de
+          quem está no salão, da gerência, de acessórios, de leads e da
+          qualidade. */}
+      <span className="wp-valsem-app"><Sparkles size={13} className="wp-ico" /> {linhaNoApp(valor, user?.cargo, user?.role)}</span>
     </Link>
   );
 }

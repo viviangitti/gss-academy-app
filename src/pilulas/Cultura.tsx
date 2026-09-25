@@ -5,12 +5,22 @@
 // um valor, é para cá que ele leva.
 import { Link } from 'react-router-dom';
 import { ChevronLeft, Sparkles } from 'lucide-react';
+import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
 import { getStats } from './data/tracking';
-import { PILARES, VALORES, valoresDoPilar, temValores, valorDaSemana, pilaresDe } from './data/valores';
+import { PILARES, VALORES, linhaNoApp, valoresDoPilar, temValores, valorDaSemana, pilaresDe, grupoDoCargo } from './data/valores';
+
+const COMO_ME_CHAMA: Record<string, string> = {
+  ponta: 'quem atende no salão',
+  vendas: 'a gerência de vendas',
+  acessorios: 'quem cuida de acessórios',
+  leads: 'quem cuida dos leads',
+  qualidade: 'a qualidade',
+};
 
 export default function Cultura() {
   const { brandId, brand } = useBrand();
+  const { user } = useAuth();
   if (!temValores(brandId)) {
     return (
       <div className="wp-cult">
@@ -33,6 +43,10 @@ export default function Cultura() {
           </span>
         ))}
       </p>
+      <p className="wp-cult-recorte">
+        As linhas “no app” abaixo são as de <b>{COMO_ME_CHAMA[grupoDoCargo(user?.cargo, user?.role)]}</b> —
+        o mesmo valor pede coisas diferentes de cada função.
+      </p>
       <p className="wp-cult-lead">
         O nome da empresa é a própria régua. No {brand.name.split('·')[0].trim()}, cada coisa que você faz
         no app carimba um destes nove valores — e é assim que a cultura aparece no que foi feito, não só na parede.
@@ -41,7 +55,7 @@ export default function Cultura() {
       <div className="wp-cult-semana">
         <span className="wp-cult-semana-rot"><Sparkles size={13} className="wp-ico" /> Valor desta semana</span>
         <b>{daSemana.nome}</b>
-        <i>{daSemana.noApp}</i>
+        <i>{linhaNoApp(daSemana, user?.cargo, user?.role)}</i>
       </div>
 
       {PILARES.map((p) => (
@@ -55,7 +69,7 @@ export default function Cultura() {
             <div className="wp-cult-valor" key={v.id}>
               <b>{v.nome}</b>
               <p>{v.texto}</p>
-              <span className="wp-cult-noapp">No app: {v.noApp}</span>
+              <span className="wp-cult-noapp">No app: {linhaNoApp(v, user?.cargo, user?.role)}</span>
             </div>
           ))}
         </section>

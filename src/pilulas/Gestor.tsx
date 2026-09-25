@@ -44,6 +44,7 @@ const ROLE_LB: Record<string, string> = {
   'gerente-acessorios': 'Gerentes de acessórios',
   'lider-acessorios': 'Supervisores de acessórios', 'lider-qualidade': 'Líderes de qualidade', 'diretor-qualidade': 'Diretoria de qualidade',
   'executivo-leads': 'Executivos de leads', 'gerente-leads': 'Gerentes de leads',
+  diretor: 'Diretoria do grupo',
 };
 // Singular certo por papel — antes o código tirava só o último "s" do plural, o
 // que gerava "Gestore" (de Gestores) e "Promotore" (de Promotores).

@@ -18,6 +18,7 @@ const time = gente.map((u) => ({
   email: String(u.email || ''),
   role: String(u.role || ''),
   cargo: u.cargo || undefined,
+  loja: u.loja || undefined,
   totals: {
     views: u.totals?.views || 0,
     missions: u.totals?.missions || 0,
@@ -30,6 +31,11 @@ const time = gente.map((u) => ({
     views: u.month?.views || 0,
     points: u.month?.points || 0,
     missions: u.month?.missions || 0,
+  },
+  pilares: {
+    razao: u.pilares?.razao || 0,
+    magia: u.pilares?.magia || 0,
+    satisfacao: u.pilares?.satisfacao || 0,
   },
   events: Array.isArray(u.events) ? u.events.map((e) => ({ type: e.type, id: e.id, at: e.at, points: e.points || 0 })) : [],
   lastActiveAt: u.lastActiveAt || undefined,

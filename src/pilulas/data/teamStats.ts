@@ -77,6 +77,21 @@ function lastMonthIds(n: number): string[] {
 
 // so-gerencia: desempenho individual do time, com nome e e-mail.
 export async function fetchTeam(brand: string): Promise<TeamPerson[]> {
+  // ATALHO SÓ DE DESENVOLVIMENTO. A sessão de captura (tutoriais, prints do
+  // Painel para a Vivian) não tem login do Firebase: a leitura do time falha e
+  // o Painel sai em branco — foi o que ela viu mais de uma vez. Antes isso se
+  // resolvia com um remendo à mão aqui dentro, que alguém tinha de lembrar de
+  // desfazer. Agora é um atalho de DEV: no build de produção
+  // import.meta.env.DEV é false e este bloco nem existe.
+  //
+  // Alimenta-se com scripts/tutorial/gera-time.mjs, que lê o elevaStats de
+  // verdade. Nada é inventado: ou é o time real, ou é tela vazia.
+  if (import.meta.env.DEV) {
+    try {
+      const bruto = localStorage.getItem('wp_demo_time');
+      if (bruto) return JSON.parse(bruto) as TeamPerson[];
+    } catch { /* json quebrado: segue para a nuvem */ }
+  }
   if (!db) return [];
   const q = query(collection(db, 'elevaStats'), where('brand', '==', brand));
   const snap = await getDocs(q);

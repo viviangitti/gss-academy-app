@@ -13,11 +13,19 @@
 //   node scripts/investimento/medir.mjs
 import { execFileSync } from 'child_process';
 
-const PASTAS = ['src/pilulas', 'api', 'scripts', 'firestore.eleva.rules', 'firestore.rules'];
+// A pasta da PROPOSTA fica de fora: escrever quanto cobrar não é trabalho
+// entregue ao cliente, e contá-lo faria o número crescer sozinho a cada vez
+// que este documento é refeito.
+const PASTAS = ['src/pilulas', 'api', 'scripts', 'firestore.eleva.rules', 'firestore.rules',
+  ':(exclude)scripts/investimento'];
+
+// A base NÃO entra na conta da Ramasa: ela nasceu com a Meraki e a Sorocaps e
+// se repete de graça em qualquer cliente novo. Fica na lista para aparecer no
+// documento como o que é — ativo da GSS, não fatura da Ramasa.
 const FASES = [
-  ['Plataforma base',              '2026-04-01', '2026-08-09'],
-  ['Vertical automotivo — Ramasa', '2026-08-10', '2026-09-11'],
-  ['Depois da proposta — Ramasa',  '2026-09-12', new Date().toISOString().slice(0, 10)],
+  ['Plataforma base (fora da conta)', '2026-04-01', '2026-08-09', false],
+  ['Vertical automotivo — Ramasa',    '2026-08-10', '2026-09-11', true],
+  ['Depois da proposta — Ramasa',     '2026-09-12', new Date().toISOString().slice(0, 10), true],
 ];
 
 function medir(de, ate) {
@@ -41,17 +49,18 @@ function medir(de, ate) {
   return { dias: porDia.size, entregas: log.length, horas };
 }
 
-let dias = 0, entregas = 0, horas = 0;
-const ramasa = { horas: 0 };
-for (const [nome, de, ate] of FASES) {
+const R = { dias: 0, entregas: 0, horas: 0 };
+const base = { dias: 0, entregas: 0, horas: 0 };
+for (const [nome, de, ate, ehRamasa] of FASES) {
   const m = medir(de, ate);
   // soma as horas JÁ arredondadas por fase: é o que o documento mostra na
   // coluna, e assim a coluna fecha com o total.
-  dias += m.dias; entregas += m.entregas; horas += Math.round(m.horas);
-  if (nome.includes('Ramasa')) ramasa.horas += Math.round(m.horas);
-  console.log(`${nome.padEnd(30)} ${de} a ${ate}  dias=${String(m.dias).padStart(3)}  entregas=${String(m.entregas).padStart(4)}  horas=${Math.round(m.horas)} h`);
+  const alvo = ehRamasa ? R : base;
+  alvo.dias += m.dias; alvo.entregas += m.entregas; alvo.horas += Math.round(m.horas);
+  console.log(`${nome.padEnd(34)} ${de} a ${ate}  dias=${String(m.dias).padStart(3)}  entregas=${String(m.entregas).padStart(4)}  horas=${Math.round(m.horas)} h`);
 }
-console.log('-'.repeat(92));
-console.log(`${'TOTAL'.padEnd(30)}${' '.repeat(24)}  dias=${String(dias).padStart(3)}  entregas=${String(entregas).padStart(4)}  horas=${horas} h`);
-console.log(`\nLeitura conservadora (60%): ${Math.round(horas * 0.6)} h no total · ${Math.round(ramasa.horas * 0.6)} h da Ramasa no código.`);
+console.log('-'.repeat(96));
+console.log(`${'TOTAL RAMASA'.padEnd(34)}${' '.repeat(24)}  dias=${String(R.dias).padStart(3)}  entregas=${String(R.entregas).padStart(4)}  horas=${R.horas} h`);
+console.log(`${'(base, fora da conta da Ramasa)'.padEnd(34)}${' '.repeat(24)}  dias=${String(base.dias).padStart(3)}  entregas=${String(base.entregas).padStart(4)}  horas=${base.horas} h`);
+console.log(`\nLeitura conservadora (60%) da Ramasa: ${Math.round(R.horas * 0.6)} h no código.`);
 console.log('Some o que foi feito FORA do código (vídeos, relatórios, apresentações, PDFs) antes de fechar o número do documento.');

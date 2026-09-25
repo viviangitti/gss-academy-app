@@ -24,6 +24,17 @@ Word precisa de tabela de verdade, e o PDF precisa de CSS.
 A fonte do Word é Arial em tudo, porque o Mac da Vivian não tem Office e
 Calibri/Cambria viram outra coisa no Pages.
 
+## A conta é só da Ramasa
+
+A **plataforma base** (abr a 09/ago — o app em si) ficou FORA da conta: ela
+nasceu com a Meraki e a Sorocaps, é ativo da GSS e se repete de graça no
+próximo cliente. O documento a mostra, marcada como fora, para que ninguém
+pense que foi esquecida.
+
+A pasta `scripts/investimento` também não entra na medição: escrever quanto
+cobrar não é entrega ao cliente, e contá-la faria o número crescer sozinho a
+cada vez que o documento é refeito.
+
 ## O que não pode mudar sem avisar
 
 - **O método das horas.** Janela do dia + 30 min, e sempre 60% dela quando o
@@ -33,7 +44,12 @@ Calibri/Cambria viram outra coisa no Pages.
 
 ## Versões
 
+Dias e entregas contam **só a Ramasa** (de 10/08 em diante).
+
 | Data | Dias | Entregas | Horas da Ramasa | Custo | Tabela cheia |
 |---|---|---|---|---|---|
-| 11/09/2026 | 49 | 346 | 107 h | R$ 21.420 | R$ 35.380 |
-| 25/09/2026 | 58 | 379 | 158 h | R$ 31.600 | R$ 51.930 |
+| 11/09/2026 | 25 | 176 | 107 h | R$ 21.420 | R$ 35.380 |
+| 25/09/2026 | 33 | 213 | 158 h | R$ 31.600 | R$ 51.930 |
+
+(A versão publicada em 11/09 mostrava 49 dias e 346 entregas porque somava a
+plataforma base junto.)

@@ -47,9 +47,9 @@ const cartaoNumero = (n, oque, antes) => celula([
 
 põe(tabela([
   new TableRow({ cantSplit: true, children: [
-    cartaoNumero('58', 'dias de trabalho', 'eram 49 em 11/09'),
-    cartaoNumero('379', 'entregas registradas', 'eram 346'),
-    cartaoNumero('158 h', 'medidas só da Ramasa', 'eram 107 h'),
+    cartaoNumero('33', 'dias de trabalho na Ramasa', 'eram 25 em 11/09'),
+    cartaoNumero('213', 'entregas registradas', 'eram 176'),
+    cartaoNumero('158 h', 'medidas, leitura conservadora', 'eram 107 h'),
     cartaoNumero('R$ 31.600', 'custo dessas horas a R$ 200/h', 'eram R$ 21.420'),
   ] }),
 ], LK, { bordas: SEM_BORDAS }));
@@ -136,7 +136,7 @@ põe(tabela([
 
 // ── 2. esforço medido ─────────────────────────────────────────────────────────
 põe(h2('2. Esforço medido',
-  'Números tirados do histórico do repositório — data e hora de cada alteração. Não é estimativa de memória.'));
+  'Só o que foi feito para a Ramasa, de 10/08 (a primeira linha de conteúdo) até hoje — 46 dias corridos, dos quais 33 tiveram entrega. Números tirados do histórico do repositório, data e hora de cada alteração. Não é estimativa de memória.'));
 
 const LF = [4200, 1900, 900, 1300, 1338];
 const linhaFase = (nome, desc, periodo, dias, entregas, horas, total) => new TableRow({
@@ -154,20 +154,20 @@ const linhaFase = (nome, desc, periodo, dias, entregas, horas, total) => new Tab
 põe(tabela([
   cabecalho([{ texto: 'Fase' }, { texto: 'Período', dir: true }, { texto: 'Dias', dir: true },
     { texto: 'Entregas', dir: true }, { texto: 'Horas', dir: true }], LF),
-  linhaFase('Plataforma base', 'O Eleva em si: app, painel, IA, publicação. Serve qualquer marca.',
-    'abr a 09/ago', 25, 166, '155 h'),
   linhaFase('Vertical automotivo — Ramasa', 'Carros, acessórios, condições comerciais, cargos da loja, conteúdo.',
     '10/ago a 11/set', 25, 176, '173 h'),
   linhaFase('Depois da proposta — Ramasa', 'Jaecoo 5, Jornada, rituais, valores do grupo, lojas, computador, isolamento no banco.',
     '12/set a 25/set', 8, 37, '58 h'),
-  linhaFase('Total', '', '', 58, 379, '386 h', true),
+  linhaFase('Total da Ramasa', '', '10/ago a 25/set', 33, 213, '231 h', true),
+  linhaFase('Plataforma base — fora da conta', 'O Eleva em si: app, painel, IA, publicação. Nasceu com a Meraki e a Sorocaps e se repete de graça em qualquer cliente novo.',
+    'abr a 09/ago', 25, 166, '155 h'),
 ], LF));
 
 põe(p('', { depois: 120 }));
 põe(nota([
-  notaP('**Como ler as horas.** São a janela entre a primeira e a última entrega de cada dia, mais 30 min. É período de trabalho, não foco cronometrado. A leitura conservadora — 60% da janela — dá **232 h** no total. Da Ramasa são **~139 h no código** (60% das duas fases dela) e **~19 h fora dele** — vídeos, relatórios, apresentação de resultados, PDFs de apoio e a campanha: **~158 h**. Use o número conservador em qualquer conversa de preço: ele se defende sozinho.'),
+  notaP('**Como ler as horas.** São a janela entre a primeira e a última entrega de cada dia, mais 30 min. É período de trabalho, não foco cronometrado. A leitura conservadora — 60% da janela — dá **~139 h no código**. Some **~19 h fora dele** — vídeos, relatórios, apresentação de resultados, PDFs de apoio e a campanha: **~158 h**. Use o número conservador em qualquer conversa de preço: ele se defende sozinho.'),
   p('', { depois: 100 }),
-  notaP('**Contra a versão de 11/09.** Lá o total era 49 dias / 346 entregas / 318 h. Refiz a medição hoje com o mesmo método e o mesmo conjunto de pastas: o crescimento real são as **8 jornadas e 58 h** das duas últimas semanas. A diferença de algumas entregas na fase automotiva é o corte do dia (a versão anterior fechou às 14h de 11/09) — não muda a ordem de grandeza.'),
+  notaP('**O que mudou na medição.** A versão de 11/09 somava a plataforma base junto e chegava a 49 dias / 346 entregas. Aqui a base saiu da conta: ela nasceu com a Meraki e a Sorocaps, é ativo da GSS e se repete de graça no próximo cliente. Contando **só a Ramasa**, eram 25 dias / 176 entregas em 11/09 e são **33 dias / 213 entregas** hoje — o crescimento real são as **8 jornadas e 58 h** das duas últimas semanas. O trabalho de escrever esta proposta também não entra: seria o número crescer sozinho a cada vez que ela é refeita.'),
 ]));
 
 
@@ -427,7 +427,7 @@ põe(p(rico('A partir do segundo ano, sem o setup: **R$ 39.600** recorrentes. Cu
   { size: 17, color: CINZA }), { antes: 140, depois: 160, linha: 250 }));
 
 põe(nota([
-  notaP('**O investimento até hoje, em três números.** **158 h** de trabalho medido só para a Ramasa, que a R$ 200/h custam **R$ 31.600**. Somando a plataforma base, são **232 h** e **R$ 46.400** de trabalho conservadoramente medido dentro deste app. E a tabela cheia do que foi entregue — peça por peça, comparada com preço de mercado — dá **R$ 51.930**. O primeiro ano proposto é R$ 69.600: cobre o que foi feito e paga para continuar.', true),
+  notaP('**O investimento até hoje, em três números.** **33 dias de trabalho** em 46 dias corridos, só para a Ramasa. **158 h** na leitura conservadora, que a R$ 200/h custam **R$ 31.600**. E a tabela cheia do que foi entregue — peça por peça, comparada com preço de mercado — dá **R$ 51.930**. A plataforma base não está aqui dentro, de propósito. O primeiro ano proposto é R$ 69.600: cobre o que foi feito e paga para continuar.', true),
 ], true));
 
 // ── o que falta decidir ───────────────────────────────────────────────────────

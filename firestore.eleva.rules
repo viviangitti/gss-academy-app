@@ -1,31 +1,78 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Gestores autorizados (espelha GESTOR_EMAILS do app).
-    // Espelha GESTOR_EMAILS do app (src/pilulas/AuthContext.tsx). Mudou lá,
-    // muda aqui — senão a pessoa vê os campos de vídeo mas não salva na nuvem.
-    // 15/09/2026: gerência da Ramasa (Raphaela, Letícia e Cristiano) entrou na lista —
-    // abriam o Painel mas nada do que publicavam chegava ao time.
-    // PENDENTE: esta lista não separa por empresa. Quem está nela alcança o conteúdo e
-    // os dados de TODAS as marcas pelas regras (o app só mostra a própria). Trocar por
-    // uma permissão por marca — ver memória gestor-por-empresa.
-    function isGestor() {
-      return request.auth != null &&
-        request.auth.token.email in ['maria26@gmail.com', 'mari.briso@merakifarma.com.br', 'silene.mendesdesouza@gmail.com', 'silene.mendesangelodesouza@gmail.com', 'silene_mendes@hotmail.com', 'viviangitti@gmail.com', 'viviangitti23@gmail.com', 'mariana@gruporamasa.com', 'silmara.ccrgerente@lincetoyota.com', 'lucas.cardoso@lincetoyota.com', 'raphaela.machado@gruporamasa.com', 'leticia.alencar@gruporamasa.com', 'cristiano.maciel@gruporamasa.com'];
+    // ===================== QUEM VÊ O QUÊ =====================
+    //
+    // 25/09/2026 — a Drogaria São Paulo entrou no app e a pergunta foi direta:
+    // "se ela fizer login com essa empresa, não vê nem que as outras existem,
+    // certo?". Na TELA, certo. No BANCO, não: a última regra daqui dizia
+    // "quem está logado lê tudo", então uma chamada direta à API alcançava a
+    // condição comercial, o perfil e o uso de qualquer empresa.
+    //
+    // Agora cada leitura passa pela empresa de quem pede. Só a GSS — Vivian e
+    // Silene — enxerga todas; a gerência de cada cliente enxerga a própria.
+    function logado() { return request.auth != null; }
+    function email() { return request.auth.token.email; }
+
+    // A GSS opera o app para todos os clientes: precisa ver tudo.
+    function ehGss() {
+      return logado() && email() in [
+        'viviangitti@gmail.com', 'viviangitti23@gmail.com',
+        'silene.mendesdesouza@gmail.com', 'silene.mendesangelodesouza@gmail.com', 'silene_mendes@hotmail.com'
+      ];
     }
+
+    // Gerência de cliente: publica conteúdo (escrita) e lê o time — da PRÓPRIA
+    // empresa, como as regras de leitura abaixo garantem.
+    // Espelha GESTOR_EMAILS do app (src/pilulas/AuthContext.tsx). Mudou lá, muda aqui.
+    function isGestor() {
+      return ehGss() || (logado() && email() in [
+        'maria26@gmail.com', 'mari.briso@merakifarma.com.br',
+        'mariana@gruporamasa.com', 'silmara.ccrgerente@lincetoyota.com', 'lucas.cardoso@lincetoyota.com',
+        'raphaela.machado@gruporamasa.com', 'leticia.alencar@gruporamasa.com', 'cristiano.maciel@gruporamasa.com'
+      ]);
+    }
+
+    // A empresa de quem está pedindo sai do próprio perfil (elevaUsers.brands).
+    // Conta sem empresa marcada fica com lista vazia: alcança só o conteúdo
+    // global e o que é dela mesma — nunca o de um cliente.
+    function minhasEmpresas() {
+      return exists(/databases/$(database)/documents/elevaUsers/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/elevaUsers/$(request.auth.uid)).data.get('brands', [])
+        : [];
+    }
+
+    // Documento sem campo `brand` é conteúdo global (vale para todas as
+    // empresas) — é assim que o app já trata o conteúdo sem marca.
+    function daMinhaEmpresa(dados) {
+      return ehGss()
+        || dados.get('brand', '') == ''
+        || minhasEmpresas().hasAny([dados.get('brand', '')]);
+    }
+    // Leitura padrão: documento que não existe não vaza nada (o app faz muitos
+    // `get` de documento que pode não existir — negar aqui quebraria tela).
+    function podeLer() {
+      return logado() && (resource == null || daMinhaEmpresa(resource.data));
+    }
+
     // Perfil do usuário: cada pessoa lê e grava SÓ o próprio doc (papel/nome/canal).
     match /elevaUsers/{uid} {
-      allow read: if request.auth != null && request.auth.uid == uid;
-      allow write: if request.auth != null && request.auth.uid == uid;
+      // O perfil é da pessoa. A GSS lê para dar suporte; a gerência do cliente
+      // NÃO lê o perfil de ninguém — o Painel se monta pelo elevaStats.
+      allow read: if ehGss() || (logado() && request.auth.uid == uid);
+      allow write: if logado() && request.auth.uid == uid;
     }
     // Uso do app (pílulas/quiz/missões): cada pessoa grava SÓ o próprio doc.
     // LEITURA: a própria pessoa, e o gestor da marca (precisa pra montar o painel
     // — sem isso o painel só mostraria número de exemplo). Vendedor não lê o do
     // colega. O Sistema de Gestão lê via Admin SDK, que passa por cima das regras.
     match /elevaStats/{uid} {
-      allow read: if request.auth != null && (request.auth.uid == uid || isGestor());
-      allow list: if isGestor();
-      allow write: if request.auth != null && request.auth.uid == uid;
+      allow get: if logado() && (request.auth.uid == uid
+                                || (isGestor() && (resource == null || daMinhaEmpresa(resource.data))));
+      // O Painel busca com where('brand','==',...), então cada documento que
+      // volta é conferido aqui: gerente de um cliente não lista o outro.
+      allow list: if isGestor() && daMinhaEmpresa(resource.data);
+      allow write: if logado() && request.auth.uid == uid;
     }
     // Placar do ranking. Só uid, marca, pontos, ofensiva e mês — SEM nome e SEM
     // e-mail, de propósito: é isso que permite liberar a leitura pro time todo
@@ -38,7 +85,9 @@ service cloud.firestore {
     // navegador antes de subir. Publicar é ato de gestão (o time só lê), e a
     // lista de e-mails é a mesma que manda no resto do conteúdo.
     match /elevaImagens/{chave} {
-      allow read, list: if request.auth != null;
+      // Índice de fotos de produto, sem marca no documento: continua legível
+      // para quem está logado (é conteúdo, não dado de pessoa nem de negócio).
+      allow read, list: if logado();
       allow write: if isGestor();
     }
     // Rituais do mês (revisão de qualidade, condições, acessórios, campanha):
@@ -46,13 +95,17 @@ service cloud.firestore {
     // como saber quem conferiu, e "achei que alguém tinha visto" foi
     // exatamente o que deixou a tabela vencida no ar.
     match /elevaRituais/{uid} {
-      allow read: if request.auth != null && (request.auth.uid == uid || isGestor());
-      allow list: if isGestor();
-      allow write: if request.auth != null && request.auth.uid == uid;
+      allow get: if logado() && (request.auth.uid == uid
+                                || (isGestor() && (resource == null || daMinhaEmpresa(resource.data))));
+      allow list: if isGestor() && daMinhaEmpresa(resource.data);
+      allow write: if logado() && request.auth.uid == uid;
     }
     match /elevaPlacar/{uid} {
-      allow read, list: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == uid;
+      // O placar não tem nome nem e-mail, mas continua sendo o desempenho de
+      // uma empresa: só quem é dela lê.
+      allow get: if podeLer();
+      allow list: if logado() && daMinhaEmpresa(resource.data);
+      allow write: if logado() && request.auth.uid == uid;
     }
     // Vendas declaradas pela ponta (venda de balcão não passa pelo site, então
     // só existe se a pessoa declarar). Guardamos o NÚMERO do cupom, nunca a
@@ -65,8 +118,9 @@ service cloud.firestore {
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.status == 'pendente';
       // A pessoa acompanha o que declarou; o gestor vê tudo pra aprovar.
-      allow read, list: if request.auth != null
-        && (resource == null || resource.data.uid == request.auth.uid || isGestor());
+      allow read, list: if logado()
+        && (resource == null || resource.data.uid == request.auth.uid
+            || (isGestor() && daMinhaEmpresa(resource.data)));
       // Só o gestor decide. E não pode reescrever a venda, só o status.
       allow update: if isGestor()
         && request.resource.data.diff(resource.data).affectedKeys()
@@ -92,9 +146,9 @@ service cloud.firestore {
       //    retorno pro time: a objeção que veio da rua volta respondida, dentro
       //    do produto. Só entra aqui o que o gestor liberou de propósito — o
       //    texto cru de quem registrou continua restrito.
-      allow read: if isGestor()
-        || (request.auth != null && resource.data.byEmail == request.auth.token.email)
-        || (request.auth != null && resource.data.publicada == true);
+      allow read: if (isGestor() && daMinhaEmpresa(resource.data))
+        || (logado() && resource.data.byEmail == request.auth.token.email)
+        || (logado() && resource.data.publicada == true && daMinhaEmpresa(resource.data));
       // NÃO existe 'allow list' aberto aqui de propósito. Um list liberado é
       // avaliado contra a CONSULTA, não documento a documento — bastaria pedir
       // a coleção inteira pra levar junto as objeções que ninguém revisou, com
@@ -126,7 +180,9 @@ service cloud.firestore {
         && request.resource.data.whatsapp is string && request.resource.data.whatsapp.size() <= 40
         && request.resource.data.mensagem is string && request.resource.data.mensagem.size() <= 800
         && request.resource.data.criadoEm == request.time;
-      allow read, list: if isGestor();
+      // Lead do site não tem empresa definida (é quem pediu demonstração):
+      // fica com a GSS, que é quem atende.
+      allow read, list: if ehGss();
       allow update, delete: if false;
     }
 
@@ -156,7 +212,7 @@ service cloud.firestore {
         && request.resource.data.byRole is string && request.resource.data.byRole.size() <= 40
         && request.resource.data.destacado == false
         && request.resource.data.createdAt == request.time;
-      allow read: if isGestor()
+      allow read: if (isGestor() && daMinhaEmpresa(resource.data))
         || (request.auth != null && resource.data.destacado == true);
       // O gestor só mexe no destaque — nem ele reescreve o que a pessoa disse.
       allow update: if isGestor()
@@ -171,10 +227,17 @@ service cloud.firestore {
     // realmente está: proteger só a ficha e deixar os pedaços abertos seria
     // trancar a porta e deixar a janela aberta.
     match /elevaDocs/{id} {
-      allow read: if request.auth != null;
+      // A ficha do documento tem a empresa; os PEDAÇOS (onde o arquivo
+      // realmente está) seguem a ficha: proteger um e deixar o outro aberto
+      // seria trancar a porta e deixar a janela.
+      allow get: if podeLer();
+      allow list: if logado() && daMinhaEmpresa(resource.data);
       allow write: if isGestor();
       match /pedacos/{n} {
-        allow read: if request.auth != null;
+        allow read: if logado() && (
+          ehGss() || get(/databases/$(database)/documents/elevaDocs/$(id)).data.get('brand', '') == ''
+          || minhasEmpresas().hasAny([get(/databases/$(database)/documents/elevaDocs/$(id)).data.get('brand', '')])
+        );
         allow write: if isGestor();
       }
     }
@@ -186,7 +249,10 @@ service cloud.firestore {
     // Leitura pra quem está logado (é o catálogo do time) e escrita só do
     // gestor. O `list` é necessário: o app busca por marca ao abrir.
     match /elevaProdutos/{id} {
-      allow read, list: if request.auth != null;
+      // O app já busca com where('brand','==',...): cada documento que volta
+      // passa por aqui.
+      allow get: if podeLer();
+      allow list: if logado() && daMinhaEmpresa(resource.data);
       allow write: if isGestor();
     }
 
@@ -198,17 +264,93 @@ service cloud.firestore {
     // os pedaços abertos seria trancar a porta e deixar a janela aberta — é
     // neles que o vídeo realmente está.
     match /elevaVideos/{id} {
-      allow read, list: if request.auth != null;
+      // Vídeo não tem marca no documento (a chave é o produto): continua
+      // legível para quem está logado, como as fotos.
+      allow read, list: if logado();
       allow write: if isGestor();
       match /pedacos/{n} {
-        allow read, list: if request.auth != null;
+        allow read, list: if logado();
         allow write: if isGestor();
       }
     }
 
-    // Conteúdo do Eleva: quem está logado LÊ; só o gestor ESCREVE.
+    // ---- conteúdo por empresa: a marca está NO DOCUMENTO ----
+    match /elevaCondicoes/{id} {
+      allow get: if podeLer();
+      allow list: if logado() && daMinhaEmpresa(resource.data);
+      allow write: if isGestor();
+    }
+    match /elevaContent/{id} {
+      allow get: if podeLer();
+      allow list: if logado() && daMinhaEmpresa(resource.data);
+      allow write: if isGestor();
+    }
+    match /elevaCalendar/{id} {
+      allow get: if podeLer();
+      allow list: if logado() && daMinhaEmpresa(resource.data);
+      allow write: if isGestor();
+    }
+    match /elevaTrends/{id} {
+      allow get: if podeLer();
+      allow list: if logado() && daMinhaEmpresa(resource.data);
+      allow write: if isGestor();
+    }
+    match /elevaOffers/{id} {
+      allow get: if podeLer();
+      allow list: if logado() && daMinhaEmpresa(resource.data);
+      allow write: if isGestor();
+    }
+
+    // ---- conteúdo por empresa: a marca é o PRÓPRIO NOME do documento ----
+    // (elevaAcessorios/{marca} e elevaDocsOcultos/{marca} guardam um documento
+    // por empresa, com a lista inteira dentro.)
+    function minhaMarcaNoNome(marca) {
+      return ehGss() || (logado() && minhasEmpresas().hasAny([marca]));
+    }
+    match /elevaAcessorios/{marca} {
+      allow read, list: if minhaMarcaNoNome(marca);
+      allow write: if isGestor();
+    }
+    match /elevaDocsOcultos/{marca} {
+      allow read, list: if minhaMarcaNoNome(marca);
+      allow write: if isGestor();
+    }
+    match /elevaBrands/{marca}/{resto=**} {
+      allow read, list: if minhaMarcaNoNome(marca);
+      allow write: if isGestor();
+    }
+
+    // ---- conteúdo sem empresa: a chave é o produto, e o produto já é de uma
+    // marca só. Vale para quem está logado, como as fotos e os vídeos ----
+    match /elevaDestaques/{id} {
+      allow read, list: if logado();
+      allow write: if isGestor();
+    }
+    match /elevaOverrides/{id} {
+      allow read, list: if logado();
+      allow write: if isGestor();
+    }
+    match /elevaProducts/{id} {
+      allow read, list: if logado();
+      allow write: if isGestor();
+    }
+    // Metadados do app (versão, cache das buscas de notícia). Sem dado de
+    // pessoa e sem dado de negócio.
+    match /elevaMeta/{id} {
+      allow read, list: if logado();
+      allow write: if isGestor();
+    }
+
+    // ---- O FECHO ----
+    //
+    // Era aqui que estava o buraco: "quem está logado lê" valia para o banco
+    // INTEIRO e passava por cima das regras estreitas de cima — em Firestore
+    // basta UMA regra permitir. Agora o que não foi citado nominalmente acima
+    // não é lido por ninguém além da GSS. Coleção nova precisa entrar aqui de
+    // propósito: se alguém esquecer, a tela falha na hora (e aparece), em vez
+    // de vazar calada.
     match /{document=**} {
-      allow read: if request.auth != null;
+      allow read, list: if ehGss();
       allow write: if isGestor();
     }
   }

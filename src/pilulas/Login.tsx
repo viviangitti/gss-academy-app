@@ -176,12 +176,23 @@ export default function Login() {
             em três linhas cada um, empurrando o resto do formulário pra fora da
             tela. E começa VAZIA — foi um campo já respondido que fez uma
             vendedora da Ramasa ser gravada como Meraki. */}
-        {mode === 'criar' && (
+        {/* QUEM VEM PELO LINK DA EMPRESA NÃO VÊ AS OUTRAS.
+            A lista existe para quem chega pelo endereço geral e precisa se
+            achar. Mas quem recebe gsseleva.com.br/eleva?marca=dsp já veio
+            endereçado — e mostrar o nome das outras empresas para ele é contar
+            quem mais é cliente da GSS. Aqui o campo vira o nome, fixo. */}
+        {mode === 'criar' && invBrand && (
+          <>
+            <label className="wp-login-label">Sua empresa</label>
+            <div className="wp-login-fixa">{getBrand(invBrand).name}</div>
+          </>
+        )}
+        {mode === 'criar' && !invBrand && (
           <>
             <label className="wp-login-label">Em qual empresa você trabalha?</label>
             <select
               className="wp-login-select"
-              value={brands[0] || invBrand || ''}
+              value={brands[0] || ''}
               onChange={(e) => {
                 setError('');
                 const v = e.target.value as BrandId | '';

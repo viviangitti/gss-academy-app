@@ -1,8 +1,17 @@
-# Os tutoriais em vídeo
+# Os vídeos
 
-Dois vídeos verticais com locução e legenda karaokê: **Guia do vendedor** e
-**Guia do gerente**. As telas são o app de verdade, rodando, com o conteúdo
-publicado de verdade — nada de mockup.
+Verticais, com locução e legenda karaokê. As telas são o app de verdade,
+rodando, com o conteúdo publicado de verdade — nada de mockup.
+
+| vídeo | para quem | marca nas telas |
+|---|---|---|
+| `vendedor` | time de salão da Ramasa | ramasa |
+| `gerente` | gerência da Ramasa | ramasa |
+| `drogaria` | **apresentação** para a Sorocaps · Drogaria São Paulo | dsp |
+
+O da drogaria não é tutorial: é apresentação para quem ainda não usa o app.
+Cada cena responde "o que isso muda no balcão", e as telas são as da marca
+DELES — farmácia com carro na tela seria entregar o material de outro cliente.
 
 ## Como refazer
 
@@ -11,10 +20,11 @@ npm run dev                                  # o app precisa estar no ar
 cd scripts/tutorial
 node ../relatorio-uso/uso.mjs                # gera time-ramasa.json (usado na cena do Painel)
 node dados.mjs                               # puxa as condições publicadas
-node capturar.mjs vendedor && node capturar.mjs gerente
-python3 narrar.py vendedor && python3 narrar.py gerente
-python3 karaoke.py vendedor && python3 karaoke.py gerente
-python3 montar.py vendedor && python3 montar.py gerente
+node falas.mjs                                # roteiro -> falas-{qual}.json (SEM isto, a narração velha fica)
+node capturar.mjs drogaria                   # ou vendedor / gerente
+python3 narrar.py drogaria
+python3 karaoke.py drogaria
+python3 montar.py drogaria
 ```
 
 ## O que cada peça faz
@@ -31,10 +41,13 @@ python3 montar.py vendedor && python3 montar.py gerente
 
 ## Armadilhas que já custaram caro
 
-**O endereço.** O Vite às vezes sobe escutando só em IPv6. O Chrome tenta IPv4,
-falha em silêncio e o quadro sai **branco** — e o montador segue sem reclamar.
-Por isso a captura usa `http://[::1]:5173`. Se um dia sair branco, confira isto
-primeiro (`lsof -nP -iTCP:5173 -sTCP:LISTEN`).
+**O endereço, dos dois lados.** O Vite às vezes sobe escutando só em IPv6: o
+Chrome tenta IPv4, falha em silêncio e o quadro sai **branco**. E já aconteceu o
+contrário — o Chrome desta máquina não alcançou `[::1]` e gravou 14 cenas
+idênticas com "site não acessível". Agora o padrão é `http://localhost:5173`, e
+dá para forçar com `ELEVA_URL=http://127.0.0.1:5173`. Se os quadros saírem todos
+do MESMO tamanho em bytes, é isto: confira o servidor
+(`lsof -nP -iTCP:5173 -sTCP:LISTEN`) antes de qualquer outra coisa.
 
 **O acesso gruda.** `Page.addScriptToEvaluateOnNewDocument` ACUMULA: um script
 injetado numa cena continua valendo nas seguintes. Foi assim que o vídeo do

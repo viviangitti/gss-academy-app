@@ -6,14 +6,21 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 QUAL = sys.argv[1]
-TITULO = 'Guia do vendedor' if QUAL == 'vendedor' else 'Guia do gerente'
-SUB = 'Eleva · Ramasa — Jaecoo e Omoda'
+# Título, assinatura e cor de acento de cada vídeo. O da Drogaria São Paulo não
+# é tutorial: é apresentação, e leva a cor da marca DELES — o azul da Ramasa num
+# material de farmácia denunciaria que o vídeo é reaproveitado de outro cliente.
+CAPAS = {
+    'vendedor': ('Guia do vendedor', 'Eleva · Ramasa — Jaecoo e Omoda', (75, 141, 255)),
+    'gerente': ('Guia do gerente', 'Eleva · Ramasa — Jaecoo e Omoda', (75, 141, 255)),
+    'drogaria': ('Educação de produto no balcão', 'Eleva · GSS para a Drogaria São Paulo', (47, 157, 106)),
+}
+TITULO, SUB, ACENTO = CAPAS.get(QUAL, CAPAS['vendedor'])
 
 W, H = 1080, 1920
 ALVO_H = 1660     # altura do celular no quadro (era 1420, com a legenda embaixo)
 TOPO_Y = 46
 FUNDO = (13, 13, 24)
-AZUL = (75, 141, 255)
+AZUL = ACENTO
 BOLD = '/System/Library/Fonts/Supplemental/Arial Bold.ttf'
 REG = '/System/Library/Fonts/Supplemental/Arial.ttf'
 
@@ -72,8 +79,8 @@ def marca(im, caixa, x0, y0, esc):
     r = l + caixa['w']*3*esc + folga*2
     b = t + caixa['h']*3*esc + folga*2
     d = ImageDraw.Draw(im, 'RGBA')
-    d.rounded_rectangle([l-5, t-5, r+5, b+5], 26, outline=(75,141,255,70), width=12)
-    d.rounded_rectangle([l, t, r, b], 22, outline=(75,141,255,255), width=7)
+    d.rounded_rectangle([l-5, t-5, r+5, b+5], 26, outline=ACENTO + (70,), width=12)
+    d.rounded_rectangle([l, t, r, b], 22, outline=ACENTO + (255,), width=7)
 
 def cena(png, texto, destino, caixa=None):
     im = Image.new('RGB', (W, H), FUNDO); d = ImageDraw.Draw(im)

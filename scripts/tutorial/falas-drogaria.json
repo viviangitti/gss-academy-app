@@ -1,0 +1,58 @@
+[
+ {
+  "id": "01-abre",
+  "fala": "O Eleva é a educação de produto da GSS. Ele coloca o produto na mão de quem está no balcão: um vídeo curto, a resposta pronta para cada objeção e a mensagem para mandar na hora. Sem apostila e sem treinamento remarcado."
+ },
+ {
+  "id": "02-hoje",
+  "fala": "A tela de início diz o que fazer hoje. E no alto, a busca por aquilo que a cliente acabou de falar: você escreve a frase dela e o app devolve a resposta."
+ },
+ {
+  "id": "03-catalogo",
+  "fala": "No catálogo ficam os produtos da Drogaria São Paulo — e só os de vocês. Cada empresa enxerga o próprio conteúdo, e ninguém de fora alcança o que é de vocês."
+ },
+ {
+  "id": "04-pilula",
+  "fala": "Dentro do produto vem a pílula: trinta segundos com o que a cliente precisa ouvir. É o tempo que existe entre a pergunta no balcão e a decisão dela."
+ },
+ {
+  "id": "05-oquee",
+  "fala": "Abaixo, o que o produto é e para quem ele serve, escrito do jeito que pode ser dito no balcão: auxilia, contribui, ajuda. Nunca cura, nunca trata."
+ },
+ {
+  "id": "06-objecao",
+  "fala": "A quebra de objeção é a parte mais usada. Achei caro. Já como peixe. Fico arrotando gosto de peixe. A resposta está escrita, pronta para falar — e é a mesma em todas as lojas."
+ },
+ {
+  "id": "07-compliance",
+  "fala": "E no pé de cada produto, como comunicar: suplemento não é medicamento e não substitui alimentação. É o que protege a farmácia de uma promessa que não pode ser feita."
+ },
+ {
+  "id": "08-ficha",
+  "fala": "A ficha do produto fica aqui, linha por linha, para achar um número em dois segundos com a cliente na frente do balcão."
+ },
+ {
+  "id": "09-tiraduvida",
+  "fala": "O Tira-dúvida responde o que ninguém decorou. Ele conhece os produtos que vocês publicaram e responde como responderia o colega mais experiente da loja."
+ },
+ {
+  "id": "10-resposta",
+  "fala": "A resposta vem com o dado do produto, não com opinião — e já no jeito de falar com a cliente."
+ },
+ {
+  "id": "11-formacao",
+  "fala": "A formação organiza a sequência: o que estudar primeiro, o quiz no fim de cada pílula e o nível seguinte, que só abre depois do acerto. Quem não domina o básico não avança."
+ },
+ {
+  "id": "12-painel",
+  "fala": "A gerência tem o painel: publica produto, sobe vídeo e acompanha quem estudou, quem parou e qual dúvida o time mais consultou. O que é publicado aqui chega na hora em todas as lojas."
+ },
+ {
+  "id": "13-entrada",
+  "fala": "Cada pessoa entra pelo link da Drogaria São Paulo. O cadastro leva um minuto e a conta já nasce dentro da empresa certa."
+ },
+ {
+  "id": "14-fim",
+  "fala": "Eleva. A cliente pergunta, e quem está no balcão já sabe responder."
+ }
+]

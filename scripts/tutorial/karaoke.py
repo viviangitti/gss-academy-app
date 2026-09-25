@@ -14,11 +14,14 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 QUAL = sys.argv[1]
+# A cor da palavra acesa acompanha a marca do vídeo (ver CAPAS em montar.py):
+# o mesmo material com o azul da Ramasa numa farmácia entrega reaproveitamento.
+REALCE = {'drogaria': ((20, 62, 46), (160, 214, 188))}.get(QUAL, ((30, 52, 104), (150, 175, 225)))
 W, FAIXA_H, FAIXA_Y = 1080, 214, 1706
 FUNDO = (13, 13, 24)
 DITA = (255, 255, 255)       # a palavra que está sendo dita agora
 AINDA = (128, 134, 158)      # o que vem depois
-JA = (150, 175, 225)         # o que já passou
+JA = REALCE[1]         # o que já passou
 BOLD = '/System/Library/Fonts/Supplemental/Arial Bold.ttf'
 FONTE = ImageFont.truetype(BOLD, 52)
 SILENCIO, FOLGA, FPS = 2.0, 0.55, 30
@@ -62,7 +65,7 @@ def tira(grupo, atual, destino):
         cor = DITA if i == atual else (JA if i < atual else AINDA)
         if i == atual:
             # halo azul atrás da palavra dita — destaca sem piscar a tela inteira
-            d.rounded_rectangle([x-10, y-40, x+larg[i]-8, y+38], 14, fill=(30, 52, 104))
+            d.rounded_rectangle([x-10, y-40, x+larg[i]-8, y+38], 14, fill=REALCE[0])
         d.text((x, y), p, font=FONTE, fill=cor, anchor='lm')
         x += larg[i]
     im.save(destino)

@@ -171,3 +171,74 @@ export const GERENTE = [
   { id: '16-fim', url: '/eleva/gestor', espera: 2200,
     fala: 'Resumo: carro e acessório novos entram na aba Conteúdo. Preço e texto se corrigem na linha. A carta do mês sobe inteira e sai sozinha. O que a inteligência artificial responde, você confere e corrige. E no começo de cada mês o app te lembra do que precisa ser atualizado.' },
 ];
+
+// ===================== DROGARIA SÃO PAULO =====================
+//
+// Este não é tutorial: é APRESENTAÇÃO. Vai para quem ainda não usa o app e
+// precisa entender para que ele serve — a gerência da Sorocaps · Drogaria São
+// Paulo. Por isso cada cena responde "o que isso muda no balcão", e não "onde
+// clicar". As telas são as da MARCA DELES, com os produtos deles: mostrar carro
+// da concessionária num material de farmácia seria dizer que o app é de outro.
+export const DROGARIA = [
+  { id: '01-abre', url: '/eleva', espera: 2800,
+    fala: 'O Eleva é a educação de produto da GSS. Ele coloca o produto na mão de quem está no balcão: um vídeo curto, a resposta pronta para cada objeção e a mensagem para mandar na hora. Sem apostila e sem treinamento remarcado.' },
+
+  { id: '02-hoje', url: '/eleva', espera: 2000,
+    foco: `document.querySelector('.wp-td-search')`,
+    fala: 'A tela de início diz o que fazer hoje. E no alto, a busca por aquilo que a cliente acabou de falar: você escreve a frase dela e o app devolve a resposta.' },
+
+  { id: '03-catalogo', url: '/eleva/catalogo', espera: 2400,
+    foco: `document.querySelector('.wp-card')`,
+    fala: 'No catálogo ficam os produtos da Drogaria São Paulo — e só os de vocês. Cada empresa enxerga o próprio conteúdo, e ninguém de fora alcança o que é de vocês.' },
+
+  { id: '04-pilula', url: '/eleva/produto/dsp-omega-3', espera: 2800,
+    foco: `document.querySelector('.wp-reel')`,
+    fala: 'Dentro do produto vem a pílula: trinta segundos com o que a cliente precisa ouvir. É o tempo que existe entre a pergunta no balcão e a decisão dela.' },
+
+  { id: '05-oquee', url: '/eleva/produto/dsp-omega-3', espera: 2000,
+    foco: `[...document.querySelectorAll('.wp-block')].find(e=>/O que é/.test(e.textContent))`,
+    acao: `const b=[...document.querySelectorAll('.wp-block')].find(e=>/O que é/.test(e.textContent)); b?.scrollIntoView({block:'center'})`,
+    fala: 'Abaixo, o que o produto é e para quem ele serve, escrito do jeito que pode ser dito no balcão: auxilia, contribui, ajuda. Nunca cura, nunca trata.' },
+
+  { id: '06-objecao', url: '/eleva/produto/dsp-omega-3', espera: 2600,
+    foco: `document.querySelector('.wp-obj.open') || document.querySelector('.wp-objections')`,
+    acao: `const b=[...document.querySelectorAll('.wp-block')].find(e=>/Quebra de objeções/.test(e.textContent)); b?.scrollIntoView({block:'start'}); window.scrollBy(0,-70); await new Promise(r=>setTimeout(r,500)); document.querySelector('.wp-obj button')?.click(); await new Promise(r=>setTimeout(r,700)); b?.scrollIntoView({block:'start'}); window.scrollBy(0,-70)`,
+    fala: 'A quebra de objeção é a parte mais usada. Achei caro. Já como peixe. Fico arrotando gosto de peixe. A resposta está escrita, pronta para falar — e é a mesma em todas as lojas.' },
+
+  { id: '07-compliance', url: '/eleva/produto/dsp-omega-3', espera: 2400,
+    foco: `document.querySelector('.wp-compliance')`,
+    acao: `document.querySelector('.wp-compliance')?.scrollIntoView({block:'center'})`,
+    fala: 'E no pé de cada produto, como comunicar: suplemento não é medicamento e não substitui alimentação. É o que protege a farmácia de uma promessa que não pode ser feita.' },
+
+  // NA FARMÁCIA NÃO EXISTE "mandar para a cliente": o app não tem esse botão no
+  // balcão, de propósito (ver isBalcao em Product.tsx). O que existe é a ficha
+  // para consultar em pé, com a cliente na frente — e é isso que a cena mostra.
+  { id: '08-ficha', url: '/eleva/produto/dsp-omega-3', espera: 2600,
+    foco: `document.querySelector('.wp-ficha-list')`,
+    acao: `const t=[...document.querySelectorAll('button')].find(e=>/^\\s*Ficha do produto/.test(e.textContent||'')); t?.click(); await new Promise(r=>setTimeout(r,800)); t?.scrollIntoView({block:'start'}); window.scrollBy(0,-70)`,
+    fala: 'A ficha do produto fica aqui, linha por linha, para achar um número em dois segundos com a cliente na frente do balcão.' },
+
+  { id: '09-tiraduvida', url: '/eleva/assistente', espera: 2400,
+    foco: `document.querySelector('.wp-ia-thread') || document.querySelector('.wp-ia-sug')`,
+    fala: 'O Tira-dúvida responde o que ninguém decorou. Ele conhece os produtos que vocês publicaram e responde como responderia o colega mais experiente da loja.' },
+
+  { id: '10-resposta', url: '/eleva/assistente', espera: 2800,
+    foco: `[...document.querySelectorAll('.wp-ia-msg.assistant')].pop()`,
+    acao: `const m=[...document.querySelectorAll('.wp-ia-msg.assistant')].pop(); m?.scrollIntoView({block:'center'})`,
+    fala: 'A resposta vem com o dado do produto, não com opinião — e já no jeito de falar com a cliente.' },
+
+  { id: '11-formacao', url: '/eleva/trilha', espera: 2600,
+    foco: `document.querySelector('.wp-tr-card') || document.querySelector('.wp-trilha')`,
+    fala: 'A formação organiza a sequência: o que estudar primeiro, o quiz no fim de cada pílula e o nível seguinte, que só abre depois do acerto. Quem não domina o básico não avança.' },
+
+  { id: '12-painel', url: '/eleva/gestor', espera: 3000,
+    usuario: { uid: 'g', name: 'Gerência', email: 'gerencia@drogariasaopaulo.com.br', role: 'gestor', brands: ['dsp'] },
+    foco: `document.querySelector('.wp-gz-abas') || document.querySelector('.wp-gz-hero')`,
+    fala: 'A gerência tem o painel: publica produto, sobe vídeo e acompanha quem estudou, quem parou e qual dúvida o time mais consultou. O que é publicado aqui chega na hora em todas as lojas.' },
+
+  { id: '13-entrada', ilustracao: 'ilustracoes/dsp-cadastro.png',
+    fala: 'Cada pessoa entra pelo link da Drogaria São Paulo. O cadastro leva um minuto e a conta já nasce dentro da empresa certa.' },
+
+  { id: '14-fim', url: '/eleva', espera: 2600,
+    fala: 'Eleva. A cliente pergunta, e quem está no balcão já sabe responder.' },
+];

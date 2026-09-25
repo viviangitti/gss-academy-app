@@ -1,13 +1,13 @@
 import fs from 'fs';
 import { abrirChrome, conectar } from './cdp.mjs';
-import { VENDEDOR, GERENTE } from './roteiros.mjs';
+import { VENDEDOR, GERENTE, DROGARIA } from './roteiros.mjs';
 
-const QUAL = process.argv[2]; // 'vendedor' | 'gerente'
+const QUAL = process.argv[2]; // 'vendedor' | 'gerente' | 'drogaria'
 // Cenas avulsas: `node capturar.mjs gerente 17-instalar,16-fim` regrava só
 // essas e NÃO apaga a pasta. Sem isso, consertar o seletor de uma cena obrigava
 // a regravar as cinquenta — e a refazer o remendo temporário do Painel.
 const SO = (process.argv[3] || '').split(',').map((x) => x.trim()).filter(Boolean);
-const TODAS = QUAL === 'gerente' ? GERENTE : VENDEDOR;
+const TODAS = QUAL === 'gerente' ? GERENTE : QUAL === 'drogaria' ? DROGARIA : VENDEDOR;
 const CENAS = SO.length ? TODAS.filter((c) => SO.includes(c.id)) : TODAS;
 const SAIDA = `frames-${QUAL}`;
 if (!SO.length) fs.rmSync(SAIDA, { recursive: true, force: true });
@@ -23,16 +23,35 @@ const condicoes = JSON.parse(fs.readFileSync('condicoes-reais.json', 'utf8'));
 // Só a gravação usa isto (ver o remendo temporário em teamStats.ts).
 const TIME = JSON.parse(fs.readFileSync('time-ramasa.json', 'utf8'));
 const folha = fs.readFileSync('folha-omoda5.txt', 'utf8');
+
+// A CONVERSA QUE APARECE NO TIRA-DÚVIDA. É uma pergunta real do balcão, com a
+// resposta saindo do conteúdo publicado — não do que a IA acha.
+const CONVERSA = QUAL === 'drogaria'
+  ? [
+      { role: 'user', content: 'A cliente disse que arrota gosto de peixe com o ômega 3. O que eu ofereço?' },
+      { role: 'assistant', content: 'Primeiro a orientação simples: tomar **junto de uma refeição**, que é o que mais reduz o retorno do sabor.\n\nSe continuar incomodando, ofereça o **Ômega 3 Mini Caps** — o mesmo ômega 3 em cápsula menor, mais fácil de engolir — ou o **Ômega 3 Plus**, com mais EPA e DHA por cápsula.\n\nLembre de comunicar como suplemento: auxilia e contribui, nunca cura nem trata.' },
+    ]
+  : [
+      { role: 'user', content: 'Cliente tem um seminovo com FIPE de R$ 45.000 e quer um Omoda 7 Luxury. Ele leva o bônus de trade-in inteiro?' },
+      { role: 'assistant', content: 'Não. Para o Omoda 7 LUXURY, o seminovo precisa ter FIPE a partir de **R$ 70.000** para levar 100% do bônus.' },
+    ];
 // A folha entra só na condição que o vídeo abre — as outras ficam sem arquivo,
 // como na vida real (a folha só desce quando alguém abre).
 const comFolha = condicoes.map((c) => (c.id === 'carta-set26-omoda-5' ? { ...c, arquivo: folha } : c));
 
 const USUARIO = QUAL === 'gerente'
   ? { uid: 'c', name: 'Cristiano Maciel', email: 'cristiano.maciel@gruporamasa.com', role: 'gestor', brands: ['ramasa'], cargo: 'gerente-veiculos' }
+  : QUAL === 'drogaria'
+  ? { uid: 'b', name: 'Ana', email: 'ana@drogariasaopaulo.com.br', role: 'balconista', brands: ['dsp'] }
   : { uid: 'v', name: 'Walther', email: 'walther@gruporamasa.com', role: 'balconista', brands: ['ramasa'], cargo: 'vendedor-veiculos' };
 
+// A MARCA DA GRAVAÇÃO. O vídeo da Drogaria São Paulo mostra as telas DELES:
+// mesmo app, catálogo deles, cor deles. Gravar farmácia com carro na tela seria
+// entregar o material de outro cliente.
+const MARCA = QUAL === 'drogaria' ? 'dsp' : 'ramasa';
+
 const SEMENTE = `
-  localStorage.setItem('wp_brand', 'ramasa');
+  localStorage.setItem('wp_brand', ${JSON.stringify(MARCA)});
   localStorage.setItem('wp_demo_time', ${JSON.stringify(JSON.stringify(TIME))});
   localStorage.setItem('wp_onboarded', '1');
   // A Jornada com os campos preenchidos: no vídeo, script com "[nome do cliente]"
@@ -61,7 +80,8 @@ const SEMENTE = `
     const t = setInterval(limpa, 400);
     setTimeout(() => clearInterval(t), 8000);
   });
-  localStorage.setItem('wp_ia_conversa:ramasa:' + ${JSON.stringify(USUARIO.email)}, JSON.stringify({em: Date.now(), msgs: [
+  localStorage.setItem('wp_ia_conversa:' + ${JSON.stringify(MARCA)} + ':' + ${JSON.stringify(USUARIO.email)}, JSON.stringify({em: Date.now(), msgs: ${JSON.stringify(CONVERSA)}}));
+  localStorage.setItem('wp_ia_conversa_velha:ramasa:' + ${JSON.stringify(USUARIO.email)}, JSON.stringify({em: Date.now(), msgs: [
     { role: 'user', content: 'Cliente tem um seminovo com FIPE de R$ 45.000 e quer um Omoda 7 Luxury. Ele leva o bônus de trade-in inteiro?' },
     { role: 'assistant', content: 'Não. Para o Omoda 7 LUXURY, o seminovo precisa ter FIPE a partir de **R$ 70.000** para levar 100% do bônus, ou entre R$ 50.000 e R$ 69.999 para levar 50%. Com R$ 45.000 ele fica abaixo da faixa e **não há bônus de trade-in**.\\n\\nMas a versão já tem **BÔNUS VAREJO de R$ 10.000**, que soma com a opção escolhida. Apresente a condição A (taxa 0%, entrada 60%, 36x) somando esse bônus, e faça a avaliação do seminovo para abater no total.' },
   ]}));
@@ -77,6 +97,15 @@ await c.send('Emulation.setDeviceMetricsOverride', {
   width: 390, height: 844, deviceScaleFactor: 3, mobile: true,
 });
 await c.send('Page.addScriptToEvaluateOnNewDocument', { source: SEMENTE });
+
+// O ENDEREÇO DO SERVIDOR DE DESENVOLVIMENTO.
+//
+// Já mordeu duas vezes, dos dois lados: houve o dia em que o Vite subiu só em
+// IPv6 e o Chrome, tentando IPv4, gravou quadro branco; e houve o dia em que
+// o Chrome desta máquina não alcançou `[::1]` e gravou "site não acessível" —
+// 14 cenas idênticas, todas com a tela de erro. Agora o padrão é localhost
+// (que resolve os dois) e dá para forçar: ELEVA_URL=http://127.0.0.1:5173 node capturar.mjs ...
+const ENDERECO = process.env.ELEVA_URL || 'http://localhost:5173';
 
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 let idAcesso = null;
@@ -121,7 +150,7 @@ for (const cena of CENAS) {
     source: `localStorage.setItem('wp_dev_user', ${JSON.stringify(JSON.stringify(quem))}); ${relogio}`,
   });
   idAcesso = posto.identifier;
-  await c.send('Page.navigate', { url: `http://[::1]:5173${cena.url}` });
+  await c.send('Page.navigate', { url: `${ENDERECO}${cena.url}` });
   await espera(cena.espera || 2000);
   if (cena.acao) {
     await c.send('Runtime.evaluate', {

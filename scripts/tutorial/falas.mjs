@@ -5,9 +5,9 @@
 // vídeo: a narração antiga é reaproveitada e ninguém percebe. Era o degrau
 // que faltava entre escrever e gravar.
 import fs from 'fs';
-import { VENDEDOR, GERENTE } from './roteiros.mjs';
+import { VENDEDOR, GERENTE, DROGARIA } from './roteiros.mjs';
 
-for (const [qual, cenas] of [['vendedor', VENDEDOR], ['gerente', GERENTE]]) {
+for (const [qual, cenas] of [['vendedor', VENDEDOR], ['gerente', GERENTE], ['drogaria', DROGARIA]]) {
   const falas = cenas.map((c) => ({ id: c.id, fala: c.fala }));
   fs.writeFileSync(`falas-${qual}.json`, JSON.stringify(falas, null, 1));
   const palavras = falas.reduce((n, c) => n + (c.fala || '').split(/\s+/).length, 0);

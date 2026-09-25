@@ -27,7 +27,7 @@ põe(tabela([
          txt('     GRUPO RAMASA · USO INTERNO', { size: 16, bold: true, color: OURO, spacing: 30 })],
         { depois: 200 }),
       p('Quanto já foi investido no app', { size: 48, bold: true, color: 'FFFFFF', depois: 140, linha: 400 }),
-      p(rico('O que existe hoje, **quanto trabalho está dentro disso** — medido no histórico, não de memória —, quanto custa manter e quanto vale cada peça. Atualização da versão de 11/09.',
+      p(rico('O que existe hoje, **quanto trabalho está dentro disso** — medido no histórico, não de memória —, quanto custa manter e quanto vale cada peça. **Da primeira conversa, em 01/07/2026, até hoje.**',
         { size: 19, color: 'D5D8E6' }), { depois: 200, linha: 290 }),
       p(`${dd} DE SETEMBRO DE 2026 · NÃO ENVIAR AO CLIENTE`,
         { size: 15, bold: true, color: '9AA2BD', spacing: 24, depois: 0 }),
@@ -56,13 +56,33 @@ const rotuloPlacar = (texto, dourado) => p(texto, {
   color: dourado ? OURO_ESCURO : CINZA_CLARO,
 });
 
-põe(rotuloPlacar('O que já foi feito para a Ramasa · desde 01/07/2026', true));
+põe(rotuloPlacar('O que já foi feito para a Ramasa · 01/07 a 25/09/2026', true));
 põe(tabela([
   new TableRow({ cantSplit: true, children: [
-    cartaoNumero('33', 'dias de trabalho', 'eram 25 em 11/09', true),
-    cartaoNumero('213', 'entregas registradas', 'eram 176', true),
-    cartaoNumero('158 h', 'medidas, leitura conservadora', 'eram 107 h', true),
-    cartaoNumero('R$ 31.600', 'custo dessas horas a R$ 200/h', 'eram R$ 21.420', true),
+    cartaoNumero('33', 'dias com entrega registrada', 'dentro de 86 dias corridos', true),
+    cartaoNumero('213', 'entregas registradas', 'cada uma com data e hora', true),
+    cartaoNumero('158 h', 'medidas', 'leitura conservadora, 60% da janela', true),
+    cartaoNumero('R$ 31.600', 'custo dessas horas', 'a R$ 200 a hora', true),
+  ] }),
+], LK, { bordas: SEM_BORDAS }));
+
+põe(rotuloPlacar('A linha do tempo'));
+const marco = (quando, oque) => celula([
+  p(quando, { size: 25, bold: true, depois: 55 }),
+  p(oque, { size: 17, color: CINZA, depois: 0, linha: 240 }),
+], { largura: 2409, mt: 130, mb: 60, ml: 0, mr: 140,
+  bordas: {
+    top: { style: BorderStyle.SINGLE, size: 12, color: OURO },
+    bottom: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+    left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+    right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+  } });
+põe(tabela([
+  new TableRow({ cantSplit: true, children: [
+    marco('01/07', 'primeira conversa com a Ramasa'),
+    marco('10/08', 'primeira linha de conteúdo escrita'),
+    marco('28/08', 'o time começa a usar o app'),
+    marco('25/09', 'hoje · 86 dias corridos'),
   ] }),
 ], LK, { bordas: SEM_BORDAS }));
 

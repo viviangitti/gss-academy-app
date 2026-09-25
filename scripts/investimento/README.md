@@ -14,6 +14,15 @@ Não é material de cliente.
    versão (a primeira seção, "O que mudou", é o que a Vivian lê primeiro).
 3. `node scripts/investimento/gera.mjs` — sai o PDF em `~/Downloads`, com a data
    de hoje no nome.
+4. `node scripts/investimento/gera-word.mjs` — sai o `.docx` editável, ao lado.
+
+O PDF é o que se manda; o Word é o que se mexe. O conteúdo é o mesmo, mas mora
+em dois lugares: `doc.html` (PDF) e `gera-word.mjs` (Word). **Mudou um, mude o
+outro** — não há geração automática de um a partir do outro, de propósito: o
+Word precisa de tabela de verdade, e o PDF precisa de CSS.
+
+A fonte do Word é Arial em tudo, porque o Mac da Vivian não tem Office e
+Calibri/Cambria viram outra coisa no Pages.
 
 ## O que não pode mudar sem avisar
 

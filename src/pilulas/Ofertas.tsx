@@ -186,6 +186,8 @@ function AcoesDaSecao({ titulo, itens }: { titulo: string; itens: Condicao[] }) 
 function Folha({ c, onAbrir }: { c: Condicao; onAbrir: (c: Condicao) => void }) {
   const [url, setUrl] = useState(c.arquivo || '');
   const [erro, setErro] = useState(false);
+  const [tentativa, setTentativa] = useState(0);
+  const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
 
   useEffect(() => {
     if (url) return;
@@ -195,18 +197,31 @@ function Folha({ c, onAbrir }: { c: Condicao; onAbrir: (c: Condicao) => void }) 
       if (u) setUrl(u); else setErro(true);
     });
     return () => { vivo = false; };
-  }, [c, url]);
+  }, [c, url, tentativa]);
 
-  const abrir = () => { if (url) onAbrir({ ...c, arquivo: url }); };
+  // Tocar na folha que falhou tenta baixar de novo — é o que a pessoa faz por
+  // instinto, e antes o toque não fazia nada porque o botão ficava desativado.
+  const abrir = () => {
+    if (url) { onAbrir({ ...c, arquivo: url }); return; }
+    if (erro) { setErro(false); setTentativa((n) => n + 1); }
+  };
 
   return (
-    <button type="button" className="wp-cond-thumb" onClick={abrir} disabled={!url}>
+    <button type="button" className="wp-cond-thumb" onClick={abrir} disabled={!url && !erro}>
       {c.tipo === 'imagem' && url ? (
         <img src={url} alt={c.titulo} />
       ) : (
         <span className="wp-cond-pdf">
           <FileText size={26} className="wp-ico" />
-          {erro ? 'sem internet para abrir a folha' : url ? c.nomeArquivo : 'carregando a folha…'}
+          {/* A MENSAGEM NÃO PODE CHUTAR O MOTIVO.
+              Esta linha dizia "sem internet" para QUALQUER falha. Em 25/09/2026
+              a folha parou por regra do servidor, e o time — com 5G no topo da
+              tela — leu "sem internet" e foi procurar o problema no lugar
+              errado. Agora só fala de internet quando o aparelho está mesmo
+              offline; no resto, assume que falhou e oferece tentar de novo. */}
+          {erro
+            ? (offline ? 'sem internet para abrir a folha' : 'não consegui abrir a folha — toque para tentar de novo')
+            : url ? c.nomeArquivo : 'carregando a folha…'}
         </span>
       )}
       <span className="wp-cond-zoom"><Maximize2 size={14} className="wp-ico" /> Abrir</span>

@@ -279,6 +279,22 @@ service cloud.firestore {
       allow get: if podeLer();
       allow list: if logado() && daMinhaEmpresa(resource.data);
       allow write: if isGestor();
+      // A FOLHA mora numa subcoleção (a ficha fica leve e o arquivo só desce
+      // quando alguém abre a condição — ver condicoes.ts). Sem esta regra, o
+      // fecho "só a GSS lê" pegava a folha inteira: o time via a condição na
+      // lista e, ao abrir, "sem internet para abrir a folha". Aconteceu de
+      // verdade em 25/09/2026, com a tabela do mês no ar.
+      //
+      // A folha segue a empresa da CONDIÇÃO, não a dela mesma: o documento de
+      // dentro não tem campo `brand`.
+      match /{peca=**} {
+        allow read: if logado() && (
+          ehGss()
+          || get(/databases/$(database)/documents/elevaCondicoes/$(id)).data.get('brand', '') == ''
+          || minhasEmpresas().hasAny([get(/databases/$(database)/documents/elevaCondicoes/$(id)).data.get('brand', '')])
+        );
+        allow write: if isGestor();
+      }
     }
     match /elevaContent/{id} {
       allow get: if podeLer();

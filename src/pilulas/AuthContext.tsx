@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import type { BrandId } from './data/brands';
+import { ehGss, marcasVisiveis, type BrandId } from './data/brands';
 import { mySegment, type SegmentId } from './data/segments';
 import { invitedBrand } from './data/brandInvite';
 import { onAuthChange, signOut as fbSignOut, type AuthUser } from '../services/auth';
@@ -129,6 +129,14 @@ const DEFAULT_BRANDS: BrandId[] = ['meraki'];
 // De qual marca a pessoa faz parte: definido pela marca (override) > perfil na
 // conta (Firestore) > convite por link (?marca=dsp) > Meraki.
 function brandsFor(email: string, profile: ElevaProfile | null): BrandId[] {
+  // A GSS VÊ TODAS — inclusive a marca que entrou ontem.
+  //
+  // A lista de marcas da Vivian e da Silene estava escrita à mão aqui embaixo,
+  // com três nomes. Quando a Royal Enfield entrou, elas não a viram: a lista
+  // fixa é mais forte que o "sem marca = todas" do seletor. Agora quem é da
+  // GSS recebe as marcas que EXISTEM, e marca nova aparece sozinha — sem
+  // depender de alguém lembrar de editar esta tabela.
+  if (ehGss(email)) return marcasVisiveis(email).map((b) => b.id);
   const ov = overrideFor(email);
   if (ov?.brands?.length) return ov.brands;
   if (profile?.brands?.length) return profile.brands;

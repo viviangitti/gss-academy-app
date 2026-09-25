@@ -8,6 +8,7 @@ import { ehNovo } from './data/novidades';
 import { acessoriosDaMarca, acessoriosPorOrigem, ORIGENS, precoLabel, type Acessorio, type OrigemAcessorio } from './data/acessorios';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
+import { vocab } from './data/vocabulario';
 import { useAjustesAcessorios } from './data/ajustesAcessorios';
 
 // Ordem em que as categorias aparecem. Categoria fora desta lista NÃO é
@@ -49,7 +50,7 @@ export default function Catalog() {
         </h1>
         <p className="wp-hero-sub">
           {isAuto(brandId)
-            ? 'Em cada carro: o que destacar, o que responder na objeção e o material pronto pra mandar.'
+            ? `Em cada ${vocab(brandId).item}: o que destacar, o que responder na objeção e o material pronto pra mandar.`
             : 'Aprenda o benefício, quebre a objeção e envie a resposta pronta à cliente — sem sair daqui.'}
         </p>
       </div>

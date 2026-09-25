@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, ChevronUp, X, RotateCcw, Undo2, CalendarClock } from 'lucide-react';
 import { useBrand } from './BrandContext';
-import { TimePelosPilares } from './Valores';
+import { TimePelosPilares, ValorDaSemana } from './Valores';
 import { isAuto } from './data/brands';
 import { cargoLabel, podeMexerEmAcessorios, podeVerOTime } from './data/cargos';
 import { lojaLabel } from './data/lojas';
@@ -2213,6 +2213,13 @@ export default function Gestor() {
       </div>
 
       {toast && <div className="wp-gz-toast"><Check size={13} className="wp-ico" /> {toast} <Link to="/eleva/catalogo">ver no catálogo <ExternalLink size={12} className="wp-ico" /></Link></div>}
+
+      {/* O VALOR DA SEMANA TAMBÉM AQUI (só Ramasa).
+          A gerência não passa pela tela Hoje: quem é gestor cai direto no
+          Painel. Sem este card, a Silene e a Vivian nunca veriam o valor da
+          semana nem teriam por onde abrir a tela de cultura — e são elas que
+          conduzem a reunião de segunda. */}
+      <ValorDaSemana />
 
 
       {/* Abas: o gestor tem dois trabalhos — ver resultado e colocar conteúdo.

@@ -12,9 +12,12 @@ Não é material de cliente.
    lidos do histórico do repositório.
 2. Edite `doc.html` com os números novos e com o que entrou desde a última
    versão (a primeira seção, "O que mudou", é o que a Vivian lê primeiro).
-3. `node scripts/investimento/gera.mjs` — sai o PDF em `~/Downloads`, com a data
-   de hoje no nome.
+3. `node scripts/investimento/gera.mjs` — sai o PDF em `~/Downloads`.
 4. `node scripts/investimento/gera-word.mjs` — sai o `.docx` editável, ao lado.
+
+Os dois saem como **`ELEVA RAMASA - investimento ATUAL (dd-mm)`**. O "ATUAL" é
+de propósito: em 25/09 a Vivian abriu por engano o PDF de 11/09 que ainda estava
+na pasta e leu "início 11/09". Se sobrar versão velha em Downloads, apague.
 
 O PDF é o que se manda; o Word é o que se mexe. O conteúdo é o mesmo, mas mora
 em dois lugares: `doc.html` (PDF) e `gera-word.mjs` (Word). **Mudou um, mude o

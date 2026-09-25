@@ -13,8 +13,9 @@ import {
 const hoje = new Date();
 const dd = String(hoje.getDate()).padStart(2, '0');
 const mm = String(hoje.getMonth() + 1).padStart(2, '0');
+// Mesmo nome do PDF, com ATUAL na frente — ver a nota em gera.mjs.
 const SAIDA = path.join(process.env.HOME, 'Downloads',
-  `Eleva x Ramasa - investimento e proposta ${dd}-${mm} (editavel).docx`);
+  `ELEVA RAMASA - investimento ATUAL (${dd}-${mm}).docx`);
 
 const filhos = [];
 const põe = (...x) => filhos.push(...x.flat());

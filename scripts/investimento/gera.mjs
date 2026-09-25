@@ -16,7 +16,10 @@ const AQUI = import.meta.dirname;
 const hoje = new Date();
 const dd = String(hoje.getDate()).padStart(2, '0');
 const mm = String(hoje.getMonth() + 1).padStart(2, '0');
-const SAIDA = path.join(process.env.HOME, 'Downloads', `Eleva x Ramasa - investimento e proposta ${dd}-${mm}.pdf`);
+// SEMPRE o mesmo nome, com "ATUAL" na frente: em 25/09 a Vivian abriu por
+// engano o PDF de 11/09 que ainda estava em Downloads e leu "início 11/09".
+// Um arquivo só, sobrescrito, não tem como confundir.
+const SAIDA = path.join(process.env.HOME, 'Downloads', `ELEVA RAMASA - investimento ATUAL (${dd}-${mm}).pdf`);
 
 const { proc, ws } = await abrirChrome();
 const c = conectar(ws);

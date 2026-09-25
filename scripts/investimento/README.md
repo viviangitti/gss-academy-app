@@ -24,6 +24,19 @@ Word precisa de tabela de verdade, e o PDF precisa de CSS.
 A fonte do Word é Arial em tudo, porque o Mac da Vivian não tem Office e
 Calibri/Cambria viram outra coisa no Pages.
 
+## A linha do tempo da Ramasa
+
+- **01/07/2026** — primeira conversa. É daqui que o relacionamento conta: 86
+  dias corridos até 25/09.
+- **10/08/2026** — primeira linha de conteúdo (o primeiro commit do vertical
+  automotivo). É daqui que a MEDIÇÃO conta, porque é onde há registro.
+- **28/08/2026** — primeiro uso real do time no app.
+
+Os 40 dias entre a primeira conversa e a primeira linha são descoberta: entender
+a operação, receber o material da montadora, fechar o escopo. Não viram commit,
+então aparecem no documento como fase sem hora medida — nunca como estimativa
+inventada.
+
 ## A conta é só da Ramasa
 
 A **plataforma base** (abr a 09/ago — o app em si) ficou FORA da conta: ela

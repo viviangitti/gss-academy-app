@@ -16,6 +16,7 @@ const COMO_ME_CHAMA: Record<string, string> = {
   acessorios: 'quem cuida de acessórios',
   leads: 'quem cuida dos leads',
   qualidade: 'a qualidade',
+  diretoria: 'a diretoria do grupo',
 };
 
 export default function Cultura() {

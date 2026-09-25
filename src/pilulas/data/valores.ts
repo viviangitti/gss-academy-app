@@ -22,10 +22,15 @@ import type { ElevaEventType } from './statsSync';
  * para o vendedor, é a maneira mais rápida de a cultura virar recado que não
  * é para mim — foi o que a Vivian apontou em 25/09/2026.
  */
-export type GrupoCargo = 'ponta' | 'vendas' | 'acessorios' | 'leads' | 'qualidade';
+export type GrupoCargo = 'ponta' | 'vendas' | 'acessorios' | 'leads' | 'qualidade' | 'diretoria';
 
 export function grupoDoCargo(cargo?: CargoAuto, role?: string): GrupoCargo {
   switch (cargo) {
+    // A diretoria não responde por uma loja: lê o grupo e compara as unidades.
+    // Por isso tem recorte próprio — dar a ela a linha da gerência de vendas
+    // seria mandar o diretor fazer o trabalho do gerente.
+    case 'diretor':
+      return 'diretoria';
     case 'gerente-veiculos':
     case 'supervisor-vendas':
       return 'vendas';
@@ -92,6 +97,7 @@ export const VALORES: Valor[] = [
       acessorios: 'Confira se a lista de acessórios está com o preço certo. Preço errado no app é margem perdida no balcão.',
       leads: 'Olhe quantos leads viraram visita nesta semana. Lead sem próximo passo é investimento que virou custo.',
       qualidade: 'Revise o que está publicado: tabela vencida no ar é desconto dado sem ninguém decidir.',
+      diretoria: 'Compare as lojas no Painel. A distância entre a primeira e a última é o maior ganho disponível do grupo — e quase sempre ela é de uso, não de mercado.',
     },
     eventos: ['acessorio'],
   },
@@ -104,6 +110,7 @@ export const VALORES: Valor[] = [
       acessorios: 'Tire do ar o acessório que saiu de linha antes que alguém ofereça o que não existe.',
       leads: 'Leve para a gerência a objeção que mais aparece no funil — ela vale para o salão também.',
       qualidade: 'Cuide do app como quem cuida da loja: as cinco frentes revisadas no primeiro dia útil.',
+      diretoria: 'Cobre o dono de cada frente pelo ritual do mês. O que não tem dono no app é exatamente o que vira surpresa na reunião.',
     },
     // Carimbado na mão quando a pessoa ENVIA uma objeção nova (não quando
     // consulta uma que já existe — consultar é "altos padrões").
@@ -118,6 +125,7 @@ export const VALORES: Valor[] = [
       acessorios: 'Uma lista certa no app evita vinte perguntas no grupo. É esse o trabalho inteligente.',
       leads: 'Use os scripts da Jornada em vez de escrever do zero a cada lead.',
       qualidade: 'Tire do ar o que está duplicado: duas versões do mesmo documento custam confiança.',
+      diretoria: 'Antes de aprovar material novo, veja o que o grupo já publicou: o que serve numa loja serve nas outras sem custo nenhum.',
     },
     eventos: ['doc_open'],
   },
@@ -130,6 +138,7 @@ export const VALORES: Valor[] = [
       acessorios: 'Ofereça o acessório como cuidado com o carro dele, não como item a mais na nota.',
       leads: 'Nenhum lead sem resposta hoje. Devolva ao executivo o que ficou parado.',
       qualidade: 'Transforme o que o cliente reclamou em resposta publicada — é assim que o time inteiro melhora.',
+      diretoria: 'Leia a objeção que mais apareceu no mês. Ela diz o que o cliente está ouvindo do mercado antes de qualquer pesquisa.',
     },
     eventos: ['jornada_script', 'jornada_onepage'],
   },
@@ -142,6 +151,7 @@ export const VALORES: Valor[] = [
       acessorios: 'Estude o acessório como se estuda o carro: quem explica o benefício vende sem dar desconto.',
       leads: 'Estude o carro que mais chega pelo funil antes de responder o próximo lead dele.',
       qualidade: 'Confira se o conteúdo publicado continua verdadeiro. Conteúdo velho ensina errado.',
+      diretoria: 'Veja quem parou de estudar há mais de sete dias e devolva o nome ao gerente da loja. O número cai antes da venda cair.',
     },
     eventos: ['pill_view', 'video_play'],
   },
@@ -154,6 +164,7 @@ export const VALORES: Valor[] = [
       acessorios: 'Mande a foto e o que o acessório resolve, não só o preço.',
       leads: 'Mande o resumo do carro já no primeiro contato: o cliente decide com o que está na mão dele.',
       qualidade: 'Garanta que a folha oficial no app é a última versão que a marca publicou.',
+      diretoria: 'Confira se o material que sai das lojas é o mesmo em todas. Promessa diferente por endereço vira reclamação no grupo.',
     },
     eventos: ['onepage'],
   },
@@ -166,6 +177,7 @@ export const VALORES: Valor[] = [
       acessorios: 'Preço certo é padrão. Confira antes que alguém prometa errado na frente do cliente.',
       leads: 'Responda com número e prazo. "Em breve" não é resposta.',
       qualidade: 'Revise carro, condição, acessório, documento e objeção. É a sua revisão que segura o padrão.',
+      diretoria: 'Pergunte na reunião de onde veio o número. Se ele não está no app, ele não foi conferido por ninguém.',
     },
     // Abrir a quebra de objeção JÁ é um evento do app ('objecao'): é o vendedor
     // buscando o dado antes de responder. É exatamente este valor.
@@ -180,6 +192,7 @@ export const VALORES: Valor[] = [
       acessorios: 'Segure o preço da tabela. Desconto combinado no corredor vira prejuízo no fechamento.',
       leads: 'Discorde com respeito quando o lead pedir o impossível, e ofereça o que existe de verdade.',
       qualidade: 'Aponte o que está errado no app mesmo quando incomoda. É para isso que a revisão existe.',
+      diretoria: 'Segure a tabela quando a pressão do mês apertar. Condição fora do app é desconto que ninguém aprovou.',
     },
     // Carimbado na mão quando a pessoa abre uma condição publicada (Ofertas).
     eventos: [],
@@ -193,6 +206,7 @@ export const VALORES: Valor[] = [
       acessorios: 'Domine a linha inteira, não só os três que mais saem.',
       leads: 'Feche a formação dos carros que mais chegam pelo funil.',
       qualidade: 'Termine a trilha: quem revisa precisa conhecer o que está revisando.',
+      diretoria: 'Acompanhe quantas pessoas dominaram o carro do mês, loja por loja. Formação é o único indicador que vem ANTES da venda.',
     },
     eventos: ['quiz_pass'],
   },

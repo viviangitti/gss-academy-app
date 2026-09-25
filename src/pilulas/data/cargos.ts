@@ -58,7 +58,8 @@ export type CargoAuto =
   | 'lider-qualidade'
   | 'diretor-qualidade'
   | 'executivo-leads'
-  | 'gerente-leads';
+  | 'gerente-leads'
+  | 'diretor';
 
 export interface Cargo {
   id: CargoAuto;
@@ -135,6 +136,16 @@ export const CARGOS_AUTO: Cargo[] = [
   {
     id: 'gerente-leads',
     label: 'Gerente de leads',
+    role: 'gestor',
+  },  {
+    // DIRETORIA DO GRUPO (25/09/2026). Não responde por uma loja nem por uma
+    // frente: lê o grupo inteiro e compara uma unidade com a outra. É o único
+    // cargo, junto do diretor de qualidade, cuja rotina no app é olhar o
+    // trabalho de todo mundo — e por isso tem um recorte de cultura próprio
+    // (ver GrupoCargo 'diretoria' em data/valores.ts), escrito para quem
+    // decide onde colocar atenção, não para quem executa.
+    id: 'diretor',
+    label: 'Diretor(a) do grupo',
     role: 'gestor',
   },
 ];

@@ -81,11 +81,15 @@ const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType
   'silene_mendes@hotmail.com': { role: 'gestor', brands: ['meraki', 'dsp', 'ramasa'] },
   // Mari (Meraki): gestora SÓ da Meraki — sem o seletor de marca, sem Sorocaps.
   'mari.briso@merakifarma.com.br': { role: 'gestor', brands: ['meraki'] },
-  // Mariana (Ramasa), gerente de vendas. Cadastrou-se em 24/08/2026, quando a
-  // Meraki ainda vinha pré-selecionada, e caiu na marca errada — com o catálogo
-  // de farmácia. NÃO confundir com a Mari Briso acima: outra pessoa, outra
-  // empresa, primeiro nome igual.
-  'mariana@gruporamasa.com': { role: 'gestor', brands: ['ramasa'], cargo: 'gerente-veiculos' },
+  // Mariana (Ramasa): DIRETORA do grupo (25/09/2026). Vê tudo e todos — o
+  // Painel já abre em "Todas as lojas" para quem é gestor, e o cargo de diretor
+  // dá a ela o recorte de cultura da diretoria, que fala de comparar unidades
+  // em vez de tocar uma.
+  //
+  // Cadastrou-se em 24/08/2026, quando a Meraki ainda vinha pré-selecionada, e
+  // caiu na marca errada — com o catálogo de farmácia. NÃO confundir com a Mari
+  // Briso acima: outra pessoa, outra empresa, primeiro nome igual.
+  'mariana@gruporamasa.com': { role: 'gestor', brands: ['ramasa'], cargo: 'diretor' },
   // Silmara: gerente de acessórios de TODAS as lojas do grupo Ramasa. O e-mail
   // é da Lince Toyota, mas o alcance dela não é de uma loja só — não confundir
   // o domínio com o escopo.

@@ -60,6 +60,7 @@ põe(h2('O que mudou em 14 dias',
 
 const LM = [2600, 7038];
 const linhaMudou = (titulo, texto) => new TableRow({
+  cantSplit: true,
   children: [
     celula([p(titulo, { size: 18, bold: true, depois: 0, linha: 240 })], { largura: 2600 }),
     celula([p(texto, { size: 17, color: '38405A', depois: 0, linha: 250 })], { largura: 7038 }),
@@ -139,6 +140,7 @@ põe(h2('2. Esforço medido',
 
 const LF = [4200, 1900, 900, 1300, 1338];
 const linhaFase = (nome, desc, periodo, dias, entregas, horas, total) => new TableRow({
+  cantSplit: true,
   children: [
     celula([p(nome, { size: 18, bold: true, depois: desc ? 50 : 0 }),
       ...(desc ? [p(desc, { size: 16, color: CINZA, depois: 0, linha: 240 })] : [])],
@@ -174,6 +176,7 @@ põe(h2('3. Custo de operação', 'O que sai do bolso todo mês para o app conti
 
 const LO = [5600, 2300, 1738];
 const linhaCusto = (nome, desc, comoEsta, custo, total) => new TableRow({
+  cantSplit: true,
   children: [
     celula([p(nome, { size: 18, bold: true, depois: desc ? 50 : 0 }),
       ...(desc ? [p(desc, { size: 16, color: CINZA, depois: 0, linha: 240 })] : [])],
@@ -186,7 +189,7 @@ const linhaCusto = (nome, desc, comoEsta, custo, total) => new TableRow({
 });
 põe(tabela([
   cabecalho([{ texto: 'Item' }, { texto: 'Como está hoje', dir: true }, { texto: 'Custo/mês', dir: true }], LO),
-  linhaCusto('IA (Gemini 2.5 Flash)', 'Cada pergunta manda ~15 mil tokens de contexto: os 5 carros, 27 acessórios, as condições do mês e os documentos.', '2 perguntas hoje · R$ 0,03 cada', 'R$ 3 a R$ 9'),
+  linhaCusto('IA (Gemini 2.5 Flash)', 'Cada pergunta manda ~15 mil tokens de contexto: os 5 carros, 27 acessórios, as condições do mês e os documentos.', '2 perguntas hoje, a R$ 0,03', 'R$ 3 a R$ 9'),
   linhaCusto('IA no cenário cheio', 'Se as 37 pessoas perguntarem 5 vezes por dia útil.', '4.070 perguntas/mês', 'R$ 122'),
   linhaCusto('Hospedagem (Vercel)', 'App e funções de servidor.', 'plano atual', 'R$ 0'),
   linhaCusto('Banco e arquivos (Firebase)', 'Contas, uso do time, condições, vídeos e documentos.', 'faixa gratuita', 'R$ 0'),
@@ -210,6 +213,7 @@ põe(h2('4. O que o mercado cobra',
 
 const LR = [2900, 3600, 3138];
 const linhaRef = (nome, site, oque, preco, detalhe) => new TableRow({
+  cantSplit: true,
   children: [
     celula([p(nome, { size: 18, bold: true, depois: 40 }), p(site, { size: 15, color: CINZA, depois: 0 })], { largura: 2900 }),
     celula([p(oque, { size: 17, color: '5A6377', depois: 0, linha: 240 })], { largura: 3600 }),
@@ -221,7 +225,7 @@ põe(tabela([
   cabecalho([{ texto: 'Referência' }, { texto: 'O que é' }, { texto: 'Preço publicado', dir: true }], LR),
   linhaRef('Twygo — Business IA', 'twygo.com/planos-e-precos', 'LMS corporativo brasileiro, com recursos de IA', 'R$ 743,40/mês', 'plano anual, até 50 usuários'),
   linhaRef('EAD Plataforma — Standard', 'eadplataforma.com/planos', 'Plataforma EAD white-label, 12 anos de mercado', 'R$ 399,90/mês', '12×, usuários ilimitados, sem taxa de implantação'),
-  linhaRef('AutoForce', 'site.autoforce.com', 'Plataforma para concessionária (site, CRM, IA) — +2.000 concessionárias', 'não publica', 'venda consultiva, preço sob negociação'),
+  linhaRef('AutoForce', 'site.autoforce.com', 'Plataforma para concessionária (site, CRM,\u00A0IA) — +2.000 concessionárias', 'não publica', 'venda consultiva, preço sob negociação'),
 ], LR));
 
 põe(p('', { depois: 120 }));
@@ -237,6 +241,7 @@ põe(h2('5. Preço peça por peça',
 
 const LP = [3000, 900, 1100, 1600, 3038];
 const linhaPeca = (nome, desc, horas, custo, preco, sub, porque) => new TableRow({
+  cantSplit: true,
   children: [
     celula([p(nome, { size: 17, bold: true, depois: 45 }), p(desc, { size: 15, color: CINZA, depois: 0, linha: 230 })], { largura: 3000 }),
     celula([p(horas, { size: 16, align: AlignmentType.RIGHT, depois: 0 })], { largura: 900 }),
@@ -247,6 +252,7 @@ const linhaPeca = (nome, desc, horas, custo, preco, sub, porque) => new TableRow
   ],
 });
 const linhaSub = (nome, horas, custo, preco) => new TableRow({
+  cantSplit: true,
   children: [
     celula([p(nome, { size: 17, bold: true, depois: 0 })], { largura: 3000, fundo: FUNDO2 }),
     celula([p(horas, { size: 16, bold: true, align: AlignmentType.RIGHT, depois: 0 })], { largura: 900, fundo: FUNDO2 }),
@@ -400,6 +406,7 @@ põe(h2('7. A conta do primeiro ano'));
 
 const LA = [4600, 1900, 1500, 1638];
 const linhaAno = (nome, quando, valor, ano1, total) => new TableRow({
+  cantSplit: true,
   children: [
     celula([p(nome, { size: 18, bold: true, depois: 0 })], { largura: 4600, fundo: total ? FUNDO2 : undefined }),
     celula([p(quando, { size: 17, align: AlignmentType.RIGHT, depois: 0 })], { largura: 1900, fundo: total ? FUNDO2 : undefined }),
@@ -441,10 +448,10 @@ const rodape = new Footer({
     alignment: AlignmentType.CENTER,
     children: [
       txt(`Eleva × Grupo Ramasa — investimento e proposta · ${dd}/${mm}/2026 · uso interno · `,
-        { size: 14, color: '8A97A3' }),
-      new Run({ children: [PageNumber.CURRENT], font: 'Arial', size: 14, color: '8A97A3' }),
-      txt('/', { size: 14, color: '8A97A3' }),
-      new Run({ children: [PageNumber.TOTAL_PAGES], font: 'Arial', size: 14, color: '8A97A3' }),
+        { size: 14, color: '6B7385' }),
+      new Run({ children: [PageNumber.CURRENT], font: 'Arial', size: 14, color: '6B7385' }),
+      txt('/', { size: 14, color: '6B7385' }),
+      new Run({ children: [PageNumber.TOTAL_PAGES], font: 'Arial', size: 14, color: '6B7385' }),
     ],
   })],
 });
@@ -460,7 +467,7 @@ const doc = new Document({
     }],
   },
   sections: [{
-    properties: { page: { margin: { top: 1134, bottom: 1134, left: 1134, right: 1134 } } },
+    properties: { page: { margin: { top: 1134, bottom: 1300, left: 1134, right: 1134, footer: 850 } } },
     footers: { default: rodape },
     children: filhos,
   }],

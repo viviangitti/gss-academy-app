@@ -33,9 +33,20 @@ const semBorda = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
 const SEM_BORDAS = { top: semBorda, bottom: semBorda, left: semBorda, right: semBorda,
   insideHorizontal: semBorda, insideVertical: semBorda };
 
+/**
+ * O espaco depois de "R$" e "US$" vira nao-separavel.
+ *
+ * Sem isso o Word quebra a linha entre o cifrao e o numero — "por acessorio ·
+ * R$" numa linha e "2.430" na outra. Fica no txt() porque vale para TODO texto
+ * do documento, inclusive o que ainda nao foi escrito.
+ */
+function colado(s) {
+  return String(s).replace(/(R\$|US\$) /g, '$1\u00A0');
+}
+
 function txt(texto, o = {}) {
   return new TextRun({
-    text: texto, font: 'Arial', size: o.size ?? 19, bold: o.bold, italics: o.italics,
+    text: colado(texto), font: 'Arial', size: o.size ?? 19, bold: o.bold, italics: o.italics,
     color: o.color ?? TINTA, allCaps: o.caps, characterSpacing: o.spacing,
   });
 }
@@ -92,7 +103,6 @@ function nota(paragrafos, escura = false) {
   const fundo = escura ? NAVY : FUNDO;
   return tabela([
     new TableRow({
-      cantSplit: true,
       children: [celula(paragrafos, {
         largura: LARGURA, fundo, mt: 150, mb: 150, ml: 200, mr: 200,
         bordas: {
@@ -126,7 +136,7 @@ function faixa(texto, larguras) {
   });
 }
 
-export { NAVY, OURO, OURO_ESCURO, TINTA, CINZA, CINZA_CLARO, LINHA, FUNDO, FUNDO2, LARGURA,
+export { colado, NAVY, OURO, OURO_ESCURO, TINTA, CINZA, CINZA_CLARO, LINHA, FUNDO, FUNDO2, LARGURA,
   SEM_BORDAS, semBorda, txt, p, rico, celula, tabela, h2, nota, notaP, cabecalho, faixa,
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, ShadingType,
   BorderStyle, AlignmentType, HeadingLevel, VerticalAlign, fs, path };

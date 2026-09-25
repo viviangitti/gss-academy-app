@@ -103,6 +103,12 @@ export function syncStats(stats: Stats, event: { type: ElevaEventType; id: strin
     email: auth?.currentUser?.email || '',
     role: meta.role || '',
     cargo: meta.cargo || '',
+    // A UNIDADE. Faltava aqui: o SyncMeta declarava `loja`, o PilulasApp
+    // passava `loja: user.loja` — e o payload nunca gravava. O Painel ganhou a
+    // barra "Todas as lojas / Tiger Goiânia / ..." em 23/09 e ela nunca teve
+    // o que mostrar, porque a barra só aparece quando há mais de uma loja NO
+    // TIME, e o time chegava inteiro sem loja.
+    loja: meta.loja || '',
     brand: meta.brand || '',
     cartaoPronto: meta.cartaoPronto === true,
     totals: {

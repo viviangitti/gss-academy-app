@@ -10,6 +10,9 @@ import { useBrand } from './BrandContext';
 import { getStats } from './data/tracking';
 import { PILARES, VALORES, linhaNoApp, valoresDoPilar, temValores, valorDaSemana, pilaresDe, grupoDoCargo } from './data/valores';
 
+// Cada rótulo entra depois de "escritas PARA", então pode (e deve) vir com o
+// artigo. Antes a frase era "são as de {rótulo}" e saía "são as de a gerência
+// de vendas" em quatro dos seis recortes.
 const COMO_ME_CHAMA: Record<string, string> = {
   ponta: 'quem atende no salão',
   vendas: 'a gerência de vendas',
@@ -45,7 +48,7 @@ export default function Cultura() {
         ))}
       </p>
       <p className="wp-cult-recorte">
-        As linhas “no app” abaixo são as de <b>{COMO_ME_CHAMA[grupoDoCargo(user?.cargo, user?.role)]}</b> —
+        As linhas “no app” abaixo são as escritas para <b>{COMO_ME_CHAMA[grupoDoCargo(user?.cargo, user?.role)]}</b> —
         o mesmo valor pede coisas diferentes de cada função.
       </p>
       <p className="wp-cult-lead">

@@ -18,6 +18,10 @@
   .placar .c b { display:block; color:#c9a84c; font-size:19pt; letter-spacing:-.03em; line-height:1; }
   .placar .c i { display:block; font-style:normal; font-size:8.2pt; color:#c8cbdb; margin-top:2mm; line-height:1.35; }
   .placar .c s { display:block; text-decoration:none; font-size:7.6pt; color:#8e96b4; margin-top:1.6mm; }
+  .placar .c.ok { background:#1b2338; box-shadow:inset 0 0 0 .6pt #c9a84c; }
+  .rotulo-placar { margin:6mm 16mm 2.5mm; font-size:8pt; font-weight:800; letter-spacing:.14em;
+                   text-transform:uppercase; color:#8a93a6; }
+  .rotulo-placar.destaque { color:#97741f; }
 
   .secao { margin:7mm 16mm 0; }
   .secao > h2 { margin:0 0 1.5mm; font-size:14pt; letter-spacing:-.02em; }
@@ -62,6 +66,7 @@
   .oferta p { margin:0; font-size:8.6pt; color:#38405a; line-height:1.45; }
 
   .quebra { page-break-before:always; }
+  .secao.abre { page-break-before:always; }
   .topo { padding:13mm 16mm 0; display:flex; justify-content:space-between; align-items:baseline;
           font-size:7.8pt; color:#97741f; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
   ol.dec { margin:4mm 0 0; padding-left:5mm; } ol.dec li { margin-bottom:2.6mm; font-size:8.8pt; line-height:1.45; }
@@ -79,36 +84,16 @@
   <p class="data">25 de setembro de 2026 · não enviar ao cliente</p>
 </div>
 
+<div class="rotulo-placar destaque">O que já foi feito para a Ramasa</div>
 <div class="placar">
-  <div class="c"><b>33</b><i>dias de trabalho na Ramasa</i><s>eram 25 em 11/09</s></div>
-  <div class="c"><b>213</b><i>entregas registradas</i><s>eram 176</s></div>
-  <div class="c"><b>158 h</b><i>medidas, leitura conservadora</i><s>eram 107 h</s></div>
-  <div class="c"><b>R$&nbsp;31.600</b><i>custo dessas horas a R$&nbsp;200/h</i><s>eram R$&nbsp;21.420</s></div>
-</div>
-
-<div class="secao">
-  <h2>O que mudou <span>em 14 dias</span></h2>
-  <p class="sub2">Entre a versão de 11/09 e hoje. Cada linha está no histórico do repositório, com data e hora.</p>
-  <table>
-    <tr class="grupo"><td colspan="2">CONTEÚDO NOVO</td></tr>
-    <tr><td style="width:44mm"><b>Jaecoo 5 no app</b></td><td class="pq">O 5º carro: ficha, versões COMFORT e PRESTIGE, 13 objeções com resposta, trilha de vídeo, etiqueta de lançamento no catálogo e o PDF do treinamento de lançamento na prateleira.</td></tr>
-    <tr><td><b>Valores da Ramasa</b></td><td class="pq">RA·zão, MA·gia e SA·tisfação dentro do app: o valor da semana no Hoje e no Painel, a linha "no app" escrita para cada um dos 11 cargos, o carimbo quando a pessoa pratica, e a tela Cultura com os 9 valores.</td></tr>
-    <tr class="grupo"><td colspan="2">FERRAMENTAS NOVAS</td></tr>
-    <tr><td><b>Jornada do lead online</b></td><td class="pq">A aba que guia o atendimento: 5 etapas, mensagem pronta em cada uma, atalho para acessórios e lembrete da entrega. Nasceu da objeção que chega pelo funil.</td></tr>
-    <tr><td><b>Rituais do mês</b></td><td class="pq">Pop-up por cargo com dia marcado — a tabela entre os dias 1 e 5, a campanha nos dias 14 e 30, a revisão de qualidade no 1º dia útil, o time da semana toda segunda. O "ok" fica gravado com nome, cargo e horário.</td></tr>
-    <tr><td><b>Cargos e lojas</b></td><td class="pq">Supervisor de vendas, F&amp;I, líder e diretor de qualidade; a loja de cada pessoa; Omoda Goiânia como unidade; e o Painel separado por loja.</td></tr>
-    <tr><td><b>O app no computador</b></td><td class="pq">Quem abre pelo desktop deixou de ver a tela de celular esticada: menu na lateral, conteúdo em duas colunas, leitura em largura de página.</td></tr>
-    <tr><td><b>Salvar PDF em tudo</b></td><td class="pq">Todo material que vai para o cliente agora tem botão de salvar em PDF.</td></tr>
-    <tr class="grupo"><td colspan="2">MANUTENÇÃO E SEGURANÇA</td></tr>
-    <tr><td><b>Isolamento no banco</b></td><td class="pq">Cada empresa só alcança o que é dela — antes a separação estava na tela, agora está na regra do banco. Vale para a Ramasa, a Meraki e a Sorocaps.</td></tr>
-    <tr><td><b>Trava de publicação</b></td><td class="pq">Uma conferência automática que simula o que o app lê antes de qualquer mudança de regra subir. Ela existe porque uma regra nova derrubou a folha de condições por seis horas no dia 25 — e a mensagem na tela dizia "sem internet" em vez da verdade.</td></tr>
-    <tr><td><b>Notícias que se consertam</b></td><td class="pq">As buscas passaram para o servidor e uma rotina diária conserta a aba antes de alguém reclamar.</td></tr>
-    <tr><td><b>Relatórios</b></td><td class="pq">Relatório semanal de uso em PDF, relatório desde o início, e a apresentação de resultados e melhorias de 23/09.</td></tr>
-  </table>
+  <div class="c ok"><b>33</b><i>dias de trabalho</i><s>eram 25 em 11/09</s></div>
+  <div class="c ok"><b>213</b><i>entregas registradas</i><s>eram 176</s></div>
+  <div class="c ok"><b>158 h</b><i>medidas, leitura conservadora</i><s>eram 107 h</s></div>
+  <div class="c ok"><b>R$&nbsp;31.600</b><i>custo dessas horas a R$&nbsp;200/h</i><s>eram R$&nbsp;21.420</s></div>
 </div>
 
 
-<div class="secao">
+<div class="secao abre">
   <h2>1. O que existe hoje</h2>
   <p class="sub2">Tudo que está no ar, contado hoje no app e no banco.</p>
   <div class="duas">
@@ -165,6 +150,27 @@
 </div>
 
 <div class="secao">
+  <h2>O que mudou <span>em 14 dias</span></h2>
+  <p class="sub2">Entre a versão de 11/09 e hoje. Cada linha está no histórico do repositório, com data e hora.</p>
+  <table>
+    <tr class="grupo"><td colspan="2">CONTEÚDO NOVO</td></tr>
+    <tr><td style="width:44mm"><b>Jaecoo 5 no app</b></td><td class="pq">O 5º carro: ficha, versões COMFORT e PRESTIGE, 13 objeções com resposta, trilha de vídeo, etiqueta de lançamento no catálogo e o PDF do treinamento de lançamento na prateleira.</td></tr>
+    <tr><td><b>Valores da Ramasa</b></td><td class="pq">RA·zão, MA·gia e SA·tisfação dentro do app: o valor da semana no Hoje e no Painel, a linha "no app" escrita para cada um dos 11 cargos, o carimbo quando a pessoa pratica, e a tela Cultura com os 9 valores.</td></tr>
+    <tr class="grupo"><td colspan="2">FERRAMENTAS NOVAS</td></tr>
+    <tr><td><b>Jornada do lead online</b></td><td class="pq">A aba que guia o atendimento: 5 etapas, mensagem pronta em cada uma, atalho para acessórios e lembrete da entrega. Nasceu da objeção que chega pelo funil.</td></tr>
+    <tr><td><b>Rituais do mês</b></td><td class="pq">Pop-up por cargo com dia marcado — a tabela entre os dias 1 e 5, a campanha nos dias 14 e 30, a revisão de qualidade no 1º dia útil, o time da semana toda segunda. O "ok" fica gravado com nome, cargo e horário.</td></tr>
+    <tr><td><b>Cargos e lojas</b></td><td class="pq">Supervisor de vendas, F&amp;I, líder e diretor de qualidade; a loja de cada pessoa; Omoda Goiânia como unidade; e o Painel separado por loja.</td></tr>
+    <tr><td><b>O app no computador</b></td><td class="pq">Quem abre pelo desktop deixou de ver a tela de celular esticada: menu na lateral, conteúdo em duas colunas, leitura em largura de página.</td></tr>
+    <tr><td><b>Salvar PDF em tudo</b></td><td class="pq">Todo material que vai para o cliente agora tem botão de salvar em PDF.</td></tr>
+    <tr class="grupo"><td colspan="2">MANUTENÇÃO E SEGURANÇA</td></tr>
+    <tr><td><b>Isolamento no banco</b></td><td class="pq">Cada empresa só alcança o que é dela — antes a separação estava na tela, agora está na regra do banco. Vale para a Ramasa, a Meraki e a Sorocaps.</td></tr>
+    <tr><td><b>Trava de publicação</b></td><td class="pq">Uma conferência automática que simula o que o app lê antes de qualquer mudança de regra subir. Ela existe porque uma regra nova derrubou a folha de condições por seis horas no dia 25 — e a mensagem na tela dizia "sem internet" em vez da verdade.</td></tr>
+    <tr><td><b>Notícias que se consertam</b></td><td class="pq">As buscas passaram para o servidor e uma rotina diária conserta a aba antes de alguém reclamar.</td></tr>
+    <tr><td><b>Relatórios</b></td><td class="pq">Relatório semanal de uso em PDF, relatório desde o início, e a apresentação de resultados e melhorias de 23/09.</td></tr>
+  </table>
+</div>
+
+<div class="secao">
   <h2>2. Esforço medido</h2>
   <p class="sub2">Só o que foi feito para a Ramasa, de 10/08 (a primeira linha de conteúdo) até hoje — <b>46 dias corridos</b>, dos quais 33 tiveram entrega. Números tirados do histórico do repositório, data e hora de cada alteração. Não é estimativa de memória.</p>
   <table>
@@ -174,8 +180,6 @@
     <tr><td><b>Depois da proposta — Ramasa</b><i>Jaecoo 5, Jornada, rituais, valores do grupo, lojas, computador, isolamento no banco.</i></td>
         <td class="n">12/set a 25/set</td><td class="n">8</td><td class="n">37</td><td class="n">58 h</td></tr>
     <tr class="tot"><td>Total da Ramasa</td><td class="n">10/ago a 25/set</td><td class="n">33</td><td class="n">213</td><td class="n">231 h</td></tr>
-    <tr><td><b>Plataforma base</b><span class="novo">fora da conta</span><i>O Eleva em si: app, painel, IA, publicação. Nasceu com a Meraki e a Sorocaps e se repete de graça em qualquer cliente novo.</i></td>
-        <td class="n">abr a 09/ago</td><td class="n">25</td><td class="n">166</td><td class="n">155 h</td></tr>
   </table>
   <div class="nota">
     <p><b>Como ler as horas.</b> São a janela entre a primeira e a última entrega de cada dia, mais 30 min. É período de trabalho, não foco cronometrado. A leitura conservadora — 60% da janela — dá <b>~139 h no código</b>. Some <b>~19 h fora dele</b> — vídeos, relatórios, apresentação de resultados, PDFs de apoio e a campanha: <b>~158 h</b>. Use o número conservador em qualquer conversa de preço: ele se defende sozinho.</p>

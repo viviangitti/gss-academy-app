@@ -5,7 +5,7 @@
 // Os números vêm do medir.mjs e são os MESMOS do doc.html. Mexeu num, mexa nos
 // dois — o README da pasta explica a ordem.
 import {
-  Document, Packer, Paragraph, TableRow, WidthType, AlignmentType, HeadingLevel, BorderStyle,
+  Document, Packer, Paragraph, TableRow, PageBreak, WidthType, AlignmentType, HeadingLevel, BorderStyle,
   NAVY, OURO, OURO_ESCURO, TINTA, CINZA, CINZA_CLARO, FUNDO, FUNDO2, LARGURA, SEM_BORDAS, semBorda,
   txt, p, rico, celula, tabela, h2, nota, notaP, cabecalho, faixa, fs, path,
 } from './word.mjs';
@@ -37,51 +37,37 @@ põe(tabela([
 
 põe(p('', { depois: 180 }));
 
-// ── os quatro números ─────────────────────────────────────────────────────────
+// ── as duas contas: o app inteiro, e a parte da Ramasa ──────────────────────
 const LK = [2409, 2409, 2410, 2410];
-const cartaoNumero = (n, oque, antes) => celula([
+const cartaoNumero = (n, oque, antes, dourado) => celula([
   p(n, { size: 34, bold: true, color: OURO, depois: 60 }),
   p(oque, { size: 15, color: 'C8CBDB', depois: 50, linha: 230 }),
   p(antes, { size: 13, color: '8E96B4', depois: 0 }),
-], { largura: 2409, fundo: NAVY, mt: 180, mb: 180, ml: 160, mr: 120 });
+], { largura: 2409, fundo: dourado ? '1B2338' : NAVY, mt: 180, mb: 180, ml: 160, mr: 120,
+  bordas: dourado ? {
+    top: { style: BorderStyle.SINGLE, size: 4, color: OURO },
+    bottom: { style: BorderStyle.SINGLE, size: 4, color: OURO },
+    left: { style: BorderStyle.SINGLE, size: 4, color: OURO },
+    right: { style: BorderStyle.SINGLE, size: 4, color: OURO },
+  } : undefined });
 
+const rotuloPlacar = (texto, dourado) => p(texto, {
+  size: 15, bold: true, caps: true, spacing: 28, antes: 200, depois: 90,
+  color: dourado ? OURO_ESCURO : CINZA_CLARO,
+});
+
+põe(rotuloPlacar('O que já foi feito para a Ramasa', true));
 põe(tabela([
   new TableRow({ cantSplit: true, children: [
-    cartaoNumero('33', 'dias de trabalho na Ramasa', 'eram 25 em 11/09'),
-    cartaoNumero('213', 'entregas registradas', 'eram 176'),
-    cartaoNumero('158 h', 'medidas, leitura conservadora', 'eram 107 h'),
-    cartaoNumero('R$ 31.600', 'custo dessas horas a R$ 200/h', 'eram R$ 21.420'),
+    cartaoNumero('33', 'dias de trabalho', 'eram 25 em 11/09', true),
+    cartaoNumero('213', 'entregas registradas', 'eram 176', true),
+    cartaoNumero('158 h', 'medidas, leitura conservadora', 'eram 107 h', true),
+    cartaoNumero('R$ 31.600', 'custo dessas horas a R$ 200/h', 'eram R$ 21.420', true),
   ] }),
 ], LK, { bordas: SEM_BORDAS }));
 
-// ── o que mudou ───────────────────────────────────────────────────────────────
-põe(h2('O que mudou em 14 dias',
-  'Entre a versão de 11/09 e hoje. Cada linha está no histórico do repositório, com data e hora.'));
-
-const LM = [2600, 7038];
-const linhaMudou = (titulo, texto) => new TableRow({
-  cantSplit: true,
-  children: [
-    celula([p(titulo, { size: 18, bold: true, depois: 0, linha: 240 })], { largura: 2600 }),
-    celula([p(texto, { size: 17, color: '38405A', depois: 0, linha: 250 })], { largura: 7038 }),
-  ],
-});
-põe(tabela([
-  faixa('CONTEÚDO NOVO', LM),
-  linhaMudou('Jaecoo 5 no app', 'O 5º carro: ficha, versões COMFORT e PRESTIGE, 13 objeções com resposta, trilha de vídeo, etiqueta de lançamento no catálogo e o PDF do treinamento de lançamento na prateleira.'),
-  linhaMudou('Valores da Ramasa', 'RA·zão, MA·gia e SA·tisfação dentro do app: o valor da semana no Hoje e no Painel, a linha "no app" escrita para cada um dos 11 cargos, o carimbo quando a pessoa pratica, e a tela Cultura com os 9 valores.'),
-  faixa('FERRAMENTAS NOVAS', LM),
-  linhaMudou('Jornada do lead online', 'A aba que guia o atendimento: 5 etapas, mensagem pronta em cada uma, atalho para acessórios e lembrete da entrega. Nasceu da objeção que chega pelo funil.'),
-  linhaMudou('Rituais do mês', 'Pop-up por cargo com dia marcado — a tabela entre os dias 1 e 5, a campanha nos dias 14 e 30, a revisão de qualidade no 1º dia útil, o time da semana toda segunda. O "ok" fica gravado com nome, cargo e horário.'),
-  linhaMudou('Cargos e lojas', 'Supervisor de vendas, F&I, líder e diretor de qualidade; a loja de cada pessoa; Omoda Goiânia como unidade; e o Painel separado por loja.'),
-  linhaMudou('O app no computador', 'Quem abre pelo desktop deixou de ver a tela de celular esticada: menu na lateral, conteúdo em duas colunas, leitura em largura de página.'),
-  linhaMudou('Salvar PDF em tudo', 'Todo material que vai para o cliente agora tem botão de salvar em PDF.'),
-  faixa('MANUTENÇÃO E SEGURANÇA', LM),
-  linhaMudou('Isolamento no banco', 'Cada empresa só alcança o que é dela — antes a separação estava na tela, agora está na regra do banco. Vale para a Ramasa, a Meraki e a Sorocaps.'),
-  linhaMudou('Trava de publicação', 'Uma conferência automática que simula o que o app lê antes de qualquer mudança de regra subir. Ela existe porque uma regra nova derrubou a folha de condições por seis horas no dia 25 — e a mensagem na tela dizia "sem internet" em vez da verdade.'),
-  linhaMudou('Notícias que se consertam', 'As buscas passaram para o servidor e uma rotina diária conserta a aba antes de alguém reclamar.'),
-  linhaMudou('Relatórios', 'Relatório semanal de uso em PDF, relatório desde o início, e a apresentação de resultados e melhorias de 23/09.'),
-], LM));
+// a capa é capa: o conteúdo abre na página seguinte
+põe(new Paragraph({ children: [new PageBreak()] }));
 
 // ── 1. o que existe hoje ──────────────────────────────────────────────────────
 põe(h2('1. O que existe hoje', 'Tudo que está no ar, contado hoje no app e no banco.'));
@@ -134,6 +120,35 @@ põe(tabela([
   ] }),
 ], LC, { bordas: { ...SEM_BORDAS, insideHorizontal: { style: BorderStyle.SINGLE, size: 6, color: 'FFFFFF' }, insideVertical: { style: BorderStyle.SINGLE, size: 6, color: 'FFFFFF' } } }));
 
+// ── o que mudou ───────────────────────────────────────────────────────────────
+põe(h2('O que mudou em 14 dias',
+  'Entre a versão de 11/09 e hoje. Cada linha está no histórico do repositório, com data e hora.'));
+
+const LM = [2600, 7038];
+const linhaMudou = (titulo, texto) => new TableRow({
+  cantSplit: true,
+  children: [
+    celula([p(titulo, { size: 18, bold: true, depois: 0, linha: 240 })], { largura: 2600 }),
+    celula([p(texto, { size: 17, color: '38405A', depois: 0, linha: 250 })], { largura: 7038 }),
+  ],
+});
+põe(tabela([
+  faixa('CONTEÚDO NOVO', LM),
+  linhaMudou('Jaecoo 5 no app', 'O 5º carro: ficha, versões COMFORT e PRESTIGE, 13 objeções com resposta, trilha de vídeo, etiqueta de lançamento no catálogo e o PDF do treinamento de lançamento na prateleira.'),
+  linhaMudou('Valores da Ramasa', 'RA·zão, MA·gia e SA·tisfação dentro do app: o valor da semana no Hoje e no Painel, a linha "no app" escrita para cada um dos 11 cargos, o carimbo quando a pessoa pratica, e a tela Cultura com os 9 valores.'),
+  faixa('FERRAMENTAS NOVAS', LM),
+  linhaMudou('Jornada do lead online', 'A aba que guia o atendimento: 5 etapas, mensagem pronta em cada uma, atalho para acessórios e lembrete da entrega. Nasceu da objeção que chega pelo funil.'),
+  linhaMudou('Rituais do mês', 'Pop-up por cargo com dia marcado — a tabela entre os dias 1 e 5, a campanha nos dias 14 e 30, a revisão de qualidade no 1º dia útil, o time da semana toda segunda. O "ok" fica gravado com nome, cargo e horário.'),
+  linhaMudou('Cargos e lojas', 'Supervisor de vendas, F&I, líder e diretor de qualidade; a loja de cada pessoa; Omoda Goiânia como unidade; e o Painel separado por loja.'),
+  linhaMudou('O app no computador', 'Quem abre pelo desktop deixou de ver a tela de celular esticada: menu na lateral, conteúdo em duas colunas, leitura em largura de página.'),
+  linhaMudou('Salvar PDF em tudo', 'Todo material que vai para o cliente agora tem botão de salvar em PDF.'),
+  faixa('MANUTENÇÃO E SEGURANÇA', LM),
+  linhaMudou('Isolamento no banco', 'Cada empresa só alcança o que é dela — antes a separação estava na tela, agora está na regra do banco. Vale para a Ramasa, a Meraki e a Sorocaps.'),
+  linhaMudou('Trava de publicação', 'Uma conferência automática que simula o que o app lê antes de qualquer mudança de regra subir. Ela existe porque uma regra nova derrubou a folha de condições por seis horas no dia 25 — e a mensagem na tela dizia "sem internet" em vez da verdade.'),
+  linhaMudou('Notícias que se consertam', 'As buscas passaram para o servidor e uma rotina diária conserta a aba antes de alguém reclamar.'),
+  linhaMudou('Relatórios', 'Relatório semanal de uso em PDF, relatório desde o início, e a apresentação de resultados e melhorias de 23/09.'),
+], LM));
+
 // ── 2. esforço medido ─────────────────────────────────────────────────────────
 põe(h2('2. Esforço medido',
   'Só o que foi feito para a Ramasa, de 10/08 (a primeira linha de conteúdo) até hoje — 46 dias corridos, dos quais 33 tiveram entrega. Números tirados do histórico do repositório, data e hora de cada alteração. Não é estimativa de memória.'));
@@ -159,8 +174,6 @@ põe(tabela([
   linhaFase('Depois da proposta — Ramasa', 'Jaecoo 5, Jornada, rituais, valores do grupo, lojas, computador, isolamento no banco.',
     '12/set a 25/set', 8, 37, '58 h'),
   linhaFase('Total da Ramasa', '', '10/ago a 25/set', 33, 213, '231 h', true),
-  linhaFase('Plataforma base — fora da conta', 'O Eleva em si: app, painel, IA, publicação. Nasceu com a Meraki e a Sorocaps e se repete de graça em qualquer cliente novo.',
-    'abr a 09/ago', 25, 166, '155 h'),
 ], LF));
 
 põe(p('', { depois: 120 }));

@@ -12,7 +12,7 @@
 import fs from 'fs';
 import path from 'path';
 import {
-  Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+  Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, PageBreak,
   WidthType, ShadingType, BorderStyle, AlignmentType, HeadingLevel, VerticalAlign,
 } from 'docx';
 
@@ -138,5 +138,5 @@ function faixa(texto, larguras) {
 
 export { colado, NAVY, OURO, OURO_ESCURO, TINTA, CINZA, CINZA_CLARO, LINHA, FUNDO, FUNDO2, LARGURA,
   SEM_BORDAS, semBorda, txt, p, rico, celula, tabela, h2, nota, notaP, cabecalho, faixa,
-  Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, ShadingType,
+  Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, PageBreak, WidthType, ShadingType,
   BorderStyle, AlignmentType, HeadingLevel, VerticalAlign, fs, path };

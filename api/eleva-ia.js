@@ -86,7 +86,7 @@ export default async function handler(req, res) {
 
   // Teto DIÁRIO global. O 'orçamento' do Google é só alerta e não segura gasto;
   // este segura.
-  if (!(await guardBudget(res))) return;
+  if (!(await guardBudget(res, 'eleva'))) return;
 
   try {
     const {

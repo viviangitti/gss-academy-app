@@ -15,7 +15,17 @@
 
 import { getDb } from './_firebase.js';
 
-const DOC = 'elevaMeta/aiUsage';
+// UM CONTADOR POR PRODUTO, não um só para todos.
+//
+// Era um doc único, e os quatro endpoints de IA (Eleva, Coach, Maestria e o
+// proxy) dividiam o mesmo teto. Um pico de um produto derrubava o outro: o
+// vendedor da Ramasa levaria "tente de novo amanhã" num sábado cheio por causa
+// de uso que não é dele. Agora cada produto tem a sua conta, e quem estoura
+// estoura sozinho.
+const DOC_BASE = 'elevaMeta/aiUsage';
+function docDe(produto) {
+  return produto ? `${DOC_BASE}-${produto}` : DOC_BASE;
+}
 // Com ~10 usuários, 300/dia é folgado (30 por pessoa por dia). Ajuste pela env
 // AI_DAILY_LIMIT se o uso legítimo crescer.
 const LIMITE_PADRAO = 300;
@@ -51,7 +61,7 @@ function consumirNaMemoria(limite) {
   return { ok: true, usado: memoria.count, limite, motivo: 'contagem local' };
 }
 
-export async function consumirChamadaIA() {
+export async function consumirChamadaIA(produto) {
   const limite = limiteDiario();
   let db;
   try {
@@ -62,7 +72,7 @@ export async function consumirChamadaIA() {
     return consumirNaMemoria(limite);
   }
 
-  const ref = db.doc(DOC);
+  const ref = db.doc(docDe(produto));
   const dia = hojeSP();
 
   try {
@@ -86,10 +96,10 @@ export async function consumirChamadaIA() {
 
 /**
  * Guard pronto pra usar no handler. Responde 429 e devolve false quando estourou.
- * Uso:  if (!(await guardBudget(res))) return;
+ * Uso:  if (!(await guardBudget(res, 'eleva'))) return;
  */
-export async function guardBudget(res) {
-  const r = await consumirChamadaIA();
+export async function guardBudget(res, produto) {
+  const r = await consumirChamadaIA(produto);
   if (!r.ok) {
     res.status(429).json({
       error: 'Limite diário de IA atingido. Tente de novo amanhã.',

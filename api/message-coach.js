@@ -57,7 +57,7 @@ export default async function handler(req, res) {
 
     // Teto DIÁRIO global (contador no Firestore). O 'orçamento' do Google é
     // só alerta e não segura gasto — este segura.
-    if (!(await guardBudget(res))) return;
+    if (!(await guardBudget(res, 'coach'))) return;
 
   const { message, context = '', channel = '' } = req.body || {};
   if (!message || typeof message !== 'string' || !message.trim()) {

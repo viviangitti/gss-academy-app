@@ -38,7 +38,7 @@ export default async function handler(req, res) {
 
     // Teto DIÁRIO global (contador no Firestore). O 'orçamento' do Google é
     // só alerta e não segura gasto — este segura.
-    if (!(await guardBudget(res))) return;
+    if (!(await guardBudget(res, 'proxy'))) return;
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return res.status(503).json({ error: 'IA não configurada no servidor' });

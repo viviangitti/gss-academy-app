@@ -19,6 +19,7 @@ import { watchedToday, notifState, enableNotif, maybeNotify } from './data/lembr
 import { logSearch } from './data/insights';
 import { useBrand } from './BrandContext';
 import { useAuth } from './AuthContext';
+import { ValorDaSemana } from './Valores';
 import PrimeirosPassos from './PrimeirosPassos';
 import { carregarCondicoes, useCondicoes } from './data/condicoes';
 import { lembreteCampanha, mostrarPopupHoje, dispensarPopupHoje, quando, diaMes, frase } from './data/lembreteCampanha';
@@ -265,6 +266,10 @@ export default function Hoje() {
       </div>
 
       {/* Me salva: busca por dor/objeção/produto */}
+      {/* O VALOR DA SEMANA (só Ramasa). Fica ACIMA da busca de propósito: é a
+          primeira coisa que a pessoa lê ao abrir o app, e é o que a gerência
+          quer que ela leve pro atendimento do dia. */}
+      <ValorDaSemana />
       <div className="wp-td-search">
         <Search size={17} className="wp-ico wp-td-search-ic" />
         <input

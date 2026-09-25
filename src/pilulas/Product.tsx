@@ -12,7 +12,7 @@ import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProduct
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { pegarVideoPreparado, adotarVideo } from './data/videoGesture';
 import { getAfiliadoCode } from './data/afiliadoCode';
-import { recordView, isQuizDone, registraUso } from './data/tracking';
+import { recordView, isQuizDone, registraUso, carimbarValor } from './data/tracking';
 import { nomeParaCliente } from './data/nomeArquivo';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
 import { useBrand } from './BrandContext';
@@ -483,6 +483,9 @@ function ObjectionSubmit({ product }: { product: ProductT }) {
     );
     setBusy(false);
     if (ok) {
+      // Mandar a objeção que apareceu na loja é cuidar da empresa como se fosse
+      // sua — é o "senso de dono" do material de cultura da Ramasa.
+      carimbarValor('senso-dono');
       setSent(true); setText(''); setAnswer('');
       recarregarMinhas(); // aparece na lista dela = prova de que chegou
       setTimeout(() => setSent(false), 4000);

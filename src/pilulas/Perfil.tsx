@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Flame, Trophy, GraduationCap, Bell, BellOff, LogOut, Check, Tag, ChevronRight, Trash2, ShieldCheck, MessageCircle, Camera } from 'lucide-react';
 import { useAuth } from './AuthContext';
+import { MeusPilares } from './Valores';
 import { useBrand } from './BrandContext';
 import { vocab } from './data/vocabulario';
 import { isAuto } from './data/brands';
@@ -243,6 +244,10 @@ export default function Perfil() {
               <span><GraduationCap size={12} className="wp-ico" /> dominados</span>
             </div>
           </div>
+
+          {/* Os pilares do mês (só Ramasa): fica ao lado dos pontos porque é a
+              mesma pergunta — como foi o meu mês — respondida pela cultura. */}
+          <MeusPilares />
 
           <Link to="/eleva/trilha" className="wp-perfil-link">
             <GraduationCap size={16} className="wp-ico" />

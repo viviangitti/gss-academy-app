@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, ChevronUp, X, RotateCcw, Undo2, CalendarClock } from 'lucide-react';
 import { useBrand } from './BrandContext';
+import { TimePelosPilares } from './Valores';
 import { isAuto } from './data/brands';
 import { cargoLabel, podeMexerEmAcessorios, podeVerOTime } from './data/cargos';
 import { lojaLabel } from './data/lojas';
@@ -136,11 +137,16 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
     [pessoas],
   );
   const semLoja = (pessoas || []).some((p) => !p.loja);
+  // O MESMO recorte de loja que alimenta o relatório alimenta os pilares: se a
+  // gerência filtrou por Itumbiara, a cultura mostrada é a de Itumbiara.
+  const pessoasDoRecorte = useMemo(() => {
+    if (!pessoas) return [];
+    return !loja ? pessoas : loja === 'sem' ? pessoas.filter((p) => !p.loja) : pessoas.filter((p) => p.loja === loja);
+  }, [pessoas, loja]);
   const rep = useMemo(() => {
     if (!pessoas) return null;
-    const recorte = !loja ? pessoas : loja === 'sem' ? pessoas.filter((p) => !p.loja) : pessoas.filter((p) => p.loja === loja);
-    return buildReport(recorte, allowed);
-  }, [pessoas, loja, allowed]);
+    return buildReport(pessoasDoRecorte, allowed);
+  }, [pessoas, pessoasDoRecorte, allowed]);
 
   // A barra de lojas só existe quando há mais de uma unidade no time — numa
   // loja só, um filtro com uma opção é ruído.
@@ -208,6 +214,11 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
             : 'Os números abaixo somam todas as lojas do grupo.'}
         </p>
       )}
+
+      {/* A cultura medida pelo que foi feito (só Ramasa). Fica ACIMA dos números
+          de uso de propósito: a pergunta da reunião de segunda é "como o time
+          se comportou", e não só "quantos abriram o app". */}
+      <TimePelosPilares pessoas={pessoasDoRecorte} />
 
       <div className="wp-gz-kpis">
         <div className="wp-gz-kpi">

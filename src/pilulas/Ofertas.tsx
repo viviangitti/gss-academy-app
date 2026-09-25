@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, Megaphone, Pencil, Trash2, CalendarClock, ChevronRight, ChevronLeft, Image as ImageIcon } from 'lucide-react';
 import { useBrand } from './BrandContext';
+import { carimbarValor } from './data/tracking';
 import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 import ArteCondicao, { dadosDaArte, type DadosArte } from './ArteCondicao';
@@ -222,6 +223,13 @@ export default function Ofertas() {
   const { user } = useAuth();
   const auto = isAuto(brandId);
   const [aberta, setAberta] = useState<Condicao | null>(null);
+  // Abrir a folha da condição vigente ANTES de falar número com o cliente é o
+  // "ser firme e discordar" do material de cultura da Ramasa: o preço é o que
+  // a tabela diz, não o que a conversa pede. Carimba uma vez por abertura.
+  const abrirFolha = (c: Condicao | null) => {
+    if (c) carimbarValor('firme-discordar');
+    setAberta(c);
+  };
   // Chegou pelo lembrete da campanha, na tela inicial? Já abre nas campanhas.
   const [grupo, setGrupo] = useState<'veiculo' | 'acessorio' | 'campanha' | null>(() => {
     const g = new URLSearchParams(window.location.search).get('grupo');
@@ -305,7 +313,7 @@ export default function Ofertas() {
                       <Lock size={12} className="wp-ico" /> Interno — passe só o número, não a folha
                     </span>
                   </div>
-                  <Folha c={c} onAbrir={setAberta} />
+                  <Folha c={c} onAbrir={abrirFolha} />
                   {c.observacao && <p className="wp-cond-obs">{c.observacao}</p>}
                   {/* ARTE PRO CLIENTE. Só aparece quando a gerência escreveu a
                       chamada aprovada — sem ela não há o que anunciar, e o
@@ -366,7 +374,7 @@ export default function Ofertas() {
                   <Lock size={12} className="wp-ico" /> Interno — passe só o número, não a folha
                 </span>
               </div>
-              <Folha c={c} onAbrir={setAberta} />
+              <Folha c={c} onAbrir={abrirFolha} />
               {c.observacao && <p className="wp-cond-obs">{c.observacao}</p>}
               <span className="wp-cond-quando">{quando(c.criadoEm)}</span>
             </div>

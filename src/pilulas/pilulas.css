@@ -4590,3 +4590,110 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   font-size: 15px;
   font-weight: 800;
 }
+
+/* ===== Cultura: os valores da Ramasa dentro do app (só ela) ===== */
+
+/* O SELO DA AÇÃO. Aparece acima do menu, fica ~3s e sai. Escuro de propósito:
+   é aviso, não conteúdo — não pode competir com a tela onde a pessoa está. */
+.wp-carimbo {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(var(--wp-nav-h, 62px) + 12px + env(safe-area-inset-bottom, 0px));
+  z-index: 62;
+  max-width: 456px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 13px;
+  border-radius: 14px;
+  background: #0f1524;
+  color: #fff;
+  box-shadow: 0 14px 34px rgba(8, 11, 20, 0.4);
+  cursor: pointer;
+  animation: wpCarimbo 0.26s ease;
+}
+@keyframes wpCarimbo { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.wp-carimbo-ic {
+  flex: none; width: 34px; height: 34px; border-radius: 10px;
+  display: grid; place-items: center;
+  font-size: 12px; font-weight: 800; letter-spacing: .04em; color: #fff;
+}
+.wp-carimbo b { display: block; font-size: 13.5px; }
+.wp-carimbo i {
+  display: block; font-style: normal; font-size: 11.5px; opacity: .8;
+  margin-top: 2px; line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* O CARD DO VALOR DA SEMANA, no Hoje. */
+.wp-valsem {
+  display: block; text-decoration: none; color: #fff;
+  background: linear-gradient(140deg, #16213c, #0f1524);
+  border-radius: 18px; padding: 14px 15px 15px; margin-bottom: 13px;
+}
+.wp-valsem-topo { display: flex; align-items: center; gap: 8px; }
+.wp-valsem-pilar {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 99px; color: #fff;
+}
+.wp-valsem-rot { font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #8fa6c8; }
+.wp-valsem-seta { margin-left: auto; color: #8fa6c8; }
+.wp-valsem-nome { display: block; font-size: 19px; font-weight: 800; margin: 9px 0 4px; letter-spacing: -.01em; }
+.wp-valsem-texto { display: block; font-size: 12.8px; line-height: 1.5; color: #d5d8e6; }
+.wp-valsem-app {
+  display: flex; gap: 7px; align-items: flex-start;
+  margin-top: 11px; padding: 9px 11px; border-radius: 11px;
+  background: rgba(255, 255, 255, .09); border: 1px solid rgba(255, 255, 255, .14);
+  font-size: 12.3px; line-height: 1.45; color: #e7ecf6;
+}
+.wp-valsem-app .wp-ico { flex: none; margin-top: 2px; color: #9fc6f5; }
+
+/* OS PILARES DO MÊS, no Perfil. */
+.wp-pilares {
+  background: var(--wp-surface); border: 1px solid var(--wp-border);
+  border-radius: 16px; padding: 14px; margin-bottom: 12px;
+}
+.wp-pilares-topo { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 11px; }
+.wp-pilares-rot { font-size: 11.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--wp-pink-deep); }
+.wp-pilares-link { font-size: 12px; font-weight: 700; color: var(--wp-pink-deep); text-decoration: none; display: inline-flex; align-items: center; gap: 2px; }
+.wp-pilares-vazio { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--wp-soft); }
+.wp-pilar-linha { margin-bottom: 11px; }
+.wp-pilar-linha:last-child { margin-bottom: 0; }
+.wp-pilar-top { display: flex; align-items: baseline; justify-content: space-between; font-size: 13.5px; }
+.wp-pilar-top b { color: var(--wp-ink); font-weight: 800; }
+.wp-pilar-top span { font-size: 12px; font-weight: 700; color: var(--wp-soft); }
+.wp-pilar-tr { height: 8px; border-radius: 99px; background: #eef1f6; margin-top: 5px; overflow: hidden; }
+.wp-pilar-tr i { display: block; height: 100%; border-radius: 99px; }
+
+/* A TELA NOSSA CULTURA. */
+.wp-cult { padding: 14px 16px 96px; max-width: 480px; margin: 0 auto; }
+.wp-cult-tit { font-size: 26px; font-weight: 800; letter-spacing: -.02em; margin: 10px 0 4px; color: var(--wp-ink); }
+.wp-cult-sigla { margin: 0 0 8px; font-size: 14px; font-weight: 700; color: var(--wp-text); }
+.wp-cult-sigla b { font-weight: 800; }
+.wp-cult-lead { margin: 0 0 14px; font-size: 13px; line-height: 1.55; color: var(--wp-soft); }
+.wp-cult-semana {
+  background: linear-gradient(140deg, #16213c, #0f1524); color: #fff;
+  border-radius: 16px; padding: 13px 14px; margin-bottom: 16px;
+}
+.wp-cult-semana-rot { display: flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #9fc6f5; }
+.wp-cult-semana b { display: block; font-size: 17px; margin: 7px 0 3px; }
+.wp-cult-semana i { display: block; font-style: normal; font-size: 12.5px; line-height: 1.5; color: #d5d8e6; }
+.wp-cult-pilar { margin-bottom: 18px; }
+.wp-cult-pilar-cab { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.wp-cult-pilar-nome {
+  font-size: 11.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  color: #fff; padding: 5px 11px; border-radius: 8px;
+}
+.wp-cult-pilar-conta { font-size: 11.5px; font-weight: 700; color: var(--wp-soft); }
+.wp-cult-lema { margin: 8px 0 10px; font-size: 12.5px; line-height: 1.5; color: var(--wp-soft); }
+.wp-cult-valor { border-top: 1px solid var(--wp-border); padding: 11px 0; }
+.wp-cult-valor b { font-size: 14.5px; color: var(--wp-ink); }
+.wp-cult-valor p { margin: 3px 0 0; font-size: 12.8px; line-height: 1.55; color: var(--wp-text); }
+.wp-cult-noapp {
+  display: block; margin-top: 7px; padding: 8px 10px; border-radius: 10px;
+  background: var(--wp-bg); border: 1px solid var(--wp-border);
+  font-size: 12.2px; line-height: 1.45; color: var(--wp-text);
+}
+.wp-cult-rodape { margin: 4px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--wp-soft); }

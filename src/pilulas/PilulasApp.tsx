@@ -16,6 +16,8 @@ import Privacidade from './Privacidade';
 import Noticias from './Noticias';
 import Jornada from './Jornada';
 import RitualDoMes from './RitualDoMes';
+import Cultura from './Cultura';
+import { CarimboValor } from './Valores';
 import Documentos from './Documentos';
 import Acessorio from './Acessorio';
 import FormArgumentos from './FormArgumentos';
@@ -380,6 +382,7 @@ function Shell() {
       {/* O lembrete do mês vive aqui, e não numa tela: o vendedor abre no Hoje
           e o gerente cai no Painel. */}
       <RitualDoMes />
+      <CarimboValor />
       <main className="wp-main">
         <Routes>
           {/* Gestor entra direto no painel (o trabalho dele é colocar conteúdo);
@@ -400,6 +403,9 @@ function Shell() {
           <Route path="/eleva/noticias" element={<Noticias />} />
           <Route path="/eleva/jornada" element={<SoAuto><Jornada /></SoAuto>} />
           <Route path="/eleva/documentos" element={<Documentos />} />
+          {/* Nossa cultura: a tela existe só pra quem tem programa de cultura
+              (hoje a Ramasa) — a própria tela devolve um aviso nas outras. */}
+          <Route path="/eleva/cultura" element={<Cultura />} />
           <Route path="/eleva/acessorio/:id" element={<Acessorio />} />
           <Route path="/pilulas/*" element={<Navigate to="/eleva" replace />} />
           {/* Link antigo ou telas que saíram do ar (ex.: /eleva/venda) caem na

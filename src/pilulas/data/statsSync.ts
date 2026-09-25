@@ -9,6 +9,7 @@
 import { doc, getDoc, setDoc, serverTimestamp, arrayUnion } from 'firebase/firestore';
 import { db, auth } from '../../services/firebase';
 import { publicarPlacar } from './placar';
+import { pilaresDe } from './valores';
 import type { Stats } from './tracking';
 
 /**
@@ -116,6 +117,10 @@ export function syncStats(stats: Stats, event: { type: ElevaEventType; id: strin
       points: stats.weekPoints,
       missions: stats.weekMissions,
     },
+    // Os pilares do mês (Ramasa). Vão somados por pilar, não valor por valor:
+    // o Painel mostra a cultura da equipe, e nome de valor pessoa a pessoa
+    // viraria planilha de julgamento.
+    pilares: pilaresDe(stats.perValor),
     lastActiveAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
     events: arrayUnion({

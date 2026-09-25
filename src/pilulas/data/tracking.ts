@@ -2,6 +2,8 @@
 // localStorage é a verdade do app (offline, instantâneo); statsSync manda uma
 // cópia agregada pro Firestore pra alimentar o Sistema de Gestão.
 import { syncStats, type ElevaEventType } from './statsSync';
+import { valorDoEvento } from './valores';
+import { avisarCarimbo } from './carimbo';
 
 // Progresso é POR CONTA, não por aparelho. Antes havia uma chave só: quem
 // entrasse depois no mesmo celular herdava as pílulas, os pontos e a ofensiva
@@ -48,6 +50,14 @@ export interface Stats {
   perProduct: Record<string, number>;
   perMission: Record<string, number>; // missões já concluídas (não repontuam)
   perQuiz: Record<string, number>; // produtos "dominados" no quiz (permanente, pontua 1x)
+  /**
+   * OS VALORES PRATICADOS NO MÊS (só Ramasa — ver data/valores.ts).
+   *
+   * Conta VEZES, não pontos: cada ação que carimba um valor soma 1. Não criei
+   * uma moeda nova de propósito — o app já tem pontos, e inventar uma segunda
+   * economia para a cultura faria as duas competirem na cabeça de quem vende.
+   */
+  perValor?: Record<string, number>;
 }
 
 function today(): string {
@@ -72,6 +82,7 @@ function fresh(): Stats {
     perProduct: {},
     perMission: {},
     perQuiz: {},
+    perValor: {},
   };
 }
 
@@ -87,6 +98,8 @@ export function getStats(): Stats {
       s.weekPoints = 0;
       s.weekMissions = 0;
       s.perMission = {};
+      // os valores são do MÊS: viraram o mês, recomeçam do zero
+      s.perValor = {};
     }
     return { ...fresh(), ...s };
   } catch {
@@ -125,7 +138,12 @@ export function recordView(productId: string): Stats {
 
   s.lastDay = day;
   save(s);
-  if (isNew) syncStats(s, { type: 'pill_view', id: productId, points: POINTS_PER_PILL });
+  if (isNew) {
+    // O carimbo do valor acompanha o PONTO, não a abertura da tela: quem
+    // reabre o mesmo carro no mesmo dia não pratica "melhoria contínua" de novo.
+    carimbarEvento('pill_view');
+    syncStats(s, { type: 'pill_view', id: productId, points: POINTS_PER_PILL });
+  }
   return s;
 }
 
@@ -158,7 +176,28 @@ function primeiraVezHoje(chave: string): boolean {
 
 export function registraUso(type: ElevaEventType, id: string): void {
   if (!primeiraVezHoje(`${type}:${id}`)) return;
+  carimbarEvento(type);
   syncStats(getStats(), { type, id, points: 0 });
+}
+
+/**
+ * CARIMBA O VALOR DA AÇÃO (só Ramasa — ver data/valores.ts).
+ *
+ * Guarda a contagem do mês e avisa a tela, que mostra o selo por três
+ * segundos. O carimbo é por AÇÃO, não por dia: quem estuda três carros pratica
+ * "melhoria contínua" três vezes, e é isso que o Painel soma.
+ */
+export function carimbarValor(valorId: string): void {
+  const s = getStats();
+  s.perValor = { ...(s.perValor || {}), [valorId]: (s.perValor?.[valorId] || 0) + 1 };
+  save(s);
+  avisarCarimbo(valorId);
+}
+
+/** O mesmo carimbo, a partir do tipo de evento que o app já registra. */
+export function carimbarEvento(type: ElevaEventType): void {
+  const v = valorDoEvento(type);
+  if (v) carimbarValor(v.id);
 }
 
 // Registra uma missão de creator concluída ("postei"). Pontua 1x por missão.
@@ -200,7 +239,10 @@ export function recordQuizPass(productId: string): Stats {
     isNew = true;
   }
   save(s);
-  if (isNew) syncStats(s, { type: 'quiz_pass', id: productId, points: POINTS_PER_QUIZ });
+  if (isNew) {
+    carimbarEvento('quiz_pass');
+    syncStats(s, { type: 'quiz_pass', id: productId, points: POINTS_PER_QUIZ });
+  }
   return s;
 }
 

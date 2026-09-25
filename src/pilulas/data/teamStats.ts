@@ -26,6 +26,8 @@ export interface TeamPerson {
   totals: { views: number; missions: number; quizPassed: number; streak: number };
   cartaoPronto?: boolean; // já preencheu o contato que sai no material do cliente
   month: { id: string; views: number; points: number; missions: number };
+  /** Quantas vezes a pessoa praticou cada pilar no mês (Ramasa). */
+  pilares?: { razao: number; magia: number; satisfacao: number };
   events: TeamEvent[];
   lastActiveAt?: Date;
 }
@@ -94,6 +96,10 @@ export async function fetchTeam(brand: string): Promise<TeamPerson[]> {
       totals: { views: t.views || 0, missions: t.missions || 0, quizPassed: t.quizPassed || 0, streak: t.streak || 0 },
       cartaoPronto: x.cartaoPronto === true,
       month: { id: String(m.id || ''), views: m.views || 0, points: m.points || 0, missions: m.missions || 0 },
+      pilares: (() => {
+        const pl = (x.pilares || {}) as Record<string, number>;
+        return { razao: pl.razao || 0, magia: pl.magia || 0, satisfacao: pl.satisfacao || 0 };
+      })(),
       events: Array.isArray(x.events) ? (x.events as TeamEvent[]) : [],
       lastActiveAt: (x.lastActiveAt as { toDate?: () => Date })?.toDate?.(),
     };

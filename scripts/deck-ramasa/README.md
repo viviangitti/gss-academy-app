@@ -9,7 +9,7 @@ enxuta: corrige os números do caso, troca o preço de implantação, cria o sli
 osascript -e 'tell application "Keynote" to export document "Eleva - Apresentacao institucional Ramasa" to POSIX file "/tmp/ramasa.pptx" as Microsoft PowerPoint'
 
 # 2. montar
-python3 scripts/deck-ramasa/monta.py /tmp/ramasa.pptx ~/Desktop/"Eleva - Apresentacao Ramasa ENXUTA (17 slides).pptx"
+python3 scripts/deck-ramasa/monta.py /tmp/ramasa.pptx ~/Desktop/"Eleva - Apresentacao Ramasa FINAL (18 slides).pptx"
 ```
 
 ## O que ele faz
@@ -22,10 +22,15 @@ python3 scripts/deck-ramasa/monta.py /tmp/ramasa.pptx ~/Desktop/"Eleva - Apresen
 3. **Slide novo, penúltimo** — três colunas: módulo principal (R$ 39.280),
    módulos extras (R$ 12.650) e diferenciais. Os dois subtotais somam a tabela
    cheia; o bloco escuro fecha no pacote.
-4. **Corte de 22 para 17** — saem A jornada do atendimento, A pessoa aprende e
+4. **Slide novo, último antes de Próximos passos** — "Quando o grupo cresce":
+   mais uma loja (R$ 400 uma vez, R$ 0/mês), outra bandeira (R$ 8.000 +
+   R$ 2.500/modelo + R$ 1.800/mês) e outro grupo (R$ 14.000 + R$ 3.300/mês),
+   mais a faixa "sem limite de acessos". A unidade é a BANDEIRA: loja não
+   custa, catálogo custa.
+5. **Corte de 22 para 18** — saem A jornada do atendimento, A pessoa aprende e
    prova, as duas de "Tudo o que vem no Eleva", Como trabalhamos juntos e O que
    a implantação entrega. Todas viraram linha do slide novo.
-5. **Rodapé** — renumera. A primeira versão duplicava o número ("… 14   14")
+6. **Rodapé** — renumera. A primeira versão duplicava o número ("… 14   14")
    porque o regex casava também a string vazia no fim.
 
 ## Cuidado

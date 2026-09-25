@@ -18,6 +18,15 @@
         "cd /Users/viviangitti/gss-site && node build.mjs && node server.mjs"
       ],
       "port": 5190
+    },
+    {
+      "name": "gss-site-proposta",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /private/tmp/claude-501/-Users-viviangitti-gss/1b50ea9a-2114-4dce-ba86-ac816f0dec5a/scratchpad/gss-depois && PORT=5191 node server.mjs"
+      ],
+      "port": 5191
     }
   ]
 }

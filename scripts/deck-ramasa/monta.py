@@ -199,6 +199,48 @@ for sl in pr.slides:
 alvo = acha(pr.slides[20], 'Relatórios de uso semanal')
 if alvo: texto(alvo, 'Relatório de uso semanal')
 
+# ── 3c) o slide do crescimento: mais loja, outra bandeira, outro grupo ──────
+cresce = pr.slides.add_slide(pr.slide_layouts[0])
+for ph in list(cresce.shapes):
+    ph._element.getparent().remove(ph._element)
+
+caixa(cresce, 0.60, 0.50, 12.10, 0.50, 'Quando o grupo cresce', tam=32, bold=True, cor=NAVY, fonte='Georgia')
+caixa(cresce, 0.60, 1.41, 12.10, 0.27,
+      'Três situações diferentes, três contas diferentes. A unidade é a bandeira: loja não custa, catálogo custa.',
+      tam=17, cor=BODY)
+
+CASOS = [
+    ('MAIS UMA LOJA', 'Mesma bandeira, mesmo dono',
+     'R$ 400', 'uma vez · R$ 0 por mês',
+     'Configurar a unidade, cadastrar o time e separar o painel. A curadoria não muda — é a mesma carta da montadora e a mesma linha de carros. Você paga o que muda, não o que se repete.'),
+    ('OUTRA BANDEIRA', 'No mesmo grupo',
+     'R$ 8.000', '+ R$ 2.500 por modelo · R$ 1.800 por mês',
+     'Aqui não é mais loja: é outro catálogo, com outra carta de montadora para publicar e conferir todo mês. A licença continua uma só, e a fatura sai no CNPJ da bandeira.'),
+    ('OUTRO GRUPO', 'Mesma bandeira, outro dono',
+     'R$ 14.000', 'R$ 3.300 por mês',
+     'O conteúdo de produto já está escrito — descreve o carro da montadora, não a sua operação. O que é seu (condição, time e números) fica isolado no banco, e nenhum outro grupo enxerga.'),
+]
+LARG = 3.85; GAP = 0.28; TOPO2 = 1.95; ALT = 3.40
+for i, (rotulo, sub, valor, complemento, texto_) in enumerate(CASOS):
+    x = 0.60 + i * (LARG + GAP)
+    retangulo(cresce, x, TOPO2, LARG, 1.02, fill=NAVY, raio=0.07)
+    caixa(cresce, x + 0.26, TOPO2 + 0.22, LARG - 0.52, 0.20, rotulo, tam=11, bold=True, cor=GOLD, espaco=300)
+    caixa(cresce, x + 0.26, TOPO2 + 0.52, LARG - 0.52, 0.24, sub, tam=12, cor=NEVOA)
+    caixa(cresce, x + 0.26, TOPO2 + 1.24, LARG - 0.52, 0.42, valor, tam=27, bold=True, cor=NAVY, fonte='Georgia', entrelinha=1.0)
+    caixa(cresce, x + 0.26, TOPO2 + 1.74, LARG - 0.52, 0.24, complemento, tam=11, bold=True, cor=GOLDD)
+    caixa(cresce, x + 0.26, TOPO2 + 2.10, LARG - 0.52, 1.10, texto_, tam=11, cor=BODY, entrelinha=1.25)
+    lin2 = cresce.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(x + 0.26), Inches(TOPO2 + 2.02), Inches(LARG - 0.52), Pt(0.75))
+    lin2.fill.solid(); lin2.fill.fore_color.rgb = LINHA; lin2.line.fill.background(); lin2.shadow.inherit = False
+
+FAIXA_Y = 5.75
+retangulo(cresce, 0.60, FAIXA_Y, 12.13, 1.05, fill=CARD, raio=0.07)
+caixa(cresce, 0.92, FAIXA_Y + 0.20, 4.20, 0.22, 'SEM LIMITE DE ACESSOS', tam=11, bold=True, cor=GOLDD, espaco=300)
+caixa(creske := cresce, 0.92, FAIXA_Y + 0.50, 11.50, 0.42,
+      'Usuários e lojas ilimitados, em todos os planos. Cobrar por pessoa faria a gerência racionar o acesso — e é justamente o uso que prova o valor. A única proteção é automática, aplicada por pessoa e por dia contra uso de robô, e nunca é faturada.',
+      tam=11, cor=BODY, entrelinha=1.25)
+
+caixa(cresce, 10.70, 7.08, 2.03, 0.14, 'Eleva · GSS Academy', tam=9, cor=GREY, alinha=PP_ALIGN.RIGHT)
+
 # ── 4) enxugar: saem os slides que a nova substitui ou que repetem ───────────
 # 5  A jornada do atendimento      → vira linha da nova (R$ 4.000)
 # 6  A pessoa aprende e prova      → vira linha da nova (trilhas + quiz)
@@ -216,10 +258,17 @@ for n in sorted(FORA, reverse=True):
     lista.remove(el)
 
 # ── 5) a nova vai para a penúltima posição, antes de "Próximos passos" ───────
+# As duas novas ("peça por peça" e "quando o grupo cresce") são as últimas do
+# arquivo; entram na frente de "Próximos passos", nessa ordem.
 ids = list(lista)
-nova_el = ids[-1]
-lista.remove(nova_el)
-lista.insert(len(list(lista)) - 1, nova_el)
+novas = [ids[-2], ids[-1]]
+for el in novas:
+    lista.remove(el)
+# A posição é calculada UMA vez: recalcular len() a cada inserção empurrava a
+# segunda para depois de "Próximos passos".
+base = len(list(lista)) - 1
+for k, el in enumerate(novas):
+    lista.insert(base + k, el)
 
 # ── 6) o rodapé volta a contar certo ─────────────────────────────────────────
 import re as _re

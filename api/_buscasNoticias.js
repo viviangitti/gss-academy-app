@@ -18,6 +18,20 @@ export const BUSCAS = {
       '(desconto OR "taxa zero" OR financiamento OR "tabela de preços" OR promoção) carro OR SUV Brasil',
     eletrificados: '(carro elétrico OR híbrido OR eletrificado) Brasil (venda OR preço OR recarga OR autonomia)',
   },
+  // Royal Enfield Brasil — marca de MOTO (em demonstração). As frentes são as
+  // mesmas, o assunto é outro: concorrente é Triumph e Honda de média
+  // cilindrada, não SUV; e "eletrificados" no mundo da moto ainda é assunto de
+  // lançamento, não de pátio.
+  royal: {
+    tudo: '"Royal Enfield"',
+    concorrencia:
+      '("Triumph Speed 400" OR "Honda CB 500" OR "Honda CB 300" OR "Yamaha MT-03" OR "Kawasaki Z400" OR Bajaj OR "Harley-Davidson X440") moto Brasil',
+    mercado: 'emplacamentos OR Abraciclo OR "mercado de motos" Brasil',
+    lancamentos: '(lançamento OR estreia OR "chega ao Brasil") moto 2026 (350 OR 450 OR 650)',
+    condicoes:
+      '(desconto OR "taxa zero" OR financiamento OR consórcio OR promoção) moto Brasil',
+    eletrificados: '(moto elétrica OR "motocicleta elétrica") Brasil (lançamento OR autonomia OR preço)',
+  },
 };
 
 // Marca sem busca configurada: usa o nome dela e o assunto do setor.
@@ -41,7 +55,7 @@ export function buscaDa(marca, frente, nome) {
 
 // Marcas de concessionária: só para elas o plano B das redações automotivas faz
 // sentido (é o mesmo critério de isAuto em src/pilulas/data/brands.ts).
-export const MARCAS_AUTO = ['ramasa'];
+export const MARCAS_AUTO = ['ramasa', 'royal'];
 
 /**
  * A versão mais solta de uma busca: só os nomes da lista de alternativas.

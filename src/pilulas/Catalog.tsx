@@ -12,7 +12,7 @@ import { useAjustesAcessorios } from './data/ajustesAcessorios';
 
 // Ordem em que as categorias aparecem. Categoria fora desta lista NÃO é
 // renderizada — foi o que sumiu com o catálogo da Ramasa quando 'suv' entrou.
-const ORDER: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria', 'jaecoo', 'omoda', 'acessorio'];
+const ORDER: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria', 'jaecoo', 'omoda', 'royal', 'acessorio'];
 
 export default function Catalog() {
   // Re-renderiza quando o preço corrigido chega da nuvem: sem isto a tela

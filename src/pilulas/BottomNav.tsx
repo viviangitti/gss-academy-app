@@ -2,10 +2,11 @@ import { NavLink } from 'react-router-dom';
 import { Home, BookOpen, Sparkles, Tag, LayoutDashboard, Eye, GraduationCap, MessageCircleQuestion, Newspaper, FolderOpen, Route } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useBrand } from './BrandContext';
-import { isBalcao, isAuto } from './data/brands';
+import { isBalcao, isAuto, isMoto } from './data/brands';
 
 // Abas por papel: a vendedora consome/posta/compartilha; o gestor só coloca conteúdo
 // (Painel) e pode espiar como o time vê (Ver app).
+type Aba = { to: string; label: string; icon: typeof Home; end: boolean };
 const VENDEDORA_TABS = [
   { to: '/eleva', label: 'Hoje', icon: Home, end: true },
   { to: '/eleva/catalogo', label: 'Catálogo', icon: BookOpen, end: false },
@@ -79,12 +80,22 @@ export default function BottomNav() {
   const { brandId } = useBrand();
   const balcao = isBalcao(brandId);
   const auto = isAuto(brandId);
-  const tabs =
+  // MOTO: mesma engrenagem do automotivo, duas diferenças na régua de baixo —
+  // a aba de catálogo se chama "Motos", e a Jornada ainda não existe porque os
+  // scripts dela são de showroom de carro (test drive, garagem com tomada).
+  // Mostrar script de carro para quem vende moto seria pior que não mostrar.
+  const moto = isMoto(brandId);
+  const ajustaMoto = (lista: Aba[]): Aba[] => (!moto ? lista : lista
+    .filter((t) => t.to !== '/eleva/jornada')
+    .map((t) => (t.to === '/eleva/catalogo' && t.label === 'Carros' ? { ...t, label: 'Motos' } : t)));
+
+  const tabs = ajustaMoto(
     auto ? (user?.role === 'gestor' ? GESTOR_AUTO_TABS : AUTO_TABS) :
     user?.role === 'gestor' ? (balcao ? GESTOR_BALCAO_TABS : GESTOR_TABS) :
     balcao ? BALCAO_TABS : // farmácia: enxuto, independe do papel
     user?.role === 'afiliado' ? AFILIADO_TABS :
-    VENDEDORA_TABS; // balconista e promotor (revenda): tudo
+    VENDEDORA_TABS, // balconista e promotor (revenda): tudo
+  );
   // Sete abas no automotivo (a Jornada entrou): o rótulo precisa de mais um
   // aperto e o ícone encolhe, senão em 375px dois rótulos se encavalam.
   return (

@@ -5,7 +5,7 @@ import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } f
 import { setStoredRole, setStoredBrands } from './data/roles';
 import { setElevaProfile } from './data/profile';
 import { invitedBrand } from './data/brandInvite';
-import { getBrand, isBalcao, isAuto, BRANDS, type BrandId } from './data/brands';
+import { getBrand, isBalcao, isAuto, ehGss, BRANDS, type BrandId } from './data/brands';
 import { CARGOS_AUTO, roleDoCargo, type CargoAuto } from './data/cargos';
 import { lojasDaMarca } from './data/lojas';
 import type { Role, AffiliateType } from './AuthContext';
@@ -94,6 +94,16 @@ export default function Login() {
     setInfo('');
     try {
       if (mode === 'criar') {
+        // MARCA EM DEMONSTRAÇÃO (soGss): aparece na lista porque é de lá que a
+        // apresentação começa, mas só a GSS entra. Sem esta trava, qualquer
+        // pessoa escolheria a empresa que ainda é proposta e abriria o conteúdo
+        // dela — inclusive alguém de outro cliente.
+        const demo = effBrands.map((b) => getBrand(b)).find((b) => b.soGss);
+        if (demo && !ehGss(email)) {
+          setError(`${demo.name} está em demonstração com a GSS. Se você é da empresa, fale com a gente que liberamos o seu acesso.`);
+          setBusy(false);
+          return;
+        }
         // Papel escolhido no cadastro é só o inicial: o poder real de gestor vem
         // do e-mail (override + regras do Firestore), não de um código na tela.
         // Balcão (Sorocaps): a pessoa é balconista, sem escolher papel.

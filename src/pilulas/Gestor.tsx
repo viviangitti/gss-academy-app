@@ -666,6 +666,7 @@ const GRADIENT: Record<Category, [string, string]> = {
   cosmeticos: ['#f7b733', '#d96d2b'],
   perfumaria: ['#ff5fa2', '#9b2c63'],
   jaecoo: ['#1e6fd9', '#0f3a75'],
+  royal: ['#a4161a', '#5c0a0d'],
   omoda: ['#5f6fd6', '#221f52'],
   acessorio: ['#64748b', '#27303f'],
 };

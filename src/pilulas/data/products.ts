@@ -2,7 +2,7 @@
 // Cada produto vira uma "pílula": conteúdo curto, focado em BENEFÍCIO,
 // de uso duplo (treina a vendedora + ela compartilha com a cliente).
 //
-import { Dumbbell, Pill, Wind, Sparkles, Flower2, Car, Zap, Wrench, type LucideIcon } from 'lucide-react';
+import { Dumbbell, Pill, Wind, Sparkles, Flower2, Car, Zap, Wrench, Motorbike, type LucideIcon } from 'lucide-react';
 import type { BrandId } from './brands';
 import type { Audience } from '../AuthContext';
 //
@@ -20,7 +20,7 @@ import type { Audience } from '../AuthContext';
 // Omoda — e é assim que o showroom pensa e que o cliente pergunta) e mais uma
 // parte de ACESSÓRIOS (engate, película, som, proteção), que é onde a
 // concessionária ganha margem e o vendedor mais esquece de oferecer.
-export type Category = 'performance' | 'capsulas' | 'respiratorio' | 'cosmeticos' | 'perfumaria' | 'jaecoo' | 'omoda' | 'acessorio';
+export type Category = 'performance' | 'capsulas' | 'respiratorio' | 'cosmeticos' | 'perfumaria' | 'jaecoo' | 'omoda' | 'royal' | 'acessorio';
 
 export interface Objection {
   trigger: string; // o que a cliente fala
@@ -217,12 +217,13 @@ export const CATEGORIES: Record<Category, { label: string; Icon: LucideIcon }> =
   perfumaria: { label: 'Perfumaria', Icon: Flower2 },
   jaecoo: { label: 'Jaecoo', Icon: Car },
   omoda: { label: 'Omoda', Icon: Zap },
+  royal: { label: 'Royal Enfield', Icon: Motorbike },
   acessorio: { label: 'Acessórios', Icon: Wrench },
 };
 
 // Quais categorias o gestor pode escolher, por vertical. Sem isso a Ramasa via
 // "Performance & Massa Magra" e "Vias Respiratórias" no cadastro do carro.
-export const CATEGORIAS_AUTO: Category[] = ['jaecoo', 'omoda', 'acessorio'];
+export const CATEGORIAS_AUTO: Category[] = ['jaecoo', 'omoda', 'royal', 'acessorio'];
 export const CATEGORIAS_SAUDE: Category[] = ['performance', 'capsulas', 'respiratorio', 'cosmeticos', 'perfumaria'];
 
 export const PRODUCTS: Product[] = [
@@ -2053,6 +2054,485 @@ export const PRODUCTS: Product[] = [
     ],
   },
 
+  // ===================== ROYAL ENFIELD BRASIL =====================
+  //
+  // Marca em DEMONSTRAÇÃO (ver soGss em brands.ts): só a GSS abre. O conteúdo
+  // abaixo foi escrito a partir do que é público da marca até maio de 2026 e
+  // serve para mostrar o app funcionando — quando a Royal Enfield mandar o
+  // material oficial, ele troca isto linha por linha. Por isso toda ficha
+  // termina com a linha "Fonte" avisando o vendedor.
+  {
+    id: 're-hunter-350',
+    brand: 'royal',
+    category: 'royal',
+    family: 're-j350',
+    name: 'Hunter 350',
+    tagline: 'A porta de entrada da Royal Enfield: 349 cc de motor de verdade, leve no trânsito e com o ronco que a marca tem desde sempre.',
+    hook: 'O cliente quer uma moto com cara de moto — não mais uma 300 de plástico — mas tem medo de peso, de altura do banco e de manutenção de importada.',
+    whatItIs:
+      'A Hunter 350 é a roadster urbana da Royal Enfield: motor monocilíndrico de 349 cc da plataforma J, câmbio de 5 marchas, rodas de 17 polegadas nas duas pontas e postura ereta. Foi desenhada para a cidade — é a mais leve e a mais ágil da família 350 — sem abrir mão do jeito Royal Enfield de entregar torque embaixo, que é o que faz a moto andar no dia a dia sem precisar girar.',
+    benefits: [
+      'Motor de 349 cc com torque logo embaixo: anda em quinta a 60 km/h sem reclamar, que é onde a moto de cilindrada pequena sofre',
+      'Rodas de 17 polegadas nas duas pontas — pneu fácil de achar e comportamento previsível na curva',
+      'É a mais leve da família 350: no trânsito e na manobra da garagem, isso pesa mais que qualquer número de catálogo',
+      'Freio a disco nas duas rodas com ABS de duplo canal',
+      'Montada no Brasil, em Manaus — rede e peça sem depender de importação',
+      'Visual que não envelhece: a pessoa compra a moto pelo desenho e continua gostando no terceiro ano',
+    ],
+    howToUse:
+      'Comece perguntando para que ele vai usar a moto no dia a dia. Se a resposta for cidade, trajeto curto e estacionamento apertado, a Hunter é a resposta — e o argumento é peso e agilidade, não potência. Depois ponha o cliente sentado: o banco baixo resolve o medo de quem está saindo de uma moto menor.',
+    forWho: 'Quem quer a primeira Royal Enfield, anda na cidade e não abre mão de uma moto com presença.',
+    salesLine: 'Senta nela um minuto. O que decide essa moto é como ela se comporta parada no sinal e na primeira curva — e isso não dá pra explicar em ficha.',
+    objections: [
+      {
+        trigger: '"Só 20 cavalos? Minha 300 japonesa tem mais."',
+        answer:
+          'Tem mesmo — e gira muito mais alto pra entregar. A conversa aqui é outra: o torque da Hunter chega embaixo, em giro de cidade. Na prática é menos troca de marcha, menos barulho de motor esticado e mais tranquilidade no trânsito. No test ride você sente isso na primeira saída de sinal.',
+      },
+      {
+        trigger: '"Moto importada tem peça? E a revisão?"',
+        answer:
+          'A Royal Enfield monta no Brasil, em Manaus, e tem rede própria de concessionárias. Peça e revisão saem por aqui, com preço publicado pela marca. Se quiser, eu abro o plano de revisão agora e a gente olha junto item por item.',
+      },
+      {
+        trigger: '"Ela é pesada? Não vou conseguir manobrar."',
+        answer:
+          'É a mais leve das 350 da marca, e o banco é baixo — o pé chega no chão com folga, que é o que dá segurança na manobra. Vamos fazer o teste que vale: você senta, tira do cavalete e anda dois metros comigo do lado. Em dez segundos a dúvida acaba.',
+      },
+      {
+        trigger: '"Royal Enfield não é moto antiga?"',
+        answer:
+          'O desenho é clássico de propósito, a engenharia não: motor da geração J, freio a disco com ABS de duplo canal e montagem nacional. É moto nova com cara de moto de sempre — e é exatamente por isso que ela é escolhida.',
+      },
+      {
+        trigger: '"E se eu quiser viajar com ela?"',
+        answer:
+          'Ela dá conta de estrada, mas a família tem moto mais indicada para isso: a Meteor 350, que é a de posição de cruiser e tanque maior, e a Himalayan 450, feita para viagem longa. Me diz quantas viagens por ano você faz que eu te mostro a que não vai te deixar na mão.',
+      },
+    ],
+    compliance:
+      'Conteúdo de demonstração, escrito a partir do material público da marca. Antes de falar número, item de série ou prazo com o cliente, confirme na ficha oficial da Royal Enfield Brasil e na condição vigente da loja.',
+    durationSec: 45,
+    gradient: ['#a4161a', '#5c0a0d'],
+    destaques: [
+      { titulo: 'Anda na cidade sem exigir nada de você', prova: 'Torque em giro baixo e a mais leve da família 350' },
+      { titulo: 'Pé no chão na hora de manobrar', prova: 'Banco baixo e rodas de 17 polegadas nas duas pontas' },
+      { titulo: 'Freia com segurança no molhado', prova: 'Disco nas duas rodas com ABS de duplo canal' },
+      { titulo: 'Assistência sem depender de importação', prova: 'Montada em Manaus, com rede e peça no Brasil' },
+    ],
+    ficha: [
+      { label: 'Marca', value: 'Royal Enfield' },
+      { label: 'Segmento', value: 'Roadster urbana' },
+      { label: 'Motor', value: 'Monocilíndrico 349 cc, plataforma J, refrigeração a ar e óleo' },
+      { label: 'Potência', value: 'Cerca de 20 cv' },
+      { label: 'Torque', value: 'Cerca de 27 Nm em giro baixo' },
+      { label: 'Câmbio', value: '5 marchas' },
+      { label: 'Freios', value: 'Disco nas duas rodas, ABS de duplo canal' },
+      { label: 'Rodas', value: '17 polegadas na frente e atrás' },
+      { label: 'Tanque', value: 'Cerca de 13 litros' },
+      { label: 'Montagem', value: 'Manaus (AM)' },
+      { label: 'Fonte', value: 'Números públicos da marca até maio de 2026 — CONFIRME na ficha oficial antes de falar com o cliente. Conteúdo de demonstração.' },
+    ],
+    storyboard: [
+      { t: '0-8s', label: 'A PERGUNTA QUE ABRE', line: 'Antes de falar da moto, pergunte onde ela vai andar. Se a resposta for cidade, a Hunter já está na mesa.' },
+      { t: '8-18s', label: 'O QUE ELE VAI SENTIR', line: 'Torque embaixo: anda em marcha alta a 60 por hora sem reclamar. É menos troca de marcha no trânsito.' },
+      { t: '18-30s', label: 'O MEDO DE TODO MUNDO', line: 'Peso e altura do banco. É a mais leve das 350 e o pé chega no chão. Resolva isso com o cliente sentado, não com número.' },
+      { t: '30-40s', label: 'A SEGURANÇA', line: 'Disco nas duas rodas com ABS de duplo canal, e roda 17 nas duas pontas: pneu fácil e comportamento previsível.' },
+      { t: '40-45s', label: 'O FECHAMENTO', line: 'Marque o test ride. Esta moto se vende sentada, não no balcão.' },
+    ],
+    niveis: [
+      {
+        titulo: 'Contra o concorrente',
+        foco: 'O que responder quando ele compara com a naked japonesa de 300 a 400 cc.',
+        storyboard: [
+          { t: '0-12s', label: 'A COMPARAÇÃO INEVITÁVEL', line: 'Ele vai citar potência de pico. Devolva com entrega: onde o torque aparece e quantas trocas de marcha ele faz num quarteirão.' },
+          { t: '12-24s', label: 'O QUE A FICHA NÃO MOSTRA', line: 'Postura, ronco e desenho. Três coisas que decidem a compra de moto e não cabem em tabela — por isso o test ride é o argumento.' },
+          { t: '24-36s', label: 'O QUE NÃO DIZER', line: 'Não ataque a marca japonesa. Quem compara já estudou: se você desmerecer, perde a confiança e a venda junto.' },
+          { t: '36-45s', label: 'O DESEMPATE', line: 'Ofereça as duas experiências: a moto dele e a Hunter no mesmo dia. Quem sai andando costuma voltar decidido.' },
+        ],
+      },
+      {
+        titulo: 'Primeira moto grande',
+        foco: 'Como conduzir quem está subindo de cilindrada e tem medo.',
+        storyboard: [
+          { t: '0-12s', label: 'O MEDO REAL', line: 'Não é potência: é derrubar na manobra e não alcançar o chão. Trate disso primeiro, sentado, antes de qualquer número.' },
+          { t: '12-26s', label: 'O ROTEIRO DO TEST RIDE', line: 'Comece em rua sem movimento, peça duas frenagens e uma manobra em oito. Quem faz isso ganha confiança na hora.' },
+          { t: '26-38s', label: 'O EQUIPAMENTO', line: 'Fale de capacete e luva como parte da compra, não como venda extra. Cliente que sai equipado volta pra revisão e indica a loja.' },
+          { t: '38-45s', label: 'O COMBINADO', line: 'Termine com data: test ride marcado, com horário. Moto sem test ride marcado é moto que ele vai ver na concorrente.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 're-meteor-350',
+    brand: 'royal',
+    category: 'royal',
+    family: 're-j350',
+    name: 'Meteor 350',
+    tagline: 'A cruiser de 349 cc: posição relaxada, tanque maior e navegação no painel para quem quer estrada sem virar motoqueiro de expedição.',
+    hook: 'O cliente quer sair da cidade no fim de semana, mas acha que para viajar precisa de uma moto enorme — e cara.',
+    whatItIs:
+      'A Meteor 350 é a cruiser da família J: mesmo motor de 349 cc da Hunter, mas com posição de pilotagem relaxada, guidão mais alto, banco mais confortável e tanque maior. Traz o Tripper, o mostrador redondo de navegação que espelha o trajeto do celular no painel — é a moto da marca para quem quer rodar 200, 300 quilômetros no domingo sem chegar quebrado.',
+    benefits: [
+      'Posição de cruiser: coluna ereta, pés à frente e guidão alto — é o que muda numa viagem de duas horas',
+      'Tanque maior que o da Hunter: menos parada de posto no fim de semana',
+      'Tripper: navegação por seta no painel, sem tirar o celular do bolso',
+      'Mesmo motor de 349 cc com torque embaixo, que segura marcha alta na estrada',
+      'Banco baixo para uma cruiser — dá segurança em quem está subindo de cilindrada',
+      'Montada em Manaus, com rede no Brasil',
+    ],
+    howToUse:
+      'Pergunte quantos fins de semana por mês ele sai da cidade. Se a resposta for um ou mais, a conversa é Meteor, não Hunter: o que decide aqui é conforto de estrada, não agilidade no trânsito. Mostre a posição de pilotagem com ele sentado e fale do Tripper na prática — "você não vai mais parar no acostamento pra olhar o mapa".',
+    forWho: 'Quem quer estrada no fim de semana com conforto, sem partir para uma moto grande e pesada.',
+    salesLine: 'Senta e repara na posição: joelho relaxado e coluna reta. É isso que você vai sentir depois de duas horas de estrada.',
+    objections: [
+      {
+        trigger: '"349 cc aguenta estrada?"',
+        answer:
+          'Aguenta, e o que faz isso é o torque em giro baixo: ela segura velocidade de estrada sem o motor gritando. O ponto honesto é ultrapassagem em subida com garupa — aí você planeja. Se o seu uso for estrada pesada toda semana, a conversa muda para a Himalayan ou para a linha 650, e eu te mostro as duas.',
+      },
+      {
+        trigger: '"Qual a diferença pra Hunter, se o motor é o mesmo?"',
+        answer:
+          'O motor é o mesmo; a moto, não. A Meteor é cruiser: guidão mais alto, pés à frente, banco mais confortável, tanque maior e o Tripper de navegação. A Hunter é urbana e mais leve. Uma ganha no trânsito, a outra ganha depois da primeira hora de estrada.',
+      },
+      {
+        trigger: '"O que é esse tal de Tripper?"',
+        answer:
+          'É um segundo mostrador redondo no painel que mostra a seta do trajeto, espelhando o mapa do seu celular por Bluetooth. Serve para você não parar no acostamento para olhar o telefone. É daqueles itens que ninguém pede na loja e todo mundo usa na primeira viagem.',
+      },
+      {
+        trigger: '"E para levar garupa?"',
+        answer:
+          'O banco e a posição são feitos para isso, e é aí que a Meteor se separa da Hunter. Traga a pessoa que vai na garupa no test ride — decidir isso na loja, com os dois sentados, evita a conversa chata depois da compra.',
+      },
+    ],
+    compliance:
+      'Conteúdo de demonstração, escrito a partir do material público da marca. Confirme itens de série, números e prazos na ficha oficial da Royal Enfield Brasil antes de falar com o cliente.',
+    durationSec: 45,
+    gradient: ['#8d1b1f', '#3d0709'],
+    destaques: [
+      { titulo: 'Chega inteiro depois de duas horas', prova: 'Posição de cruiser: guidão alto, pés à frente, banco largo' },
+      { titulo: 'Menos parada no posto', prova: 'Tanque maior que o da Hunter' },
+      { titulo: 'Não para mais para olhar o mapa', prova: 'Tripper: navegação por seta no painel' },
+      { titulo: 'Garupa que quer voltar', prova: 'Banco e posição pensados para dois' },
+    ],
+    ficha: [
+      { label: 'Marca', value: 'Royal Enfield' },
+      { label: 'Segmento', value: 'Cruiser' },
+      { label: 'Motor', value: 'Monocilíndrico 349 cc, plataforma J, refrigeração a ar e óleo' },
+      { label: 'Potência', value: 'Cerca de 20 cv' },
+      { label: 'Torque', value: 'Cerca de 27 Nm em giro baixo' },
+      { label: 'Câmbio', value: '5 marchas' },
+      { label: 'Navegação', value: 'Tripper — mostrador redondo com seta do trajeto, por Bluetooth' },
+      { label: 'Freios', value: 'Disco nas duas rodas, ABS de duplo canal' },
+      { label: 'Tanque', value: 'Cerca de 15 litros' },
+      { label: 'Montagem', value: 'Manaus (AM)' },
+      { label: 'Fonte', value: 'Números públicos da marca até maio de 2026 — CONFIRME na ficha oficial antes de falar com o cliente. Conteúdo de demonstração.' },
+    ],
+    storyboard: [
+      { t: '0-8s', label: 'A PERGUNTA QUE ABRE', line: 'Quantos fins de semana por mês você sai da cidade? A resposta separa a Meteor da Hunter em dez segundos.' },
+      { t: '8-20s', label: 'O QUE MUDA', line: 'Mesmo motor, moto diferente: guidão alto, pés à frente, banco largo e tanque maior. Conforto é o argumento, não potência.' },
+      { t: '20-32s', label: 'O ITEM QUE ENCANTA', line: 'Tripper: a seta do trajeto no painel. Conte o benefício — nunca mais parar no acostamento pra olhar o celular.' },
+      { t: '32-45s', label: 'O FECHAMENTO', line: 'Traga a garupa pro test ride. Cruiser se decide de dois, não de um.' },
+    ],
+  },
+  {
+    id: 're-classic-350',
+    brand: 'royal',
+    category: 'royal',
+    family: 're-j350',
+    name: 'Classic 350',
+    tagline: 'A moto que fez a marca: desenho de 1950 com motor da geração J e freio a disco com ABS. É a Royal Enfield que as pessoas reconhecem na rua.',
+    hook: 'O cliente não está escolhendo uma moto: está escolhendo uma imagem. E fica com medo de comprar beleza e levar problema.',
+    whatItIs:
+      'A Classic 350 é o modelo que sustenta a marca no mundo inteiro: linhas de década de 1950, paralama largo, farol redondo e o mesmo motor monocilíndrico de 349 cc da plataforma J, com câmbio de 5 marchas e freio a disco com ABS de duplo canal. É a moto para quem quer o clássico de verdade, e não uma moto moderna com pintura antiga.',
+    benefits: [
+      'O desenho é o produto: é a moto da marca que as pessoas param na rua para olhar',
+      'Motor da geração J, com torque em giro baixo e vibração muito menor que a das gerações antigas',
+      'Freio a disco nas duas rodas com ABS de duplo canal',
+      'Montada em Manaus: rede, peça e revisão com preço publicado no Brasil',
+      'Aceita bagageiro, protetor de motor e banco de conforto de fábrica — o cliente monta a moto do jeito dele',
+    ],
+    howToUse:
+      'Aqui a venda é emocional e o seu trabalho é dar segurança técnica para ela acontecer: deixe o cliente olhar, tirar foto e sentar. Depois traga o que ele precisa ouvir para se permitir comprar — ABS, motor da geração nova, rede no Brasil. Emoção fecha, técnica destrava.',
+    forWho: 'Quem quer a Royal Enfield clássica pelo desenho e pelo som, e anda mais por prazer do que por necessidade.',
+    salesLine: 'Essa é a moto que as pessoas reconhecem sem ler o nome no tanque. Vamos ligar ela?',
+    objections: [
+      {
+        trigger: '"Moto antiga não vibra e quebra muito?"',
+        answer:
+          'O desenho é antigo, a mecânica não. O motor é da geração J, que nasceu justamente para resolver vibração e confiabilidade das gerações anteriores — e a montagem é nacional, com rede e peça no Brasil. É clássico no olhar e atual no que você não vê.',
+      },
+      {
+        trigger: '"É muito pesada para o dia a dia."',
+        answer:
+          'Ela é mais encorpada que a Hunter, e isso aparece na manobra em garagem apertada. Duas perguntas resolvem: onde você guarda a moto e quanto anda no trânsito por dia. Se for trânsito pesado todo dia, a Hunter cumpre melhor — e eu prefiro te dizer isso agora do que você descobrir no segundo mês.',
+      },
+      {
+        trigger: '"Consumo?"',
+        answer:
+          'É um monocilíndrico de 349 cc sem exigência de giro alto, então o consumo é de moto pequena, não de moto grande. O número exato eu te mostro na ficha oficial, porque prefiro te dar o dado certo a um número de cabeça.',
+      },
+      {
+        trigger: '"Dá pra personalizar?"',
+        answer:
+          'É metade da graça da marca. Tem catálogo de fábrica de bagageiro, protetor de motor, banco de conforto, retrovisor e escapamento. Me diz como você imagina a sua e a gente monta a lista — o que dá para instalar já na entrega, sai na entrega.',
+      },
+    ],
+    compliance:
+      'Conteúdo de demonstração, escrito a partir do material público da marca. Confirme itens, números e disponibilidade de acessório na ficha oficial e com a loja antes de prometer ao cliente.',
+    durationSec: 45,
+    gradient: ['#6f1013', '#2b0507'],
+    destaques: [
+      { titulo: 'A moto que todo mundo reconhece', prova: 'Desenho clássico original da marca, farol redondo e paralama largo' },
+      { titulo: 'Clássica de fora, atual por dentro', prova: 'Motor da geração J e ABS de duplo canal' },
+      { titulo: 'Ela vira a moto do cliente', prova: 'Catálogo de fábrica de bagageiro, protetor, banco e escapamento' },
+    ],
+    ficha: [
+      { label: 'Marca', value: 'Royal Enfield' },
+      { label: 'Segmento', value: 'Clássica' },
+      { label: 'Motor', value: 'Monocilíndrico 349 cc, plataforma J, refrigeração a ar e óleo' },
+      { label: 'Potência', value: 'Cerca de 20 cv' },
+      { label: 'Torque', value: 'Cerca de 27 Nm em giro baixo' },
+      { label: 'Câmbio', value: '5 marchas' },
+      { label: 'Freios', value: 'Disco nas duas rodas, ABS de duplo canal' },
+      { label: 'Montagem', value: 'Manaus (AM)' },
+      { label: 'Fonte', value: 'Números públicos da marca até maio de 2026 — CONFIRME na ficha oficial antes de falar com o cliente. Conteúdo de demonstração.' },
+    ],
+    storyboard: [
+      { t: '0-10s', label: 'DEIXE OLHAR', line: 'Esta moto vende sozinha nos primeiros trinta segundos. Cale a boca e deixe o cliente olhar e tirar foto.' },
+      { t: '10-22s', label: 'DESTRAVE A TÉCNICA', line: 'Depois do encanto vem o medo: vibra? quebra? Responda com motor da geração J, ABS e rede no Brasil.' },
+      { t: '22-34s', label: 'A PERGUNTA HONESTA', line: 'Pergunte onde ele guarda a moto. Se for garagem apertada e trânsito diário, diga a verdade e mostre a Hunter.' },
+      { t: '34-45s', label: 'O FECHAMENTO', line: 'Monte a moto com ele: bagageiro, protetor, banco. Cliente que escolhe acessório já decidiu comprar.' },
+    ],
+  },
+  {
+    id: 're-himalayan-450',
+    brand: 'royal',
+    category: 'royal',
+    family: 're-450',
+    name: 'Himalayan 450',
+    tagline: 'A trail de viagem da marca: motor Sherpa de 452 cc com refrigeração líquida, painel redondo com mapa do Google e ABS que desliga atrás.',
+    hook: 'O cliente sonha com viagem longa e estrada de terra, mas acha que para isso precisa de uma trail gigante, pesada e de preço de carro.',
+    whatItIs:
+      'A Himalayan 450 é a moto de viagem da Royal Enfield: motor monocilíndrico Sherpa de 452 cc com refrigeração líquida e 6 marchas, suspensão de curso longo, roda dianteira de 21 polegadas e painel circular TFT que roda o mapa do Google direto na tela. Tem modos de pilotagem e ABS que pode ser desligado na roda traseira — que é o que a terra pede.',
+    benefits: [
+      'Motor Sherpa de 452 cc com refrigeração líquida: aguenta subida longa e calor sem perder rendimento',
+      'Painel redondo TFT com o mapa do Google na tela — navegação de verdade, não só seta',
+      'ABS desligável atrás e modos de pilotagem: a mesma moto para o asfalto e para a estrada de terra',
+      'Roda dianteira de 21 polegadas e suspensão de curso longo, que é o que segura buraco e cascalho',
+      'Tanque grande, feito para etapa longa entre postos',
+      'Montada em Manaus, com rede no Brasil — viagem sem depender de importar peça',
+    ],
+    howToUse:
+      'A venda começa pela viagem, não pela moto: pergunte qual foi a última que ele fez e qual está guardada na cabeça. Depois mostre os três itens que essa moto tem e a concorrência da faixa costuma cobrar à parte: navegação na tela, ABS desligável atrás e suspensão de curso longo. Termine perguntando quando ele quer sair na primeira.',
+    forWho: 'Quem quer viajar de moto, inclusive fora do asfalto, sem carregar o peso e o preço de uma trail de mil cilindradas.',
+    salesLine: 'Me conta a viagem que você quer fazer. Eu te mostro a moto que cabe nela — e o que precisa ir junto.',
+    objections: [
+      {
+        trigger: '"452 cc é pouco para viajar?"',
+        answer:
+          'Para viagem real, o que cansa não é o pico de potência: é vibração, posição e autonomia. A Himalayan foi feita para isso, com refrigeração líquida, 6 marchas e tanque grande. Se a sua viagem for de dois com bagagem em rodovia pesada, eu te mostro também a linha 650 e a gente compara honestamente.',
+      },
+      {
+        trigger: '"Nunca andei na terra. Vou conseguir?"',
+        answer:
+          'É exatamente por isso que essa moto tem modo de pilotagem e ABS que desliga só atrás — você começa no modo de asfalto e vai soltando conforme ganha confiança. Faça o primeiro test ride comigo no asfalto e o segundo num trecho de terra tranquilo.',
+      },
+      {
+        trigger: '"Essa altura do banco não dá para mim."',
+        answer:
+          'É a pergunta certa e a resposta é sentar, não estimar. A marca tem opções de banco e ajuste — vamos medir com você em cima, do jeito que você vai pilotar, de bota. Se não ficar bom, eu te digo; moto que assusta na garagem não sai de casa.',
+      },
+      {
+        trigger: '"Esse painel com Google Maps funciona mesmo?"',
+        answer:
+          'Funciona: o painel é uma tela redonda TFT e o mapa aparece nela, ligado ao seu celular. Na prática é o que muda a viagem — você para de fazer malabarismo com suporte de telefone no guidão, que é onde todo mundo perde o celular.',
+      },
+      {
+        trigger: '"Quanto custa manter uma moto dessas?"',
+        answer:
+          'Revisão com preço publicado pela marca e rede no Brasil, com montagem em Manaus. Eu abro o plano de revisão agora e a gente vê intervalo por intervalo, para você comparar com a sua moto atual sem chute.',
+      },
+    ],
+    compliance:
+      'Conteúdo de demonstração, escrito a partir do material público da marca. Confirme itens de série, números, altura de banco e prazos na ficha oficial da Royal Enfield Brasil antes de falar com o cliente.',
+    durationSec: 45,
+    gradient: ['#b3541e', '#4a1f08'],
+    destaques: [
+      { titulo: 'A viagem sem planejar parada', prova: 'Tanque grande e motor Sherpa de 452 cc com refrigeração líquida' },
+      { titulo: 'O mapa na moto, não no guidão', prova: 'Painel circular TFT com o Google Maps na tela' },
+      { titulo: 'A mesma moto no asfalto e na terra', prova: 'Modos de pilotagem e ABS desligável na roda traseira' },
+      { titulo: 'Buraco e cascalho sem susto', prova: 'Roda de 21 polegadas na frente e suspensão de curso longo' },
+    ],
+    ficha: [
+      { label: 'Marca', value: 'Royal Enfield' },
+      { label: 'Segmento', value: 'Trail de viagem' },
+      { label: 'Motor', value: 'Monocilíndrico Sherpa 452 cc, refrigeração líquida' },
+      { label: 'Potência', value: 'Cerca de 40 cv' },
+      { label: 'Torque', value: 'Cerca de 40 Nm' },
+      { label: 'Câmbio', value: '6 marchas' },
+      { label: 'Painel', value: 'Circular TFT, com navegação do Google Maps' },
+      { label: 'Pilotagem', value: 'Modos de pilotagem e ABS desligável na roda traseira' },
+      { label: 'Rodas', value: '21 polegadas na frente, 17 atrás' },
+      { label: 'Montagem', value: 'Manaus (AM)' },
+      { label: 'Fonte', value: 'Números públicos da marca até maio de 2026 — CONFIRME na ficha oficial antes de falar com o cliente. Conteúdo de demonstração.' },
+    ],
+    storyboard: [
+      { t: '0-10s', label: 'COMECE PELA VIAGEM', line: 'Pergunte qual viagem ele quer fazer. A moto entra depois — e entra como resposta, não como vitrine.' },
+      { t: '10-22s', label: 'OS TRÊS ITENS', line: 'Navegação na tela, ABS que desliga atrás e suspensão de curso longo. É o que a faixa costuma cobrar à parte.' },
+      { t: '22-34s', label: 'O MEDO DA TERRA', line: 'Modo de pilotagem existe pra isso: ele começa no asfalto e vai soltando. Ofereça o segundo test ride num trecho de terra.' },
+      { t: '34-45s', label: 'O FECHAMENTO', line: 'Marque data da viagem, não só do test ride. Quem já tem a data marcada compra a moto que cabe nela.' },
+    ],
+    niveis: [
+      {
+        titulo: 'Equipar para viajar',
+        foco: 'O que oferecer junto — e por que isso é serviço, não empurro.',
+        storyboard: [
+          { t: '0-12s', label: 'A REGRA', line: 'Ninguém viaja com a moto de fábrica. Malas, protetor de motor e bolsa de tanque não são extra: são o que faz a viagem acontecer.' },
+          { t: '12-26s', label: 'A ORDEM CERTA', line: 'Ofereça na hora em que ele fala da viagem, nunca depois do preço fechado. Ali é serviço; depois vira venda casada.' },
+          { t: '26-38s', label: 'O QUE SAI NA ENTREGA', line: 'O que dá pra instalar antes, instale antes. Moto entregue pronta pra viagem é a foto que ele manda pros amigos.' },
+          { t: '38-45s', label: 'O COMBINADO', line: 'Liste com ele o que vai agora e o que fica pra depois. Lista escrita evita a briga do "achei que estava incluso".' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 're-guerrilla-450',
+    brand: 'royal',
+    category: 'royal',
+    family: 're-450',
+    name: 'Guerrilla 450',
+    tagline: 'O motor Sherpa de 452 cc numa roadster de rua: a moto mais moderna da marca para quem anda na cidade e quer andar rápido.',
+    hook: 'O cliente gosta da marca, mas acha que Royal Enfield é só moto clássica e lenta — e por isso nem entra na loja.',
+    whatItIs:
+      'A Guerrilla 450 pega o motor Sherpa de 452 cc com refrigeração líquida da Himalayan e coloca numa roadster de rua, com rodas de 17 polegadas nas duas pontas e postura urbana. É a Royal Enfield moderna: a que responde quando o cliente diz que a marca só faz moto de época.',
+    benefits: [
+      'Motor Sherpa de 452 cc com refrigeração líquida e 6 marchas — a base mais moderna da marca',
+      'Rodas de 17 polegadas nas duas pontas: comportamento de roadster na curva e pneu fácil de achar',
+      'Mais leve que a Himalayan, com a mesma força: é o que faz sentido no trânsito',
+      'Painel digital com navegação (conforme versão)',
+      'Montada em Manaus, com rede e peça no Brasil',
+    ],
+    howToUse:
+      'Use a Guerrilla para quebrar a imagem de que a marca é só clássica. Se o cliente chegou olhando naked japonesa, esta é a moto que segura a conversa — motor moderno, peso de rua e a assinatura da marca. Leve para o test ride cedo: aqui o argumento é como ela anda.',
+    forWho: 'Quem anda na cidade todo dia, quer motor moderno e não abre mão de desenho com personalidade.',
+    salesLine: 'Se você acha que Royal Enfield é só moto antiga, senta nessa aqui dez minutos.',
+    objections: [
+      {
+        trigger: '"Qual a diferença para a Himalayan, se o motor é o mesmo?"',
+        answer:
+          'O coração é o mesmo, o propósito não. A Himalayan é trail de viagem: roda 21 na frente, suspensão de curso longo, tanque grande. A Guerrilla é rua: roda 17 nas duas, mais leve e mais ágil no trânsito. Uma leva você para a estrada de terra, a outra para o dia a dia.',
+      },
+      {
+        trigger: '"Royal Enfield não é marca de moto lenta?"',
+        answer:
+          'Essa é a moto que responde isso. Motor de 452 cc com refrigeração líquida e 6 marchas, na base mais nova da marca. Faça o test ride antes de falar qualquer número — dez minutos resolvem essa objeção melhor que dez argumentos.',
+      },
+      {
+        trigger: '"Tem peça e assistência?"',
+        answer:
+          'Montagem em Manaus e rede própria no Brasil, com revisão de preço publicado. Se quiser, abro o plano de revisão agora e você compara com o da sua moto atual.',
+      },
+    ],
+    compliance:
+      'Conteúdo de demonstração, escrito a partir do material público da marca. Confirme itens de série e números na ficha oficial da Royal Enfield Brasil antes de falar com o cliente.',
+    durationSec: 45,
+    gradient: ['#c2410c', '#5c1d05'],
+    destaques: [
+      { titulo: 'A Royal Enfield que anda', prova: 'Motor Sherpa de 452 cc com refrigeração líquida e 6 marchas' },
+      { titulo: 'Feita para o trânsito', prova: 'Rodas de 17 polegadas nas duas pontas e peso menor que o da Himalayan' },
+      { titulo: 'Assistência no Brasil', prova: 'Montagem em Manaus, rede própria e revisão com preço publicado' },
+    ],
+    ficha: [
+      { label: 'Marca', value: 'Royal Enfield' },
+      { label: 'Segmento', value: 'Roadster' },
+      { label: 'Motor', value: 'Monocilíndrico Sherpa 452 cc, refrigeração líquida' },
+      { label: 'Potência', value: 'Cerca de 40 cv' },
+      { label: 'Torque', value: 'Cerca de 40 Nm' },
+      { label: 'Câmbio', value: '6 marchas' },
+      { label: 'Rodas', value: '17 polegadas na frente e atrás' },
+      { label: 'Montagem', value: 'Manaus (AM)' },
+      { label: 'Fonte', value: 'Números públicos da marca até maio de 2026 — CONFIRME na ficha oficial antes de falar com o cliente. Conteúdo de demonstração.' },
+    ],
+    storyboard: [
+      { t: '0-10s', label: 'A OBJEÇÃO QUE ABRE', line: 'Quando ele disser que a marca só faz moto antiga, é essa moto que você mostra. Não discuta: leve para o test ride.' },
+      { t: '10-22s', label: 'O QUE ELA É', line: 'Motor Sherpa de 452 cc com refrigeração líquida numa roadster de rua. Roda 17 nas duas pontas, leve e ágil no trânsito.' },
+      { t: '22-34s', label: 'CONTRA A HIMALAYAN', line: 'Mesma base, propósito oposto: uma é viagem e terra, a outra é cidade. Pergunte onde a moto vai dormir e andar.' },
+      { t: '34-45s', label: 'O FECHAMENTO', line: 'Dez minutos no trânsito de verdade valem mais que qualquer comparativo impresso.' },
+    ],
+  },
+  {
+    id: 're-interceptor-650',
+    brand: 'royal',
+    category: 'royal',
+    family: 're-650',
+    name: 'Interceptor 650',
+    tagline: 'A twin de 648 cc: dois cilindros, som de verdade e empurrada de estrada — o degrau natural de quem já tem uma 350.',
+    hook: 'O cliente quer subir de cilindrada, mas acha que acima de 600 cc a moto vira brinquedo caro de manter.',
+    whatItIs:
+      'A Interceptor 650 é a roadster de dois cilindros da marca: motor paralelo de 648 cc com 6 marchas, posição ereta e comportamento fácil para uma moto dessa faixa. É a moto que entrega o que o cliente procura quando diz que quer "uma moto de verdade": torque de estrada, som de twin e a possibilidade de viajar com folga.',
+    benefits: [
+      'Motor de dois cilindros de 648 cc: empurrada de estrada e ultrapassagem sem planejar',
+      'Comportamento fácil para a cilindrada — é das 650 mais amigáveis para quem está subindo de moto',
+      'Postura ereta, que é o que permite rodar horas sem dor de coluna',
+      'Som de twin: parte da compra, e o cliente sabe disso',
+      'Rede e peça no Brasil, com montagem nacional',
+    ],
+    howToUse:
+      'Este é o upgrade de quem já tem uma 350 — e a melhor abordagem é a mais simples: convide para andar. Antes, pergunte que tipo de estrada ele faz e se anda com garupa. Se a resposta for viagem com duas pessoas e bagagem, a 650 deixa de ser desejo e vira recomendação técnica.',
+    forWho: 'Quem já pilota, quer dois cilindros e faz estrada com frequência — sozinho ou de dois.',
+    salesLine: 'Liga ela e escuta. Depois a gente conversa sobre o resto.',
+    objections: [
+      {
+        trigger: '"650 não é demais para mim?"',
+        answer:
+          'Essa é das 650 mais fáceis de pilotar: entrega linear e postura ereta, sem aquele susto de moto esportiva. Ainda assim, quem decide é você no test ride — e se eu achar que ainda não é a hora, eu te digo e a gente olha a 350 com calma.',
+      },
+      {
+        trigger: '"Manutenção de 650 é muito mais cara?"',
+        answer:
+          'É maior que a de uma 350, seria mentira dizer o contrário — são dois cilindros. Mas é revisão de preço publicado, com rede no Brasil. Vamos abrir os dois planos lado a lado agora, o da 350 e o da 650, para você decidir com número e não com medo.',
+      },
+      {
+        trigger: '"Consumo deve ser alto."',
+        answer:
+          'É de twin de 650, não de moto pequena — e na estrada, em velocidade constante, ela se comporta bem. Prefiro te mostrar o número oficial na ficha a chutar: o que não vale é você descobrir a conta no segundo tanque.',
+      },
+      {
+        trigger: '"Vale a pena trocar minha 350 por ela?"',
+        answer:
+          'Se o seu uso mudou — mais estrada, mais garupa, mais bagagem — vale. Se você anda no trânsito cinco dias por semana e viaja duas vezes por ano, a 350 continua sendo a moto certa, e eu não vou te empurrar a troca. Me diz como foram os seus últimos três meses de uso.',
+      },
+    ],
+    compliance:
+      'Conteúdo de demonstração, escrito a partir do material público da marca. Confirme números, itens e plano de revisão na ficha oficial da Royal Enfield Brasil antes de falar com o cliente.',
+    durationSec: 45,
+    gradient: ['#7f1d1d', '#2c0808'],
+    destaques: [
+      { titulo: 'Ultrapassa sem planejar', prova: 'Motor de dois cilindros, 648 cc, com torque de estrada' },
+      { titulo: 'Fácil para uma 650', prova: 'Entrega linear e postura ereta' },
+      { titulo: 'O som faz parte', prova: 'Twin paralelo — é o que o cliente procura quando diz "moto de verdade"' },
+    ],
+    ficha: [
+      { label: 'Marca', value: 'Royal Enfield' },
+      { label: 'Segmento', value: 'Roadster de média cilindrada' },
+      { label: 'Motor', value: 'Dois cilindros paralelos, 648 cc' },
+      { label: 'Potência', value: 'Cerca de 47 cv' },
+      { label: 'Torque', value: 'Cerca de 52 Nm' },
+      { label: 'Câmbio', value: '6 marchas' },
+      { label: 'Freios', value: 'Disco nas duas rodas, ABS de duplo canal' },
+      { label: 'Montagem', value: 'Manaus (AM)' },
+      { label: 'Fonte', value: 'Números públicos da marca até maio de 2026 — CONFIRME na ficha oficial antes de falar com o cliente. Conteúdo de demonstração.' },
+    ],
+    storyboard: [
+      { t: '0-10s', label: 'O CONVITE', line: 'Com a 650 não se argumenta: liga a moto e deixa o cliente ouvir. Esse é o primeiro argumento.' },
+      { t: '10-22s', label: 'O QUE MUDA', line: 'Dois cilindros, 648 cc: ultrapassagem sem planejar e estrada com folga. É o degrau natural de quem tem uma 350.' },
+      { t: '22-34s', label: 'A CONTA HONESTA', line: 'Manutenção de twin é maior que a de uma 350. Abra os dois planos lado a lado — sinceridade aqui fecha a venda.' },
+      { t: '34-45s', label: 'O FECHAMENTO', line: 'Pergunte como foram os últimos três meses de uso dele. A resposta diz se é hora de subir de moto.' },
+    ],
+  },
 ];
 
 export function getProduct(id: string) {

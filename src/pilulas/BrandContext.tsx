@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import { BRANDS, getBrand, type Brand, type BrandId } from './data/brands';
+import { BRANDS, getBrand, marcasVisiveis, type Brand, type BrandId } from './data/brands';
 import { useAuth } from './AuthContext';
 
 const KEY = 'wp_brand';
@@ -27,8 +27,17 @@ export function BrandProvider({ children }: { children: ReactNode }) {
   // empresas disponíveis = as que a pessoa escolheu (fallback: todas, ex. na tela de login).
   // Guard: se o filtro zerar (ex.: usuário só com marca já desativada), volta pra todas —
   // senão available[0] seria undefined e a UI crasharia.
-  const filtered = user?.brands?.length ? BRANDS.filter((b) => user.brands.includes(b.id)) : BRANDS;
-  const available = filtered.length ? filtered : BRANDS;
+  // MARCA EM DEMONSTRAÇÃO não entra pelo atalho de quem não tem marca.
+  //
+  // Quem não tem empresa marcada no perfil cai no "todas" (é assim que a conta
+  // da GSS enxerga os clientes). Sem este filtro, a Royal Enfield — que é
+  // proposta, não cliente — apareceria no seletor de qualquer conta sem
+  // empresa. Agora o "todas" é "todas as que este e-mail pode abrir".
+  const podem = marcasVisiveis(user?.email);
+  const filtered = user?.brands?.length
+    ? podem.filter((b) => user.brands.includes(b.id))
+    : podem;
+  const available = filtered.length ? filtered : podem.length ? podem : BRANDS;
 
   const [brandId, setBrandId] = useState<BrandId>(() => stored() ?? available[0].id);
   // garante que a marca ativa é uma das disponíveis

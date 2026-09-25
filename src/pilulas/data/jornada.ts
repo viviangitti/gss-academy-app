@@ -9,7 +9,7 @@
 // pagamento. Número vai só na tabela oficial que a gerência publica em
 // Condições — é ela que chega no cliente, com a validade dela.
 
-import { isAuto, type BrandId } from './brands';
+import { verticalOf, type BrandId } from './brands';
 
 export type OnePageTipo = 'proprio' | 'carro' | 'condicao' | 'objecao';
 
@@ -363,5 +363,9 @@ Eu cuido do resto e te aviso a cada passo. Quando estiver tudo certo, marcamos a
  * `npm run confere` procura.
  */
 export function etapasDaMarca(brand: BrandId): Etapa[] {
-  return isAuto(brand) ? ETAPAS : [];
+  // SÓ CARRO, por enquanto. Os scripts falam test drive, garagem com tomada e
+  // carro na troca — é a jornada de um showroom de automóvel. Numa marca de
+  // moto isso não é "quase certo", é errado: melhor não ter a aba do que ter
+  // script que o vendedor não pode mandar.
+  return verticalOf(brand) === 'auto' ? ETAPAS : [];
 }

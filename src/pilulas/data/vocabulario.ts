@@ -7,7 +7,7 @@
 //
 // Em vez de espalhar `isAuto(brandId) ? 'carro' : 'produto'` por trinta telas,
 // as palavras ficam aqui. Tela nova só precisa pedir o vocabulário da marca.
-import { isAuto, type BrandId } from './brands';
+import { isAuto, isMoto, type BrandId } from './brands';
 
 export interface Vocab {
   /** 'produto' / 'carro' */
@@ -42,6 +42,23 @@ const SAUDE: Vocab = {
   vendedor: 'vendedora',
 };
 
+// Moto não é carro pequeno: quem vende fala "moto", "pilotar", "test ride".
+// Chamar a Himalayan de carro na tela do vendedor é o mesmo erro que chamar o
+// Jaecoo de produto.
+const MOTO: Vocab = {
+  item: 'moto',
+  itens: 'motos',
+  oItem: 'a moto',
+  dosItens: 'das motos',
+  pilula: 'vídeo',
+  pilulas: 'vídeos',
+  cliente: 'cliente',
+  aCliente: 'o cliente',
+  daCliente: 'do cliente',
+  praCliente: 'pro cliente',
+  vendedor: 'vendedor',
+};
+
 const AUTO: Vocab = {
   item: 'carro',
   itens: 'carros',
@@ -57,5 +74,6 @@ const AUTO: Vocab = {
 };
 
 export function vocab(brandId: BrandId): Vocab {
+  if (isMoto(brandId)) return MOTO;
   return isAuto(brandId) ? AUTO : SAUDE;
 }

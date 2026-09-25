@@ -102,22 +102,22 @@ const cartao = (titulo, itens) => celula([
 põe(tabela([
   new TableRow({ cantSplit: true, children: [
     cartao('App do vendedor', [
-      'Catálogo de **5 carros** com trilha de 6 níveis cada (+1)',
+      'Catálogo de **5 carros** com trilha de 6 níveis cada — 7 no Jaecoo 5 (+1)',
       '**27 acessórios** com preço, código de peça e como oferecer',
       'Condições comerciais do mês, com validade automática',
       'Material pronto pro cliente, com o contato do vendedor — agora com **botão de salvar PDF** (novo)',
-      '**Jornada do lead online** em 5 etapas (novo)',
+      '**Jornada do lead online** em 9 etapas (novo)',
       'Tira-dúvida com IA, preso ao conteúdo aprovado',
       'Notícias do setor em 6 frentes',
       '**Valores do grupo**: valor da semana, carimbo e a tela Cultura (novo)',
       '**Pop-up do ritual do mês**, por cargo, com dia marcado (novo)',
     ]),
     cartao('Conteúdo produzido', [
-      '**5 carros**: ficha, versões, destaques e trilha de ~32 cenas cada',
-      '**36 objeções** escritas com resposta, mais 4 que o time mandou',
+      '**5 carros**: ficha, versões, destaques e trilha de 29 a 32 cenas cada',
+      '**36 objeções** escritas com resposta, mais 4 que o time mandou (uma já respondida)',
       '27 acessórios escritos um a um',
       '**23 documentos** da montadora na prateleira (+2)',
-      '**14 condições** de setembro publicadas, com lâmina pronta pro WhatsApp',
+      '**14 condições** no ar, com lâmina pronta pro WhatsApp — 8 delas são a carta de setembro',
       'Fotos e PDFs organizados por carro',
     ]),
   ] }),
@@ -158,7 +158,7 @@ põe(tabela([
   linhaMudou('Jaecoo 5 no app', 'O 5º carro: ficha, versões COMFORT e PRESTIGE, 13 objeções com resposta, trilha de vídeo, etiqueta de lançamento no catálogo e o PDF do treinamento de lançamento na prateleira.'),
   linhaMudou('Valores da Ramasa', 'RA·zão, MA·gia e SA·tisfação dentro do app: o valor da semana no Hoje e no Painel, a linha "no app" escrita para cada um dos 11 cargos, o carimbo quando a pessoa pratica, e a tela Cultura com os 9 valores.'),
   faixa('FERRAMENTAS NOVAS', LM),
-  linhaMudou('Jornada do lead online', 'A aba que guia o atendimento: 5 etapas, mensagem pronta em cada uma, atalho para acessórios e lembrete da entrega. Nasceu da objeção que chega pelo funil.'),
+  linhaMudou('Jornada do lead online', 'A aba que guia o atendimento: 9 etapas, mensagem pronta em cada uma, atalho para acessórios e lembrete da entrega. Nasceu da objeção que chega pelo funil.'),
   linhaMudou('Rituais do mês', 'Pop-up por cargo com dia marcado — a tabela entre os dias 1 e 5, a campanha nos dias 14 e 30, a revisão de qualidade no 1º dia útil, o time da semana toda segunda. O "ok" fica gravado com nome, cargo e horário.'),
   linhaMudou('Cargos e lojas', 'Supervisor de vendas, F&I, líder e diretor de qualidade; a loja de cada pessoa; Omoda Goiânia como unidade; e o Painel separado por loja.'),
   linhaMudou('O app no computador', 'Quem abre pelo desktop deixou de ver a tela de celular esticada: menu na lateral, conteúdo em duas colunas, leitura em largura de página.'),
@@ -240,9 +240,9 @@ põe(p('', { depois: 120 }));
 põe(nota([
   notaP('**O app custa quase nada para rodar. O que custa é manter alguém construindo.** Servidor, banco e IA somam R$ 3 a R$ 122 por mês. A ferramenta de desenvolvimento custa R$ 545 — sozinha, ela é **82% a 99% do custo mensal**.'),
   p('', { depois: 100 }),
-  notaP('**E o pior caso agora tem teto.** A IA tem um limite de 300 perguntas por dia gravado no próprio app: passou do limite, ninguém mais chama o Gemini — nem usuário, nem robô, nem erro em laço. O pior mês possível é R$ 198, não uma surpresa na fatura. Essa trava foi escrita depois de um mês em que o "orçamento" do Google avisou mas não segurou o gasto.'),
+  notaP('**E o pior caso agora tem teto.** A IA tem um limite de 300 perguntas por dia gravado no próprio app: passou do limite, ninguém mais chama o Gemini — nem usuário, nem robô, nem erro em laço. O pior mês possível é R$ 270 — 300 perguntas × 30 dias × R$ 0,03 —, não uma surpresa na fatura. Essa trava foi escrita depois de um mês em que o "orçamento" do Google avisou mas não segurou o gasto.'),
   p('', { depois: 100 }),
-  notaP('**Ela é fixa e compartilhada.** Não sobe se você colocar o quarto cliente, e no período da obra atendeu também Dilnara, Corpo Leve, Bússola e MAESTR.IA. Medindo pelos dias trabalhados em cada projeto, o Eleva usou ~34% dela: **R$ 460** nos dois meses e meio de construção. Isso não muda o preço, mas muda o argumento: a licença não paga servidor — ela paga a capacidade de continuar consertando, publicando a carta do mês e escrevendo conteúdo novo. **Um cliente que não paga recorrência vira um app que congela.**'),
+  notaP('**Ela é fixa e compartilhada.** Não sobe se você colocar o quarto cliente, e no período da obra atendeu também Dilnara, Corpo Leve, Bússola e MAESTR.IA. Medindo pelos dias trabalhados em cada projeto, o Eleva usou ~34% dela: **R$ 460** nos três meses de construção. Isso não muda o preço, mas muda o argumento: a licença não paga servidor — ela paga a capacidade de continuar consertando, publicando a carta do mês e escrevendo conteúdo novo. **Um cliente que não paga recorrência vira um app que congela.**'),
 ]));
 
 // ── 4. o que o mercado cobra ──────────────────────────────────────────────────
@@ -270,7 +270,7 @@ põe(p('', { depois: 120 }));
 põe(nota([
   notaP('**O que isso significa, sem maquiagem.** A Ramasa inteira — 37 contas hoje — ainda cabe no MENOR plano dos dois primeiros. O piso de mercado de uma plataforma para esse tamanho é **R$ 400 a R$ 750 por mês, para o grupo todo**. E a EAD Plataforma anuncia "sem taxa de implantação" — é a objeção que você vai ouvir sobre o setup.'),
   p('', { depois: 100 }),
-  notaP('**Mas eles vendem outra coisa.** Twygo e EAD Plataforma entregam a casa vazia: você sobe seus cursos, escreve seu conteúdo, mantém tudo. O Eleva chegou na Ramasa com 5 carros escritos em 6 níveis, 27 acessórios, 23 documentos, 40 objeções respondidas e uma IA que responde a carta do mês com o número certo. **A comparação honesta é em duas partes:** a plataforma vale o preço de mercado de uma plataforma; o conteúdo vale o que custa escrever conteúdo. Vender os dois num número só é o que faz o cliente comparar com o LMS de R$ 400 e achar caro.'),
+  notaP('**Mas eles vendem outra coisa.** Twygo e EAD Plataforma entregam a casa vazia: você sobe seus cursos, escreve seu conteúdo, mantém tudo. O Eleva chegou na Ramasa com 5 carros escritos em 6 níveis (7 no Jaecoo 5), 27 acessórios, 23 documentos, 36 objeções respondidas e uma IA que responde a carta do mês com o número certo. **A comparação honesta é em duas partes:** a plataforma vale o preço de mercado de uma plataforma; o conteúdo vale o que custa escrever conteúdo. Vender os dois num número só é o que faz o cliente comparar com o LMS de R$ 400 e achar caro.'),
 ]));
 
 // ── 5. preço peça por peça ────────────────────────────────────────────────────
@@ -311,8 +311,8 @@ põe(tabela([
     '15,2 h', 'R$ 3.040', 'R$ 6.000', '', 'Chatbot de IA sob medida custa de R$ 15 mil a R$ 150 mil (Halk). Fica em 40% do piso.'),
   linhaPeca('Painel da gerência', 'Uso por pessoa, cargo e loja, ranking, edição de acessório na linha, time pelos pilares',
     '11,0 h', 'R$ 2.200', 'R$ 3.300', '', 'Hora medida + 50%. Cresceu com a separação por loja e os 11 cargos.'),
-  linhaPeca('Jornada do lead online (novo)', '5 etapas, mensagem pronta em cada uma, atalho de acessórios e lembrete da entrega',
-    '11,4 h', 'R$ 2.280', 'R$ 4.000', '', 'É roteiro comercial, não tela: texto técnico de nicho custa R$ 180–400 por peça, e aqui são 5 etapas escritas e revisadas com a loja.'),
+  linhaPeca('Jornada do lead online (novo)', '9 etapas, mensagem pronta em cada uma, atalho de acessórios e lembrete da entrega',
+    '11,4 h', 'R$ 2.280', 'R$ 4.000', '', 'É roteiro comercial, não tela: texto técnico de nicho custa R$ 180–400 por peça, e aqui são 9 etapas escritas e revisadas com a loja.'),
   linhaPeca('Condições comerciais', 'Carta partida por modelo, validade automática, arquivo e auditoria contra a montadora',
     '9,8 h', 'R$ 1.960', 'R$ 2.400', '', 'Hora medida + 22%.'),
   linhaPeca('Cultura e valores no app (novo)', '9 valores, 3 pilares, valor da semana, carimbo ao praticar e a linha "no app" escrita para cada um dos 11 cargos',
@@ -324,13 +324,13 @@ põe(tabela([
   linhaPeca('Documentos e notícias', '23 PDFs da montadora em prateleiras; notícias do setor que se consertam sozinhas',
     '4,4 h', 'R$ 880', 'R$ 1.400', '', 'Hora medida + 59%. As buscas passaram para o servidor e uma rotina diária conserta a aba.'),
   linhaPeca('Arte da condição para o cliente', 'Lâmina pronta pra WhatsApp, gerada sozinha para cada condição',
-    '2,6 h', 'R$ 520', 'R$ 1.200', '', '14 condições em setembro × R$ 90 do criativo avulso = R$ 1.260 — todo mês, se fosse feito por designer.'),
+    '2,6 h', 'R$ 520', 'R$ 1.200', '', 'As 14 condições no ar × R$ 90 do criativo avulso = R$ 1.260. As 8 da carta se repetem a cada virada de mês.'),
   linhaSub('Subtotal ferramentas', '91,0 h', 'R$ 18.200', 'R$ 28.700'),
 
   faixa('CONTEÚDO · POR UNIDADE', LP),
   linhaPeca('Ficha comercial do carro', 'Versões, destaques e 5 a 13 objeções com resposta · 5 carros',
     '22,4 h', 'R$ 4.480', 'R$ 1.000', 'por carro · R$ 5.000', 'Hora medida (R$ 896 por carro) + 12%. Texto técnico de nicho custa R$ 180–400, mais 40–100%.'),
-  linhaPeca('Trilha de vídeo do carro', '6 roteiros por carro, ~32 cenas, com locução · 5 carros',
+  linhaPeca('Trilha de vídeo do carro', '6 roteiros por carro, 29 a 32 cenas · 5 carros. A locução está gravada nos quatro primeiros; a do Jaecoo 5 entra na virada.',
     '10,6 h', 'R$ 2.120', 'R$ 1.500', 'por carro · R$ 7.500', '6 vídeos curtos × R$ 250, dentro da faixa de R$ 120–280 por vídeo curto (CrazyStack). Em agência, um módulo de 5 min sai por US$ 2–5 mil.'),
   linhaPeca('Ficha de acessório', 'Preço, código de peça e como oferecer · 27 acessórios',
     '11,0 h', 'R$ 2.200', 'R$ 90', 'por acessório · R$ 2.430', 'Hora medida. Acessório novo, a loja cadastra sozinha.'),
@@ -342,7 +342,7 @@ põe(tabela([
   linhaPeca('Vídeo tutorial', 'Com locução, legenda e destaque na tela · vendedor e gerente, mais a atualização com Jornada e rituais',
     '4,6 h', 'R$ 920', 'R$ 1.500', 'por vídeo · R$ 3.750', 'Na mediana nacional de R$ 1.400 por projeto audiovisual (Filmly). A atualização entra por meio.'),
   linhaPeca('Relatório e apresentação de uso', 'Gráficos, telas do app e diagnóstico · 4 entregues, incluindo a apresentação de resultados de 23/09',
-    '2,6 h', 'R$ 520', 'R$ 350', 'por relatório · R$ 1.400', 'Hora medida + 35%.'),
+    '2,6 h', 'R$ 520', 'R$ 350', 'por relatório · R$ 1.400', 'Hora medida × 2,7. O relatório leva pouca hora porque o script já existe — o preço é o do produto pronto, não o da hora de rodar.'),
   linhaPeca('Campanha de incentivo', 'Arte da premiação e publicação no app',
     '2,0 h', 'R$ 400', 'R$ 450', '', 'Um cartaz na TAGX sai R$ 350.'),
   linhaSub('Subtotal peças avulsas', '12,4 h', 'R$ 2.480', 'R$ 8.300'),
@@ -415,7 +415,7 @@ const espaco = () => p('', { depois: 130 });
 põe(oferta('PACOTE DE IMPLANTAÇÃO · UMA VEZ, NA ENTRADA', 'R$ 25.000', 'tabela cheia R$ 51.930 · 52% abaixo',
   'Carregar a linha completa, os acessórios, os documentos e as fotos; configurar a marca e as lojas; publicar a primeira carta; treinar a gerência. Inclui tudo da tabela da seção 5: ferramentas, conteúdo e as peças já entregues. Quando ouvir "a EAD Plataforma não cobra implantação": ela também não escreve o conteúdo. Lá, quem carrega os 5 carros e os 27 acessórios é o cliente.'), espaco());
 põe(oferta('LICENÇA DA PLATAFORMA · TODO MÊS, PARA O GRUPO', 'R$ 900/mês', 'grupo inteiro, sem limite de usuários',
-  'App, painel, IA, notícias, hospedagem e correções. Fica 20% acima do Twygo (R$ 743) — diferença que a IA presa à carta do mês justifica sozinha. Para o GRUPO e não por cabeça: em concessionária o time gira, e cobrar por usuário faz a gerência tirar acesso de quem entrou.'), espaco());
+  'App, painel, IA, notícias, hospedagem e correções. Fica 21% acima do Twygo (R$ 743) — diferença que a IA presa à carta do mês justifica sozinha. Para o GRUPO e não por cabeça: em concessionária o time gira, e cobrar por usuário faz a gerência tirar acesso de quem entrou.'), espaco());
 põe(oferta('CURADORIA DE CONTEÚDO · TODO MÊS', 'R$ 2.400/mês', '',
   'Publicar a carta do mês partindo o PDF por modelo, conferir cada lâmina contra o documento da montadora, manter preço de acessório, revisar o que a IA lê e acompanhar o uso do time. É serviço, não software — e é exatamente o que nenhum LMS entrega. Separado da licença de propósito: é esta linha que o cliente entende que não tem substituto.'), espaco());
 põe(oferta('CONTEÚDO NOVO · POR MODELO', 'R$ 2.500 por carro', '',

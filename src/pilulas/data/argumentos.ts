@@ -95,6 +95,15 @@ export async function enviarArgumento(o: {
 /** Tudo o que o time respondeu — visão do gestor. */
 // so-gerencia: moderação — o texto cru tem nome e e-mail de quem respondeu.
 export async function buscarArgumentos(brand: BrandId): Promise<Argumento[]> {
+  // Atalho SÓ de desenvolvimento, igual ao de fetchTeam: a sessão de captura
+  // não tem login do Firebase e esta leitura falharia, fazendo o Painel dizer
+  // "ninguém respondeu ainda" quando há 64 respostas no banco. Some no build de produção.
+  if (import.meta.env.DEV) {
+    try {
+      const bruto = localStorage.getItem('wp_demo_argumentos');
+      if (bruto) return JSON.parse(bruto);
+    } catch { /* json quebrado: segue para a nuvem */ }
+  }
   if (!db) return [];
   try {
     const snap = await getDocs(query(collection(db, COL), where('brand', '==', brand)));

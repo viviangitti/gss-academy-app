@@ -80,6 +80,15 @@ export async function submitObjection(
 /** Histórico completo de objeções da marca, mais novas primeiro (uso do gestor). */
 // so-gerencia: objeções cruas trazem relato de cliente; o time vê só as publicadas.
 export async function fetchObjections(brand: BrandId): Promise<TeamObjection[]> {
+  // Atalho SÓ de desenvolvimento, igual ao de fetchTeam: a sessão de captura
+  // não tem login do Firebase e esta leitura falharia, fazendo o Painel dizer
+  // "ninguém respondeu ainda" quando há objeções no banco. Some no build de produção.
+  if (import.meta.env.DEV) {
+    try {
+      const bruto = localStorage.getItem('wp_demo_objecoes');
+      if (bruto) return JSON.parse(bruto);
+    } catch { /* json quebrado: segue para a nuvem */ }
+  }
   if (!db) return [];
   try {
     const q = query(collection(db, 'elevaObjections'), where('brand', '==', brand));

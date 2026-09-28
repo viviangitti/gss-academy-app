@@ -57,13 +57,13 @@ const rotuloPlacar = (texto, dourado) => p(texto, {
   color: dourado ? OURO_ESCURO : CINZA_CLARO,
 });
 
-põe(rotuloPlacar('O que já foi feito para a Ramasa · 01/07 a 25/09/2026', true));
+põe(rotuloPlacar('O que já foi feito para a Ramasa · 01/07 a 28/09/2026', true));
 põe(tabela([
   new TableRow({ cantSplit: true, children: [
-    cartaoNumero('33', 'dias com entrega registrada', 'dentro de 86 dias corridos', true),
-    cartaoNumero('213', 'entregas registradas', 'cada uma com data e hora', true),
-    cartaoNumero('158 h', 'medidas', 'leitura conservadora, 60% da janela', true),
-    cartaoNumero('R$ 31.600', 'custo dessas horas', 'a R$ 200 a hora', true),
+    cartaoNumero('34', 'dias com entrega registrada', 'dentro de 89 dias corridos', true),
+    cartaoNumero('221', 'entregas registradas', 'cada uma com data e hora', true),
+    cartaoNumero('162 h', 'medidas', 'leitura conservadora, 60% da janela', true),
+    cartaoNumero('R$ 32.400', 'custo dessas horas', 'a R$ 200 a hora', true),
   ] }),
 ], LK, { bordas: SEM_BORDAS }));
 
@@ -83,7 +83,7 @@ põe(tabela([
     marco('01/07', 'primeira conversa com a Ramasa'),
     marco('10/08', 'primeira linha de conteúdo escrita'),
     marco('28/08', 'o time começa a usar o app'),
-    marco('25/09', 'hoje · 86 dias corridos'),
+    marco('28/09', 'hoje · 89 dias corridos'),
   ] }),
 ], LK, { bordas: SEM_BORDAS }));
 
@@ -172,7 +172,7 @@ põe(tabela([
 
 // ── 2. esforço medido ─────────────────────────────────────────────────────────
 põe(h2('2. Esforço medido',
-  'Da primeira conversa com a Ramasa, em 01/07, até hoje: 86 dias corridos. Os números abaixo saem do histórico do repositório — data e hora de cada alteração, não estimativa de memória.'));
+  'Da primeira conversa com a Ramasa, em 01/07, até hoje: 89 dias corridos. Os números abaixo saem do histórico do repositório — data e hora de cada alteração, não estimativa de memória.'));
 
 const LF = [4200, 1900, 900, 1300, 1338];
 const linhaFase = (nome, desc, periodo, dias, entregas, horas, total) => new TableRow({
@@ -193,9 +193,9 @@ põe(tabela([
   linhaFase('Descoberta e escopo', 'Primeira conversa, entender a operação da loja, receber o material da montadora e fechar o que o app precisava ter. Não vira commit — por isso não tem hora medida.',
     '01/jul a 09/ago', '—', '—', '—'),
   linhaFase('Vertical automotivo — Ramasa', 'Carros, acessórios, condições comerciais, cargos da loja, conteúdo.',
-    '10/ago a 11/set', 25, 176, '173 h'),
+    '10/ago a 11/set', 25, 175, '172 h'),
   linhaFase('Depois da proposta — Ramasa', 'Jaecoo 5, Jornada, rituais, valores do grupo, lojas, computador, isolamento no banco.',
-    '12/set a 25/set', 8, 37, '58 h'),
+    '12/set a 28/set', 9, 46, '66 h'),
   linhaFase('Total medido', '', '10/ago a 25/set', 33, 213, '231 h', true),
 ], LF));
 
@@ -203,14 +203,14 @@ põe(p('', { depois: 120 }));
 põe(nota([
   notaP('**Os 40 dias que não aparecem na tabela.** Entre a primeira conversa (01/07) e a primeira linha de conteúdo (10/08) passaram 40 dias de descoberta: entender como a loja vende, receber a carta e as fichas da montadora, decidir o que entrava. É trabalho real e é o que fez o resto ser rápido — mas não deixa registro de hora, e por isso não entra na conta. A conta começa onde dá para provar.'),
   p('', { depois: 100 }),
-  notaP('**Como ler as horas.** São a janela entre a primeira e a última entrega de cada dia, mais 30 min. É período de trabalho, não foco cronometrado. A leitura conservadora — 60% da janela — dá **~139 h no código**. Some **~19 h fora dele** — vídeos, relatórios, apresentação de resultados, PDFs de apoio e a campanha: **~158 h**. Use o número conservador em qualquer conversa de preço: ele se defende sozinho.'),
+  notaP('**Como ler as horas.** São a janela entre a primeira e a última entrega de cada dia, mais 30 min. É período de trabalho, não foco cronometrado. A leitura conservadora — 60% da janela — dá **~143 h no código**. Some **~19 h fora dele** — vídeos, relatórios, apresentação de resultados, PDFs de apoio e a campanha: **~162 h**. Use o número conservador em qualquer conversa de preço: ele se defende sozinho.'),
   p('', { depois: 100 }),
-  notaP('**O que mudou na medição.** A versão de 11/09 somava a plataforma base junto e chegava a 49 dias / 346 entregas. Aqui a base saiu da conta: ela nasceu com a Meraki e a Sorocaps, é ativo da GSS e se repete de graça no próximo cliente. Contando **só a Ramasa**, eram 25 dias / 176 entregas em 11/09 e são **33 dias / 213 entregas** hoje — o crescimento real são as **8 jornadas e 58 h** das duas últimas semanas. O trabalho de escrever esta proposta também não entra: seria o número crescer sozinho a cada vez que ela é refeita.'),
+  notaP('**O que mudou na medição.** A versão de 11/09 somava a plataforma base junto e chegava a 49 dias / 346 entregas. Aqui a base saiu da conta: ela nasceu com a Meraki e a Sorocaps, é ativo da GSS e se repete de graça no próximo cliente. Contando **só a Ramasa**, eram 25 dias / 176 entregas em 11/09 e são **34 dias / 221 entregas** hoje — o crescimento real são as **9 jornadas e 66 h** desde então. O trabalho de escrever esta proposta também não entra: seria o número crescer sozinho a cada vez que ela é refeita.'),
 ]));
 
 
 // ── 3. custo de operação ──────────────────────────────────────────────────────
-põe(h2('3. Custo de operação', 'O que sai do bolso todo mês para o app continuar no ar. Medido hoje, 25/09.'));
+põe(h2('3. Custo de operação', 'O que sai do bolso todo mês para o app continuar no ar. Medido hoje, 28/09.'));
 
 const LO = [5600, 2300, 1738];
 const linhaCusto = (nome, desc, comoEsta, custo, total) => new TableRow({
@@ -275,7 +275,7 @@ põe(nota([
 
 // ── 5. preço peça por peça ────────────────────────────────────────────────────
 põe(h2('5. Preço peça por peça',
-  'Cada linha tem as horas medidas daquela peça, o custo delas a R$ 200/h e o preço de tabela, com o motivo. A divisão das horas segue o assunto de cada entrega no histórico — é aproximada entre peças vizinhas, mas o total bate com as 158 h.'));
+  'Cada linha tem as horas medidas daquela peça, o custo delas a R$ 200/h e o preço de tabela, com o motivo. A divisão das horas segue o assunto de cada entrega no histórico — é aproximada entre peças vizinhas, mas o total bate com as 162 h.'));
 
 const LP = [3000, 900, 1100, 1600, 3038];
 const linhaPeca = (nome, desc, horas, custo, preco, sub, porque) => new TableRow({
@@ -310,13 +310,13 @@ põe(tabela([
   linhaPeca('Tira-dúvida com IA', 'Responde preço, condição e ficha a partir do conteúdo aprovado, com teto de gasto',
     '15,2 h', 'R$ 3.040', 'R$ 6.000', '', 'Chatbot de IA sob medida custa de R$ 15 mil a R$ 150 mil (Halk). Fica em 40% do piso.'),
   linhaPeca('Painel da gerência', 'Uso por pessoa, cargo e loja, ranking, edição de acessório na linha, time pelos pilares',
-    '11,0 h', 'R$ 2.200', 'R$ 3.300', '', 'Hora medida + 50%. Cresceu com a separação por loja e os 11 cargos.'),
+    '13,0 h', 'R$ 2.600', 'R$ 3.300', '', 'Hora medida + 50%. Cresceu com a separação por loja e os 11 cargos.'),
   linhaPeca('Jornada do lead online (novo)', '9 etapas, mensagem pronta em cada uma, atalho de acessórios e lembrete da entrega',
     '11,4 h', 'R$ 2.280', 'R$ 4.000', '', 'É roteiro comercial, não tela: texto técnico de nicho custa R$ 180–400 por peça, e aqui são 9 etapas escritas e revisadas com a loja.'),
   linhaPeca('Condições comerciais', 'Carta partida por modelo, validade automática, arquivo e auditoria contra a montadora',
     '9,8 h', 'R$ 1.960', 'R$ 2.400', '', 'Hora medida + 22%.'),
   linhaPeca('Cultura e valores no app (novo)', '9 valores, 3 pilares, valor da semana, carimbo ao praticar e a linha "no app" escrita para cada um dos 11 cargos',
-    '8,2 h', 'R$ 1.640', 'R$ 2.400', '', 'São 45 frases escritas (9 valores × 5 grupos de cargo) mais a tela. Redação de nicho, R$ 180–400 por peça.'),
+    '9,2 h', 'R$ 1.840', 'R$ 2.400', '', 'São 45 frases escritas (9 valores × 5 grupos de cargo) mais a tela. Redação de nicho, R$ 180–400 por peça.'),
   linhaPeca('Rituais do mês (novo)', 'Pop-up por cargo com dia marcado e o "ok" gravado com nome, cargo e horário',
     '7,8 h', 'R$ 1.560', 'R$ 2.200', '', 'Hora medida + 41%. É o que impede tabela vencida no ar — o erro que já custou caro em setembro.'),
   linhaPeca('Configuração do grupo', '11 cargos, 4 lojas, acessos e o isolamento entre as empresas',
@@ -325,7 +325,7 @@ põe(tabela([
     '4,4 h', 'R$ 880', 'R$ 1.400', '', 'Hora medida + 59%. As buscas passaram para o servidor e uma rotina diária conserta a aba.'),
   linhaPeca('Arte da condição para o cliente', 'Lâmina pronta pra WhatsApp, gerada sozinha para cada condição',
     '2,6 h', 'R$ 520', 'R$ 1.200', '', 'As 14 condições no ar × R$ 90 do criativo avulso = R$ 1.260. As 8 da carta se repetem a cada virada de mês.'),
-  linhaSub('Subtotal ferramentas', '91,0 h', 'R$ 18.200', 'R$ 28.700'),
+  linhaSub('Subtotal ferramentas', '94,0 h', 'R$ 18.800', 'R$ 28.700'),
 
   faixa('CONTEÚDO · POR UNIDADE', LP),
   linhaPeca('Ficha comercial do carro', 'Versões, destaques e 5 a 13 objeções com resposta · 5 carros',
@@ -338,14 +338,14 @@ põe(tabela([
 
   faixa('PEÇAS AVULSAS · JÁ ENTREGUES', LP),
   linhaPeca('Documento de apoio em PDF', 'Lâminas da carta, roteiros, trilha, argumentos do time, quem responde por quê, treinamento do Jaecoo 5 e outros · 9 entregues',
-    '3,2 h', 'R$ 640', 'R$ 300', 'por documento · R$ 2.700', 'Um catálogo na TAGX sai R$ 600.'),
+    '4,2 h', 'R$ 840', 'R$ 300', 'por documento · R$ 2.700', 'Um catálogo na TAGX sai R$ 600.'),
   linhaPeca('Vídeo tutorial', 'Com locução, legenda e destaque na tela · vendedor e gerente, mais a atualização com Jornada e rituais',
     '4,6 h', 'R$ 920', 'R$ 1.500', 'por vídeo · R$ 3.750', 'Na mediana nacional de R$ 1.400 por projeto audiovisual (Filmly). A atualização entra por meio.'),
   linhaPeca('Relatório e apresentação de uso', 'Gráficos, telas do app e diagnóstico · 4 entregues, incluindo a apresentação de resultados de 23/09',
     '2,6 h', 'R$ 520', 'R$ 350', 'por relatório · R$ 1.400', 'Hora medida × 2,7. O relatório leva pouca hora porque o script já existe — o preço é o do produto pronto, não o da hora de rodar.'),
   linhaPeca('Campanha de incentivo', 'Arte da premiação e publicação no app',
     '2,0 h', 'R$ 400', 'R$ 450', '', 'Um cartaz na TAGX sai R$ 350.'),
-  linhaSub('Subtotal peças avulsas', '12,4 h', 'R$ 2.480', 'R$ 8.300'),
+  linhaSub('Subtotal peças avulsas', '13,4 h', 'R$ 2.680', 'R$ 8.300'),
 
   faixa('NÃO COBRADO · É PLATAFORMA', LP),
   linhaPeca('App instalável, adaptação ao computador e ajustes de uso', 'Serve a todos os clientes, não só à Ramasa',
@@ -355,8 +355,8 @@ põe(tabela([
 
   new TableRow({ children: [
     celula([p('Tabela cheia', { size: 19, bold: true, depois: 0 })], { largura: 3000, fundo: FUNDO2, mt: 130, mb: 130 }),
-    celula([p('158,0 h', { size: 18, bold: true, align: AlignmentType.RIGHT, depois: 0 })], { largura: 900, fundo: FUNDO2, mt: 130, mb: 130 }),
-    celula([p('R$ 31.600', { size: 18, bold: true, align: AlignmentType.RIGHT, depois: 0 })], { largura: 1100, fundo: FUNDO2, mt: 130, mb: 130 }),
+    celula([p('162,0 h', { size: 18, bold: true, align: AlignmentType.RIGHT, depois: 0 })], { largura: 900, fundo: FUNDO2, mt: 130, mb: 130 }),
+    celula([p('R$ 32.400', { size: 18, bold: true, align: AlignmentType.RIGHT, depois: 0 })], { largura: 1100, fundo: FUNDO2, mt: 130, mb: 130 }),
     celula([p('R$ 51.930', { size: 19, bold: true, align: AlignmentType.RIGHT, depois: 0 })], { largura: 1600, fundo: FUNDO2, mt: 130, mb: 130 }),
     celula([p('', { depois: 0 })], { largura: 3038, fundo: FUNDO2, mt: 130, mb: 130 }),
   ] }),
@@ -430,7 +430,7 @@ põe(nota([
 // ── por que esses números ─────────────────────────────────────────────────────
 põe(h2('Por que esses números'));
 põe(nota([
-  notaP('**O pacote se sustenta na hora medida.** 158 h a R$ 200/h dão R$ 31.600 de custo. Os R$ 25.000 pagam **R$ 158 por hora** — abaixo até da faixa de desenvolvedor pleno (R$ 110–240, Lancei). Em 11/09 esse número era R$ 233/h. Ou seja: o pacote ficou mais barato por hora do que era, porque duas semanas de trabalho entraram sem mexer no preço.'),
+  notaP('**O pacote se sustenta na hora medida.** 162 h a R$ 200/h dão R$ 32.400 de custo. Os R$ 25.000 pagam **R$ 154 por hora** — abaixo até da faixa de desenvolvedor pleno (R$ 110–240, Lancei). Em 11/09 esse número era R$ 233/h. Ou seja: o pacote ficou mais barato por hora do que era, porque duas semanas de trabalho entraram sem mexer no preço.'),
   p('', { depois: 100 }),
   notaP('**A licença se sustenta no mercado.** R$ 900 contra R$ 743 do Twygo e R$ 400 da EAD Plataforma. É uma diferença que se explica em uma frase — não é um salto que exige fé.'),
   p('', { depois: 100 }),
@@ -465,7 +465,7 @@ põe(p(rico('A partir do segundo ano, sem o setup: **R$ 39.600** recorrentes. Cu
   { size: 17, color: CINZA }), { antes: 140, depois: 160, linha: 250 }));
 
 põe(nota([
-  notaP('**O investimento até hoje, em três números.** **33 dias de trabalho** dentro dos 86 dias corridos desde a primeira conversa, em 01/07, só para a Ramasa. **158 h** na leitura conservadora, que a R$ 200/h custam **R$ 31.600**. E a tabela cheia do que foi entregue — peça por peça, comparada com preço de mercado — dá **R$ 51.930**. A plataforma base não está aqui dentro, de propósito. O primeiro ano proposto é R$ 69.600: cobre o que foi feito e paga para continuar.', true),
+  notaP('**O investimento até hoje, em três números.** **34 dias de trabalho** dentro dos 89 dias corridos desde a primeira conversa, em 01/07, só para a Ramasa. **162 h** na leitura conservadora, que a R$ 200/h custam **R$ 32.400**. E a tabela cheia do que foi entregue — peça por peça, comparada com preço de mercado — dá **R$ 51.930**. A plataforma base não está aqui dentro, de propósito. O primeiro ano proposto é R$ 69.600: cobre o que foi feito e paga para continuar.', true),
 ], true));
 
 // ── o que falta decidir ───────────────────────────────────────────────────────

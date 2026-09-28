@@ -27,6 +27,15 @@
         "cd /private/tmp/claude-501/-Users-viviangitti-gss/1b50ea9a-2114-4dce-ba86-ac816f0dec5a/scratchpad/gss-anima && node build.mjs && PORT=5192 node server.mjs"
       ],
       "port": 5192
+    },
+    {
+      "name": "gssacademy-previa",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/viviangitti/gssacademy/landing-page && npx vite preview --port 5201 --strictPort"
+      ],
+      "port": 5201
     }
   ]
 }

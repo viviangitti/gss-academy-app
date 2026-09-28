@@ -76,7 +76,8 @@ export function montar(D) {
   if (D.ranking.length) recs.push(['Reconhecimento', `Quem mais usou: ${lista(D.ranking.slice(0, 3).map((r) => `${r.nome} (${r.acoes})`))}.`, 'Citar no grupo do time na sexta.']);
   if (objs.length) recs.push(['Objeção da semana', `“${objs[0][0]}” foi a mais consultada.`, 'Levar a resposta pronta do app para a reunião de segunda.']);
 
-  const rod = (n) => `<div class="rod"><span>Eleva · Relatório semanal · Grupo Ramasa · ${dm(D.de)} a ${dm(D.ate)}/${D.ate.slice(0, 4)}</span><span>${n} / 7</span></div>`;
+  const QUEM = D.recorte ? D.recorte.nome : 'Grupo Ramasa';
+  const rod = (n) => `<div class="rod"><span>Eleva · Relatório semanal · ${QUEM} · ${dm(D.de)} a ${dm(D.ate)}/${D.ate.slice(0, 4)}</span><span>${n} / 7</span></div>`;
   const carroImg = (id) => imgOuNada(`carro-${id}.jpg`);
 
   return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><style>
@@ -127,7 +128,8 @@ table.t{width:100%;border-collapse:collapse;font-size:10px}.t th{text-align:left
   <div class="capa">
     <div><div class="k">ELEVA · RELATÓRIO SEMANAL · ${edicao}ª SEMANA</div>
       <h1>Semana de ${dm(D.de)} a ${dm(D.ate)}</h1>
-      <p class="dt">Uso do app no Grupo Ramasa · segunda a domingo</p></div>
+      <p class="dt">Uso do app ${D.recorte ? `na ${D.recorte.nome}` : 'no Grupo Ramasa'} · segunda a domingo</p>
+      ${D.recorte ? `<p class="dt" style="margin-top:2mm">Recorte por e-mail @${D.recorte.dominio} — ${D.contas} das ${D.recorte.noGrupo} contas do grupo. ${D.recorte.semDominio} pessoas usam e-mail pessoal e não entram em loja nenhuma.</p>` : ''}</div>
     <img src="${img('logo-gss.png')}">
   </div>
   <div class="kpis">

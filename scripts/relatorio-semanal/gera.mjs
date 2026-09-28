@@ -1,7 +1,9 @@
 // Relatório semanal de uso do Eleva na Ramasa — um comando só.
 //
-//   npm run relatorio-semanal                       → última semana completa
+//   npm run relatorio-semanal                       → última semana completa, grupo inteiro
 //   npm run relatorio-semanal -- --semana 2026-09-07 → semana que começa nessa segunda
+//   npm run relatorio-semanal -- --loja omoda        → só a Tiger Omoda
+//        (lojas: omoda, toyota, mitsubishi, grupo)
 //
 // Grava em ~/.claude/eleva-uso/relatorios/<segunda>/ (dados, HTML, PDF e as
 // páginas em imagem, para conferência) e copia o PDF para ~/Downloads.
@@ -9,7 +11,7 @@ import { mkdirSync, writeFileSync, copyFileSync, readdirSync } from 'fs';
 import { execFileSync } from 'child_process';
 import { homedir } from 'os';
 import { join } from 'path';
-import { coletar, ultimaSemana } from './dados.mjs';
+import { coletar, ultimaSemana, LOJAS } from './dados.mjs';
 import { montar } from './monta.mjs';
 import { imprimir } from './pdf.mjs';
 
@@ -19,10 +21,16 @@ if (!/^\d{4}-\d{2}-\d{2}$/.test(segunda) || new Date(segunda + 'T12:00:00Z').get
   console.error(`--semana precisa ser uma segunda-feira no formato AAAA-MM-DD (recebi "${segunda}")`);
   process.exit(1);
 }
-const pasta = join(homedir(), '.claude', 'eleva-uso', 'relatorios', segunda);
+const j = process.argv.indexOf('--loja');
+const loja = j > -1 ? String(process.argv[j + 1] || '').toLowerCase() : '';
+if (loja && !LOJAS[loja]) {
+  console.error(`--loja precisa ser uma de: ${Object.keys(LOJAS).join(', ')} (recebi "${loja}")`);
+  process.exit(1);
+}
+const pasta = join(homedir(), '.claude', 'eleva-uso', 'relatorios', segunda + (loja ? `-${loja}` : ''));
 mkdirSync(join(pasta, 'paginas'), { recursive: true });
 
-const D = await coletar(segunda);
+const D = await coletar(segunda, loja || undefined);
 writeFileSync(join(pasta, 'dados.json'), JSON.stringify(D, null, 1));
 const html = join(pasta, 'relatorio.html');
 writeFileSync(html, montar(D));
@@ -34,7 +42,8 @@ for (const f of readdirSync(join(pasta, 'paginas'))) if (f.endsWith('.jpg')) exe
 execFileSync('pdftoppm', ['-jpeg', '-r', '80', pdf, join(pasta, 'paginas', 'pag')]);
 
 const dm = (d) => `${d.slice(8)}-${d.slice(5, 7)}`;
-const destino = join(homedir(), 'Downloads', `Eleva - Relatorio semanal Ramasa ${dm(D.de)} a ${dm(D.ate)}.pdf`);
+const quem = D.recorte ? D.recorte.nome : 'Ramasa';
+const destino = join(homedir(), 'Downloads', `Eleva - Relatorio semanal ${quem} ${dm(D.de)} a ${dm(D.ate)}.pdf`);
 copyFileSync(pdf, destino);
 console.log(JSON.stringify({ semana: `${D.de} a ${D.ate}`, paginas, esperado: 7, pdf: destino, conferencia: join(pasta, 'paginas'),
   numeros: D.semana, anterior: D.anterior }, null, 1));

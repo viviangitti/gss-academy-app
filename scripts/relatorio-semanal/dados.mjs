@@ -9,6 +9,15 @@ import { readFileSync } from 'fs';
 
 const RAIZ = new URL('../../', import.meta.url);
 const MARCA = 'ramasa';
+// AS LOJAS, PELO DOMÍNIO DO E-MAIL. É o mesmo critério do relatório diário
+// (scripts/uso-eleva.mjs): o campo `loja` do perfil só existe para parte do
+// time, e o domínio é o que separa as bandeiras do grupo na prática.
+export const LOJAS = {
+  omoda: { dominio: 'tigeromoda.com.br', nome: 'Tiger Omoda' },
+  toyota: { dominio: 'lincetoyota.com', nome: 'Lince Toyota' },
+  mitsubishi: { dominio: 'nikkomitsubishi.com.br', nome: 'Nikko Mitsubishi' },
+  grupo: { dominio: 'gruporamasa.com', nome: 'Grupo Ramasa (corporativo)' },
+};
 const TESTE = new Set(['viviangitti23@gmail.com', 'viviangitti@gmail.com', 'maria26@gmail.com',
   'silene_mendes@hotmail.com', 'silene.mendesdesouza@gmail.com', 'silene.mendesangelodesouza@gmail.com']);
 // Nome fora do relatório a pedido da Vivian (07/09/2026). A conta segue nos totais.
@@ -57,7 +66,7 @@ export function nomesDeDocumentos() {
   return m;
 }
 
-export async function coletar(segunda) {
+export async function coletar(segunda, recorte) {
   const de = segunda, ate = mais(segunda, 6);
   const deAnt = mais(de, -7), ateAnt = mais(de, -1);
   const r = await fetch('https://identitytoolkit.googleapis.com/v1/projects/eleva-gss/accounts:batchGet?maxResults=500', { headers: { Authorization: `Bearer ${TOKEN}` } });
@@ -68,7 +77,7 @@ export async function coletar(segunda) {
   for (const d of ((await get('elevaStats?pageSize=300')).documents || [])) { const o = doc2obj(d); stats[o.uid] = o; }
   const over = papeisDoCodigo(), publica = podemPublicar();
 
-  const pessoas = auth.map((u) => {
+  let pessoas = auth.map((u) => {
     const email = (u.email || '').toLowerCase(), p = perfis[u.localId] || {}, s = stats[u.localId] || {};
     const role = over[email]?.role || p.role || '', cargo = over[email]?.cargo || p.cargo || s.cargo || '';
     const eventos = (s.events || []).filter((e) => e.at && dia(e.at) <= ate).map((e) => ({ ...e, d: dia(e.at) }));
@@ -76,6 +85,16 @@ export async function coletar(segunda) {
       criada: dia(new Date(Number(u.createdAt)).toISOString()), eventos,
       gestor: role === 'gestor' || /gerente|lider/.test(cargo), podePublicar: publica.has(email) };
   }).filter((p) => p.marcas.includes(MARCA) && !TESTE.has(p.email) && p.criada <= ate);
+
+  // O RECORTE POR LOJA. Fora dele o relatório é do grupo inteiro, como sempre.
+  // Quem usa e-mail pessoal (gmail, hotmail) não entra em loja nenhuma — o
+  // relatório avisa quantos são, senão o número parece menor do que é.
+  const todos = pessoas;
+  const L = recorte ? LOJAS[recorte] : null;
+  if (recorte && !L) throw new Error(`loja desconhecida: "${recorte}". Use uma de: ${Object.keys(LOJAS).join(', ')}`);
+  const pessoasDoRecorte = L ? pessoas.filter((p) => p.email.endsWith('@' + L.dominio)) : pessoas;
+  const semDominio = L ? todos.filter((p) => !Object.values(LOJAS).some((x) => p.email.endsWith('@' + x.dominio))).length : 0;
+  pessoas = pessoasDoRecorte;
 
   const naJanela = (p, a, b) => p.eventos.filter((e) => e.d >= a && e.d <= b);
   const resumo = (a, b) => {
@@ -123,6 +142,7 @@ export async function coletar(segunda) {
 
   return {
     de, ate, deAnt, ateAnt, geradoEm: new Date().toISOString(),
+    recorte: L ? { ...L, chave: recorte, semDominio, noGrupo: todos.length } : null,
     contas: pessoas.length, totalGestores: pessoas.filter((p) => p.gestor).length, totalLeads: pessoas.filter((p) => LEADS.includes(p.cargo)).length,
     semana: resumo(de, ate), anterior: resumo(deAnt, ateAnt), dias, semanas, tipos,
     carros: conta(evSemana, (e) => e.type === 'pill_view'), objecoes: conta(evSemana, (e) => e.type === 'objecao'),

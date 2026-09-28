@@ -20,13 +20,13 @@
       "port": 5190
     },
     {
-      "name": "gss-site-proposta",
+      "name": "gss-site-animada",
       "runtimeExecutable": "/bin/bash",
       "runtimeArgs": [
         "-c",
-        "cd /private/tmp/claude-501/-Users-viviangitti-gss/1b50ea9a-2114-4dce-ba86-ac816f0dec5a/scratchpad/gss-depois && PORT=5191 node server.mjs"
+        "cd /private/tmp/claude-501/-Users-viviangitti-gss/1b50ea9a-2114-4dce-ba86-ac816f0dec5a/scratchpad/gss-anima && node build.mjs && PORT=5192 node server.mjs"
       ],
-      "port": 5191
+      "port": 5192
     }
   ]
 }

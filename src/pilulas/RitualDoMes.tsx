@@ -7,6 +7,7 @@
 // Os itens são marcáveis e o botão só libera com todos marcados. É de
 // propósito: "dar o ok" tem que significar ter passado item por item — senão
 // vira o botão que todo mundo aperta sem ler, e o registro não vale nada.
+import { useDiaAtual, hojeEmBrasilia } from './data/diaAtual';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CalendarCheck, Square, CheckSquare, Check, X } from 'lucide-react';
@@ -16,12 +17,16 @@ import { auth } from '../services/firebase';
 import { confirmacoesDaConta, confirmadoLocal, confirmar, ritualDeHoje } from './data/rituais';
 
 const KEY_ADIADO = 'wp_ritual_adiado';
-const hojeISO = () => new Date().toISOString().slice(0, 10);
+const hojeISO = () => hojeEmBrasilia();
 
 export default function RitualDoMes() {
   const { user } = useAuth();
   const { brandId } = useBrand();
-  const ritual = useMemo(() => ritualDeHoje(brandId, user?.cargo), [brandId, user?.cargo]);
+  // O dia assinado: a janela do ritual ("até o dia 5") era decidida na abertura
+  // do app e sobrevivia à virada — o gerente que deixava o PWA aberto era
+  // cobrado do dia 6 ao 13, e quem abriu no dia 4 e voltou no 6 não era.
+  const dia = useDiaAtual();
+  const ritual = useMemo(() => ritualDeHoje(brandId, user?.cargo), [brandId, user?.cargo, dia]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [mostrar, setMostrar] = useState(false);
   const [feitos, setFeitos] = useState<number[]>([]);

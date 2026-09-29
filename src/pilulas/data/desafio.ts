@@ -1,6 +1,7 @@
 // Desafio coletivo da rede (estilo Rallyware): uma meta que TODO MUNDO soma junto.
 // Sem backend ainda, o total da rede é uma simulação (base que cresce no mês) + a sua
 // parte real. Quando o Firebase estiver ligado, o total vira a soma real das vendedoras.
+import { diaDoMesEmBrasilia } from './diaAtual';
 import { getStats } from './tracking';
 
 export interface Desafio {
@@ -17,7 +18,7 @@ export function getDesafio(): Desafio {
   const stats = getStats();
   const meta = 500;
   // Base coletiva determinística: sobe ao longo do mês pra dar sensação de rede viva.
-  const day = new Date().getDate(); // 1..31
+  const day = diaDoMesEmBrasilia(); // 1..31, no fuso da loja
   const base = Math.min(meta - 30, 150 + day * 9);
   const minhaParte = stats.weekViews;
   const atual = Math.min(meta, base + minhaParte);

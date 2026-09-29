@@ -8,6 +8,7 @@
 // Duas camadas: uma faixa que fica enquanto houver disputa aberta, e um pop-up
 // que só aparece na reta final (3 dias ou menos), uma vez por dia. Pop-up todo
 // dia desde o dia 1 vira paisagem em uma semana — e aí nem o da reta final é lido.
+import { hojeEmBrasilia } from './diaAtual';
 import type { BrandId } from './brands';
 import { condicoesDaMarca, estaVencida, type Condicao, type Disputa } from './condicoes';
 import { diasRestantes } from './campanha';
@@ -65,8 +66,9 @@ export function frase(s: string): string {
 
 // ---- o pop-up aparece uma vez por dia, por disputa ----
 function chaveDoDia(l: LembreteCampanha, hoje = new Date()): string {
-  const dia = `${hoje.getFullYear()}-${hoje.getMonth() + 1}-${hoje.getDate()}`;
-  return `wp_camp_pop:${l.condicao.id}:${l.disputa.ate}:${dia}`;
+  // Dia de Brasília: a chave marcava "já dispensou hoje" com o dia do relógio
+  // do aparelho, e às 21h ele já era outro.
+  return `wp_camp_pop:${l.condicao.id}:${l.disputa.ate}:${hojeEmBrasilia(hoje)}`;
 }
 
 export function mostrarPopupHoje(l: LembreteCampanha | null, hoje = new Date()): boolean {

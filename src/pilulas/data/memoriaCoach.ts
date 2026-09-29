@@ -9,9 +9,9 @@
 // em api/_coach.js, e nunca passam pelo navegador.
 import { getStats } from './tracking';
 import { fetchObjections, fetchMyObjections, type TeamObjection } from './objections';
-import { condicoesDaMarca, estaVencida } from './condicoes';
+import { condicoesDaMarca, estaVencida, type Condicao } from './condicoes';
 import { allOffers } from './store';
-import { campanhaPara, ateLabel } from './campanha';
+import { campanhaPara, ateLabel, encerrada, diasRestantes } from './campanha';
 import { getBrand, isAuto, type BrandId } from './brands';
 import { acessoriosDaMarca, precoLabel } from './acessorios';
 import { documentosDaMarca } from './documentos';
@@ -87,6 +87,29 @@ function comoCaso(o: TeamObjection): { rotulo: string; texto: string } | null {
  * Só o gestor recebe os casos da equipe inteira — é a mesma regra do painel, e
  * está no Firestore, não só aqui. Vendedor leva os casos que ele mesmo viveu.
  */
+/**
+ * "1ª quinzena: ENCERRADA em 14/09/2026 · 2ª quinzena: aberta, último dia 30/09/2026 (faltam 1 dia)"
+ *
+ * A campanha da casa vive em quinzenas, e quinzena é justamente o tipo de coisa
+ * que o modelo erra quando tem que calcular: ele lê "de 1 a 14/09" na folha e
+ * decide sozinho se já passou. Aqui a conta vai feita, com ano, porque foi
+ * assim que o coach anunciou como "reta final" uma disputa fechada no dia
+ * anterior.
+ */
+function estadoDasDisputas(c: Condicao): string | undefined {
+  if (c.categoria !== 'campanha' || !c.disputas?.length) return undefined;
+  const linhas = c.disputas
+    .filter((d) => d.nome && d.ate)
+    .map((d) => {
+      const dias = diasRestantes(d.ate);
+      const data = d.ate.split('-').reverse().join('/');
+      if (dias < 0) return `${d.nome}: ENCERRADA em ${data}`;
+      if (dias === 0) return `${d.nome}: ÚLTIMO DIA, encerra hoje ${data}`;
+      return `${d.nome}: aberta até ${data} (faltam ${dias} ${dias === 1 ? 'dia' : 'dias'})`;
+    });
+  return linhas.length ? `disputas — ${linhas.join(' · ')}` : undefined;
+}
+
 export async function montarMemoria(opts: {
   brandId: BrandId;
   nome?: string;
@@ -127,14 +150,22 @@ export async function montarMemoria(opts: {
     .filter((c): c is { rotulo: string; texto: string } => !!c)
     .slice(0, 20);
 
-  const campanha = campanhaPara(role, brandId);
+  // CAMPANHA ENCERRADA NÃO VAI PRA IA.
+  //
+  // `campanhaPara` não confere prazo de propósito: a tela da Trilha quer
+  // mostrar a campanha encerrada, com o certificado. O coach não — pra ele
+  // "Metas do mês: Lançamento GLPEN — até 15/08" é uma meta viva, e ele
+  // cobrava, em setembro, uma campanha que morreu em agosto. E vai com ANO:
+  // "até 15/08" sem ano faz o modelo completar o ano pela memória de treino.
+  const emCartaz = campanhaPara(role, brandId);
+  const campanha = emCartaz && !encerrada(emCartaz) ? emCartaz : null;
 
   return {
     nome,
     cargo: CARGO[role || ''] || undefined,
     empresa: marca.name,
     segmento: auto ? 'automotivo' : segmento || 'saúde e suplementos',
-    metas: campanha ? `${campanha.nome} — até ${ateLabel(campanha)}` : undefined,
+    metas: campanha ? `${campanha.nome} — até ${ateLabel(campanha)}/${campanha.ate.slice(0, 4)}` : undefined,
     tom: getTom(),
     atividades,
     falas,
@@ -155,6 +186,15 @@ export async function montarMemoria(opts: {
           c.categoria === 'campanha' ? 'campanha interna' : c.categoria === 'acessorio' ? 'acessório' : 'veículo',
           c.validade,
           c.observacao,
+          // AS DISPUTAS JÁ RESOLVIDAS CONTRA HOJE.
+          //
+          // Esta é a segunda metade da resposta errada que a Vivian recebeu:
+          // "a 2ª quinzena termina na segunda-feira, 28/09" — dito no dia 29.
+          // O app SABE a data de cada disputa (`c.disputas[].ate`), mas só
+          // mandava para a IA o texto da folha, e ela ficava fazendo conta de
+          // calendário sozinha. Agora vai a conta pronta: aberta ou encerrada,
+          // com dia, mês e ANO.
+          estadoDasDisputas(c),
           // O conteúdo da folha, quando existe. É o que faz a IA responder
           // "taxa 0%, entrada 70%" em vez de mandar abrir.
           c.resumo,

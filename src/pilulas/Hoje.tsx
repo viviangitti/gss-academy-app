@@ -1,3 +1,4 @@
+import { useDiaAtual } from './data/diaAtual';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Play, Send, Download, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon, Sparkles, Trophy, X } from 'lucide-react';
@@ -142,6 +143,10 @@ function dayOfYear(): number {
 
 export default function Hoje() {
   useStore();
+  // Assinar o dia faz esta tela se refazer na virada da meia-noite. Sem isso, o
+  // PWA parado no balcão passava a noite mostrando a pílula, o post e a
+  // contagem regressiva do dia anterior.
+  const dia = useDiaAtual();
   const navigate = useNavigate();
   const { brandId, brand } = useBrand();
   const { user } = useAuth();
@@ -187,7 +192,7 @@ export default function Hoje() {
   const [popup, setPopup] = useState(false);
   useEffect(() => {
     setPopup(user?.role !== 'gestor' && mostrarPopupHoje(lembrete));
-  }, [lembrete?.condicao.id, lembrete?.disputa.ate, user?.role]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lembrete?.condicao.id, lembrete?.disputa.ate, user?.role, dia]); // eslint-disable-line react-hooks/exhaustive-deps
   const fecharPopup = () => { if (lembrete) dispensarPopupHoje(lembrete); setPopup(false); };
 
   // Pílula do dia: gira todo dia, determinística (mesmo produto o dia todo)

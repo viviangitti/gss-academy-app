@@ -11,6 +11,7 @@
 import { requireAuth, checkRateLimit } from './_auth.js';
 import { guardBudget } from './_aiBudget.js';
 import { MODELOS } from './_modelos.js';
+import { linhaDeHoje } from './_hoje.js';
 
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 
@@ -21,6 +22,12 @@ const ALLOWED_MODELS = new Set(MODELOS);
 const MAX_PAYLOAD_BYTES = 12 * 1024 * 1024;
 
 export default async function handler(req, res) {
+    // Resposta de IA não se guarda em lugar nenhum: é por pessoa, por minuto,
+    // e uma resposta reaproveitada é uma resposta desatualizada — foi assim que
+    // a data velha chegou à tela. Mesmo trio que as rotas maestria-* já usam.
+    res.setHeader('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
+    res.setHeader('CDN-Cache-Control', 'no-store');
+    res.setHeader('Vercel-CDN-Cache-Control', 'no-store');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -48,12 +55,19 @@ export default async function handler(req, res) {
     if (!ALLOWED_MODELS.has(model)) return res.status(400).json({ error: `Modelo não permitido: ${model}` });
 
     try {
+        // O DIA ENTRA AQUI, SEMPRE.
+        //
+        // Este proxy é a porta por onde passam RolePlay, análise de reunião e o
+        // que vier depois — cada um monta o próprio prompt, e nenhum lembrava de
+        // dizer que dia é hoje. Em vez de confiar que cada tela nova vai lembrar,
+        // o dia é carimbado na passagem: uma linha, em todas as chamadas.
         const body = { contents };
-        if (systemInstruction) {
-            body.systemInstruction = typeof systemInstruction === 'string'
-                ? { parts: [{ text: systemInstruction }] }
-                : systemInstruction;
-        }
+        const partesSistema = !systemInstruction
+            ? []
+            : typeof systemInstruction === 'string'
+                ? [{ text: systemInstruction }]
+                : (systemInstruction.parts || []);
+        body.systemInstruction = { parts: [...partesSistema, { text: linhaDeHoje() }] };
         if (generationConfig && typeof generationConfig === 'object') body.generationConfig = generationConfig;
         if (Array.isArray(tools)) body.tools = tools;
 

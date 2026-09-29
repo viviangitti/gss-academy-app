@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useDiaAtual } from './data/diaAtual';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, Megaphone, Pencil, Trash2, CalendarClock, ChevronRight, ChevronLeft, Image as ImageIcon } from 'lucide-react';
 import { useBrand } from './BrandContext';
@@ -233,7 +234,9 @@ export default function Ofertas() {
   useStore(); // re-renderiza quando o gestor cria oferta
   // Qual arte está aberta. Uma por vez — é uma peça pra mandar, não uma galeria.
   const [arte, setArte] = useState<DadosArte | null>(null);
-  useCondicoes();
+  const versaoCondicoes = useCondicoes();
+  // O dia assinado: é o que refaz a lista na virada da meia-noite.
+  const dia = useDiaAtual();
   const { brandId } = useBrand();
   const { user } = useAuth();
   const auto = isAuto(brandId);
@@ -267,7 +270,14 @@ export default function Ofertas() {
   // primeiro dia útil; no meio disso, tabela velha na tela é promessa que a
   // loja não cumpre. Ela continua na lista do Painel, marcada, pra gerência
   // trocar — some da ponta, não do controle.
-  const condicoes = condicoesDaMarca(brandId).filter((c) => !estaVencida(c));
+  // `dia` entra aqui para a lista ser refeita na virada: a aba deixada aberta
+  // na véspera continuava mostrando a tabela que venceu à meia-noite.
+  const condicoes = useMemo(
+    () => condicoesDaMarca(brandId).filter((c) => !estaVencida(c)),
+    // `dia` e `versaoCondicoes` são gatilhos de invalidação, não insumos: um
+    // refaz a lista na virada da meia-noite, o outro quando a gerência publica.
+    [brandId, dia, versaoCondicoes], // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   return (
     <div className="wp-ofertas">

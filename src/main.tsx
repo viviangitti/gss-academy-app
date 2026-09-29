@@ -57,6 +57,9 @@ if ('serviceWorker' in navigator) {
       import('./pilulas/data/versaoApp').then((m) => m.avisarVersaoNova());
     });
     import('./pilulas/data/versaoApp').then((m) => m.escutarInstalacao());
+    // E liga a escuta da VIRADA DO DIA. Sem ela, tudo o que a tela calculou
+    // sobre "hoje" vale até alguém fechar o app — e no celular ninguém fecha.
+    import('./pilulas/data/diaAtual').then((m) => m.escutarViradaDoDia());
   });
 }
 

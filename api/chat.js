@@ -5,6 +5,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { requireAuth, checkRateLimit } from './_auth.js';
 import { guardBudget } from './_aiBudget.js';
 import { MODELO_RAPIDO } from './_modelos.js';
+import { linhaDeHoje } from './_hoje.js';
 
 const BUSINESS_CONTEXT = `
 Você é a **Silvia**, assistente pessoal de IA da Silene, co-fundadora da GSS Academy.
@@ -111,6 +112,12 @@ Produto principal: MAESTR.IA em Vendas — metodologia própria, cursos, mentori
 
 export default async function handler(req, res) {
   // CORS pra chamar do preview estático
+  // Resposta de IA não se guarda em lugar nenhum: é por pessoa, por minuto,
+  // e uma resposta reaproveitada é uma resposta desatualizada — foi assim que
+  // a data velha chegou à tela. Mesmo trio que as rotas maestria-* já usam.
+  res.setHeader('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
+  res.setHeader('CDN-Cache-Control', 'no-store');
+  res.setHeader('Vercel-CDN-Cache-Control', 'no-store');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -151,7 +158,9 @@ export default async function handler(req, res) {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
       model: MODELO_RAPIDO,
-      systemInstruction: BUSINESS_CONTEXT,
+      // O dia entra montado na hora, nunca escrito dentro do BUSINESS_CONTEXT:
+      // data escrita em constante envelhece calada e ninguém percebe.
+      systemInstruction: `${BUSINESS_CONTEXT}\n\n## HOJE\n${linhaDeHoje()}`,
     });
 
     // Histórico no formato do Gemini

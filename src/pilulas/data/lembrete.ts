@@ -2,10 +2,13 @@
 // Valor real hoje = o check-in dentro do app. Extra opcional = uma notificação local
 // que dispara quando a pessoa abre o app num dia novo sem ter assistido nada.
 // (Lembrete automático com o app fechado precisa de push/servidor — fica pro Firebase.)
+import { hojeEmBrasilia } from './diaAtual';
 import { getStats } from './tracking';
 
+// Mesmo dia que o tracking grava: o de Brasília. Quando os dois discordavam,
+// "já garantiu o dia?" respondia não para quem tinha acabado de assistir.
 function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
+  return hojeEmBrasilia();
 }
 
 // Já garantiu o dia? (assistiu qualquer pílula hoje)

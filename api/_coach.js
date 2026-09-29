@@ -15,6 +15,8 @@
 //   PEÇA 4 — o comportamento em volta (fica em eleva-ia.js: modelo reserva,
 //            resposta vazia, higiene do histórico, limite de uso)
 
+import { hojeNoBrasil, diaCurto } from './_hoje.js';
+
 import ARSENAL from './_arsenal.js';
 
 // ---------------------------------------------------------------- PEÇA 1 ----
@@ -267,10 +269,23 @@ const ACK_GESTOR = (app) => `Entendido! Sou o Coach de Vendas e Gestão do ${app
 
 // Higiene do histórico. Cada uma destas quatro regras existe porque a falta dela
 // já causou bug de verdade: chamada quebrada, resposta vazia ou papel trocado.
-function historicoLimpo(historico) {
+//
+// A QUINTA é de DATA, e nasceu do pior erro que este endpoint já cometeu: em
+// 29/09/2026, uma terça, o coach cumprimentou a Vivian com "hoje é sexta-feira,
+// 25 de setembro de 2026". Não foi chute — foi ECO. O bloco "## HOJE" é o
+// PRIMEIRO turno da conversa, e o histórico guardado no aparelho entra depois
+// dele: uma resposta gravada no dia 25, que dizia a data daquele dia, voltava
+// como a afirmação MAIS RECENTE sobre que dia é hoje. Entre duas datas, o
+// modelo fica com a última que leu. Por isso toda mensagem de outro dia entra
+// marcada com [dd/mm] — e por isso o relógio é repetido no fim (montarConversa).
+function historicoLimpo(historico, hojeCurto) {
   const h = (Array.isArray(historico) ? historico : [])
     // 1) mensagem vazia quebra a chamada
-    .map((m) => ({ role: m?.role === 'assistant' || m?.role === 'model' ? 'model' : 'user', text: String(m?.content ?? m?.text ?? '').trim() }))
+    .map((m) => ({
+      role: m?.role === 'assistant' || m?.role === 'model' ? 'model' : 'user',
+      text: String(m?.content ?? m?.text ?? '').trim(),
+      dia: diaCurto(m?.at ?? m?.em),
+    }))
     .filter((m) => m.text)
     // 4) 20 pares é o teto: além disso o custo sobe sem ganhar qualidade
     .slice(-40);
@@ -285,7 +300,28 @@ function historicoLimpo(historico) {
   // 3) o histórico real precisa COMEÇAR com 'user'
   while (semRepetido.length && semRepetido[0].role !== 'user') semRepetido.shift();
 
-  return semRepetido.map((m) => ({ role: m.role, parts: [{ text: m.text }] }));
+  // 5) o carimbo do dia. Só entra quando a mensagem NÃO é de hoje — marcar as
+  // de hoje seria ruído, e o modelo passaria a repetir a marca na resposta.
+  //
+  // SEM CARIMBO NÃO É HOJE — mas só quando dá para comparar.
+  //
+  // O celular do vendedor pode estar rodando o pacote antigo por dias (é PWA,
+  // atualiza quando quer), e esse pacote manda o histórico inteiro sem carimbo.
+  // Marcar TUDO como "[outro dia]" ali seria trocar um erro por outro: o coach
+  // passaria a descontar até a pergunta de dois minutos atrás. Então o rótulo
+  // de dúvida só entra quando a conversa é MISTA — parte carimbada, parte não,
+  // que é o caso de quem acabou de atualizar no meio de uma conversa velha.
+  // Conversa sem carimbo nenhum fica limpa e quem segura a data é a conferência
+  // do fim, que é do servidor e não depende do aparelho.
+  const temCarimbo = semRepetido.some((m) => m.dia);
+  return semRepetido.map((m) => ({
+    role: m.role,
+    parts: [{
+      text: m.dia
+        ? (m.dia === hojeCurto ? m.text : `[${m.dia}] ${m.text}`)
+        : (temCarimbo ? `[outro dia] ${m.text}` : m.text),
+    }],
+  }));
 }
 
 /**
@@ -304,17 +340,34 @@ function historicoLimpo(historico) {
  * pela memória de treino, que é de outro ano — e aí a resposta não bate com a
  * aba de Condições nem quando o número está certo.
  */
-function hojeNoBrasil() {
-  return new Intl.DateTimeFormat('pt-BR', {
-    timeZone: 'America/Sao_Paulo',
-    weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
-  }).format(new Date());
-}
+// hojeNoBrasil e diaCurto moram em _hoje.js: o relógio é o mesmo para todas as
+// portas de IA, e o proxy não precisa carregar o método inteiro para saber o dia.
+// diaCurto marca o histórico a partir do carimbo que o APARELHO mandou — quem
+// manda o número é o cliente, então ele nunca decide nada: no máximo escreve um
+// rótulo errado numa mensagem antiga.
+
+/**
+ * O RELÓGIO NO FIM DA FILA.
+ *
+ * O método inteiro vive no primeiro turno, e isso é proposital (PEÇA 3). Mas
+ * data é a única informação do prompt que uma conversa longa consegue
+ * atropelar: depois de vinte turnos, a última data escrita na tela pesa mais
+ * que a primeira. Então ela é dita duas vezes — uma no método, outra aqui,
+ * encostada na pergunta de agora.
+ */
+const conferenciaDeData = (hoje, curto) => `[SISTEMA — isto não é fala de ninguém e não se comenta na resposta]
+CONFERÊNCIA DE DATA: hoje é ${hoje} (${curto}), horário de Brasília.
+Esta linha vale acima de QUALQUER data que apareça antes nesta conversa, inclusive de datas ditas por você mesmo: tudo o que está acima foi escrito no dia em que foi escrito, não hoje.
+Mensagens que começam com [dd/mm] ou com [outro dia] NÃO são de hoje — a marca é só o carimbo de quando aquilo foi dito. Nunca repita essas marcas na sua resposta e nunca trate a data de uma delas como o dia de hoje.
+Se for dizer que dia é hoje, ou calcular prazo, quinzena ou validade, use exatamente: ${hoje}.`;
 
 export function montarConversa({ app, vertical, ehGestor, segmento, produtos, perfil, historico, apelido }) {
+  const hoje = hojeNoBrasil();
+  const hojeCurto = diaCurto(Date.now());
+
   const promptFinal = [
     METODO_GSS(app),
-    `\n\n## HOJE\nHoje é ${hojeNoBrasil()} (horário de Brasília). Use ESTA data para julgar prazo e validade — nunca a sua memória de treino, e nunca chute o ano. Condição com prazo já vencido não se cita como vigente: diga que venceu e mande conferir com a gerência. Prazo que ainda não chegou também não vale como "agora".\n`,
+    `\n\n## HOJE\nHoje é ${hoje} (horário de Brasília). Use ESTA data para julgar prazo e validade — nunca a sua memória de treino, nunca uma data que apareça no meio da conversa, e nunca chute o ano. Mensagens do histórico que começam com [dd/mm] ou [outro dia] são de outro dia: a marca diz quando aquilo foi dito, não é parte do texto e não se repete na resposta. Condição com prazo já vencido não se cita como vigente: diga que venceu e mande conferir com a gerência. Prazo que ainda não chegou também não vale como "agora".\n`,
     ehGestor ? COMPLEMENTO_GESTOR : '',
     TRAVAS[vertical] || TRAVAS.revenda,
     arsenal(segmento),
@@ -322,9 +375,26 @@ export function montarConversa({ app, vertical, ehGestor, segmento, produtos, pe
     '\n\n' + contextoVivo(perfil, apelido),
   ].join('');
 
-  return [
+  const turnos = [
     { role: 'user', parts: [{ text: 'Contexto: ' + promptFinal }] },
     { role: 'model', parts: [{ text: (ehGestor ? ACK_GESTOR : ACK_VENDEDOR)(app) }] },
-    ...historicoLimpo(historico),
+    ...historicoLimpo(historico, hojeCurto),
   ];
+
+  // A conferência de data é o ÚLTIMO par antes da pergunta de agora. O turno de
+  // modelo logo abaixo existe pelo mesmo motivo do ACK: data que o modelo já
+  // disse com a própria boca ele não desdiz no parágrafo seguinte.
+  //
+  // O histórico normalmente termina em 'model' (a última resposta), mas não
+  // sempre: se uma pergunta falhou no meio, ele termina em 'user'. Dois turnos
+  // de usuário seguidos derrubam a chamada — daí a emenda.
+  if (turnos[turnos.length - 1].role === 'user') {
+    turnos.push({ role: 'model', parts: [{ text: 'Certo.' }] });
+  }
+  turnos.push(
+    { role: 'user', parts: [{ text: conferenciaDeData(hoje, hojeCurto) }] },
+    { role: 'model', parts: [{ text: `Confirmado: hoje é ${hoje}. Vou usar só esta data e não vou repetir as marcas [dd/mm].` }] },
+  );
+
+  return turnos;
 }

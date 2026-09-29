@@ -1,6 +1,7 @@
 // Rastreamento de "quem vê mais" — base da competição.
 // localStorage é a verdade do app (offline, instantâneo); statsSync manda uma
 // cópia agregada pro Firestore pra alimentar o Sistema de Gestão.
+import { hojeEmBrasilia, mesEmBrasilia } from './diaAtual';
 import { syncStats, type ElevaEventType } from './statsSync';
 import { valorDoEvento } from './valores';
 import { avisarCarimbo } from './carimbo';
@@ -40,7 +41,7 @@ export const WEEKLY_GOAL = 10; // pílulas/semana
 
 export interface Stats {
   week: string; // id da semana vigente
-  weekViews: number; // pílulas assistidas na semana
+  weekViews: number; // pílulas assistidas no MÊS (o nome é herança; o período é weekId, que é mensal)
   weekPoints: number; // pontos na semana
   weekMissions: number; // missões de conteúdo concluídas na semana
   totalViews: number; // histórico total
@@ -60,13 +61,18 @@ export interface Stats {
   perValor?: Record<string, number>;
 }
 
+// O DIA É O DE BRASÍLIA, NÃO O DE LONDRES.
+//
+// Isto aqui era `toISOString().slice(0,10)`, que é UTC: das 21h em diante o app
+// já estava no dia seguinte. Quem assistia uma pílula às 20h e voltava às 21h30
+// via a ofensiva zerada — a marca tinha sido gravada no dia de amanhã.
 function today(): string {
-  return new Date().toISOString().slice(0, 10);
+  return hojeEmBrasilia();
 }
 
 function weekId(d = new Date()): string {
   // Período do ranking = MÊS (os campos week* guardam o placar do mês vigente).
-  return `${d.getFullYear()}-${d.getMonth() + 1}`;
+  return mesEmBrasilia(d);
 }
 
 function fresh(): Stats {

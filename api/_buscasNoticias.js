@@ -13,7 +13,7 @@ export const BUSCAS = {
     concorrencia:
       '(GWM OR Haval OR BYD OR "Great Wall" OR "Jeep Compass" OR "Corolla Cross" OR "Honda HR-V" OR "Volkswagen T-Cross") SUV Brasil',
     mercado: 'emplacamentos OR Fenabrave OR "mercado automotivo" Brasil',
-    lancamentos: '(lançamento OR estreia OR "chega ao Brasil") (SUV OR carro) Brasil 2026',
+    lancamentos: '(lançamento OR estreia OR "chega ao Brasil") (SUV OR carro) Brasil {ANO}',
     condicoes:
       '(desconto OR "taxa zero" OR financiamento OR "tabela de preços" OR promoção) carro OR SUV Brasil',
     eletrificados: '(carro elétrico OR híbrido OR eletrificado) Brasil (venda OR preço OR recarga OR autonomia)',
@@ -27,7 +27,7 @@ export const BUSCAS = {
     concorrencia:
       '("Triumph Speed 400" OR "Honda CB 500" OR "Honda CB 300" OR "Yamaha MT-03" OR "Kawasaki Z400" OR Bajaj OR "Harley-Davidson X440") moto Brasil',
     mercado: 'emplacamentos OR Abraciclo OR "mercado de motos" Brasil',
-    lancamentos: '(lançamento OR estreia OR "chega ao Brasil") moto 2026 (350 OR 450 OR 650)',
+    lancamentos: '(lançamento OR estreia OR "chega ao Brasil") moto {ANO} (350 OR 450 OR 650)',
     condicoes:
       '(desconto OR "taxa zero" OR financiamento OR consórcio OR promoção) moto Brasil',
     eletrificados: '(moto elétrica OR "motocicleta elétrica") Brasil (lançamento OR autonomia OR preço)',
@@ -48,9 +48,26 @@ export function buscaPadrao(nome, frente) {
   return porFrente[frente] || base;
 }
 
+/**
+ * O ANO, RESOLVIDO NA HORA DA BUSCA.
+ *
+ * As buscas de Lançamentos tinham "2026" escrito à mão. Em 01/01/2027 elas
+ * continuariam pedindo ao Google notícia de 2026 e nada no código perceberia:
+ * a trava de idade julga o que VOLTOU, e o que volta seria matéria de 2026 —
+ * velha, mas dentro do prazo. A aba envelheceria em silêncio.
+ *
+ * Vai o ano corrente E o seguinte, porque lançamento se anuncia antes: em
+ * novembro a notícia que interessa já é do ano que vem.
+ */
+function anos() {
+  const ano = Number(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }).slice(0, 4));
+  return `(${ano} OR ${ano + 1})`;
+}
+
 export function buscaDa(marca, frente, nome) {
   if (!FRENTES.includes(frente)) return '';
-  return BUSCAS[marca]?.[frente] || buscaPadrao(nome || marca, frente);
+  const busca = BUSCAS[marca]?.[frente] || buscaPadrao(nome || marca, frente);
+  return busca.replace(/\{ANO\}/g, anos());
 }
 
 // Marcas de concessionária: só para elas o plano B das redações automotivas faz

@@ -1,3 +1,4 @@
+import { useDiaAtual } from './data/diaAtual';
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, Send, Sparkles, Mic, Square, RotateCcw } from 'lucide-react';
@@ -12,7 +13,7 @@ import { criarDitado, ditadoDisponivel } from './data/ditado';
 import { montarMemoria, type MemoriaCoach } from './data/memoriaCoach';
 import { carregarCondicoes } from './data/condicoes';
 
-type Msg = { role: 'user' | 'assistant'; content: string };
+type Msg = { role: 'user' | 'assistant'; content: string; at?: number };
 
 // Em dev (vite) as funções /api não rodam local — aponta pra produção pra testar.
 const API_URL = import.meta.env.DEV ? 'https://eleva-five.vercel.app/api/eleva-ia' : '/api/eleva-ia';
@@ -75,7 +76,16 @@ export default function AssistenteBalcao() {
   // A conversa começa de onde parou. No showroom a pessoa pergunta, o cliente
   // chega, ela volta dez minutos depois — e antes disso a conversa tinha sumido.
   const [msgs, setMsgs] = useState<Msg[]>([]);
-  const [conversaDe, setConversaDe] = useState('');
+  // O DIA COMO ESTADO, não como leitura única.
+  //
+  // Esta tela fica aberta dias no celular do vendedor. Antes, a etiqueta
+  // "Conversa de ontem" e a MEMÓRIA mandada pra IA eram calculadas na abertura
+  // e congelavam ali: no dia 29 a tela ainda dizia "Continuando a conversa"
+  // sobre uma conversa do dia 25, e a IA recebia a memória do dia 25.
+  const dia = useDiaAtual();
+  const [conversaEm, setConversaEm] = useState(0);
+  // `dia` não entra na conta: entra para a conta ser REFEITA quando o dia vira.
+  const conversaDe = useMemo(() => deQuandoEh(conversaEm), [conversaEm, dia]); // eslint-disable-line react-hooks/exhaustive-deps
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
@@ -140,7 +150,7 @@ export default function AssistenteBalcao() {
   useEffect(() => {
     const { msgs: guardadas, em } = lerConversa(brandId, user?.email);
     setMsgs(guardadas);
-    setConversaDe(deQuandoEh(em));
+    setConversaEm(em);
   }, [brandId, user?.email]);
 
   // Grava a cada troca. Duas guardas, e as duas custaram:
@@ -159,7 +169,7 @@ export default function AssistenteBalcao() {
   const novaConversa = () => {
     limparConversa(brandId, user?.email);
     setMsgs([]);
-    setConversaDe('');
+    setConversaEm(0);
     setErro('');
   };
 
@@ -175,7 +185,10 @@ export default function AssistenteBalcao() {
         .catch(() => {});
     });
     return () => { vivo = false; };
-  }, [brandId, user?.name, user?.email, user?.role, user?.segment]);
+    // `dia` nas dependências: quando o dia vira, a memória é remontada. Sem
+    // isso, a aba aberta desde o dia 25 continuava mandando as atividades, o
+    // "há quanto tempo" e a campanha do dia 25.
+  }, [brandId, user?.name, user?.email, user?.role, user?.segment, dia]);
 
   const enviar = async (texto: string) => {
     const pergunta = texto.trim();
@@ -183,7 +196,7 @@ export default function AssistenteBalcao() {
     setErro('');
     setInput('');
     const historico = msgs;
-    setMsgs((m) => [...m, { role: 'user', content: pergunta }]);
+    setMsgs((m) => [...m, { role: 'user', content: pergunta, at: Date.now() }]);
     setLoading(true);
     try {
       const r = await fetch(API_URL, {
@@ -202,7 +215,7 @@ export default function AssistenteBalcao() {
       const data = await r.json().catch(() => null);
       if (!r.ok) throw new Error(data?.error || `falha ${r.status}`);
       if (!data?.reply) throw new Error('A IA respondeu em branco. Tenta perguntar de outro jeito.');
-      setMsgs((m) => [...m, { role: 'assistant', content: data.reply }]);
+      setMsgs((m) => [...m, { role: 'assistant', content: data.reply, at: Date.now() }]);
     } catch (e) {
       // MOSTRA O QUE O SERVIDOR DISSE.
       //

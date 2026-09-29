@@ -12,10 +12,16 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { requireAuth, checkRateLimit } from './_auth.js';
 import { guardBudget } from './_aiBudget.js';
 import { MODELO_RAPIDO } from './_modelos.js';
+import { linhaDeHoje } from './_hoje.js';
 
 const MAX_MESSAGE_CHARS = 4000;
 
+// A DATA ENTRA AQUI TAMBÉM. A mensagem que o vendedor manda quase sempre tem
+// prazo dentro ("só até sexta", "a condição vai até dia 30"), e sem saber o dia
+// o modelo aprova como urgente uma promoção que já venceu.
 const ANALYSIS_PROMPT = (message, context, channel) => `Você é um coach de vendas especialista. Analise esta mensagem comercial que o vendedor vai enviar para o cliente.
+
+${linhaDeHoje()}
 
 CANAL: ${channel}
 CONTEXTO: ${context || 'não especificado'}
@@ -40,6 +46,12 @@ Seja honesto: se a mensagem for ruim, dê nota baixa. Se for excelente, dê nota
 NÃO inclua nenhum texto antes ou depois do JSON.`;
 
 export default async function handler(req, res) {
+  // Resposta de IA não se guarda em lugar nenhum: é por pessoa, por minuto,
+  // e uma resposta reaproveitada é uma resposta desatualizada — foi assim que
+  // a data velha chegou à tela. Mesmo trio que as rotas maestria-* já usam.
+  res.setHeader('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
+  res.setHeader('CDN-Cache-Control', 'no-store');
+  res.setHeader('Vercel-CDN-Cache-Control', 'no-store');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');

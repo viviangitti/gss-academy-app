@@ -1,6 +1,7 @@
 // Trilha de formação (estilo Rallyware): os produtos da marca viram uma jornada.
 // Cada produto é um passo. "Dominada" = passou no quiz; "Assistida" = viu a pílula.
 // Quando domina TODOS, ganha o certificado da marca.
+import { hojeEmBrasilia } from './diaAtual';
 import { allProducts } from './store';
 import { getStats } from './tracking';
 import { visibleProducts, type Product } from './products';
@@ -67,7 +68,7 @@ export function certDate(brandId: string): string | null {
 export function ensureCertDate(brandId: string): string {
   const existing = certDate(brandId);
   if (existing) return existing;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = hojeEmBrasilia();
   try {
     localStorage.setItem(certKey(brandId), today);
   } catch {

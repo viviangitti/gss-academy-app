@@ -18,6 +18,7 @@ import { guardBudget } from './_aiBudget.js';
 import { montarConversa } from './_coach.js';
 import { MODELOS } from './_modelos.js';
 import { anotarFalhaIA } from './_falhasIA.js';
+import { linhaDeHoje } from './_hoje.js';
 
 // A fila de modelos vive em _modelos.js — pinada e num lugar só, porque o
 // apelido '-latest' já derrubou esta IA duas vezes (ver o arquivo).
@@ -49,7 +50,16 @@ async function responder(apiKey, conversa, mensagem) {
   let ultimoErro = null;
   for (const modelo of MODELOS) {
     try {
-      const model = genAI.getGenerativeModel({ model: modelo });
+      // A DATA TAMBÉM FORA DA CONVERSA.
+      //
+      // O método vive no primeiro turno de propósito (PEÇA 3), e a conferência
+      // de data fecha a fila (_coach.js). Isto aqui é a terceira cópia, e é a
+      // única que nenhum turno de histórico consegue atropelar: o
+      // systemInstruction não é uma fala da conversa, é o chão dela.
+      const model = genAI.getGenerativeModel({
+        model: modelo,
+        systemInstruction: { parts: [{ text: linhaDeHoje() }] },
+      });
       const chat = model.startChat({ history: conversa });
       const r = await comPrazo(chat.sendMessage(mensagem), LIMITE_MS, modelo);
       const texto = (r?.response?.text?.() || '').trim();
@@ -68,6 +78,12 @@ async function responder(apiKey, conversa, mensagem) {
 }
 
 export default async function handler(req, res) {
+  // Resposta de IA não se guarda em lugar nenhum: é por pessoa, por minuto,
+  // e uma resposta reaproveitada é uma resposta desatualizada — foi assim que
+  // a data velha chegou à tela. Mesmo trio que as rotas maestria-* já usam.
+  res.setHeader('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
+  res.setHeader('CDN-Cache-Control', 'no-store');
+  res.setHeader('Vercel-CDN-Cache-Control', 'no-store');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');

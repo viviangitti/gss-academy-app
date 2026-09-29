@@ -66,7 +66,7 @@ Dias e entregas contam **só a Ramasa** (de 10/08 em diante).
 |---|---|---|---|---|---|
 | 11/09/2026 | 25 | 176 | 107 h | R$ 21.420 | R$ 35.380 |
 | 25/09/2026 | 33 | 213 | 158 h | R$ 31.600 | R$ 51.930 |
-| 28/09/2026 | 34 | 221 | 162 h | R$ 32.400 | R$ 51.930 |
+| 29/09/2026 | 34 | 222 | 162 h | R$ 32.400 | R$ 51.930 |
 
 (A versão publicada em 11/09 mostrava 49 dias e 346 entregas porque somava a
 plataforma base junto.)

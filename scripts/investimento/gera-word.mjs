@@ -57,11 +57,11 @@ const rotuloPlacar = (texto, dourado) => p(texto, {
   color: dourado ? OURO_ESCURO : CINZA_CLARO,
 });
 
-põe(rotuloPlacar('O que já foi feito para a Ramasa · 01/07 a 28/09/2026', true));
+põe(rotuloPlacar('O que já foi feito para a Ramasa · 01/07 a 29/09/2026', true));
 põe(tabela([
   new TableRow({ cantSplit: true, children: [
-    cartaoNumero('34', 'dias com entrega registrada', 'dentro de 89 dias corridos', true),
-    cartaoNumero('221', 'entregas registradas', 'cada uma com data e hora', true),
+    cartaoNumero('90', 'dias corridos desde a primeira conversa', '34 deles com entrega registrada', true),
+    cartaoNumero('222', 'entregas registradas', 'cada uma com data e hora', true),
     cartaoNumero('162 h', 'medidas', 'leitura conservadora, 60% da janela', true),
     cartaoNumero('R$ 32.400', 'custo dessas horas', 'a R$ 200 a hora', true),
   ] }),
@@ -82,8 +82,8 @@ põe(tabela([
   new TableRow({ cantSplit: true, children: [
     marco('01/07', 'primeira conversa com a Ramasa'),
     marco('10/08', 'primeira linha de conteúdo escrita'),
-    marco('28/08', 'o time começa a usar o app'),
-    marco('28/09', 'hoje · 89 dias corridos'),
+    marco('28/08', 'o time começa a usar o app — 32 dias de uso até hoje'),
+    marco('29/09', 'hoje · 90 dias corridos'),
   ] }),
 ], LK, { bordas: SEM_BORDAS }));
 
@@ -172,7 +172,7 @@ põe(tabela([
 
 // ── 2. esforço medido ─────────────────────────────────────────────────────────
 põe(h2('2. Esforço medido',
-  'Da primeira conversa com a Ramasa, em 01/07, até hoje: 89 dias corridos. Os números abaixo saem do histórico do repositório — data e hora de cada alteração, não estimativa de memória.'));
+  'Da primeira conversa com a Ramasa, em 01/07, até hoje: 90 dias corridos. Os números abaixo saem do histórico do repositório — data e hora de cada alteração, não estimativa de memória.'));
 
 const LF = [4200, 1900, 900, 1300, 1338];
 const linhaFase = (nome, desc, periodo, dias, entregas, horas, total) => new TableRow({
@@ -190,29 +190,29 @@ const linhaFase = (nome, desc, periodo, dias, entregas, horas, total) => new Tab
 põe(tabela([
   cabecalho([{ texto: 'Fase' }, { texto: 'Período', dir: true }, { texto: 'Dias', dir: true },
     { texto: 'Entregas', dir: true }, { texto: 'Horas', dir: true }], LF),
-  linhaFase('Descoberta e escopo', 'Primeira conversa, entender a operação da loja, receber o material da montadora e fechar o que o app precisava ter. Não vira commit — por isso não tem hora medida.',
+  linhaFase('Descoberta e escopo', 'Primeira conversa em 01/07, discussões e testes do app com o grupo, entender a operação da loja, receber o material da montadora e fechar o que ele precisava ter. Não vira commit — por isso não tem hora medida.',
     '01/jul a 09/ago', '—', '—', '—'),
   linhaFase('Vertical automotivo — Ramasa', 'Carros, acessórios, condições comerciais, cargos da loja, conteúdo.',
     '10/ago a 11/set', 25, 175, '172 h'),
   linhaFase('Depois da proposta — Ramasa', 'Jaecoo 5, Jornada, rituais, valores do grupo, lojas, computador, isolamento no banco.',
-    '12/set a 28/set', 9, 46, '66 h'),
-  linhaFase('Total medido', '', '10/ago a 25/set', 33, 213, '231 h', true),
+    '12/set a 29/set', 9, 47, '67 h'),
+  linhaFase('Total medido', '', '10/ago a 29/set', 34, 222, '239 h', true),
 ], LF));
 
 põe(p('', { depois: 120 }));
 põe(nota([
-  notaP('**Os 40 dias que não aparecem na tabela.** Entre a primeira conversa (01/07) e a primeira linha de conteúdo (10/08) passaram 40 dias de descoberta: entender como a loja vende, receber a carta e as fichas da montadora, decidir o que entrava. É trabalho real e é o que fez o resto ser rápido — mas não deixa registro de hora, e por isso não entra na conta. A conta começa onde dá para provar.'),
+  notaP('**Os 40 dias que não aparecem na tabela.** Entre a primeira conversa (01/07) e a primeira linha de conteúdo (10/08) passaram 40 dias de descoberta: discussões e testes do app com o grupo, entender como a loja vende, receber a carta e as fichas da montadora, decidir o que entrava. É trabalho real e é o que fez o resto ser rápido — mas não deixa registro de hora, e por isso não entra na conta. A conta começa onde dá para provar.'),
   p('', { depois: 100 }),
-  notaP('**De quem são estas horas.** Não são horas suas nem da Silene. São o tempo de **construção do app**, medido no histórico do repositório: cada alteração publicada tem data e hora, e a janela de cada dia é o que está somado aqui. As ~19 h de fora do código são as peças feitas à mão — vídeos, relatórios, apresentações e PDFs. Em 34 dias com entrega, dá **4,8 h por dia trabalhado**; espalhado nos 89 dias corridos desde a primeira conversa, dá **1,8 h por dia**. Seis desses dias foram fim de semana, e eles valem 12% do total — estão contados porque o trabalho aconteceu neles.'),
+  notaP('**De quem são estas horas.** Não são horas suas nem da Silene. São o tempo de **construção do app**, medido no histórico do repositório: cada alteração publicada tem data e hora, e a janela de cada dia é o que está somado aqui. As ~19 h de fora do código são as peças feitas à mão — vídeos, relatórios, apresentações e PDFs. Em 34 dias com entrega, dá **4,8 h por dia trabalhado**; espalhado nos 90 dias corridos desde a primeira conversa, dá **1,8 h por dia**. Seis desses dias foram fim de semana, e eles valem 12% do total — estão contados porque o trabalho aconteceu neles.'),
   p('', { depois: 100 }),
   notaP('**Como ler as horas.** São a janela entre a primeira e a última entrega de cada dia, mais 30 min. É período de trabalho, não foco cronometrado. A leitura conservadora — 60% da janela — dá **~143 h no código**. Some **~19 h fora dele** — vídeos, relatórios, apresentação de resultados, PDFs de apoio e a campanha: **~162 h**. Use o número conservador em qualquer conversa de preço: ele se defende sozinho.'),
   p('', { depois: 100 }),
-  notaP('**O que mudou na medição.** A versão de 11/09 somava a plataforma base junto e chegava a 49 dias / 346 entregas. Aqui a base saiu da conta: ela nasceu com a Meraki e a Sorocaps, é ativo da GSS e se repete de graça no próximo cliente. Contando **só a Ramasa**, eram 25 dias / 176 entregas em 11/09 e são **34 dias / 221 entregas** hoje — o crescimento real são as **9 jornadas e 66 h** desde então. O trabalho de escrever esta proposta também não entra: seria o número crescer sozinho a cada vez que ela é refeita.'),
+  notaP('**O que mudou na medição.** A versão de 11/09 somava a plataforma base junto e chegava a 49 dias / 346 entregas. Aqui a base saiu da conta: ela nasceu com a Meraki e a Sorocaps, é ativo da GSS e se repete de graça no próximo cliente. Contando **só a Ramasa**, eram 25 dias / 176 entregas em 11/09 e são **34 dias / 222 entregas** hoje — o crescimento real são as **9 jornadas e 66 h** desde então. O trabalho de escrever esta proposta também não entra: seria o número crescer sozinho a cada vez que ela é refeita.'),
 ]));
 
 
 // ── 3. custo de operação ──────────────────────────────────────────────────────
-põe(h2('3. Custo de operação', 'O que sai do bolso todo mês para o app continuar no ar. Medido hoje, 28/09.'));
+põe(h2('3. Custo de operação', 'O que sai do bolso todo mês para o app continuar no ar. Medido hoje, 29/09.'));
 
 const LO = [5600, 2300, 1738];
 const linhaCusto = (nome, desc, comoEsta, custo, total) => new TableRow({
@@ -467,7 +467,7 @@ põe(p(rico('A partir do segundo ano, sem o setup: **R$ 39.600** recorrentes. Cu
   { size: 17, color: CINZA }), { antes: 140, depois: 160, linha: 250 }));
 
 põe(nota([
-  notaP('**O investimento até hoje, em três números.** **34 dias de trabalho** dentro dos 89 dias corridos desde a primeira conversa, em 01/07, só para a Ramasa. **162 h** na leitura conservadora, que a R$ 200/h custam **R$ 32.400**. E a tabela cheia do que foi entregue — peça por peça, comparada com preço de mercado — dá **R$ 51.930**. A plataforma base não está aqui dentro, de propósito. O primeiro ano proposto é R$ 69.600: cobre o que foi feito e paga para continuar.', true),
+  notaP('**O investimento até hoje, em três números.** **34 dias de trabalho** dentro dos 90 dias corridos desde a primeira conversa, em 01/07, só para a Ramasa. **162 h** na leitura conservadora, que a R$ 200/h custam **R$ 32.400**. E a tabela cheia do que foi entregue — peça por peça, comparada com preço de mercado — dá **R$ 51.930**. A plataforma base não está aqui dentro, de propósito. O primeiro ano proposto é R$ 69.600: cobre o que foi feito e paga para continuar.', true),
 ], true));
 
 // ── o que falta decidir ───────────────────────────────────────────────────────

@@ -1160,7 +1160,14 @@
   font-weight: 500; margin-bottom: 14px;
 }
 .wp-gz-uplift b { color: var(--wp-pink); font-size: 18px; font-weight: 800; }
-.wp-gz-top-head { font-size: 12px; font-weight: 800; color: var(--wp-soft); margin-bottom: 9px; text-transform: uppercase; letter-spacing: 0.03em; }
+/* O selo de variação (+1013% vs ago) ficava SOLTO no meio da frase.
+   Ele já pedia `margin-left: auto`, que só funciona em flex — e este cabeçalho
+   nunca foi flex. Resultado no celular: o selo quebrava no meio, "AGO" caía
+   para a linha de baixo e encavalava o título. */
+.wp-gz-top-head {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  font-size: 12px; font-weight: 800; color: var(--wp-soft); margin-bottom: 9px; text-transform: uppercase; letter-spacing: 0.03em;
+}
 .wp-gz-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .wp-gz-bar-name { font-size: 12px; font-weight: 700; color: var(--wp-ink); width: 38%; flex-shrink: 0; }
 .wp-gz-bar-track { flex: 1; height: 10px; background: var(--wp-bg); border-radius: 99px; overflow: hidden; }
@@ -2094,7 +2101,8 @@
 
 /* Painel: resultados reais */
 .wp-gz-delta {
-  margin-left: auto; padding: 2px 8px; border-radius: 999px;
+  margin-left: auto; flex: none; white-space: nowrap;
+  padding: 2px 8px; border-radius: 999px;
   font-size: 10.5px; font-weight: 800;
 }
 .wp-gz-delta.up { background: #dcf5e3; color: #1f7a4d; }

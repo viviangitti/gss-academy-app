@@ -34,19 +34,19 @@ NEVOA  = (51400, 52171, 56283)   # #C8CBDB
 
 LINHAS = [
     ('ALIMENTADO POR',
-     'O Método GSS e o seu segmento.',
+     'O Método GSS e o segmento da empresa.',
      'O catálogo e a carta da sua marca.'),
-    ('O QUE ENSINA',
-     'COMO vender: abordagem, objeção e fechamento.',
-     'O QUE vender: produto, condição e documento oficial.'),
+    ('O QUE ENTREGA',
+     'Cinco abas: Painel, Negociações, Maestria, Raio X e Coaching.',
+     'Sete abas: Painel, Jornada, Ver como time, Condições, Notícias, Documentos e Tira-dúvida.'),
     ('NO DIA A DIA',
-     'Treino e simulação de atendimento, preparação da visita e pós-atendimento.',
-     'A resposta na hora, no meio do atendimento, só com o conteúdo aprovado.'),
+     'Boost na objeção, mensagem de prospecção e de resgate, treino falado e em vídeo.',
+     'A resposta na hora, a condição vigente e o one-page pronto pro cliente.'),
     ('O GESTOR VÊ',
-     'O gap de cada vendedor: por que ganha e por que perde.',
+     'Raio X do Time: por que cada vendedor ganha e por que perde.',
      'Quem estudou, quem parou e o que a ponta anda perguntando.'),
     ('SE TROCAR DE MARCA',
-     'Vai junto — método serve a qualquer catálogo.',
+     'Vai junto — o método serve a qualquer catálogo.',
      'Fica com a marca — ele é o catálogo.'),
 ]
 
@@ -70,12 +70,12 @@ txt('O copiloto da equipe comercial.', 230, 196, 330, 'Helvetica', 11, NEVOA)
 txt('ELEVA', 600, 174, 330, 'Helvetica-Bold', 15, GOLD)
 txt('O conhecimento da marca na mão de quem atende.', 600, 196, 330, 'Helvetica', 11, NEVOA)
 
-y = 236
+y = 228
 for rotulo, m, e in LINHAS:
     txt(rotulo, 43, y + 2, 175, 'Helvetica-Bold', 9, GOLD)
-    txt(m, 230, y, 330, 'Helvetica', 12, BRANCO)
-    txt(e, 600, y, 330, 'Helvetica', 12, BRANCO)
-    y += 54
+    txt(m, 230, y, 330, 'Helvetica', 11.5, BRANCO)
+    txt(e, 600, y, 330, 'Helvetica', 11.5, BRANCO)
+    y += 56
 
 txt('Um prepara o vendedor. O outro põe a marca na mão dele. É por isso que um não substitui o outro.',
     43, 500, 880, 'Helvetica-BoldOblique', 12, GOLD)

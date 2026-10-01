@@ -46,6 +46,16 @@ export interface Documento {
 
 export const DOCUMENTOS: Documento[] = [
   {
+    // O manual de lançamento que a montadora mandou em 30/09/2026. É INTERNO:
+    // tem volume de lote, divisão de estoque por loja e a nota de que o test
+    // drive é faturado com preço fictício. Nada disso vai para o cliente.
+    id: 'lancamento-jaecoo-5', brand: 'ramasa', prateleira: 'venda',
+    titulo: 'Lançamento JAECOO 5 — mecânica, prazos e evento',
+    paraQue: 'Como reservar pelo Webmotors, quanto o cliente paga para garantir, em quanto tempo o carro chega e o que acontece quando o lote acaba.',
+    arquivo: '/docs/ramasa/lancamento-jaecoo-5.pdf', paginas: 9, atualizado: 'set/2026',
+    interno: true,
+  },
+  {
     id: 'guia-jaecoo-7-my27', brand: 'ramasa', prateleira: 'venda',
     titulo: 'Guia do line-up MY27 — Jaecoo 7',
     paraQue: 'O que muda entre ELITE, LUXURY e PRESTIGE, item por item — e o comparativo de gasto anual contra Corolla Cross, Compass e Taos.',

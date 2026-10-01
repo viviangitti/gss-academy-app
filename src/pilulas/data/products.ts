@@ -1239,6 +1239,24 @@ export const PRODUCTS: Product[] = [
     salesLine: 'Me diz quanto você roda por dia e onde estaciona à noite, que eu te mostro em números o que esse carro muda na sua conta do mês.',
     objections: [
       {
+        // AS PERGUNTAS QUE O LANÇAMENTO CRIOU (manual da montadora, 30/09/2026).
+        // Não são objeções de produto: são as três coisas que o cliente pergunta
+        // no primeiro minuto quando o carro ainda não está no pátio.
+        trigger: '"Como eu garanto o meu? Já posso comprar?"',
+        answer:
+          'Dá para garantir hoje: a reserva é feita na página do carro no Webmotors. Você põe o CEP, escolhe a nossa loja, preenche os dados e escolhe cor e versão. Sai um PIX de R$ 5.000 que vale 24 horas — pago direto na conta da concessionária, não para o Webmotors. Assim que cai, a reserva é sua e o pedido já entra no nosso sistema. Eu acompanho daqui.',
+      },
+      {
+        trigger: '"E se não tiver a cor ou a versão que eu quero?"',
+        answer:
+          'Aí não dá para reservar, mas dá para entrar na fila: você deixa o cadastro mesmo assim e eu te chamo quando abrir. Só sendo honesto com você — cadastro não segura carro. O que segura é a reserva paga, e ela depende de ter a cor e a versão disponíveis na hora.',
+      },
+      {
+        trigger: '"Em quanto tempo eu recebo?"',
+        answer:
+          'Depende de onde o seu carro vem. Temos unidades já faturadas no estoque da rede, que são as mais rápidas. O primeiro lote de reservas entrega entre 30 e 60 dias. Quando ele acaba, abre o segundo, com cerca de 90 dias. Depois disso a entrega passa a ser por alocação, em torno de 120 dias. Por isso reservar cedo não é pressa de vendedor: é o que define em qual desses prazos você cai.',
+      },
+      {
         trigger: '"Híbrido não precisa de tomada?"',
         answer:
           'Esse não. O Jaecoo 5 é híbrido pleno: a bateria se recarrega sozinha, com o motor e com a frenagem. Você abastece no posto, como sempre fez, e a parte elétrica trabalha dentro do carro. Não tem wallbox, não tem obra na garagem e não tem conta de luz.',

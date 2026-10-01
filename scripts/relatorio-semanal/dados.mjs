@@ -68,7 +68,17 @@ export function nomesDeDocumentos() {
 
 export async function coletar(segunda, recorte) {
   const de = segunda, ate = mais(segunda, 6);
-  const deAnt = mais(de, -7), ateAnt = mais(de, -1);
+  // SEMANA PELA METADE NÃO SE COMPARA COM SEMANA INTEIRA.
+  //
+  // Rodando o relatório numa quinta-feira, a semana corrente tem 4 dias e a
+  // anterior tem 7 — e a comparação mostrava tudo despencando ("-70 ações")
+  // quando na verdade faltavam três dias. É o tipo de número que, mostrado ao
+  // cliente, parece abandono do app. Agora a janela anterior é cortada no
+  // MESMO número de dias já decorridos.
+  const hojeBR = new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10);
+  const parcial = ate > hojeBR;
+  const diasDecorridos = parcial ? (entre(de, hojeBR) + 1) : 7;
+  const deAnt = mais(de, -7), ateAnt = mais(deAnt, diasDecorridos - 1);
   const r = await fetch('https://identitytoolkit.googleapis.com/v1/projects/eleva-gss/accounts:batchGet?maxResults=500', { headers: { Authorization: `Bearer ${TOKEN}` } });
   if (!r.ok) throw new Error(`Firebase Auth recusou (${r.status})`);
   const auth = (await r.json()).users || [];
@@ -141,7 +151,7 @@ export async function coletar(segunda, recorte) {
     naSemana: naJanela(p, de, ate).length, ultimo: ultimo(p) || null })).sort((a, b) => b.naSemana - a.naSemana);
 
   return {
-    de, ate, deAnt, ateAnt, geradoEm: new Date().toISOString(),
+    de, ate, deAnt, ateAnt, parcial, diasDecorridos, geradoEm: new Date().toISOString(),
     recorte: L ? { ...L, chave: recorte, semDominio, noGrupo: todos.length } : null,
     contas: pessoas.length, totalGestores: pessoas.filter((p) => p.gestor).length, totalLeads: pessoas.filter((p) => LEADS.includes(p.cargo)).length,
     semana: resumo(de, ate), anterior: resumo(deAnt, ateAnt), dias, semanas, tipos,

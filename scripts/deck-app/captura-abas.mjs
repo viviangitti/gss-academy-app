@@ -32,7 +32,13 @@ const CONDICOES = (() => {
   // disco (é a que está no ar), então ela entra embutida no cache e a tela
   // fotografa o que o time vê de verdade.
   const lista = JSON.parse(fs.readFileSync(T + 'condicoes-reais.json', 'utf8'));
-  const arte = fs.readFileSync('/private/tmp/claude-501/-Users-viviangitti-gss/84f94a70-efb7-46bd-8bda-f478a2a6d14f/scratchpad/abas/campanha-dataurl.txt', 'utf8');
+  // A arte vive numa pasta de trabalho que pode não existir — se faltar, a
+  // captura segue sem ela em vez de morrer. O ARQUIVO é gerado por quem
+  // precisa da folha aberta no print (ver o README).
+  const ARTE = '/private/tmp/claude-501/-Users-viviangitti-gss/84f94a70-efb7-46bd-8bda-f478a2a6d14f/scratchpad/abas/campanha-dataurl.txt';
+  let arte = '';
+  try { arte = fs.readFileSync(ARTE, 'utf8'); } catch { console.log('   (sem a arte da campanha — a folha vai aparecer fechada)'); }
+  if (!arte) return JSON.stringify(lista);
   return JSON.stringify(lista.map((c) => (c.id === 'campanha-set26-premiacao' ? { ...c, arquivo: arte } : c)));
 })();
 
@@ -163,6 +169,9 @@ await tela('/eleva/ficha/estribo-iluminado', 'ficha-acessorio.png');
 await tela('/eleva/ofertas', 'condicoes.png');
 await tela('/eleva/noticias', 'noticias.png', { espera: 6000 });
 await tela('/eleva/documentos', 'documentos.png', { rolar: 120 });
+// O lançamento do Jaecoo 5: o documento na prateleira e as perguntas no carro.
+await tela('/eleva/documentos', 'j5-documento.png', { rolar: 1180 });
+await tela('/eleva/produto/jaecoo-5', 'j5-perguntas.png', { rolar: 2600, espera: 5000 });
 await tela('/eleva/assistente', 'tira-duvida.png', { espera: 4500 });
 
 c.fechar(); proc.kill();

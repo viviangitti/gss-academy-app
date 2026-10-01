@@ -128,7 +128,7 @@ table.t{width:100%;border-collapse:collapse;font-size:10px}.t th{text-align:left
   <div class="capa">
     <div><div class="k">ELEVA · RELATÓRIO SEMANAL · ${edicao}ª SEMANA</div>
       <h1>Semana de ${dm(D.de)} a ${dm(D.ate)}</h1>
-      <p class="dt">Uso do app ${D.recorte ? `na ${D.recorte.nome}` : 'no Grupo Ramasa'} · segunda a domingo</p>
+      <p class="dt">Uso do app ${D.recorte ? `na ${D.recorte.nome}` : 'no Grupo Ramasa'} · ${D.parcial ? `semana em andamento — ${D.diasDecorridos} ${D.diasDecorridos === 1 ? 'dia' : 'dias'} corridos, comparados com os mesmos ${D.diasDecorridos} da semana passada` : 'segunda a domingo'}</p>
       ${D.recorte ? `<p class="dt" style="margin-top:2mm">Recorte por e-mail @${D.recorte.dominio} — ${D.contas} das ${D.recorte.noGrupo} contas do grupo. ${D.recorte.semDominio} pessoas usam e-mail pessoal e não entram em loja nenhuma.</p>` : ''}</div>
     <img src="${img('logo-gss.png')}">
   </div>
@@ -252,7 +252,7 @@ table.t{width:100%;border-collapse:collapse;font-size:10px}.t th{text-align:left
   ${recs.slice(0, 8).map(([t, fato, acao], i) => `<div class="rec"><div class="num">${i + 1}</div><div><b>${t}</b><div class="fato">${esc(fato)}</div><div class="acao">→ ${esc(acao)}</div></div></div>`).join('')}
   <h3 style="margin-top:16px">Como ler este relatório</h3>
   <div class="cx">
-    <p><b>Semana</b> vai de segunda a domingo. <b>Ação</b> é qualquer coisa que a pessoa fez com conteúdo: abrir um carro, uma objeção ou um documento, gerar material, fazer o quiz.</p>
+    <p>${D.parcial ? `<b>Esta semana ainda não fechou.</b> O relatório cobre os ${D.diasDecorridos} dias já corridos, e a comparação usa os mesmos ${D.diasDecorridos} dias da semana anterior — comparar meia semana com uma inteira faria tudo parecer queda. ` : ''}<b>Semana</b> vai de segunda a domingo. <b>Ação</b> é qualquer coisa que a pessoa fez com conteúdo: abrir um carro, uma objeção ou um documento, gerar material, fazer o quiz.</p>
     <p><b>Material enviado</b> é o resumo do carro gerado para o cliente, com o contato do vendedor.</p>
     <p>Fonte: Firebase ao vivo (contas e registro de uso do app), lido em ${new Date(D.geradoEm).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}. Contas de teste ficam fora.</p>
   </div>

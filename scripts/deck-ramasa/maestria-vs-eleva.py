@@ -86,12 +86,16 @@ tell application "Keynote"
   set d to open src
   -- O FUNDO ESCURO É DO SLIDE, NÃO É UM OBJETO.
   --
+  -- Era o slide 5 que servia de molde, mas ele virou CLARO em 30/09. Agora o
+  -- molde é o 7 (este mesmo comparativo) — se um dia ele também clarear,
+  -- troque aqui por outro slide escuro.
+  --
   -- O deck tem um layout só ("DEFAULT", branco): os slides escuros têm a cor
   -- no fundo do próprio slide, e o AppleScript não deixa definir nem o fundo
   -- do slide nem o preenchimento de uma forma. Então o caminho é duplicar um
   -- slide escuro que já existe, esvaziar e escrever por cima — assim o fundo
   -- vem exatamente igual ao dos outros.
-  duplicate slide 5 of d
+  duplicate slide 7 of d
   move slide (count of slides of d) of d to after slide {DEPOIS} of d
   set s to slide {POS} of d
   -- A ORDEM IMPORTA: formas e imagens primeiro. Apagar os textos antes disso

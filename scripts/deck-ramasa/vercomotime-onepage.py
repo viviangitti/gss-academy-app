@@ -12,12 +12,18 @@ folha aparece sem explicação, e os três textos do slide falam da aba, não de
 
 Fundo transparente — o painel escuro do slide continua aparecendo em volta.
 
-Uso: python3 vercomotime-onepage.py <pasta> <saida.png>
+O terceiro argumento escolhe a ETAPA, porque o Keynote não deixa um script
+criar animação: o efeito é feito com dois slides seguidos.
+  'celular'  — só o aparelho (primeira etapa)
+  'completo' — aparelho + one-page (segunda etapa)
+
+Uso: python3 vercomotime-onepage.py <pasta> <saida.png> [celular|completo]
 """
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 import sys
 
 PASTA, SAIDA = sys.argv[1], sys.argv[2]
+ETAPA = sys.argv[3] if len(sys.argv) > 3 else 'completo'
 E = 2
 L, A = 360 * E, 450 * E
 GOLD = (201, 168, 76)
@@ -48,7 +54,18 @@ cx, cy = 0, 120 * E
 sombra(base, corpo, cx, cy, (6 * E, 9 * E), 11 * E, 165)
 base.alpha_composite(corpo, (cx, cy))
 
-# 2) a folha, na frente: é ela que o cliente recebe
+# 2) a folha, na frente: é ela que o cliente recebe.
+#    Na primeira etapa ela não existe ainda — é justamente ela que "entra".
+if ETAPA == 'celular':
+    d = ImageDraw.Draw(base)
+    fonte = ImageFont.truetype(A_BOLD, 10 * E)
+    texto = 'TELA DA GERÊNCIA'
+    larg = d.textlength(texto, font=fonte)
+    d.text(((L - larg) / 2, 432 * E), texto, font=fonte, fill=GOLD + (255,))
+    base.save(SAIDA)
+    print('composição (só o celular):', SAIDA, base.size)
+    sys.exit(0)
+
 folha = Image.open(f'{PASTA}/onepage.png').convert('RGB')
 fh = 372 * E
 fw = round(fh * folha.width / folha.height)

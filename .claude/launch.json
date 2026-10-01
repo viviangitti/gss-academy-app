@@ -36,6 +36,15 @@
         "cd /Users/viviangitti/gssacademy/landing-page && npx vite preview --port 5201 --strictPort"
       ],
       "port": 5201
+    },
+    {
+      "name": "meraki-redesign",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/viviangitti/meraki-redesign && npx vite preview --port 5210 --strictPort"
+      ],
+      "port": 5210
     }
   ]
 }

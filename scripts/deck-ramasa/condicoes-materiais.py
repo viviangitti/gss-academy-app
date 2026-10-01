@@ -18,7 +18,7 @@ import sys
 
 PASTA, SAIDA = sys.argv[1], sys.argv[2]
 E = 2
-L, A = 620 * E, 540 * E          # o painel escuro inteiro
+L, A = 600 * E, 540 * E          # o painel escuro inteiro
 GOLD = (201, 168, 76)
 A_BOLD = '/System/Library/Fonts/Supplemental/Arial Bold.ttf'
 
@@ -43,7 +43,7 @@ base = Image.new('RGBA', (L, A), (0, 0, 0, 0))
 
 # 1) a arte da campanha, a peça mais vistosa: vai atrás e à esquerda
 arte = papel(Image.open(ARTE).convert('RGB'), 424)
-ax, ay = 36 * E, 42 * E
+ax, ay = 28 * E, 42 * E
 sombra(base, arte, ax, ay, (9 * E, 13 * E), 15 * E, 185)
 base.alpha_composite(arte, (ax, ay))
 
@@ -51,7 +51,7 @@ base.alpha_composite(arte, (ax, ay))
 tela = Image.open(f'{PASTA}/telas/ficha-acessorio.png').convert('RGB')
 # a folha ocupa x 50..1120, y 575..1880 na captura de 1170 px
 ficha = papel(tela.crop((50, 575, 1120, 1880)), 352)
-fx, fy = 318 * E, 126 * E
+fx, fy = 306 * E, 126 * E
 sombra(base, ficha, fx, fy, (9 * E, 13 * E), 15 * E, 195)
 base.alpha_composite(ficha, (fx, fy))
 

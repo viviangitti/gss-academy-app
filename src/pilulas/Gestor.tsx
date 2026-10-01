@@ -2348,13 +2348,24 @@ export default function Gestor() {
           {openForm === 'condicao' && !editandoCond && (
             <CondicaoForm brand={brandId} onDone={(t) => done(t, 'Condição')} />
           )}
+          {/* ARQUIVADA, NÃO APAGADA.
+              A regra da casa é: condição vencida sai do ar e FICA, como
+              histórico — a gerência ainda precisa dela depois da virada, para
+              apurar a premiação e para conferir o que foi praticado no mês.
+              O app já tirava da tela do vendedor sozinho; o que faltava era
+              dizer isso com todas as letras aqui, e não deixar a vencida
+              embaralhada no meio das que estão valendo. */}
           <div className="wp-gz-list">
-            {condicoes.map((c, i) => (
+            {[...condicoes].sort((a, b) => Number(estaVencida(a)) - Number(estaVencida(b))).map((c, i) => (
               <div key={c.id}>
                 <div className={`wp-gz-item ${estaVencida(c) ? 'wp-gz-item-off' : ''}`}>
                   <span className="wp-gz-item-name">
                     {c.titulo}
-                    {estaVencida(c) && <span className="wp-gz-fora">vencida — fora do ar</span>}
+                    {estaVencida(c) && (
+                      <span className="wp-gz-fora">
+                        arquivada{c.venceEm ? ` — fora do ar desde ${c.venceEm.split('-').reverse().slice(0, 2).join('/')}` : ' — fora do ar'}
+                      </span>
+                    )}
                   </span>
                   <span className="wp-gz-item-meta">
                     {c.validade}

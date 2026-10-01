@@ -24,7 +24,17 @@ const OBJS = fs.readFileSync(T + 'objecoes-ramasa.json', 'utf8');
 // Firebase — sem isto ela fotografa "Nenhuma tabela publicada ainda", que é
 // justamente o contrário do que a aba faz. São as mesmas 14 folhas que o time
 // da Ramasa vê, lidas do banco por scripts/tutorial (condicoes-reais.json).
-const CONDICOES = fs.readFileSync(T + 'condicoes-reais.json', 'utf8');
+const CONDICOES = (() => {
+  // A FOLHA DA CAMPANHA, DE VERDADE.
+  //
+  // A sessão de captura não tem login do Firebase, então toda folha vinha como
+  // "não consegui abrir a folha". A arte da Premiação de setembro existe em
+  // disco (é a que está no ar), então ela entra embutida no cache e a tela
+  // fotografa o que o time vê de verdade.
+  const lista = JSON.parse(fs.readFileSync(T + 'condicoes-reais.json', 'utf8'));
+  const arte = fs.readFileSync('/private/tmp/claude-501/-Users-viviangitti-gss/84f94a70-efb7-46bd-8bda-f478a2a6d14f/scratchpad/abas/campanha-dataurl.txt', 'utf8');
+  return JSON.stringify(lista.map((c) => (c.id === 'campanha-set26-premiacao' ? { ...c, arquivo: arte } : c)));
+})();
 
 const VENDEDOR = { uid: 'demo-vend', name: 'Walther', email: 'walther@tigeromoda.com.br',
   role: 'balconista', cargo: 'vendedor-veiculos', brands: ['ramasa'], loja: 'tiger-goiania' };
@@ -84,7 +94,10 @@ async function semente(user, extra = '') {
             if (!alvo) return;
             var st = document.createElement('style');
             st.id = 'sem-avisos';
-            st.textContent = '.wp-aviso{display:none !important}';
+            // .wp-rit-fundo é o ritual do mês: no dia 14 e no dia 30 ele abre por cima
+            // de tudo e tapa a tela inteira. É comportamento certo do app e errado
+            // para a foto.
+            st.textContent = '.wp-aviso, .wp-rit-fundo{display:none !important}';
             alvo.appendChild(st);
           } catch (e) { /* ainda não deu: o DOMContentLoaded tenta de novo */ }
         };
@@ -135,6 +148,12 @@ await tela('/eleva/catalogo', 'ver-como-time.png', { rolar: 250 });
 console.log('como VENDEDOR (Walther):');
 await semente(VENDEDOR);
 await tela('/eleva/jornada', 'jornada.png');
+// DENTRO DA ABA: os assets que a GSS produziu para a Ramasa.
+// A Vivian pediu para o slide mostrar o que existe dentro de Condições — o
+// catálogo de acessórios e a campanha da casa — e não só as três categorias.
+await tela('/eleva/ofertas', 'cond-campanha.png', { clicar: 'Campanhas da casa', espera: 4500 });
+await tela('/eleva/acessorio/estribo-iluminado', 'acessorio.png');
+
 // FICA NA TELA DE ENTRADA DA ABA, de propósito.
 // Entrar em "Veículos" mostraria as folhas — mas a sessão de captura não tem
 // login do Firebase e cada folha vira "não consegui abrir a folha". Tela de

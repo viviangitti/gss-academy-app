@@ -153,6 +153,8 @@ await tela('/eleva/jornada', 'jornada.png');
 // catálogo de acessórios e a campanha da casa — e não só as três categorias.
 await tela('/eleva/ofertas', 'cond-campanha.png', { clicar: 'Campanhas da casa', espera: 4500 });
 await tela('/eleva/acessorio/estribo-iluminado', 'acessorio.png');
+// A FICHA DO ACESSÓRIO como documento: é material, não tela de app.
+await tela('/eleva/ficha/estribo-iluminado', 'ficha-acessorio.png');
 
 // FICA NA TELA DE ENTRADA DA ABA, de propósito.
 // Entrar em "Veículos" mostraria as folhas — mas a sessão de captura não tem

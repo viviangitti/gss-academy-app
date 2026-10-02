@@ -5,13 +5,33 @@ import { nomesDeDocumentos } from './dados.mjs';
 const ASSETS = new URL('./assets/', import.meta.url);
 const img = (arq) => 'data:image/' + (arq.endsWith('.png') ? 'png' : 'jpeg') + ';base64,' + readFileSync(new URL(arq, ASSETS)).toString('base64');
 const imgOuNada = (arq) => { try { return img(arq); } catch { return ''; } };
+// A FOTO DO CARRO VEM DO APP QUANDO NÃO HÁ ASSET PRÓPRIO.
+//
+// O Jaecoo 5 saiu SEM FOTO no relatório de 01/10 — e era o carro mais aberto
+// da semana, no topo da lista. A pasta assets/ tinha só os quatro carros
+// antigos, e nada avisava quando entrava um quinto. Agora, faltando o asset,
+// o relatório pega a primeira foto que o próprio app publica em
+// public/carros/<id>-1.jpg. Carro novo nunca mais sai em branco.
+const APP_CARROS = new URL('../../public/carros/', import.meta.url);
+const imgDoApp = (arq) => { try { return 'data:image/jpeg;base64,' + readFileSync(new URL(arq, APP_CARROS)).toString('base64'); } catch { return ''; } };
 
 const CARRO = { 'jaecoo-7': 'Jaecoo 7 SHS-P', 'jaecoo-5': 'Jaecoo 5 SHS-H', 'omoda-5-shs-h': 'Omoda 5 SHS-H', 'omoda-e5': 'Omoda E5', 'omoda-7-shs-p': 'Omoda 7 SHS-P' };
 const nomeCarro = (id) => CARRO[String(id).split('|')[0]] || String(id).split('|')[0];
 const LOJA = { 'tiger-goiania': 'Tiger Goiânia', 'tiger-anapolis': 'Tiger Anápolis', 'tiger-itumbiara': 'Tiger Itumbiara' };
-const CARGO = { 'vendedor-veiculos': 'vendedor de veículos', 'supervisor-vendas': 'supervisor de vendas', 'vendedor-acessorios': 'vendedor de acessórios', fi: 'F&I', 'gerente-vendas': 'gerente de vendas',
-  'gerente-veiculos': 'gerente de veículos', 'gerente-acessorios': 'gerente de acessórios', 'lider-acessorios': 'supervisor de acessórios',
-  'executivo-leads': 'executivo de leads', 'gerente-leads': 'gerente de leads' };
+// OS CARGOS SAEM DO APP, não de uma cópia aqui.
+//
+// Esta lista era escrita à mão e ficou para trás: Becegato, Jessica e Leticia
+// Maria apareceram com "—" no relatório de 01/10 porque 'diretor-qualidade' e
+// 'lider-qualidade' tinham sido criados no app e ninguém lembrou de copiar.
+// Lendo data/cargos.ts, cargo novo entra sozinho.
+const CARGO = (() => {
+  const mapa = {};
+  try {
+    const fonte = readFileSync(new URL('../../src/pilulas/data/cargos.ts', import.meta.url), 'utf8');
+    for (const m of fonte.matchAll(/id:\s*'([^']+)',\s*\n\s*label:\s*'([^']+)'/g)) mapa[m[1]] = m[2];
+  } catch { /* sem o arquivo, cai no traço */ }
+  return mapa;
+})();
 const cargo = (c) => CARGO[c] || '—';
 const dm = (d) => `${d.slice(8)}/${d.slice(5, 7)}`;
 const SEM = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
@@ -78,7 +98,7 @@ export function montar(D) {
 
   const QUEM = D.recorte ? D.recorte.nome : 'Grupo Ramasa';
   const rod = (n) => `<div class="rod"><span>Eleva · Relatório semanal · ${QUEM} · ${dm(D.de)} a ${dm(D.ate)}/${D.ate.slice(0, 4)}</span><span>${n} / 7</span></div>`;
-  const carroImg = (id) => imgOuNada(`carro-${id}.jpg`);
+  const carroImg = (id) => imgOuNada(`carro-${id}.jpg`) || imgDoApp(`${id}-1.jpg`);
 
   return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><style>
 @page{size:A4;margin:0}*{box-sizing:border-box}

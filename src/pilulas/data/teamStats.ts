@@ -5,12 +5,19 @@
 //
 // O mês a mês sai do array `events` (últimos 200 por pessoa, cada um com data) —
 // o agregado `month` só guarda o mês corrente, então histórico só existe ali.
+import type { ElevaEventType } from './statsSync';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { ehContaDeTeste } from './contasDeTeste';
 
 export interface TeamEvent {
-  type: 'pill_view' | 'quiz_pass' | 'mission_done';
+  // A LISTA INTEIRA, não só as três que pontuam.
+  //
+  // Estava fixa em pill_view/quiz_pass/mission_done, e os eventos chegam
+  // crus do Firestore: o tipo mentia sobre o que existe no array. Quem
+  // quisesse contar one-page enviado ou objeção consultada no Painel
+  // esbarrava num erro de tipo sobre um dado que está lá.
+  type: ElevaEventType;
   id: string;
   points: number;
   at: string; // ISO
@@ -205,4 +212,112 @@ export function buildReport(people: TeamPerson[], allowedIds?: Set<string>, mont
     ranking,
     semUso,
   };
+}
+
+// ---------------------------------------------------------------------------
+// QUEM PAROU, AS LOJAS LADO A LADO E A COMPARAÇÃO COM O PERÍODO ANTERIOR.
+//
+// O Painel respondia "quanto" e o relatório semanal respondia "o que mudou e
+// o que fazer". Estas três funções trazem a segunda parte para dentro do app.
+// A apuração é a mesma de scripts/relatorio-semanal — o que muda é só a fonte
+// (aqui vem do fetchTeam, lá do Firestore cru).
+
+/** O dia de Brasília de um evento. O dia da loja, não o de Londres. */
+function diaBR(iso: string | Date): string {
+  const d = typeof iso === 'string' ? new Date(iso) : iso;
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(d);
+}
+
+const diasEntre = (a: string, b: string) =>
+  Math.round((Date.parse(b + 'T12:00:00Z') - Date.parse(a + 'T12:00:00Z')) / 86400000);
+
+export interface Parado {
+  pessoa: TeamPerson;
+  /** Há quantos dias não abre o app. */
+  dias: number;
+}
+
+/**
+ * QUEM USAVA E SUMIU.
+ *
+ * Diferente de `semUso`, que é quem nunca começou. Esta é a lista mais
+ * acionável do Painel e era a que não existia: dá para cobrar hoje, com nome e
+ * com o número de dias na mão. Quem nunca usou fica de fora — tem card próprio.
+ */
+export function quemParou(people: TeamPerson[], dias = 7): Parado[] {
+  const hoje = diaBR(new Date());
+  return people
+    .map((pessoa) => {
+      const ultimo = pessoa.events.map((e) => diaBR(e.at)).sort().pop();
+      return ultimo ? { pessoa, dias: diasEntre(ultimo, hoje) } : null;
+    })
+    .filter((x): x is Parado => !!x && x.dias >= dias)
+    .sort((a, b) => b.dias - a.dias);
+}
+
+export interface LinhaLoja {
+  loja: string;
+  total: number;
+  /** Quantos abriram o app nos últimos `dias`. */
+  ativos: number;
+  acoes: number;
+}
+
+/**
+ * AS LOJAS LADO A LADO — a tela da diretoria.
+ *
+ * Com filtro, comparar duas lojas é clicar quatro vezes e guardar de cabeça.
+ * A distância entre a primeira e a última é o maior ganho disponível do grupo,
+ * e ela só aparece quando as duas estão na mesma tela.
+ */
+export function porLoja(people: TeamPerson[], dias = 7): LinhaLoja[] {
+  const hoje = diaBR(new Date());
+  const mapa = new Map<string, LinhaLoja>();
+  for (const p of people) {
+    const loja = p.loja || '';
+    const linha = mapa.get(loja) || { loja, total: 0, ativos: 0, acoes: 0 };
+    linha.total += 1;
+    linha.acoes += p.events.length;
+    const ultimo = p.events.map((e) => diaBR(e.at)).sort().pop();
+    if (ultimo && diasEntre(ultimo, hoje) < dias) linha.ativos += 1;
+    mapa.set(loja, linha);
+  }
+  return [...mapa.values()].sort((a, b) => b.acoes - a.acoes);
+}
+
+export interface Janela { acoes: number; pessoas: number; materiais: number }
+
+/**
+ * O PERÍODO DE AGORA E O ANTERIOR, do mesmo tamanho.
+ *
+ * Número absoluto não diz se melhorou. E comparar sete dias com quatro faz
+ * tudo parecer queda — foi o defeito que o relatório semanal tinha. As duas
+ * janelas aqui têm sempre a mesma quantidade de dias.
+ */
+export function comparativo(people: TeamPerson[], dias = 7): { atual: Janela; anterior: Janela } {
+  const hoje = diaBR(new Date());
+  const recua = (n: number) => diaBR(new Date(Date.parse(hoje + 'T12:00:00Z') - n * 86400000));
+  const inicioAtual = recua(dias - 1);
+  const inicioAnt = recua(dias * 2 - 1);
+  const fimAnt = recua(dias);
+
+  const conta = (de: string, ate: string): Janela => {
+    const quem = new Set<string>();
+    let acoes = 0;
+    let materiais = 0;
+    for (const p of people) {
+      for (const e of p.events) {
+        const d = diaBR(e.at);
+        if (d < de || d > ate) continue;
+        acoes += 1;
+        quem.add(p.uid);
+        if (e.type === 'onepage') materiais += 1;
+      }
+    }
+    return { acoes, pessoas: quem.size, materiais };
+  };
+
+  return { atual: conta(inicioAtual, hoje), anterior: conta(inicioAnt, fimAnt) };
 }

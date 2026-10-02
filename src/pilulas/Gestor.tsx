@@ -13,7 +13,7 @@ import type { OfferKind } from './data/offers';
 import { CHANNELS, type Channel } from './data/creatorContent';
 import { SEGMENTS, segmentLabel } from './data/segments';
 import { topSearches } from './data/insights';
-import { fetchTeam, buildReport, type TeamPerson } from './data/teamStats';
+import { fetchTeam, buildReport, quemParou, porLoja, comparativo, type TeamPerson } from './data/teamStats';
 import { CAMPANHA, prazoLabel } from './data/campanha';
 import { allProducts, allOffers, allCalendar, allTrends, addProduct, addOffer, addCalendar, addTrend, hasVideo, setProductVideo, clearProductVideo, useStore } from './data/store';
 import { DOCUMENTOS, PRATELEIRAS, type PrateleiraId } from './data/documentos';
@@ -96,6 +96,7 @@ function resumo(s: string, max: number): string {
 }
 
 function Resultados({ brandId, products, buscas }: { brandId: string; products: Product[]; buscas: { term: string; count: number }[] }) {
+  const { user } = useAuth();
   const v = vocab(brandId as BrandId);
   const auto = isAuto(brandId as BrandId);
   // Denominador: quantos itens têm nível pra destravar. Sem isso a barra
@@ -148,6 +149,16 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
     if (!pessoas) return null;
     return buildReport(pessoasDoRecorte, allowed);
   }, [pessoas, pessoasDoRecorte, allowed]);
+
+  // O QUE MUDOU, não só quanto. Os três cartões de cima eram números soltos:
+  // "84 ações" não diz se melhorou. A janela anterior tem sempre o MESMO
+  // tamanho da atual — comparar sete dias com quatro faz tudo parecer queda.
+  const comp = useMemo(() => comparativo(pessoasDoRecorte, 7), [pessoasDoRecorte]);
+  // Quem usava e sumiu. Diferente de `semUso`, que é quem nunca começou.
+  const parados = useMemo(() => quemParou(pessoasDoRecorte, 7), [pessoasDoRecorte]);
+  // A diretoria vê as lojas lado a lado; o gerente de uma loja não precisa.
+  const ehDiretoria = user?.cargo === 'diretor';
+  const lojas = useMemo(() => (ehDiretoria ? porLoja(pessoas || [], 7) : []), [ehDiretoria, pessoas]);
 
   // A barra de lojas só existe quando há mais de uma unidade no time — numa
   // loja só, um filtro com uma opção é ruído.
@@ -216,10 +227,67 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
         </p>
       )}
 
+      {/* AS LOJAS LADO A LADO — a tela de quem é dono do grupo.
+          Com filtro, comparar duas lojas é clicar quatro vezes e guardar de
+          cabeça. A distância entre a primeira e a última é o maior ganho
+          disponível do grupo, e ela só aparece quando as duas estão juntas. */}
+      {ehDiretoria && lojas.length > 1 && (
+        <div className="wp-gz-top">
+          <div className="wp-gz-top-head"><Users size={12} className="wp-ico" /> As lojas, lado a lado</div>
+          {lojas.map((l) => (
+            <div key={l.loja || 'sem'} className="wp-gz-bar-row">
+              <span className="wp-gz-bar-name">
+                {l.loja ? lojaLabel(l.loja) : 'Sem loja no cadastro'}
+                <i style={{ display: 'block', fontStyle: 'normal', fontSize: 10.5, fontWeight: 600, color: 'var(--wp-soft)' }}>
+                  {l.ativos} de {l.total} ativos
+                </i>
+              </span>
+              <span className="wp-gz-bar-track">
+                <span className="wp-gz-bar-fill" style={{ width: `${Math.round((l.acoes / Math.max(1, lojas[0].acoes)) * 100)}%` }} />
+              </span>
+              <span className="wp-gz-bar-val">{l.acoes}</span>
+            </div>
+          ))}
+          <p className="wp-gz-help" style={{ margin: '6px 0 0' }}>
+            Ações registradas desde o começo. Use o filtro acima para entrar numa loja.
+          </p>
+        </div>
+      )}
+
       {/* A cultura medida pelo que foi feito (só Ramasa). Fica ACIMA dos números
           de uso de propósito: a pergunta da reunião de segunda é "como o time
           se comportou", e não só "quantos abriram o app". */}
       <TimePelosPilares pessoas={pessoasDoRecorte} />
+
+      {/* OS ÚLTIMOS 7 DIAS, COM COMPARAÇÃO.
+          Os cartões abaixo são do MÊS e são números soltos. Este bloco responde
+          a outra pergunta — "melhorou?" — e por isso fica separado: misturar
+          janela de mês com janela de semana no mesmo cartão confunde. */}
+      <div className="wp-gz-top">
+        <div className="wp-gz-top-head">
+          <CalendarDays size={12} className="wp-ico" /> Últimos 7 dias
+        </div>
+        <div className="wp-gz-kpis">
+          {([
+            ['ações', comp.atual.acoes, comp.anterior.acoes],
+            ['pessoas', comp.atual.pessoas, comp.anterior.pessoas],
+            ['materiais ao cliente', comp.atual.materiais, comp.anterior.materiais],
+          ] as [string, number, number][]).map(([rotulo, agora, antes]) => {
+            const d = agora - antes;
+            return (
+              <div className="wp-gz-kpi" key={rotulo}>
+                <b>{agora}</b><span>{rotulo}</span>
+                {antes > 0 || agora > 0 ? (
+                  <span className={`wp-gz-delta ${d >= 0 ? 'up' : 'down'}`}>{d >= 0 ? '+' : ''}{d}</span>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+        <p className="wp-gz-help" style={{ margin: '6px 0 0' }}>
+          Comparado com os 7 dias anteriores.
+        </p>
+      </div>
 
       <div className="wp-gz-kpis">
         <div className="wp-gz-kpi">
@@ -339,6 +407,30 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
               <span className="wp-gz-bar-val">{t.views}</span>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* QUEM USAVA E SUMIU.
+          O Painel só enxergava quem NUNCA começou. Quem usou por três semanas
+          e parou há vinte dias não aparecia em lugar nenhum — e é justamente
+          quem dá para recuperar com uma mensagem. Vem antes de "nunca
+          assistiu" porque é a conversa mais fácil de ter. */}
+      {parados.length > 0 && (
+        <div className="wp-gz-top">
+          <div className="wp-gz-top-head">
+            <CalendarClock size={12} className="wp-ico" /> Quem parou ({parados.length})
+          </div>
+          <p className="wp-gz-help" style={{ margin: '0 0 8px' }}>
+            Usavam e não abrem há uma semana ou mais. Toque em “Cobrar” pra copiar a mensagem pronta.
+          </p>
+          {parados.slice(0, 8).map(({ pessoa, dias }) => (
+            <CobrarPessoa key={pessoa.uid} p={pessoa} auto={auto} parouHa={dias} />
+          ))}
+          {parados.length > 8 && (
+            <p className="wp-gz-help" style={{ margin: '6px 0 0' }}>
+              E mais {parados.length - 8} — os oito que estão há mais tempo sem abrir vêm primeiro.
+            </p>
+          )}
         </div>
       )}
 
@@ -644,14 +736,20 @@ function ObjectionsPanel({ brandId }: { brandId: string }) {
 // ---------- Cobrança de um toque ----------
 // O painel já dizia "3 pessoas nunca assistiram". Dado sem ação vira relatório.
 // Aqui vira gestão: um toque copia a mensagem pronta pra chamar a pessoa.
-function CobrarPessoa({ p, campanhaNome, prazo, auto }: { p: TeamPerson; campanhaNome?: string; prazo?: string; auto: boolean }) {
+function CobrarPessoa({ p, campanhaNome, prazo, auto, parouHa }: { p: TeamPerson; campanhaNome?: string; prazo?: string; auto: boolean; parouHa?: number }) {
   const [copiado, setCopiado] = useState(false);
   const primeiro = (p.name || '').split(' ')[0] || 'Oi';
   // Aspas no nome da campanha de propósito: sem artigo, funciona pra qualquer
   // nome ("Lançamento GLPEN" é masculino, "Campanha X" é feminino).
-  const msg = campanhaNome
-    ? `Oi, ${primeiro}! Tudo bem? Vi que você ainda não começou a formação “${campanhaNome}” no Eleva — ${prazo}. São só 3 vídeos curtos e você já sai com o certificado. Qualquer dúvida me chama!`
-    : `Oi, ${primeiro}! Tudo bem? Vi que você ainda não assistiu nenhum vídeo no Eleva. São vídeos curtos que ajudam muito na hora de vender. Dá uma olhada quando puder — qualquer dúvida me chama!`;
+  // QUEM PAROU NÃO É QUEM NUNCA COMEÇOU. A mensagem de "você ainda não
+  // assistiu nenhum vídeo" mandada pra quem usou o app por três semanas soa
+  // como se ninguém estivesse olhando — e é o oposto do que a cobrança quer
+  // dizer. Quem parou recebe o reconhecimento de que já usou.
+  const msg = parouHa
+    ? `Oi, ${primeiro}! Tudo bem? Vi que você estava usando o Eleva e parou faz ${parouHa} dias. Entrou carro novo e condição nova nesse meio-tempo — vale dar uma olhada antes do próximo atendimento. Qualquer coisa me chama!`
+    : campanhaNome
+      ? `Oi, ${primeiro}! Tudo bem? Vi que você ainda não começou a formação “${campanhaNome}” no Eleva — ${prazo}. São só 3 vídeos curtos e você já sai com o certificado. Qualquer dúvida me chama!`
+      : `Oi, ${primeiro}! Tudo bem? Vi que você ainda não assistiu nenhum vídeo no Eleva. São vídeos curtos que ajudam muito na hora de vender. Dá uma olhada quando puder — qualquer dúvida me chama!`;
   const copiar = () => {
     navigator.clipboard?.writeText(msg).then(
       () => { setCopiado(true); setTimeout(() => setCopiado(false), 1800); },
@@ -662,7 +760,13 @@ function CobrarPessoa({ p, campanhaNome, prazo, auto }: { p: TeamPerson; campanh
     <div className="wp-gz-cob">
       <span className="wp-gz-cob-info">
         <b>{p.name}</b>
-        <i>{comoChamar(p.role, p.cargo, auto)}{p.loja ? ` · ${lojaLabel(p.loja)}` : ''}{p.email ? ` · ${p.email}` : ''}</i>
+        <i>
+          {/* O NÚMERO DE DIAS VEM PRIMEIRO. É a informação que decide a ordem
+              da cobrança — quem sumiu há 28 dias não é o mesmo caso de quem
+              sumiu há 8 —, e sem ela a lista é só uma relação de nomes. */}
+          {parouHa ? <b style={{ color: 'var(--wp-pink-deep)' }}>há {parouHa} dias sem abrir · </b> : null}
+          {comoChamar(p.role, p.cargo, auto)}{p.loja ? ` · ${lojaLabel(p.loja)}` : ''}{p.email ? ` · ${p.email}` : ''}
+        </i>
       </span>
       <button className="wp-gz-cob-btn" onClick={copiar} title="Copiar mensagem pronta">
         {copiado ? <><Check size={13} className="wp-ico" /> Copiada</> : <><Copy size={13} className="wp-ico" /> Cobrar</>}

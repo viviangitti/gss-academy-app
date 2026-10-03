@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Eye, EyeOff, Check } from 'lucide-react';
 import { signInWithEmail, signUpWithEmail, resetPassword, translateAuthError } from '../services/auth';
-import { setStoredRole, setStoredBrands } from './data/roles';
+import { setStoredRole, setStoredBrands, setStoredCargo } from './data/roles';
 import { setElevaProfile } from './data/profile';
 import { invitedBrand } from './data/brandInvite';
 import { getBrand, isBalcao, isAuto, ehGss, BRANDS, type BrandId } from './data/brands';
@@ -118,6 +118,10 @@ export default function Login() {
         // ANTES de criar a conta: o perfil só pode ser gravado depois (precisa
         // do uid), e no meio-tempo o app já decidiu qual marca mostrar.
         setStoredBrands(email.trim(), effBrands);
+        // Cargo e unidade pela mesma ponte das marcas: a conta nasce logada, o
+        // AuthContext lê o perfil antes de ele existir, e sem isto a pessoa
+        // roda a primeira sessão inteira sem cargo e sem loja.
+        setStoredCargo(email.trim(), auto ? cargo || undefined : undefined, auto ? loja || undefined : undefined);
         const fb = await signUpWithEmail(email.trim(), password, name.trim());
         // Perfil NA CONTA (Firestore): guarda TODOS os perfis marcados (pro
         // gestor saber) + o principal, que é o que o app usa.

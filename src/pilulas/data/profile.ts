@@ -114,10 +114,23 @@ export async function setElevaProfile(uid: string, p: ElevaProfile): Promise<voi
         name: p.name || '',
         segment: p.segment || '',
         affiliateType: p.affiliateType || '',
-        cargo: p.cargo || '',
         brands: p.brands || [],
         whatsapp: p.whatsapp || '',
         foto: p.foto || '',
+        // CARGO E LOJA SÓ ENTRAM QUANDO TÊM VALOR.
+        //
+        // A `loja` simplesmente não estava aqui. O cadastro pergunta a unidade,
+        // o botão de criar conta fica travado até a pessoa escolher — e o
+        // gravador jogava a resposta fora. Quinze contas da Ramasa ficaram sem
+        // loja assim, três delas DEPOIS de eu travar o campo, e ninguém podia
+        // perceber: a tela mostrava a unidade escolhida até o fim.
+        //
+        // E entram só quando têm valor porque `cargo: p.cargo || ''` é o mesmo
+        // defeito pelo avesso — com merge: true, gravar vazio APAGA o que já
+        // estava lá. Campo em branco não é uma resposta; é a ausência dela, e
+        // ausência não deve escrever nada por cima.
+        ...(p.cargo ? { cargo: p.cargo } : {}),
+        ...(p.loja ? { loja: p.loja } : {}),
         updatedAt: serverTimestamp(),
       },
       { merge: true }
@@ -125,6 +138,21 @@ export async function setElevaProfile(uid: string, p: ElevaProfile): Promise<voi
   } catch {
     /* offline / sem permissão: o localStorage cobre neste aparelho */
   }
+}
+
+/**
+ * O cargo da pessoa, corrigido depois do cadastro.
+ *
+ * Existe porque até aqui não existia: quem entrasse sem cargo — por uma conta
+ * antiga, por um furo do cadastro ou por ter entrado na aba "Entrar" sem nunca
+ * ter criado perfil — não tinha NENHUMA tela no app capaz de consertar isso. E
+ * sem cargo a gerência olha as respostas do time e não sabe quem falou.
+ */
+export async function updateElevaCargo(uid: string, cargo: string): Promise<void> {
+  if (!db || !cargo) return;
+  try {
+    await setDoc(doc(db, 'elevaUsers', uid), { cargo, updatedAt: serverTimestamp() }, { merge: true });
+  } catch { /* offline / sem permissão */ }
 }
 
 /**

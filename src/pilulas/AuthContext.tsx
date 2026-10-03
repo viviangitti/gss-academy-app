@@ -5,9 +5,9 @@ import { invitedBrand } from './data/brandInvite';
 import { onAuthChange, signOut as fbSignOut, type AuthUser } from '../services/auth';
 import { setStatsAccount } from './data/tracking';
 import { firebaseEnabled } from '../services/firebase';
-import { storedRole, setStoredRole, storedAffiliateType, storedBrands } from './data/roles';
+import { storedRole, setStoredRole, storedAffiliateType, storedBrands, storedCargo } from './data/roles';
 import { getElevaProfile, type ElevaProfile } from './data/profile';
-import type { CargoAuto } from './data/cargos';
+import { cargoPorId, type CargoAuto } from './data/cargos';
 
 // Papéis de acesso. 'balconista' era chamado de 'vendedora' até 2026-07 — quem
 // tem o papel antigo salvo é migrado na leitura (ver normalizeRole em roles.ts).
@@ -164,8 +164,13 @@ function toUser(fb: AuthUser, profile: ElevaProfile | null): User {
     brands: brandsFor(email, profile),
     segment: profile?.segment || mySegment(),
     affiliateType: role === 'afiliado' ? (affiliateTypeFor(email, profile) ?? 'geral') : undefined,
-    cargo: overrideFor(email)?.cargo || profile?.cargo,
-    loja: profile?.loja,
+    // A ponte do primeiro acesso vale para cargo e loja também: sem ela, quem
+    // acabou de se cadastrar roda a sessão inteira sem cargo — e era a sessão
+    // em que o app grava os primeiros números da pessoa.
+    // A ponte passa por `cargoPorId`: o que veio do localStorage é dado de
+    // fora, e só vale se for um cargo que existe de verdade na lista.
+    cargo: overrideFor(email)?.cargo || profile?.cargo || cargoPorId(storedCargo(email)?.cargo)?.id,
+    loja: profile?.loja || storedCargo(email)?.loja,
   };
 }
 
@@ -211,13 +216,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       // Busca o perfil NA CONTA (Firestore). Espera até 3.5s; se demorar (rede ruim),
       // cai pro cache local pra não travar no carregando.
+      //
+      // MAS DEMORAR NÃO É NÃO TER. A espera antiga devolvia `null` nos dois
+      // casos, e `null` vira "esta pessoa não tem cargo nem loja" — no 4G do
+      // showroom isso bastava pra sessão inteira rodar cega. Agora o estouro do
+      // relógio é distinguível da resposta, e só ele dá uma segunda chance;
+      // quem de fato não tem perfil segue em frente na primeira tentativa, sem
+      // ficar preso na tela de carregando.
       let profile: ElevaProfile | null = null;
-      try {
-        profile = await Promise.race([
-          getElevaProfile(fb.uid),
-          new Promise<null>((r) => setTimeout(() => r(null), 3500)),
-        ]);
-      } catch { /* ignore */ }
+      const DEMOROU = Symbol('demorou');
+      for (const espera of [3500, 5000]) {
+        let r: ElevaProfile | null | typeof DEMOROU = null;
+        try {
+          r = await Promise.race([
+            getElevaProfile(fb.uid),
+            new Promise<typeof DEMOROU>((res) => setTimeout(() => res(DEMOROU), espera)),
+          ]);
+        } catch { /* rede: tenta de novo, se ainda houver tentativa */ }
+        if (r !== DEMOROU) { profile = r; break; }
+      }
       // Espelha o papel da conta neste aparelho (cache pra próxima abertura).
       if (profile && fb.email) setStoredRole(fb.email, profile.role, profile.affiliateType);
       // ANTES do setUser: as telas leem os pontos já no primeiro render, e

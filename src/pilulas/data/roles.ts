@@ -72,6 +72,36 @@ export function storedBrands(email: string): string[] | null {
   }
 }
 
+// A MESMA PONTE, PARA CARGO E LOJA.
+//
+// A marca tinha ponte; cargo e loja não tinham, e sofriam do mesmo mal pelo
+// mesmo motivo: `createUserWithEmailAndPassword` já loga a pessoa, então o
+// AuthContext lê o perfil ANTES de o cadastro escrevê-lo. Ele lia `null`, e
+// `null` é indistinguível de "esta pessoa não tem cargo" — a sessão inteira
+// corria sem cargo e sem loja, e era isso que o Painel e o relatório viam.
+//
+// Gravado ANTES de a conta nascer, como o das marcas. Vale só neste aparelho e
+// só até o perfil chegar: a verdade continua sendo o elevaUsers.
+function cargoKey(email: string): string {
+  return 'wp_cargo_' + email.trim().toLowerCase();
+}
+
+export function setStoredCargo(email: string, cargo?: string, loja?: string): void {
+  try {
+    localStorage.setItem(cargoKey(email), JSON.stringify({ cargo: cargo || '', loja: loja || '' }));
+  } catch { /* cheio */ }
+}
+
+export function storedCargo(email: string): { cargo?: string; loja?: string } | null {
+  try {
+    const v = JSON.parse(localStorage.getItem(cargoKey(email)) || 'null');
+    if (!v || typeof v !== 'object') return null;
+    return { cargo: v.cargo || undefined, loja: v.loja || undefined };
+  } catch {
+    return null;
+  }
+}
+
 function typeKey(email: string): string {
   return 'wp_afiltype_' + email.trim().toLowerCase();
 }

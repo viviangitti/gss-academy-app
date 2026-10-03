@@ -84,9 +84,20 @@ interface SyncMeta {
 
 let meta: SyncMeta = {};
 
-/** Chamado pelo app quando sabe marca/papel/nome (ver PilulasApp). */
+/**
+ * Chamado pelo app quando sabe marca/papel/nome (ver PilulasApp).
+ *
+ * IGNORA O QUE VEM VAZIO. `{ ...meta, ...m }` copia a CHAVE, não só o valor:
+ * uma chamada com `cargo: undefined` — que é o normal enquanto o perfil ainda
+ * está carregando — apagava o cargo que já se sabia. Esquecer é pior do que
+ * não ter aprendido: o que vier depois grava vazio por cima do bom.
+ */
 export function setStatsMeta(m: SyncMeta): void {
-  meta = { ...meta, ...m };
+  const limpo: SyncMeta = {};
+  for (const [k, v] of Object.entries(m)) {
+    if (v !== undefined && v !== null && v !== '') (limpo as Record<string, unknown>)[k] = v;
+  }
+  meta = { ...meta, ...limpo };
 }
 
 /**
@@ -97,20 +108,40 @@ export function syncStats(stats: Stats, event: { type: ElevaEventType; id: strin
   const uid = auth?.currentUser?.uid;
   if (!db || !uid) return;
 
+  // QUEM É A PESSOA — só entra quando se sabe.
+  //
+  // Isto era `cargo: meta.cargo || ''` e, com merge: true, uma sincronização
+  // feita antes de o perfil carregar APAGAVA o cargo que o cadastro tinha
+  // acabado de escolher. Dezessete pessoas da Ramasa ficaram sem cargo no
+  // elevaStats tendo cargo no perfil, e três sem loja; o relatório diário e o
+  // Painel leem daqui, então eles passaram semanas dizendo que o time não
+  // tinha preenchido o que o time tinha preenchido. É a mesma família do
+  // `brand` vazio que fez o Painel contar 29 pessoas em vez de 34.
+  //
+  // Campo vazio não é uma resposta. Não escreve nada: o que já está gravado
+  // continua, e a próxima sincronização com dado bom corrige.
+  const quemE: Record<string, string | boolean> = {};
+  const seTiver = (chave: string, valor: string | undefined | null) => {
+    if (valor) quemE[chave] = valor;
+  };
+  seTiver('name', meta.name || auth?.currentUser?.displayName || '');
+  seTiver('email', auth?.currentUser?.email || '');
+  seTiver('role', meta.role);
+  seTiver('cargo', meta.cargo);
+  // A UNIDADE. Faltava aqui: o SyncMeta declarava `loja`, o PilulasApp
+  // passava `loja: user.loja` — e o payload nunca gravava. O Painel ganhou a
+  // barra "Todas as lojas / Tiger Goiânia / ..." em 23/09 e ela nunca teve
+  // o que mostrar, porque a barra só aparece quando há mais de uma loja NO
+  // TIME, e o time chegava inteiro sem loja.
+  seTiver('loja', meta.loja);
+  seTiver('brand', meta.brand);
+  // Booleano é diferente: `false` é uma resposta de verdade ("ainda não montou
+  // o cartão"), então só fica de fora quando ninguém decidiu nada.
+  if (typeof meta.cartaoPronto === 'boolean') quemE.cartaoPronto = meta.cartaoPronto;
+
   const payload = {
     uid,
-    name: meta.name || auth?.currentUser?.displayName || '',
-    email: auth?.currentUser?.email || '',
-    role: meta.role || '',
-    cargo: meta.cargo || '',
-    // A UNIDADE. Faltava aqui: o SyncMeta declarava `loja`, o PilulasApp
-    // passava `loja: user.loja` — e o payload nunca gravava. O Painel ganhou a
-    // barra "Todas as lojas / Tiger Goiânia / ..." em 23/09 e ela nunca teve
-    // o que mostrar, porque a barra só aparece quando há mais de uma loja NO
-    // TIME, e o time chegava inteiro sem loja.
-    loja: meta.loja || '',
-    brand: meta.brand || '',
-    cartaoPronto: meta.cartaoPronto === true,
+    ...quemE,
     totals: {
       views: stats.totalViews,
       missions: stats.totalMissions,

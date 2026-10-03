@@ -23,6 +23,8 @@ import Acessorio from './Acessorio';
 import FormArgumentos from './FormArgumentos';
 import Landing from './Landing';
 import Onboarding from './Onboarding';
+import QuemVoceE from './QuemVoceE';
+import { lojasDaMarca } from './data/lojas';
 import BottomNav from './BottomNav';
 import AvisosApp from './AvisosApp';
 import { carregarAjustesAcessorios } from './data/ajustesAcessorios';
@@ -33,7 +35,7 @@ import Perfil from './Perfil';
 import Ficha from './Ficha';
 import { stageSegmentFromUrl } from './data/segments';
 import { stageBrandFromUrl, invitedBrand } from './data/brandInvite';
-import { isAuto, isBalcao, type BrandId } from './data/brands';
+import { isAuto, isBalcao, ehGss, type BrandId } from './data/brands';
 import { setStatsMeta, podaEventos } from './data/statsSync';
 import { getElevaProfile } from './data/profile';
 import { auth } from '../services/firebase';
@@ -372,6 +374,26 @@ function Shell() {
   }
 
   const showOnboarding = user.role !== 'gestor' && !onboarded;
+
+  // QUEM É A PESSOA, antes de qualquer outra coisa.
+  //
+  // Exigir o cargo só no formulário de cadastro protege uma porta e deixa as
+  // outras abertas — a aba "Entrar", as contas antigas, e o furo seguinte. Aqui
+  // a pergunta é do app: quem está sem cargo (ou sem unidade, onde a marca tem
+  // mais de uma) responde agora, e só depois o app abre.
+  //
+  // Fora a GSS: a Vivian e a Silene não têm cargo em concessionária nenhuma, e
+  // travar quem opera o app seria trancar a chave do lado de dentro.
+  const faltaQuemSou = isAuto(brand.id) && !ehGss(user.email)
+    && (!user.cargo || (lojasDaMarca(brand.id).length > 0 && !user.loja));
+
+  if (faltaQuemSou) {
+    return (
+      <div className="wp-app" style={themeStyle}>
+        <QuemVoceE brand={brand.id} />
+      </div>
+    );
+  }
 
   return (
     <div className={`wp-app ${onProduct ? 'is-product' : ''}`} style={themeStyle}>

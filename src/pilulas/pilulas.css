@@ -3098,7 +3098,11 @@
 /* Painel: publicar documento */
 .wp-gz-check { display: flex; gap: 9px; align-items: flex-start; margin-top: 12px; font-size: 13px; cursor: pointer; }
 .wp-gz-check input { margin-top: 3px; }
-.wp-gz-check i { display: block; font-style: normal; font-size: 11.5px; color: var(--wp-soft); margin-top: 2px; }
+/* A explicação embaixo do rótulo. Vale pros DOIS: a regra só falava de <i>,
+   e o <small> de "Substituir o que já está nesta prateleira" ficava colado no
+   negrito — "prateleiraAs condições que estão no ar", numa linha só. */
+.wp-gz-check i,
+.wp-gz-check small { display: block; font-style: normal; font-size: 11.5px; color: var(--wp-soft); margin-top: 2px; }
 .wp-gz-prog {
   display: flex; align-items: center; gap: 9px; margin-top: 12px;
   height: 10px; border-radius: 99px; background: var(--wp-border);

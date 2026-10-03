@@ -1221,6 +1221,11 @@ export const PRODUCTS: Product[] = [
     // Os números vêm da ficha do Carros na Web (versão Comfort 1.5 HEV) que a
     // Vivian indicou, com o comprimento completado por segunda fonte. Carro de
     // lançamento: confirme na tabela antes de prometer item de série.
+    // A ficha mudou em outubro: entrou o documento de lançamento que a Vivian
+    // subiu, e com ele as perguntas novas do carro. Este carimbo é o que faz o
+    // quiz do Jaecoo 5 voltar a valer os 30 pontos pra quem já tinha acertado
+    // na versão antiga — conteúdo novo, ponto novo.
+    conteudoEm: '2026-10',
     id: 'jaecoo-5',
     brand: 'ramasa',
     category: 'jaecoo',

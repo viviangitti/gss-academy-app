@@ -23,6 +23,15 @@ export const LOJAS: Loja[] = [
   { id: 'omoda-goiania', nome: 'Omoda Goiânia', brand: 'ramasa' },
   { id: 'tiger-anapolis', nome: 'Tiger Anápolis', brand: 'ramasa' },
   { id: 'tiger-itumbiara', nome: 'Tiger Itumbiara', brand: 'ramasa' },
+  // QUEM NÃO É DE UMA LOJA SÓ.
+  //
+  // A trava do cadastro passou a exigir a unidade de todo mundo, e aí apareceu
+  // gente para quem a pergunta não tem resposta: a Mariana responde pelo grupo,
+  // o Lucas pela operação de acessórios das quatro lojas, a qualidade audita
+  // todas. Obrigar essas pessoas a escolher UMA unidade não é só incômodo — põe
+  // o número delas no balde errado do Painel, que é justamente o que a loja
+  // existe para evitar.
+  { id: 'grupo', nome: 'Grupo — todas as unidades', brand: 'ramasa' },
 ];
 
 export function lojasDaMarca(brand: BrandId): Loja[] {

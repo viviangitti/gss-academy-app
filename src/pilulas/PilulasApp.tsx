@@ -24,6 +24,7 @@ import FormArgumentos from './FormArgumentos';
 import Landing from './Landing';
 import Onboarding from './Onboarding';
 import QuemVoceE from './QuemVoceE';
+import DesafioSemana from './DesafioSemana';
 import { lojasDaMarca } from './data/lojas';
 import BottomNav from './BottomNav';
 import AvisosApp from './AvisosApp';
@@ -411,6 +412,8 @@ function Shell() {
               a vendedora abre no "Hoje" (consumir, postar e compartilhar). */}
           <Route path="/eleva" element={user.role === 'gestor' ? <Navigate to="/eleva/gestor" replace /> : <Hoje />} />
           <Route path="/eleva/catalogo" element={<Catalog />} />
+          {/* O desafio da semana e a prova do mês. :tipo é 'semana' ou 'mes'. */}
+          <Route path="/eleva/desafio/:tipo" element={<DesafioSemana />} />
           <Route path="/eleva/produto/:id" element={<Product />} />
           <Route path="/eleva/missoes" element={<BlockBalcao><BlockAuto><Missoes /></BlockAuto></BlockBalcao>} />
           <Route path="/eleva/trilha" element={<Trilha />} />

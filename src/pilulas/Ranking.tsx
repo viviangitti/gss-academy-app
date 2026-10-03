@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Trophy, Flame, Target, Check, Medal, User, Rocket, ArrowRight, Users } from 'lucide-react';
-import { getStats, WEEKLY_GOAL } from './data/tracking';
+import { getStats, WEEKLY_GOAL, desafioFeito } from './data/tracking';
 import { getDesafio } from './data/desafio';
+import { chaveDe, pontosDe, quantasDe, minimoDe } from './data/desafioSemanal';
 import { carregarPlacar, type LinhaPlacar } from './data/placar';
 import { useBrand } from './BrandContext';
 import { vocab } from './data/vocabulario';
@@ -72,6 +73,29 @@ export default function Ranking() {
           <span className="wp-rk-mini-num">{stats.weekPoints}</span>
           <span className="wp-rk-mini-lbl">pontos · {myRank}º lugar</span>
         </div>
+      </div>
+
+      {/* OS DOIS DESAFIOS DE PERGUNTA, lado a lado.
+          Ficam aqui, no Ranking, porque é a tela de quem está pensando em
+          pontos — e porque é onde dá pra ver, de um relance, o que ainda está
+          em aberto neste mês. Quem já fez vê o cartão apagado com a nota. */}
+      <div className="wp-rk-provas">
+        {(['semana', 'mes'] as const).map((t) => {
+          const feito = desafioFeito(chaveDe(t));
+          return (
+            <Link key={t} to={`/eleva/desafio/${t}`} className={`wp-rk-prova ${feito ? 'feito' : ''}`}>
+              <span className="wp-rk-prova-k">{t === 'semana' ? 'Desafio da semana' : 'Prova do mês'}</span>
+              {feito
+                ? <b>{feito.acertos}/{feito.de}</b>
+                : <b>+{pontosDe(t)}</b>}
+              <i>
+                {feito
+                  ? (feito.passou ? `+${pontosDe(t)} pontos somados` : 'sem ponto desta vez')
+                  : `${quantasDe(t)} perguntas · acerte ${minimoDe(t)}`}
+              </i>
+            </Link>
+          );
+        })}
       </div>
 
       <div className="wp-mission">

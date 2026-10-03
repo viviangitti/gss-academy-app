@@ -88,6 +88,14 @@ export interface Stats {
    * economia para a cultura faria as duas competirem na cabeça de quem vende.
    */
   perValor?: Record<string, number>;
+  /**
+   * OS DESAFIOS JÁ TENTADOS, por período ("semana:2026-S40", "mes:2026-10").
+   *
+   * Guarda a tentativa mesmo quando a pessoa não passa — é isso que fecha o
+   * desafio até virar o período. Sem registrar a reprovação, bastaria sair e
+   * voltar pra ter a prova de novo, e aí o desafio deixaria de medir preparo.
+   */
+  desafios?: Record<string, { acertos: number; de: number; passou: boolean }>;
 }
 
 // O DIA É O DE BRASÍLIA, NÃO O DE LONDRES.
@@ -118,6 +126,7 @@ function fresh(): Stats {
     perMission: {},
     perQuiz: {},
     perValor: {},
+    desafios: {},
   };
 }
 
@@ -352,4 +361,38 @@ export function isQuizDone(productId: string, conteudoEm?: string): boolean {
  */
 export function quizJaPassou(productId: string): boolean {
   return !!getStats().perQuiz[productId];
+}
+
+/**
+ * O resultado do desafio da semana ou da prova do mês.
+ *
+ * Grava SEMPRE, passando ou não: a tentativa é o que fecha o desafio até o
+ * período virar. Os pontos só entram quando a pessoa atinge o mínimo — e entram
+ * uma vez só, porque a chave do período já estará ocupada na próxima chamada.
+ */
+export function recordDesafio(
+  chave: string,
+  acertos: number,
+  de: number,
+  minimo: number,
+  pontos: number,
+): Stats {
+  const s = getStats();
+  if (!s.desafios) s.desafios = {};
+  if (s.desafios[chave]) return s; // já tentou neste período
+  const passou = acertos >= minimo;
+  s.desafios[chave] = { acertos, de, passou };
+  if (passou) s.weekPoints += pontos;
+  save(s);
+  syncStats(s, {
+    type: passou ? 'desafio_pass' : 'desafio_fail',
+    id: chave,
+    points: passou ? pontos : 0,
+  });
+  return s;
+}
+
+/** Já tentou o desafio deste período? */
+export function desafioFeito(chave: string): { acertos: number; de: number; passou: boolean } | null {
+  return getStats().desafios?.[chave] || null;
 }

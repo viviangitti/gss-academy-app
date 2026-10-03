@@ -317,6 +317,18 @@ function descreve(e, cat, docs = {}, acess = {}) {
     // marca a mensagem de quando o cliente some.
     case 'jornada_script': return `copiou o script da jornada — ${base.replace(/-/g, ' ')}${detalhe === 'retomada' ? ' (retomada)' : ''}`;
     case 'jornada_onepage': return `mandou o one page da jornada — ${base.replace(/-/g, ' ')}`;
+    // Desafio da semana e prova do mês. O id é 'semana:2026-S40' ou
+    // 'mes:2026-10' — não é um carro, então o `nome` acima não serve.
+    // O id é 'semana:2026-S40' ou 'mes:2026-10' — separado por dois-pontos, não
+    // por barra vertical, então `base` acima não serve aqui.
+    case 'desafio_pass':
+    case 'desafio_fail': {
+      const [qual, quando] = String(e.id || '').split(':');
+      const nomeDoDesafio = qual === 'mes' ? 'na prova do mês' : 'no desafio da semana';
+      return e.type === 'desafio_pass'
+        ? `★ PASSOU ${nomeDoDesafio} (${quando || '—'})`
+        : `não passou ${nomeDoDesafio} (${quando || '—'})`;
+    }
     default: return nome;
   }
 }

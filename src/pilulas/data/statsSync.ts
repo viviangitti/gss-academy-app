@@ -44,6 +44,11 @@ export type ElevaEventType =
   | 'onepage'
   | 'objecao'
   | 'acessorio'
+  // O desafio da semana e a prova do mês. Tipos próprios porque o relatório
+  // precisa separar "estudou o carro" de "passou na prova da marca" — e porque
+  // a reprovação também é informação: é ela que mostra o que o time não sabe.
+  | 'desafio_pass'
+  | 'desafio_fail'
   // Jornada do atendimento: copiar o script de uma etapa e mandar o one page
   // dela. Tipos próprios de propósito — entrassem como 'onepage' e o relatório
   // semanal contaria folha de etapa como material de carro enviado ao cliente.

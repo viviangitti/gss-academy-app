@@ -4808,3 +4808,100 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 .wp-quiz-novo span { display: block; min-width: 0; }
 .wp-quiz-novo b { display: block; font-size: 13.5px; font-weight: 800; color: #4d3c0c; }
 .wp-quiz-novo i { display: block; font-style: normal; font-size: 12px; line-height: 1.4; margin-top: 2px; }
+
+/* ---- DESAFIO DA SEMANA / PROVA DO MÊS ---- */
+/* Cor e fundo explícitos de propósito. A primeira versão destas classes se
+   chamava .wp-desafio e caiu em cima do cartão escuro do Desafio DA REDE
+   (linha 1634): o texto saiu branco em cartão branco, e a tela ficou com
+   metade das palavras invisíveis. */
+.wp-prova {
+  padding: 14px 16px 90px; max-width: 560px; margin: 0 auto;
+  background: var(--wp-bg, #f6f6f9); color: var(--wp-ink, #1a1a2e);
+}
+.wp-prova-voltar {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 0; padding: 4px 0 12px;
+  font-size: 13.5px; font-weight: 700; color: var(--wp-soft); cursor: pointer;
+}
+.wp-prova-card {
+  background: #fff; border: 1.5px solid var(--wp-line, #e3e7ec);
+  border-radius: 18px; padding: 24px 20px 22px; text-align: center;
+}
+.wp-prova-card.ok { border-color: #b7e2c8; background: linear-gradient(180deg, #f3fbf6, #fff); }
+.wp-prova-card.nao { border-color: #e9d6d3; background: linear-gradient(180deg, #fdf5f4, #fff); }
+.wp-prova-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 54px; height: 54px; border-radius: 17px;
+  background: var(--wp-accent-soft, #e7efff); color: var(--wp-accent, #2563eb); margin-bottom: 13px;
+}
+.wp-prova-card.ok .wp-prova-ico { background: #e1f5e9; color: #1f9d6b; }
+.wp-prova-card.nao .wp-prova-ico { background: #fbe6e3; color: #c0483c; }
+.wp-prova-card h2 { color: var(--wp-ink, #1a1a2e); font-size: 22px; margin: 0 0 8px; letter-spacing: -.3px; }
+.wp-prova-nota { color: var(--wp-ink, #1a1a2e); font-size: 38px; font-weight: 800; margin: 2px 0 6px; letter-spacing: -1px; }
+.wp-prova-sub { font-size: 14px; line-height: 1.55; color: var(--wp-soft); margin: 0; }
+.wp-prova-regras { list-style: none; padding: 0; margin: 16px 0 0; text-align: left; }
+.wp-prova-regras li {
+  font-size: 13px; line-height: 1.5; color: var(--wp-soft);
+  padding: 9px 0; border-top: 1px solid var(--wp-line, #eceff3);
+}
+.wp-prova-regras li:first-child { border-top: 0; }
+.wp-prova-regras b { color: var(--wp-ink, #16202a); }
+.wp-prova-prazo {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 12px; font-weight: 700; color: var(--wp-soft); margin: 15px 0 0;
+}
+.wp-prova-ok {
+  width: 100%; margin-top: 18px; padding: 14px;
+  font-size: 15.5px; font-weight: 800; color: #fff;
+  background: var(--wp-accent, #2563eb); border: 0; border-radius: 12px; cursor: pointer;
+}
+.wp-prova-vazio { font-size: 14px; color: var(--wp-soft); text-align: center; padding: 40px 0; }
+
+.wp-prova-topo { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+.wp-prova-topo b { font-size: 15px; }
+.wp-prova-topo i { font-style: normal; font-size: 12.5px; font-weight: 700; color: var(--wp-soft); }
+.wp-prova-barra { height: 6px; border-radius: 4px; background: var(--wp-line, #e6eaef); overflow: hidden; margin-bottom: 18px; }
+.wp-prova-barra span { display: block; height: 100%; background: var(--wp-accent, #2563eb); transition: width .25s ease; }
+.wp-prova-q { color: var(--wp-ink, #1a1a2e); font-size: 16.5px; font-weight: 700; line-height: 1.45; margin: 0 0 14px; }
+
+.wp-prova-estudo { margin-top: 18px; }
+.wp-prova-estudo-tit {
+  display: block; font-size: 11px; font-weight: 800; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--wp-soft); margin-bottom: 9px;
+}
+.wp-prova-estudo-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 15px; margin-bottom: 8px;
+  background: #fff; border: 1.4px solid var(--wp-line, #e3e7ec); border-radius: 13px;
+  font-size: 14.5px; font-weight: 700; color: var(--wp-ink, #1a1a2e); text-decoration: none;
+}
+
+/* Cartão do desafio na tela inicial. Reaproveita a forma do .wp-td-rank, com
+   fundo dourado: é a única coisa da tela que tem prazo — segunda ele volta. */
+.wp-td-desafio {
+  display: flex; align-items: center; gap: 11px;
+  padding: 14px 15px; margin-bottom: 10px;
+  background: linear-gradient(180deg, #fdf7e8, #fbf1d9);
+  border: 1.5px solid #e4cf92; border-radius: 14px;
+  color: #4d3c0c; text-decoration: none;
+}
+.wp-td-desafio > .wp-ico { flex: none; color: #b08a2a; }
+.wp-td-desafio span { display: block; min-width: 0; flex: 1; }
+.wp-td-desafio b { display: block; font-size: 14.5px; font-weight: 800; }
+.wp-td-desafio i { display: block; font-style: normal; font-size: 12px; margin-top: 2px; color: #6b5312; }
+
+/* Os dois desafios no Ranking, lado a lado. */
+.wp-rk-provas { display: flex; gap: 9px; margin: 12px 0; }
+.wp-rk-prova {
+  flex: 1; display: block; padding: 14px 13px 13px;
+  background: linear-gradient(180deg, #fdf7e8, #fbf1d9);
+  border: 1.5px solid #e4cf92; border-radius: 15px;
+  color: #4d3c0c; text-decoration: none;
+}
+.wp-rk-prova.feito { background: #f6f7fa; border-color: var(--wp-line, #e3e7ec); color: var(--wp-soft); }
+.wp-rk-prova-k {
+  display: block; font-size: 10px; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; opacity: .75; margin-bottom: 7px;
+}
+.wp-rk-prova b { display: block; font-size: 25px; font-weight: 800; letter-spacing: -.6px; line-height: 1; }
+.wp-rk-prova i { display: block; font-style: normal; font-size: 11px; line-height: 1.35; margin-top: 5px; }

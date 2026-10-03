@@ -1,8 +1,10 @@
 import { useDiaAtual } from './data/diaAtual';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Play, Send, Download, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon, Sparkles, Trophy, X } from 'lucide-react';
+import { Search, Play, Send, Download, Flame, CalendarDays, ChevronRight, Copy, Check, ShieldCheck, GraduationCap, Bell, Infinity as InfinityIcon, Sparkles, Trophy, X, Award } from 'lucide-react';
 import { allProducts, useStore } from './data/store';
+import { chaveDe, PERGUNTAS_SEMANA, PONTOS_SEMANA } from './data/desafioSemanal';
+import { desafioFeito } from './data/tracking';
 import { buildShareMessage, visibleProducts, duracaoLabel, type Product } from './data/products';
 import { getAfiliadoCode } from './data/afiliadoCode';
 import { audienceOf } from './AuthContext';
@@ -177,6 +179,9 @@ export default function Hoje() {
   const trilha = getTrilha(brandId, user?.role);
   const campanha = campanhaPara(user?.role, brandId);
   const balcao = isBalcao(brandId); // farmácia: sem postar/enviar/venda
+  // Já fez o desafio desta semana? O cartão da porta de entrada some quando sim
+  // — cartão que não leva a nada vira ruído, e a tela do vendedor já é cheia.
+  const desafioDaSemana = desafioFeito(chaveDe('semana'));
   const auto = isAuto(brandId);     // concessionária: sem postar; a língua muda
   const v = vocab(brandId);
   const novos = naoVistos(products);
@@ -350,6 +355,21 @@ export default function Hoje() {
               <span>
                 <b>Seu lugar no ranking</b>
                 <i>{stats.weekPoints} pontos no mês · {stats.streak} {stats.streak === 1 ? 'dia seguido' : 'dias seguidos'}</i>
+              </span>
+              <ChevronRight size={16} className="wp-ico" />
+            </Link>
+          )}
+
+          {/* O DESAFIO DA SEMANA, NA PORTA DE ENTRADA.
+              De nada adianta existir se a pessoa não souber: o quiz do carro
+              acaba quando ela estuda os cinco, e é este cartão que diz que tem
+              ponto novo na mesa toda segunda. Some quando ela já fez. */}
+          {!balcao && !desafioDaSemana && (
+            <Link to="/eleva/desafio/semana" className="wp-td-desafio">
+              <Award size={16} className="wp-ico" />
+              <span>
+                <b>Desafio da semana</b>
+                <i>{PERGUNTAS_SEMANA} perguntas dos carros da casa · vale +{PONTOS_SEMANA} pontos</i>
               </span>
               <ChevronRight size={16} className="wp-ico" />
             </Link>

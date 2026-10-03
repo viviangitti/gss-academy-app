@@ -152,6 +152,7 @@ await tela('/eleva/gestor', 'painel.png', { rolar: 430 });
 // O Painel novo: a comparação de 7 dias, as lojas lado a lado e quem parou.
 await tela('/eleva/gestor', 'painel-lojas.png', { rolar: 330, espera: 5000 });
 await tela('/eleva/gestor', 'painel-parou.png', { rolar: 2750, espera: 5000 });
+await tela('/eleva/gestor', 'painel-7dias.png', { rolar: 1020, espera: 5000 });
 await tela('/eleva/catalogo', 'ver-como-time.png', { rolar: 250 });
 
 console.log('como VENDEDOR (Walther):');

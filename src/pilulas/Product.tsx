@@ -783,7 +783,7 @@ export default function Product() {
   // One-page: qual versão está sendo montada, e o WhatsApp que vai nela.
   const [nivel, setNivel] = useState(1);
   const temNiveis = !!product?.niveis?.length;
-  const quizFeito = product ? isQuizDone(product.id) : false;
+  const quizFeito = product ? isQuizDone(product.id, product.conteudoEm) : false;
   const [gerando, setGerando] = useState<'cliente' | 'estudo' | null>(null);
   const [avisoOp, setAvisoOp] = useState('');
   const [whats, setWhats] = useState<string>('');

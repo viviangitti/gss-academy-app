@@ -132,7 +132,7 @@ export default function Quiz({ product }: { product: Product }) {
   const [hits, setHits] = useState(0);
   const [finished, setFinished] = useState(false);
   const [passedNow, setPassedNow] = useState(false);
-  const alreadyDone = isQuizDone(product.id);
+  const alreadyDone = isQuizDone(product.id, product.conteudoEm);
 
   if (questions.length < 2) return null; // sem conteúdo suficiente pra um quiz honesto
 
@@ -164,8 +164,8 @@ export default function Quiz({ product }: { product: Product }) {
       return;
     }
     if (hits === questions.length) {
-      const wasNew = !isQuizDone(product.id);
-      recordQuizPass(product.id);
+      const wasNew = !isQuizDone(product.id, product.conteudoEm);
+      recordQuizPass(product.id, product.conteudoEm);
       setPassedNow(wasNew);
     } else {
       registraUso('quiz_fail', product.id);

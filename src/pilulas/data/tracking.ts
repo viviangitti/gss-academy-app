@@ -39,6 +39,27 @@ export const POINTS_PER_PILL = 10;
 export const POINTS_PER_QUIZ = 30;
 export const WEEKLY_GOAL = 10; // pílulas/semana
 
+/**
+ * O TRABALHO PONTUA — com teto por dia.
+ *
+ * Consultar objeção, copiar o script da jornada, abrir o documento e mandar o
+ * one-page não valiam nada. O placar media só estudo, e estudo satura: quem
+ * viu tudo em setembro não tinha como pontuar em outubro a não ser
+ * reassistindo o que já sabia.
+ *
+ * O teto é o que impede isto de virar alvo. Sem ele, quem atende mal e
+ * consulta vinte vezes passa na frente de quem estudou e já sabe responder —
+ * exatamente o incentivo invertido que a regra antiga queria evitar quando
+ * decidiu não pontuar nada.
+ */
+export const POINTS_PER_WORK = 2;
+export const WORK_DAILY_CAP = 10;
+
+/** As ações que contam como trabalho (as outras só servem para medir uso). */
+const TRABALHO = new Set<ElevaEventType>([
+  'objecao', 'onepage', 'doc_open', 'acessorio', 'jornada_script', 'jornada_onepage',
+]);
+
 export interface Stats {
   week: string; // id da semana vigente
   weekViews: number; // pílulas assistidas no MÊS (o nome é herança; o período é weekId, que é mensal)
@@ -50,7 +71,15 @@ export interface Stats {
   lastDay: string | null; // AAAA-MM-DD da última visualização
   perProduct: Record<string, number>;
   perMission: Record<string, number>; // missões já concluídas (não repontuam)
-  perQuiz: Record<string, number>; // produtos "dominados" no quiz (permanente, pontua 1x)
+  /**
+   * Produtos dominados no quiz. O VALOR é o carimbo do conteúdo na hora do
+   * acerto (`conteudoEm` do produto, ou 1 para os registros antigos): quando a
+   * marca atualiza a ficha, o quiz daquele carro volta a valer. É assim que o
+   * placar renova sem fábrica de quiz — quem renova é a carta do mês.
+   */
+  perQuiz: Record<string, number | string>;
+  /** Pontos de trabalho ganhos hoje, para respeitar o teto diário. */
+  trabalhoDia?: { dia: string; pontos: number };
   /**
    * OS VALORES PRATICADOS NO MÊS (só Ramasa — ver data/valores.ts).
    *
@@ -132,13 +161,23 @@ export function recordView(productId: string): Stats {
     s.streak = s.lastDay === yesterday ? s.streak + 1 : 1;
   }
 
+  // PONTUA UMA VEZ POR CARRO, NÃO UMA VEZ POR DIA.
+  //
+  // A regra antiga dava 10 pontos toda vez que a pessoa reabria o mesmo carro
+  // num dia novo. Com dez carros, dava para fazer 100 pontos por dia sem
+  // aprender nada — e, do segundo mês em diante, era o único jeito de pontuar,
+  // porque o quiz só valia uma vez na vida. O placar media repetição.
+  //
+  // A abertura continua sendo registrada todo dia (é ela que alimenta a
+  // ofensiva, a missão do mês e o "já viu"); o que não se repete é o PONTO.
   const dayKey = `${productId}@${day}`;
+  const jaPontuou = Object.keys(s.perProduct).some((k) => k === productId || k.startsWith(`${productId}@`));
   let isNew = false;
   if (!s.perProduct[dayKey]) {
     s.perProduct[dayKey] = 1;
     s.weekViews += 1;
     s.totalViews += 1;
-    s.weekPoints += POINTS_PER_PILL;
+    if (!jaPontuou) s.weekPoints += POINTS_PER_PILL;
     isNew = true;
   }
 
@@ -148,7 +187,7 @@ export function recordView(productId: string): Stats {
     // O carimbo do valor acompanha o PONTO, não a abertura da tela: quem
     // reabre o mesmo carro no mesmo dia não pratica "melhoria contínua" de novo.
     carimbarEvento('pill_view');
-    syncStats(s, { type: 'pill_view', id: productId, points: POINTS_PER_PILL });
+    syncStats(s, { type: 'pill_view', id: productId, points: jaPontuou ? 0 : POINTS_PER_PILL });
   }
   return s;
 }
@@ -183,7 +222,28 @@ function primeiraVezHoje(chave: string): boolean {
 export function registraUso(type: ElevaEventType, id: string): void {
   if (!primeiraVezHoje(`${type}:${id}`)) return;
   carimbarEvento(type);
-  syncStats(getStats(), { type, id, points: 0 });
+
+  // O TRABALHO PONTUA ATÉ O TETO DO DIA.
+  //
+  // Ficava tudo em zero de propósito — "se pontuasse, viraria alvo". A razão
+  // era boa e continua valendo: por isso o teto. Até ele, o placar reconhece
+  // quem está atendendo; passado ele, consultar mais não rende mais nada, e
+  // quem atende mal não ultrapassa quem estudou.
+  const s = getStats();
+  let pontos = 0;
+  if (TRABALHO.has(type)) {
+    const hoje = today();
+    const dia = s.trabalhoDia?.dia === hoje ? s.trabalhoDia : { dia: hoje, pontos: 0 };
+    const cabe = Math.max(0, WORK_DAILY_CAP - dia.pontos);
+    pontos = Math.min(POINTS_PER_WORK, cabe);
+    if (pontos) {
+      dia.pontos += pontos;
+      s.trabalhoDia = dia;
+      s.weekPoints += pontos;
+      save(s);
+    }
+  }
+  syncStats(s, { type, id, points: pontos });
 }
 
 /**
@@ -236,11 +296,20 @@ export function isMissionDone(missionId: string): boolean {
 }
 
 // Quiz da pílula: acertou tudo = "domina o produto". Pontua 1x por produto (permanente).
-export function recordQuizPass(productId: string): Stats {
+export function recordQuizPass(productId: string, conteudoEm?: string): Stats {
   const s = getStats();
+  // O CARIMBO DO CONTEÚDO.
+  //
+  // O quiz valia uma vez na vida: do segundo mês em diante não havia como
+  // pontuar nele, e o placar sobrava para a pílula reassistida. Agora o acerto
+  // guarda QUAL versão do conteúdo foi acertada. Quando a marca atualiza a
+  // ficha — carta nova, versão nova, número corrigido —, o quiz daquele carro
+  // volta a valer. Quem renova o placar é a carta do mês, não uma fábrica de
+  // quiz. Sem `conteudoEm`, o comportamento é o de antes: pontua uma vez.
+  const carimbo = conteudoEm || 1;
   let isNew = false;
-  if (!s.perQuiz[productId]) {
-    s.perQuiz[productId] = 1;
+  if (s.perQuiz[productId] !== carimbo) {
+    s.perQuiz[productId] = carimbo;
     s.weekPoints += POINTS_PER_QUIZ;
     isNew = true;
   }
@@ -252,6 +321,15 @@ export function recordQuizPass(productId: string): Stats {
   return s;
 }
 
-export function isQuizDone(productId: string): boolean {
-  return !!getStats().perQuiz[productId];
+/**
+ * Já dominou ESTA versão do conteúdo?
+ *
+ * Com `conteudoEm`, um quiz acertado na ficha antiga volta a aparecer como
+ * pendente quando a marca publica a nova — é o mesmo carro, mas não é mais o
+ * mesmo conteúdo.
+ */
+export function isQuizDone(productId: string, conteudoEm?: string): boolean {
+  const feito = getStats().perQuiz[productId];
+  if (!feito) return false;
+  return feito === (conteudoEm || 1);
 }

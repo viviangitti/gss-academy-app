@@ -104,6 +104,15 @@ export interface Versao {
 }
 
 export interface Product {
+  /**
+   * QUANDO O CONTEÚDO DESTE CARRO MUDOU PELA ÚLTIMA VEZ (AAAA-MM).
+   *
+   * É o que faz o quiz voltar a valer ponto: quem acertou na versão de
+   * setembro refaz quando entra a ficha de outubro. Sem este campo, o quiz
+   * pontua uma vez na vida, como era antes — então ele é opcional de
+   * propósito: só os carros que a gerência realmente atualizou renovam.
+   */
+  conteudoEm?: string;
   id: string;
   brand: BrandId;
   name: string;

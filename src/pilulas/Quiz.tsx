@@ -76,9 +76,42 @@ function buildQuestions(product: Product, role?: string): Question[] {
     const comuns = [...A].filter((w) => B.has(w)).length;
     return comuns / juntos > 0.3;
   };
+  /**
+   * O QUE VALE PRA MARCA INTEIRA NÃO PODE SER ALTERNATIVA ERRADA.
+   *
+   * O `pareceCom` só reprova a frase do outro carro quando ELA SE PARECE com
+   * algo escrito neste. E é aí que ele falha: o Jaecoo 5 não tem uma linha
+   * própria sobre garantia, então "7 anos ou 150.000 km de garantia total" —
+   * que vale para os cinco — não parece com nada dele e entra como opção
+   * errada. O vendedor que sabe a garantia marca, está certo, e o app diz que
+   * errou. O mesmo com a bateria de lítio-ferro-fosfato (os quatro usam), com
+   * "híbrido que não precisa de tomada" (o Jaecoo 5 e o Omoda 5 são
+   * exatamente isso) e com os fatos do grupo (Chery, 2009, Cajamar, Allianz).
+   *
+   * Medido antes de escrever esta lista: de 270 alternativas erradas que o app
+   * aceitava, 53 eram verdade sobre o carro da pergunta — e a chance de uma
+   * pergunta sair injusta ia de 15% (objeção do Jaecoo 7) a 60% (objeção do
+   * Jaecoo 5). O quiz estava punindo justamente quem conhece a marca.
+   *
+   * Fato da marca não serve de alternativa errada para NENHUM dos carros dela.
+   * Reprovar aqui não deixa o quiz sem opção: sobram mais de catorze por campo.
+   */
+  const FATO_DA_MARCA = [
+    /grupo\s+chery|\bchery\b/i,
+    /desde\s+2009|em\s+2009/i,
+    /\b\d{2}\s+pa[íi]ses/i,
+    /cajamar/i,
+    /allianz/i,
+    /garantia[^.]{0,40}\b[78]\s+anos|\b150\.?000\s*km/i,
+    /l[íi]tio[-\s]ferro[-\s]fosfato|\bLFP\b/i,
+    /n[ãa]o\s+precisa\s+(de\s+)?tomada|sem\s+tomada|recarrega\s+sozinho/i,
+  ];
+  const ehFatoDaMarca = (t: string) => FATO_DA_MARCA.some((re) => re.test(t));
+
   const make = (q: string, correct: string, wrong: string[]): Question | null => {
     const candidatas = wrong.filter(
-      (w) => w && w !== correct && !falaDoProduto(w) && !proprio.some((meu) => pareceCom(w, meu)),
+      (w) => w && w !== correct && !falaDoProduto(w) && !ehFatoDaMarca(w)
+        && !proprio.some((meu) => pareceCom(w, meu)),
     );
     const distractors = pick(candidatas, 2);
     if (distractors.length < 2) return null;

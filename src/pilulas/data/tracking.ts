@@ -333,3 +333,23 @@ export function isQuizDone(productId: string, conteudoEm?: string): boolean {
   if (!feito) return false;
   return feito === (conteudoEm || 1);
 }
+
+/**
+ * JÁ PASSOU ALGUMA VEZ NESTE QUIZ? — para DESTRANCAR, não para pontuar.
+ *
+ * `isQuizDone` responde "acertou a versão de agora?", e é a pergunta certa para
+ * o ponto: conteúdo novo, ponto novo. Mas ela é a pergunta ERRADA para o
+ * cadeado dos níveis 2, 3 e 4.
+ *
+ * Quando o Jaecoo 5 foi carimbado, as duas coisas andavam juntas — e cinco
+ * pessoas que já tinham aberto os quatro níveis viram os três de cima voltarem
+ * a ter cadeado. Ganhar a chance de pontuar de novo é um presente; perder o
+ * acesso a um conteúdo que já era seu é um castigo, e ninguém pediu o segundo
+ * ao aceitar o primeiro. Pior: é o vendedor no meio do atendimento que descobre.
+ *
+ * Então são duas perguntas diferentes, e cada uma tem a sua função: o quiz
+ * reabre para valer ponto, e o que já foi aberto fica aberto.
+ */
+export function quizJaPassou(productId: string): boolean {
+  return !!getStats().perQuiz[productId];
+}

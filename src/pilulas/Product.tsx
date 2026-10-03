@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText, ArrowUpRight, Play, Pause, Plus, Minus, Camera, Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon, Volume2, BookOpen, Users, Lock, Package, Maximize2, Layers, Download, X,
-} from 'lucide-react';
+  MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText, ArrowUpRight, Play, Pause, Plus, Minus, Camera, Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon, Volume2, BookOpen, Users, Lock, Package, Maximize2, Layers, Download, X, Sparkles, ChevronRight } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
 import { NARRATION_TIMINGS } from './data/narrationTimings';
 import { submitObjection, fetchMyObjections, fetchPublicadas, objectionDate, type TeamObjection } from './data/objections';
@@ -12,7 +11,7 @@ import { findProduct, hasVideo, getVideoObjectUrl, ensureVideoLoaded, setProduct
 import { audienceVideoKey, getAudienceReel, setAudienceReel, useAudienceReels, audiencesForLine } from './data/audienceVideos';
 import { pegarVideoPreparado, adotarVideo } from './data/videoGesture';
 import { getAfiliadoCode } from './data/afiliadoCode';
-import { recordView, isQuizDone, registraUso, carimbarValor } from './data/tracking';
+import { recordView, isQuizDone, registraUso, carimbarValor, quizJaPassou, POINTS_PER_QUIZ } from './data/tracking';
 import { nomeParaCliente } from './data/nomeArquivo';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
 import { useBrand } from './BrandContext';
@@ -784,6 +783,10 @@ export default function Product() {
   const [nivel, setNivel] = useState(1);
   const temNiveis = !!product?.niveis?.length;
   const quizFeito = product ? isQuizDone(product.id, product.conteudoEm) : false;
+  // DESTRANCAR não é a mesma pergunta que PONTUAR: quem já acertou uma vez
+  // mantém os níveis abertos mesmo quando a ficha é atualizada e o quiz volta
+  // a valer ponto (ver quizJaPassou em data/tracking).
+  const niveisAbertos = product ? quizJaPassou(product.id) : false;
   const [gerando, setGerando] = useState<'cliente' | 'estudo' | null>(null);
   const [avisoOp, setAvisoOp] = useState('');
   const [whats, setWhats] = useState<string>('');
@@ -993,7 +996,7 @@ export default function Product() {
       {temNiveis && (
         <div className="wp-niveis">
           {[1, ...(product.niveis || []).map((_, k) => k + 2)].map((n) => {
-            const bloqueado = n > 1 && !quizFeito;
+            const bloqueado = n > 1 && !niveisAbertos;
             const info = n === 1 ? null : product.niveis?.[n - 2];
             return (
               <button
@@ -1014,8 +1017,28 @@ export default function Product() {
       {temNiveis && nivel > 1 && (
         <p className="wp-nivel-foco">{product.niveis?.[nivel - 2]?.foco}</p>
       )}
-      {temNiveis && !quizFeito && (
+      {temNiveis && !niveisAbertos && (
         <p className="wp-nivel-aviso">Acerte o quiz aqui embaixo para abrir os próximos níveis.</p>
+      )}
+
+      {/* A FICHA MUDOU — e a pessoa precisa SABER.
+          Sem este aviso o quiz reabria calado: a tela ficava idêntica à de
+          sempre, e quem já tinha acertado não tinha por que descer até o fim da
+          página pra descobrir que valia 30 pontos de novo. Aparece só pra quem
+          já passou uma vez e ainda não refez — some sozinho quando refizer. */}
+      {niveisAbertos && !quizFeito && (
+        <button
+          type="button"
+          className="wp-quiz-novo"
+          onClick={() => document.querySelector('.wp-quiz')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+        >
+          <Sparkles size={16} className="wp-ico" />
+          <span>
+            <b>A ficha deste carro foi atualizada</b>
+            <i>O quiz vale +{POINTS_PER_QUIZ} pontos de novo. Toque para refazer.</i>
+          </span>
+          <ChevronRight size={17} className="wp-ico" />
+        </button>
       )}
 
       <Reel key={nivel} product={product} previewAudience={previewAud} nivel={nivel} />

@@ -4784,3 +4784,27 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
 }
 .wp-quemsou-ok:disabled { opacity: .42; cursor: default; }
 .wp-quemsou-rodape { font-size: 11.5px; line-height: 1.5; color: var(--wp-soft); margin: 14px 0 0; text-align: center; }
+
+/* ---- "A ficha foi atualizada": o quiz voltou a valer ponto ---- */
+/* Dourado, e não azul: o app usa azul pra tudo que é ação de rotina, e este
+   aviso aparece poucas vezes no mês — tem que destoar da tela que a pessoa já
+   conhece de cor, ou vira mais um botão que ela não lê. */
+.wp-quiz-novo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  margin: 10px 0 2px;
+  padding: 13px 14px;
+  text-align: left;
+  border: 1.5px solid #e4cf92;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fdf7e8, #fbf1d9);
+  color: #6b5312;
+  cursor: pointer;
+}
+.wp-quiz-novo > .wp-ico:first-child { flex: none; color: #b08a2a; }
+.wp-quiz-novo > .wp-ico:last-child { flex: none; margin-left: auto; color: #b08a2a; }
+.wp-quiz-novo span { display: block; min-width: 0; }
+.wp-quiz-novo b { display: block; font-size: 13.5px; font-weight: 800; color: #4d3c0c; }
+.wp-quiz-novo i { display: block; font-style: normal; font-size: 12px; line-height: 1.4; margin-top: 2px; }

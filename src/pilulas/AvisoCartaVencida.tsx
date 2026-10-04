@@ -47,10 +47,13 @@ export default function AvisoCartaVencida() {
           nenhuma condição de veículo.
         </p>
 
-        <div className="wp-cv-nota">
-          As folhas antigas não foram apagadas — estão no Painel, arquivadas, para consulta.
-          O que falta é publicar a nova.
-        </div>
+        {/* NADA SOBRE AS FOLHAS ANTIGAS AQUI.
+            A primeira versão explicava que a carta velha fica arquivada no
+            Painel. É verdade, mas era resposta para uma pergunta que a Silene
+            fez e que estas duas pessoas não fizeram — e, pior, dava a entender
+            que havia uma decisão a tomar sobre a carta antiga. Não há: ela sai
+            sozinha na data de validade. Este aviso tem um trabalho só, que é
+            publicar a nova. */}
 
         <button
           className="wp-cv-ok"

@@ -63,10 +63,13 @@ const ROLE_OVERRIDES: Record<string, { role: Role; affiliateType?: AffiliateType
   // A conta continua fora da contagem e do ranking (ver data/contasDeTeste):
   // gestora não disputa posição com quem está no showroom, e o "11 pessoas
   // usaram" do Painel tem que ser 9 vendedores de verdade.
-  // TEMPORÁRIO (11/09/2026): a Vivian pediu para ver o app como vendedora — o
-  // pop-up da campanha não aparece para gestor. Voltar para
-  // { role: 'gestor', ..., cargo: 'gerente-veiculos' } quando ela pedir.
-  'viviangitti23@gmail.com': { role: 'balconista', brands: ['meraki', 'dsp', 'ramasa'], cargo: 'vendedor-veiculos' },
+  // DE VOLTA A GESTORA (04/10/2026). Entre 11/09 e hoje ela entrava como
+  // vendedora, porque o pop-up da campanha não aparece para gestor e ela queria
+  // ver o app do jeito que o time vê. O que trouxe de volta foi o histórico: só
+  // o Painel mostra a condição arquivada, e sem ele a Vivian não conseguia
+  // conferir o que foi praticado no mês que passou. Para rever a tela do
+  // vendedor, usar "Ver como time" em vez de trocar o papel.
+  'viviangitti23@gmail.com': { role: 'gestor', brands: ['meraki', 'dsp', 'ramasa'], cargo: 'gerente-veiculos' },
   // Silene: gestora de TODAS as marcas, em qualquer um dos e-mails dela.
   //
   // O Hotmail era a conta de AFILIADA — e afiliado só enxerga a linha GLPEN.

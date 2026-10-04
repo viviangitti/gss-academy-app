@@ -25,6 +25,7 @@ import Landing from './Landing';
 import Onboarding from './Onboarding';
 import QuemVoceE from './QuemVoceE';
 import DesafioSemana from './DesafioSemana';
+import AvisoCartaVencida from './AvisoCartaVencida';
 import { lojasDaMarca } from './data/lojas';
 import BottomNav from './BottomNav';
 import AvisosApp from './AvisosApp';
@@ -401,6 +402,9 @@ function Shell() {
       {showOnboarding && (
         <Onboarding auto={isAuto(brand.id)} onFinish={() => { try { localStorage.setItem('wp_onboarded', '1'); } catch { /* ignore */ } setOnboarded(true); }} />
       )}
+      {/* A loja sem carta de veículo — só para quem pode publicar. Vem antes do
+          Header de propósito: é a primeira coisa que essas duas pessoas veem. */}
+      <AvisoCartaVencida />
       <Header />
       {/* O lembrete do mês vive aqui, e não numa tela: o vendedor abre no Hoje
           e o gerente cai no Painel. */}

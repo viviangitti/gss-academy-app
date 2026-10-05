@@ -263,6 +263,44 @@ export function tituloDaPagina(texto: string, n: number): string {
  * Devolve lista vazia quando não é PDF ou quando o arquivo não abre — quem
  * chama volta pro caminho normal, de uma condição só.
  */
+/**
+ * Deixa o leitor de PDF pronto — de preferência ANTES de alguém precisar dele.
+ *
+ * Duas tentativas, com uma pausa entre elas: a falha típica do 4G de loja é
+ * instantânea e passa na segunda. Se as duas falharem, o erro sobe com nome e
+ * sobrenome, em vez de virar "o arquivo é grande demais" três camadas acima.
+ */
+async function prepararLeitor(pdfjs: typeof import('pdfjs-dist')): Promise<void> {
+  if (pdfjs.GlobalWorkerOptions.workerSrc) return;
+  let ultimo: unknown = null;
+  for (const tentativa of [1, 2]) {
+    try {
+      const worker = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
+      pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
+      return;
+    } catch (e) {
+      ultimo = e;
+      if (tentativa === 1) await new Promise((r) => setTimeout(r, 900));
+    }
+  }
+  throw new Error(
+    `o leitor de PDF não baixou (${ultimo instanceof Error ? ultimo.message : 'sem rede'}). `
+    + 'Tente de novo com wi-fi, ou abra o app pelo navegador do celular em vez do WhatsApp.',
+  );
+}
+
+/**
+ * CHAMADO QUANDO O PAINEL ABRE, de propósito.
+ *
+ * Entre abrir o Painel e escolher o arquivo passam segundos — às vezes minutos,
+ * porque a pessoa ainda vai procurar a carta no celular. É nesse intervalo que
+ * o 1,2 MB tem que viajar, e não no toque em que ela escolhe o PDF. Falhar aqui
+ * não custa nada: `lerCarta` tenta de novo na hora.
+ */
+export function preCarregarLeitor(): void {
+  import('pdfjs-dist').then((pdfjs) => prepararLeitor(pdfjs)).catch(() => { /* lerCarta tenta de novo */ });
+}
+
 export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]> {
   const ehPdf = f.type === 'application/pdf' || /\.pdf$/i.test(f.name);
   if (!ehPdf) return [];
@@ -271,9 +309,20 @@ export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]
   // mais de 1 MB de biblioteca, e o vendedor no showroom não pode pagar por
   // isso no carregamento do app.
   const pdfjs = await import('pdfjs-dist');
-  const worker = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
-  pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
 
+  // O WORKER É O PONTO FRACO, E É DELE QUE VEM O SILÊNCIO.
+  //
+  // São 1,2 MB num arquivo separado, buscado no instante em que a pessoa
+  // escolhe o PDF — ou seja, no 4G da loja. Quando esse download falha, a carta
+  // inteira falha, e até ontem o erro era engolido e saía como "PDF grande
+  // demais": a Raphaela passou dois dias tentando resolver um problema de
+  // tamanho que não existia.
+  //
+  // O pdf.js 6 não roda sem worker (a volta pela linha principal saiu da
+  // biblioteca), então não há como contornar — o jeito é não depender da rede
+  // na hora H. `preCarregarLeitor` busca isso quando o Painel abre, minutos
+  // antes; aqui ficam as tentativas, para o caso de ela ter ido direto.
+  await prepararLeitor(pdfjs);
   const doc = await pdfjs.getDocument({ data: await f.arrayBuffer() }).promise;
   const paginas: PaginaCarta[] = [];
   let textoTodo = '';
@@ -372,6 +421,12 @@ export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]
       arquivo = cv.toDataURL('image/jpeg', q);
       if (arquivo.length <= 900 * 1024) break;
     }
+    // DEVOLVE A MEMÓRIA DA PÁGINA ANTES DE DESENHAR A PRÓXIMA.
+    //
+    // Cada tela destas ocupa uns 6 MB enquanto existe, e uma carta tem dez. No
+    // Safari do iPhone o coletor de lixo não corre atrás disso sozinho no meio
+    // de um laço — zerar o tamanho é o jeito de dizer "pode levar agora".
+    cv.width = 0; cv.height = 0;
 
     textoTodo += ' ' + texto;
 

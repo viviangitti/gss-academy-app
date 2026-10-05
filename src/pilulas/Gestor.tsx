@@ -20,7 +20,7 @@ import { DOCUMENTOS, PRATELEIRAS, type PrateleiraId } from './data/documentos';
 import { enviarDocNuvem, carregarDocsNuvem, docsNuvemDaMarca, apagarDocNuvem, type DocNuvem } from './data/docsUpload';
 import { carregarOcultos, ocultosDaMarca, alternarOculto, useDocsOcultos } from './data/docsOcultos';
 import { atualizarCondicao, aposentarVarias, jaPublicada, abrirArquivo, type Condicao } from './data/condicoes';
-import { lerCarta, pareceAcessorio, textoDeValidade, type PaginaCarta } from './data/cartaPdf';
+import { lerCarta, pareceAcessorio, textoDeValidade, type PaginaCarta, preCarregarLeitor } from './data/cartaPdf';
 import { acessoriosParaGestao, acessorioOculto, precoLabel, precoDe, ORIGENS, type Acessorio, type OrigemAcessorio } from './data/acessorios';
 import { carregarAjustesAcessorios, salvarPreco, salvarEdicao, ocultarAcessorio, salvarOrdemAcessorios, edicaoDe, useAjustesAcessorios, salvarAcessorioNovo, apagarAcessorioNovo, idParaAcessorio, novosDaMarca } from './data/ajustesAcessorios';
 import { publicarCondicao, apagarCondicao, prepararArquivo, carregarCondicoes, condicoesDaMarca, estaVencida, useCondicoes, vaiAteAVirada, type Disputa, type ArquivoPronto } from './data/condicoes';
@@ -2243,6 +2243,15 @@ export default function Gestor() {
   const [openForm, setOpenForm] = useState<'produto' | 'oferta' | 'condicao' | 'documento' | 'calendario' | 'tendencia' | null>(null);
   // Qual condição está aberta para correção (o formulário abre abaixo dela).
   const [editandoCond, setEditandoCond] = useState<string | null>(null);
+
+  // O LEITOR DE PDF COMEÇA A BAIXAR AGORA, não quando ela escolher o arquivo.
+  //
+  // São 1,2 MB. Entre abrir o Painel e achar a carta no celular passam segundos
+  // — às vezes minutos. É esse intervalo que o download tem que usar, e não o
+  // toque em que ela escolhe o PDF, no meio do 4G da loja. Foi o que derrubou a
+  // Raphaela: o pacote não veio, a leitura falhou, e o erro saiu como "PDF
+  // grande demais".
+  useEffect(() => { preCarregarLeitor(); }, []);
   // Veio de "Editar" lá da tela do time: abre na aba certa, com a condição
   // aberta e rolada até ela. Sem isso o atalho jogava a pessoa no topo do
   // Painel e ela tinha que procurar de novo.

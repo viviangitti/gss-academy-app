@@ -264,6 +264,40 @@ export function tituloDaPagina(texto: string, n: number): string {
  * chama volta pro caminho normal, de uma condição só.
  */
 /**
+ * O MÉTODO QUE O CELULAR DELA NÃO TINHA.
+ *
+ * O pdf.js 6 usa `Map.prototype.getOrInsertComputed`, que é uma adição recente
+ * ao JavaScript: existe no Chrome e no Safari novos e não existe em celular um
+ * pouco mais velho. Quando falta, a biblioteca estoura com
+ * "this[#t].getOrInsertComputed is not a function" — foi exatamente o erro que
+ * a Raphaela mandou, depois de dois dias achando que o problema era o tamanho
+ * do arquivo. O build "legacy" do pdf.js não resolve: conferi, ele usa o mesmo
+ * método.
+ *
+ * São sete linhas de JavaScript. Só entram quando faltam, e com a mesma
+ * assinatura da proposta — devolve o valor se a chave existe, senão calcula,
+ * guarda e devolve.
+ */
+function ensinarMapaAoNavegador(): void {
+  const M = Map.prototype as unknown as Record<string, unknown>;
+  if (typeof M.getOrInsertComputed !== 'function') {
+    M.getOrInsertComputed = function <K, V>(this: Map<K, V>, chave: K, calcula: (k: K) => V): V {
+      if (this.has(chave)) return this.get(chave) as V;
+      const valor = calcula(chave);
+      this.set(chave, valor);
+      return valor;
+    };
+  }
+  if (typeof M.getOrInsert !== 'function') {
+    M.getOrInsert = function <K, V>(this: Map<K, V>, chave: K, padrao: V): V {
+      if (this.has(chave)) return this.get(chave) as V;
+      this.set(chave, padrao);
+      return padrao;
+    };
+  }
+}
+
+/**
  * Deixa o leitor de PDF pronto — de preferência ANTES de alguém precisar dele.
  *
  * Duas tentativas, com uma pausa entre elas: a falha típica do 4G de loja é
@@ -271,6 +305,7 @@ export function tituloDaPagina(texto: string, n: number): string {
  * sobrenome, em vez de virar "o arquivo é grande demais" três camadas acima.
  */
 async function prepararLeitor(pdfjs: typeof import('pdfjs-dist')): Promise<void> {
+  ensinarMapaAoNavegador();
   if (pdfjs.GlobalWorkerOptions.workerSrc) return;
   let ultimo: unknown = null;
   for (const tentativa of [1, 2]) {
@@ -298,6 +333,7 @@ async function prepararLeitor(pdfjs: typeof import('pdfjs-dist')): Promise<void>
  * não custa nada: `lerCarta` tenta de novo na hora.
  */
 export function preCarregarLeitor(): void {
+  ensinarMapaAoNavegador();
   import('pdfjs-dist').then((pdfjs) => prepararLeitor(pdfjs)).catch(() => { /* lerCarta tenta de novo */ });
 }
 
@@ -308,6 +344,8 @@ export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]
   // pdf.js só entra na tela de quem publica, e só quando o arquivo é PDF: são
   // mais de 1 MB de biblioteca, e o vendedor no showroom não pode pagar por
   // isso no carregamento do app.
+  // Antes de qualquer coisa do pdf.js: o método que falta em celular mais velho.
+  ensinarMapaAoNavegador();
   const pdfjs = await import('pdfjs-dist');
 
   // O WORKER É O PONTO FRACO, E É DELE QUE VEM O SILÊNCIO.

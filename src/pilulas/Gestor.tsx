@@ -1036,7 +1036,18 @@ function CondicaoForm({ brand, editando, onDone }: {
       // Antes de tudo: é uma carta comercial de várias páginas? Se for, ela
       // não vira UMA condição — vira uma por modelo, que é como o vendedor
       // procura.
-      const pgs = await lerCarta(f, brand).catch(() => [] as PaginaCarta[]);
+      // O LEITOR PODE FALHAR, E FALHAR NÃO É "ARQUIVO GRANDE DEMAIS".
+      //
+      // Isto era `.catch(() => [])`: qualquer tropeço do pdf.js — a biblioteca
+      // de 1 MB que não baixou no 4G da loja, um PDF que ele não abre — virava
+      // lista vazia, o código seguia pro caminho do arquivo cru e a pessoa lia
+      // "esse PDF é grande demais. Tire um print". Ela ia tirar print de oito
+      // páginas por causa de um erro que não tinha nada a ver com tamanho.
+      let falhaLeitor = '';
+      const pgs = await lerCarta(f, brand).catch((e) => {
+        falhaLeitor = e instanceof Error ? e.message : 'não consegui abrir o PDF';
+        return [] as PaginaCarta[];
+      });
       if (pgs.length > 1) {
         setPaginas(pgs);
         // Reaproveitar o arquivo inteiro é o erro mais comum: subir de novo pra
@@ -1049,7 +1060,38 @@ function CondicaoForm({ brand, editando, onDone }: {
         if (!escreveuValidade && pgs[0].validade) setValidade(pgs[0].validade);
         return;
       }
-      const pronto = await prepararArquivo(f);
+      // CARTA DE UMA PÁGINA TAMBÉM PASSA PELO LEITOR.
+      //
+      // A máquina que resolve o tamanho já existia: `lerCarta` desenha cada
+      // página numa imagem de 1080px e vai baixando a qualidade até caber nos
+      // 900 KB. Só que ela só era usada quando o PDF tinha MAIS de uma página —
+      // com uma só, o código mandava o PDF cru e barrava no limite. Foi assim
+      // que a Raphaela levou "esse PDF é grande demais" com o app tendo, ali do
+      // lado, exatamente o que precisava para publicar.
+      //
+      // De quebra, a página desenhada vem com o rebate da rede tapado e com a
+      // validade já lida da carta — o caminho do arquivo cru não tem nada disso.
+      if (pgs.length === 1) {
+        const pg = pgs[0];
+        setArq({
+          arquivo: pg.arquivo,
+          tipo: 'imagem',
+          nomeArquivo: f.name.replace(/\.pdf$/i, '') + '.jpg',
+          bytes: pg.bytes,
+        });
+        setRepetida(jaPublicada(brand, pg.arquivo, editando?.id) || null);
+        if (!titulo.trim() && pg.titulo) setTitulo(pg.titulo);
+        if (!escolheuCategoria) setCategoria(pg.categoria);
+        if (!venceEm && pg.venceEm) setVenceEm(pg.venceEm);
+        if (!escreveuValidade && pg.validade) setValidade(pg.validade);
+        return;
+      }
+
+      const pronto = await prepararArquivo(f).catch((e) => {
+        // Se o leitor tropeçou ANTES, a causa é essa — não o tamanho.
+        if (falhaLeitor) throw new Error(`Não consegui ler esse PDF (${falhaLeitor}). Tente de novo com uma conexão melhor; se insistir, mande um print da página.`);
+        throw e;
+      });
       setArq(pronto);
       setRepetida(jaPublicada(brand, pronto.arquivo, editando?.id) || null);
       if (!escolheuCategoria) setCategoria(pareceAcessorio(pronto.nomeArquivo, titulo) ? 'acessorio' : 'veiculo');

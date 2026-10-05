@@ -1780,7 +1780,7 @@ function VideoProductRow({ p }: { p: Product }) {
 // GSS, não da marca — por isso só quem toca a GSS vê, e não todo gestor.
 const DONOS_GSS = ['viviangitti23@gmail.com'];
 
-function Interessados({ email }: { email?: string }) {
+function Interessados({ email, marca }: { email?: string; marca: string }) {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [aberto, setAberto] = useState(false);
   const podeVer = !!email && DONOS_GSS.includes(email.trim().toLowerCase());
@@ -1793,11 +1793,23 @@ function Interessados({ email }: { email?: string }) {
   return (
     <div className="wp-gz-block">
       <button type="button" className="wp-objadd-head" onClick={() => setAberto((o) => !o)}>
-        <span className="wp-gz-block-title"><Mail size={17} className="wp-ico" /> Marcas interessadas ({leads.length})</span>
+        <span className="wp-gz-block-title"><Mail size={17} className="wp-ico" /> Interessados na vitrine do Eleva ({leads.length})</span>
         <ChevronDown size={16} className={`wp-ico wp-objadd-chev ${aberto ? 'open' : ''}`} />
       </button>
       {aberto && (
         <div className="wp-gz-leads">
+          {/* DE QUEM É ESTA LISTA, COM TODAS AS LETRAS.
+              São contatos da vitrine do Eleva — gente que pediu informação pra
+              GSS. Não têm marca, e por isso o bloco aparecia igual dentro do
+              painel de qualquer cliente: no painel da Royal, uma linha escrita
+              "Ramasa" parecia lead da Royal. Só a Vivian vê isto (DONOS_GSS),
+              então nunca houve vazamento entre empresas — mas confundir as duas
+              coisas na própria cabeça dela é problema suficiente. */}
+          <p className="wp-gz-leads-aviso">
+            Contatos da <b>GSS</b>, não {marca ? `da ${marca}` : 'desta marca'}. Vieram da vitrine
+            do Eleva e aparecem igual em qualquer painel — a empresa abaixo é a que a própria
+            pessoa escreveu no formulário.
+          </p>
           {leads.map((l) => (
             <div key={l.id} className="wp-gz-lead">
               <b>{l.empresa || 'Sem empresa'}</b>
@@ -2400,7 +2412,7 @@ export default function Gestor() {
           quê. Cada bloco cai sozinho agora. */}
       {veOTime && tab === 'resultados' && (
         <>
-          <Interessados email={user?.email} />
+          <Interessados email={user?.email} marca={brand.name} />
           <Resultados brandId={brandId} products={products} buscas={buscas} />
           {auto && <ArgumentosPanel brandId={brandId} products={products} />}
           <ObjectionsPanel brandId={brandId} />

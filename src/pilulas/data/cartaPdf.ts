@@ -128,6 +128,17 @@ const MODELOS: Array<[RegExp, string]> = [
   [/LINHA\s+OMODA\s*7|OMODA\s*7\s+(LUXURY|PRESTIGE)/i, 'Omoda 7'],
   [/LINHA\s+OMODA\s*5|OMODA\s*5\s+(LUXURY|PRESTIGE)/i, 'Omoda 5'],
   [/LINHA\s+JAECOO\s*7|JAECOO\s*7\s+(ELITE|LUXURY|PRESTIGE)/i, 'Jaecoo 7'],
+  // O JAECOO 5 FALTAVA, e isso quase custou a carta de outubro.
+  //
+  // Ele entrou na linha depois que esta lista foi escrita. Sem o padrão, as
+  // duas páginas dele ("fase lançamento" e "vendas regulares") caíam no título
+  // genérico "Página 7" e "Página 8" — e página sem modelo reconhecido entra
+  // DESMARCADA, porque quase sempre é capa ou verso. Ou seja: a carta subiria
+  // inteira, menos o carro de lançamento.
+  //
+  // A versão de entrada dele é COMFORT, que também não existia na lista de
+  // versões lá embaixo.
+  [/LINHA\s+JAECOO\s*5|JAECOO\s*5\s+(COMFORT|LUXURY|PRESTIGE)/i, 'Jaecoo 5'],
 ];
 
 /**
@@ -245,9 +256,16 @@ export function tituloDaPagina(texto: string, n: number): string {
 
   if (modelo) {
     const nome = modelo[1];
-    const versoes = ['ELITE', 'LUXURY', 'PRESTIGE'].filter((v) =>
+    const versoes = ['COMFORT', 'ELITE', 'LUXURY', 'PRESTIGE'].filter((v) =>
       new RegExp(`${nome.replace(/\s/g, '\\s*')}\\s+${v}`, 'i').test(texto));
-    return versoes.length ? `${nome} — ${versoes.join(' e ')}` : nome;
+    const base = versoes.length ? `${nome} — ${versoes.join(' e ')}` : nome;
+    // O MESMO CARRO EM DUAS PÁGINAS. A carta de outubro traz o Jaecoo 5 duas
+    // vezes: a fase de lançamento (limitada a 3.600 unidades) e as vendas
+    // regulares, com condições diferentes. Sem a marcação, as duas virariam
+    // cards de nome idêntico e o vendedor abriria no escuro.
+    if (/FASE\s+LAN[ÇC]AMENTO/i.test(texto)) return `${base} · fase de lançamento`;
+    if (/VENDAS\s+REGULARES/i.test(texto)) return `${base} · vendas regulares`;
+    return base;
   }
 
   // Tabela de acessórios: o nome sai dos itens que ela lista.

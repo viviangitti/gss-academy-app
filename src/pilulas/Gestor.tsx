@@ -1115,16 +1115,23 @@ function CondicaoForm({ brand, editando, onDone }: {
     setErro('');
     setFeitas(0);
     try {
-      // SUBSTITUIR: aposenta o que já está na prateleira ANTES de publicar o
-      // novo. Antes era virar o mês em duas operações, e entre uma e outra o
-      // time via a carta velha e a nova ao mesmo tempo.
-      if (substituir) {
-        const prateleiras = new Set(escolhidas.map((p) => p.categoria));
-        const velhas = condicoesDaMarca(brand)
-          .filter((c) => prateleiras.has((c.categoria || 'veiculo') as typeof escolhidas[number]['categoria']))
-          .map((c) => c.id);
-        if (velhas.length) await aposentarVarias(velhas);
-      }
+      // AS VELHAS SAEM DEPOIS, NÃO ANTES.
+      //
+      // Isto rodava primeiro, e em 05/10 custou caro: a Raphaela marcou
+      // "Substituir", as sete folhas de setembro foram aposentadas num
+      // segundo — e a publicação seguinte estourou na primeira página. A
+      // prateleira ficou vazia e nada ocupou o lugar, até alguém publicar na
+      // mão no dia seguinte. O destrutivo passou, o construtivo não.
+      //
+      // Aposentar depois inverte o único risco que sobra: por alguns segundos
+      // a carta velha e a nova convivem na tela. É muito melhor do que o time
+      // ficar sem nenhuma.
+      const velhas = substituir
+        ? condicoesDaMarca(brand)
+          .filter((c) => new Set(escolhidas.map((p) => p.categoria))
+            .has((c.categoria || 'veiculo') as typeof escolhidas[number]['categoria']))
+          .map((c) => c.id)
+        : [];
       for (const p of [...escolhidas].reverse()) {
         await publicarCondicao({
           brand,
@@ -1140,9 +1147,25 @@ function CondicaoForm({ brand, editando, onDone }: {
         });
         setFeitas((k) => k + 1);
       }
+      // Só agora, com as novas no ar.
+      if (velhas.length) await aposentarVarias(velhas);
       onDone(`${escolhidas.length} condições`);
-    } catch {
-      setErro('Não consegui publicar todas. Confira a internet — as que já subiram estão no ar.');
+    } catch (e) {
+      // A MENSAGEM PRECISA DIZER O QUE É.
+      //
+      // Era uma frase só, culpando a internet. A Raphaela trocou de rede e
+      // tentou de novo três vezes por causa dela — e o problema nunca foi
+      // rede: era um campo em branco que o banco recusava. Erro que aponta
+      // para o lugar errado custa mais caro que erro nenhum.
+      const cod = (e as { code?: string })?.code || '';
+      const diz = e instanceof Error ? e.message : '';
+      setErro(
+        cod === 'permission-denied'
+          ? 'Seu acesso não libera publicar condição. Avise a Vivian — o resto do app segue funcionando.'
+          : /invalid|unsupported field|undefined/i.test(diz)
+            ? `O app montou um dado que o banco recusou (${diz.slice(0, 90)}). Isto é defeito meu, não seu — me mande este print.`
+            : 'Não consegui publicar. Confira a internet e tente de novo — o que já subiu está no ar.',
+      );
     } finally {
       setSubindo(false);
     }

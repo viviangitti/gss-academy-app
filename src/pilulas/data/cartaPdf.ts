@@ -282,39 +282,29 @@ export function tituloDaPagina(texto: string, n: number): string {
  * chama volta pro caminho normal, de uma condição só.
  */
 /**
- * O MÉTODO QUE O CELULAR DELA NÃO TINHA.
+ * O BUILD LEGACY, E POR QUE O POLYFILL CASEIRO NÃO BASTAVA.
  *
- * O pdf.js 6 usa `Map.prototype.getOrInsertComputed`, que é uma adição recente
- * ao JavaScript: existe no Chrome e no Safari novos e não existe em celular um
- * pouco mais velho. Quando falta, a biblioteca estoura com
- * "this[#t].getOrInsertComputed is not a function" — foi exatamente o erro que
- * a Raphaela mandou, depois de dois dias achando que o problema era o tamanho
- * do arquivo. O build "legacy" do pdf.js não resolve: conferi, ele usa o mesmo
- * método.
+ * O pdf.js 6 usa métodos de JavaScript muito recentes. No celular da Raphaela
+ * faltava `Map.prototype.getOrInsertComputed`, e eu "consertei" ensinando esse
+ * método ao navegador. O conserto estava errado por dois motivos, e os dois só
+ * apareceram quando fui investigar a sério:
  *
- * São sete linhas de JavaScript. Só entram quando faltam, e com a mesma
- * assinatura da proposta — devolve o valor se a chave existe, senão calcula,
- * guarda e devolve.
+ *   · o pdf.js roda a maior parte do trabalho num WORKER, que é outro ambiente
+ *     de JavaScript. O que eu ensinei na página não chega lá — e é justamente
+ *     no worker que estão a maioria das chamadas.
+ *   · não era só aquele método. O pdf.js 6.3 também usa `Math.sumPrecise`, que
+ *     é mais novo ainda. Eu teria consertado um por um, cada vez que alguém
+ *     falhasse.
+ *
+ * O build `legacy` do pdf.js existe exatamente para isto: vem com os polyfills
+ * do core-js embutidos, nas duas pontas. Conferido no pacote: no build normal
+ * `sumPrecise` só aparece sendo usado; no legacy aparece sendo DEFINIDO também.
+ * Custa 60 KB a mais e resolve a classe inteira do problema.
+ *
+ * Eu havia escrito aqui que o legacy não resolvia. Era conclusão de um `grep`
+ * preguiçoso: procurei o nome do método, achei nos dois, e não reparei que num
+ * deles era a definição.
  */
-function ensinarMapaAoNavegador(): void {
-  const M = Map.prototype as unknown as Record<string, unknown>;
-  if (typeof M.getOrInsertComputed !== 'function') {
-    M.getOrInsertComputed = function <K, V>(this: Map<K, V>, chave: K, calcula: (k: K) => V): V {
-      if (this.has(chave)) return this.get(chave) as V;
-      const valor = calcula(chave);
-      this.set(chave, valor);
-      return valor;
-    };
-  }
-  if (typeof M.getOrInsert !== 'function') {
-    M.getOrInsert = function <K, V>(this: Map<K, V>, chave: K, padrao: V): V {
-      if (this.has(chave)) return this.get(chave) as V;
-      this.set(chave, padrao);
-      return padrao;
-    };
-  }
-}
-
 /**
  * Deixa o leitor de PDF pronto — de preferência ANTES de alguém precisar dele.
  *
@@ -322,13 +312,12 @@ function ensinarMapaAoNavegador(): void {
  * instantânea e passa na segunda. Se as duas falharem, o erro sobe com nome e
  * sobrenome, em vez de virar "o arquivo é grande demais" três camadas acima.
  */
-async function prepararLeitor(pdfjs: typeof import('pdfjs-dist')): Promise<void> {
-  ensinarMapaAoNavegador();
+async function prepararLeitor(pdfjs: { GlobalWorkerOptions: { workerSrc: string } }): Promise<void> {
   if (pdfjs.GlobalWorkerOptions.workerSrc) return;
   let ultimo: unknown = null;
   for (const tentativa of [1, 2]) {
     try {
-      const worker = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
+      const worker = await import('pdfjs-dist/legacy/build/pdf.worker.min.mjs?url');
       pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
       return;
     } catch (e) {
@@ -351,8 +340,7 @@ async function prepararLeitor(pdfjs: typeof import('pdfjs-dist')): Promise<void>
  * não custa nada: `lerCarta` tenta de novo na hora.
  */
 export function preCarregarLeitor(): void {
-  ensinarMapaAoNavegador();
-  import('pdfjs-dist').then((pdfjs) => prepararLeitor(pdfjs)).catch(() => { /* lerCarta tenta de novo */ });
+  import('pdfjs-dist/legacy/build/pdf.min.mjs').then((pdfjs) => prepararLeitor(pdfjs)).catch(() => { /* lerCarta tenta de novo */ });
 }
 
 export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]> {
@@ -362,9 +350,7 @@ export async function lerCarta(f: File, _brand?: BrandId): Promise<PaginaCarta[]
   // pdf.js só entra na tela de quem publica, e só quando o arquivo é PDF: são
   // mais de 1 MB de biblioteca, e o vendedor no showroom não pode pagar por
   // isso no carregamento do app.
-  // Antes de qualquer coisa do pdf.js: o método que falta em celular mais velho.
-  ensinarMapaAoNavegador();
-  const pdfjs = await import('pdfjs-dist');
+  const pdfjs = await import('pdfjs-dist/legacy/build/pdf.min.mjs');
 
   // O WORKER É O PONTO FRACO, E É DELE QUE VEM O SILÊNCIO.
   //

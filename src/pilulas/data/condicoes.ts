@@ -335,6 +335,30 @@ export async function carregarCondicoes(brand: BrandId): Promise<void> {
   }
 }
 
+/**
+ * TIRA AS CHAVES EM BRANCO ANTES DE GRAVAR.
+ *
+ * O SDK do Firestore RECUSA um documento que tenha qualquer campo com valor
+ * `undefined` — e recusa na hora, antes de tocar na rede. O formulário monta
+ * `observacao: observacao.trim() || undefined`, ou seja: deixar a Observação em
+ * branco, que é o normal, produzia exatamente esse campo.
+ *
+ * Foi o que derrubou a carta de outubro. A folha é gravada primeiro e entrava;
+ * a ficha vinha logo atrás e estourava — e o laço parava na primeira página.
+ * A Raphaela via "Não consegui publicar todas. Confira a internet", trocava de
+ * rede, tentava de novo e falhava de novo, porque internet nunca foi o
+ * problema. Sobraram duas folhas órfãs no banco, sem ficha nenhuma.
+ *
+ * Em setembro funcionou por acaso: ela tinha preenchido a Observação nas sete
+ * folhas. O caminho inteiro dependia de ninguém deixar um campo opcional vazio.
+ *
+ * A limpeza mora aqui, e não em cada tela, porque aqui passam todas as portas:
+ * publicar uma, publicar a carta inteira e corrigir.
+ */
+function semVazios<T extends object>(o: T): T {
+  return Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined)) as T;
+}
+
 export async function publicarCondicao(c: Omit<Condicao, 'id' | 'criadoEm'>): Promise<void> {
   const id = 'c-' + Math.random().toString(36).slice(2, 10);
   const { arquivo, ...ficha } = c;
@@ -348,7 +372,7 @@ export async function publicarCondicao(c: Omit<Condicao, 'id' | 'criadoEm'>): Pr
   // O ARQUIVO primeiro. Se a ficha entrasse antes e a folha falhasse, o time
   // veria uma condição publicada que não abre — pior do que não ver nada.
   if (arquivo) await setDoc(doc(db, COL, id, SUB, PECA), { arquivo });
-  await setDoc(doc(db, COL, id), nova);
+  await setDoc(doc(db, COL, id), semVazios(nova));
 }
 
 /**
@@ -378,7 +402,7 @@ export async function atualizarCondicao(
   // dizendo uma coisa e mostrando outra.
   if (arquivo) await setDoc(doc(db, COL, id, SUB, PECA), { arquivo });
   const { arquivo: _fora, ...paraNuvem } = nova;
-  await setDoc(doc(db, COL, id), paraNuvem, { merge: true });
+  await setDoc(doc(db, COL, id), semVazios(paraNuvem), { merge: true });
 }
 
 /**

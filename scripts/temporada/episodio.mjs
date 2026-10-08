@@ -57,28 +57,28 @@ body{width:${L}px;height:${A}px;background:${NOITE};color:#f4f3f0;
 
 /* O SELO DO EPISÓDIO — canto de cima, à esquerda, sempre.
    É o lugar fixo que a pessoa aprende a procurar. */
-.selo{display:inline-flex;align-items:baseline;gap:10px;align-self:flex-start;
+.selo{display:inline-flex;align-items:baseline;gap:13px;align-self:flex-start;
   background:rgba(7,7,15,.62);backdrop-filter:blur(6px);
-  border:1.5px solid ${GOLD};border-radius:999px;padding:11px 22px 12px}
-.selo .k{font-size:14px;font-weight:900;letter-spacing:.28em;color:${GOLD};text-transform:uppercase}
-.selo .n{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:26px;color:#f4f3f0;line-height:1}
+  border:2px solid ${GOLD};border-radius:999px;padding:14px 28px 15px}
+.selo .k{font-size:21px;font-weight:900;letter-spacing:.24em;color:${GOLD};text-transform:uppercase}
+.selo .n{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:36px;color:#f4f3f0;line-height:1}
 
 .meio{margin-top:auto}
-.carro{font-size:19px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;color:${GOLD}}
-h1{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:72px;line-height:1.04;margin:14px 0 0;letter-spacing:-.01em}
-.foco{font-size:23px;color:#aab0c2;margin-top:16px;line-height:1.45;max-width:800px}
+.carro{font-size:28px;font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:${GOLD}}
+h1{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:96px;line-height:1.04;margin:14px 0 0;letter-spacing:-.01em}
+.foco{font-size:37px;color:#aab0c2;margin-top:20px;line-height:1.38;max-width:880px}
 
-.quiz{display:flex;align-items:center;gap:15px;margin-top:30px;font-size:23px}
-.quiz i{flex:none;width:11px;height:11px;border-radius:50%;background:${GOLD};font-style:normal}
+.quiz{display:flex;align-items:center;gap:18px;margin-top:34px;font-size:36px}
+.quiz i{flex:none;width:15px;height:15px;border-radius:50%;background:${GOLD};font-style:normal}
 .quiz b{font-weight:800}
 
 /* O RODAPÉ NUNCA MUDA: esquerda onde está, direita quanto vale. */
-.rodape{margin-top:34px;border-top:1px solid rgba(255,255,255,.13);padding-top:26px;
+.rodape{margin-top:40px;border-top:1.5px solid rgba(255,255,255,.16);padding-top:30px;
   display:flex;align-items:flex-end;justify-content:space-between}
-.rodape .k{font-size:14px;font-weight:800;letter-spacing:.26em;color:#8e94a8;text-transform:uppercase}
-.rodape .v{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:34px;color:${GOLD};margin-top:8px;line-height:1}
+.rodape .k{font-size:21px;font-weight:800;letter-spacing:.2em;color:#8e94a8;text-transform:uppercase}
+.rodape .v{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:46px;color:${GOLD};margin-top:8px;line-height:1}
 .premio{text-align:right}
-.premio .v{font-family:Inter,sans-serif;font-size:26px;font-weight:800;color:#f4f3f0;line-height:1.25}
+.premio .v{font-family:Inter,sans-serif;font-size:37px;font-weight:800;color:#f4f3f0;line-height:1.25}
 .premio .v span{color:${GOLD}}
 </style>
 <div class="capa"><img src="${foto}"></div>
@@ -88,7 +88,7 @@ h1{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:72px;line-height:1
     <div class="carro">${NOME}</div>
     <h1>${TITULO}</h1>
     ${FOCO ? `<p class="foco">${FOCO}</p>` : ''}
-    <div class="quiz"><i></i><span><b>3 perguntas</b> no fim — cada acerto vale ponto no ranking</span></div>
+    <div class="quiz"><i></i><span><b>3 perguntas</b> no fim · cada acerto vale ponto</span></div>
   </div>
   <div class="rodape">
     <!-- O RODAPÉ ENSINA O RITMO, toda vez. Era "no ar agora / no app", que

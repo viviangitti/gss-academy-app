@@ -49,13 +49,13 @@ body{width:${L}px;height:${A}px;background:${NOITE};color:#f4f3f0;
   justify-content:space-between}
 
 .apresenta{display:flex;align-items:center;gap:14px;justify-content:center}
-.apresenta .marca{font-family:Cinzel,Georgia,serif;font-weight:800;font-size:34px;letter-spacing:.02em}
-.apresenta .ap{font-size:15px;font-weight:800;letter-spacing:.34em;color:#8e94a8;text-transform:uppercase}
+.apresenta .marca{font-family:Cinzel,Georgia,serif;font-weight:800;font-size:44px;letter-spacing:.02em}
+.apresenta .ap{font-size:21px;font-weight:800;letter-spacing:.3em;color:#8e94a8;text-transform:uppercase}
 
-h1{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:80px;line-height:1.02;
+h1{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:96px;line-height:1.02;
   text-align:center;margin:0;letter-spacing:-.01em}
-h1 em{display:block;font-style:normal;color:${GOLD};font-size:64px;margin-top:6px;white-space:nowrap}
-.linha{text-align:center;font-size:22px;color:#aab0c2;margin-top:16px;letter-spacing:.01em}
+h1 em{display:block;font-style:normal;color:${GOLD};font-size:76px;margin-top:6px;white-space:nowrap}
+.linha{text-align:center;font-size:35px;color:#aab0c2;margin-top:20px;letter-spacing:.01em}
 
 /* A FILA DE PÔSTERES, como a prateleira de uma plataforma de streaming. */
 /* CARTÃO DEITADO, não pôster em pé. A foto do carro é larga: recortada em 2:3
@@ -63,18 +63,18 @@ h1 em{display:block;font-style:normal;color:${GOLD};font-size:64px;margin-top:6p
    vende. Deitado, cabe o carro inteiro — e é também o formato que as
    plataformas de streaming usam nas fileiras. */
 .fila{display:flex;justify-content:center;align-items:center;gap:10px}
-.pos{width:190px;height:146px;border-radius:13px;overflow:hidden;position:relative;
+.pos{width:192px;height:136px;border-radius:13px;overflow:hidden;position:relative;
   box-shadow:0 16px 34px rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.09)}
 .pos:nth-child(1),.pos:nth-child(5){opacity:.74}
 .pos:nth-child(2),.pos:nth-child(4){opacity:.9}
 .pos img{width:100%;height:100%;object-fit:cover}
-.pos b{position:absolute;left:0;right:0;bottom:0;padding:22px 8px 8px;
-  font-size:13px;font-weight:800;text-align:center;
-  background:linear-gradient(transparent,rgba(5,5,12,.93))}
+/* SEM ETIQUETA NO CARTÃO. A 400px de largura, que é como a peça chega no
+   WhatsApp, o nome do carro vira um borrão de 5 pixels — ruído, não
+   informação. E o time reconhece os próprios carros sem legenda. */
 
-.promessa{display:flex;flex-direction:column;gap:17px}
-.it{display:flex;align-items:center;gap:16px;font-size:24px;line-height:1.35}
-.it i{flex:none;width:11px;height:11px;border-radius:50%;background:${GOLD};font-style:normal}
+.promessa{display:flex;flex-direction:column;gap:22px}
+.it{display:flex;align-items:flex-start;gap:20px;font-size:37px;line-height:1.32}
+.it i{flex:none;width:15px;height:15px;margin-top:14px;border-radius:50%;background:${GOLD};font-style:normal}
 .it b{font-weight:800}
 
 /* O PRIMEIRO EPISÓDIO, com nome e tudo.
@@ -82,17 +82,17 @@ h1 em{display:block;font-style:normal;color:${GOLD};font-size:64px;margin-top:6p
    ficava vazia. Dizer o nome do episódio 1 é o que transforma "vem aí" em
    "começa assim". */
 .ep1{border-left:3px solid ${GOLD};padding:4px 0 4px 22px}
-.ep1-k{font-size:14px;font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:${GOLD}}
-.ep1-t{font-family:Cinzel,Georgia,serif;font-weight:800;font-size:40px;margin-top:10px;line-height:1.1}
+.ep1-k{font-size:21px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:${GOLD}}
+.ep1-t{font-family:Cinzel,Georgia,serif;font-weight:800;font-size:54px;margin-top:12px;line-height:1.1}
 .ep1-d{font-size:20px;color:#aab0c2;margin-top:10px;line-height:1.45;max-width:720px}
 
 .rodape{border-top:1px solid rgba(255,255,255,.13);padding-top:26px;
   display:flex;align-items:flex-end;justify-content:space-between}
-.estreia .k{font-size:14px;font-weight:800;letter-spacing:.26em;color:#8e94a8;text-transform:uppercase}
-.estreia .v{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:${DATA ? 46 : 54}px;color:${GOLD};margin-top:8px;line-height:1}
+.estreia .k{font-size:21px;font-weight:800;letter-spacing:.2em;color:#8e94a8;text-transform:uppercase}
+.estreia .v{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:${DATA ? 58 : 66}px;color:${GOLD};margin-top:10px;line-height:1}
 .premio{text-align:right;max-width:430px}
-.premio .k{font-size:14px;font-weight:800;letter-spacing:.26em;color:#8e94a8;text-transform:uppercase}
-.premio .v{font-size:27px;font-weight:800;margin-top:8px;line-height:1.25}
+.premio .k{font-size:21px;font-weight:800;letter-spacing:.2em;color:#8e94a8;text-transform:uppercase}
+.premio .v{font-size:37px;font-weight:800;margin-top:10px;line-height:1.22}
 .premio .v span{color:${GOLD}}
 </style>
 <div class="luz"></div>
@@ -103,19 +103,17 @@ h1 em{display:block;font-style:normal;color:${GOLD};font-size:64px;margin-top:6p
   <p class="linha">Tudo o que você precisa saber para vender, episódio por episódio.</p></div>
 
   <div class="fila">
-    ${CARROS.map(([f, n]) => `<div class="pos"><img src="${b64(f)}"><b>${n}</b></div>`).join('')}
+    ${CARROS.map(([f]) => `<div class="pos"><img src="${b64(f)}"></div>`).join('')}
   </div>
 
   <div class="promessa">
-    <div class="it"><i></i><span><b>Um episódio novo a cada 2 dias</b>, direto no app</span></div>
-    <div class="it"><i></i><span><b>3 perguntas</b> por episódio — cada acerto vale ponto no ranking</span></div>
-    <div class="it"><i></i><span>Quem assistir tudo chega no fim do mês <b>sabendo vender os cinco</b></span></div>
+    <div class="it"><i></i><span><b>Episódio novo toda terça e quinta</b>, no app</span></div>
+    <div class="it"><i></i><span><b>3 perguntas</b> por episódio · cada acerto vale ponto</span></div>
   </div>
 
   <div class="ep1">
     <div class="ep1-k">Episódio 1</div>
     <div class="ep1-t">O essencial do Jaecoo 7</div>
-    <div class="ep1-d">Os 30 segundos que abrem qualquer atendimento. Depois dele, o episódio 2 destrava.</div>
   </div>
 
   <div class="rodape">
@@ -125,7 +123,11 @@ h1 em{display:block;font-style:normal;color:${GOLD};font-size:64px;margin-top:6p
     </div>
     <div class="premio">
       <div class="k">Prêmio do mês</div>
-      <div class="v"><span>R$ 500</span> em combustível<br>para quem liderar o ranking</div>
+      <!-- CURTO, e igual ao da arte de episódio. Com a letra no tamanho que se
+           lê no celular, "para quem liderar o ranking" quebrava em três linhas
+           e empurrava o bloco inteiro. Esse detalhe cabe na legenda do
+           WhatsApp, não na arte. -->
+      <div class="v"><span>R$ 500</span> em combustível</div>
     </div>
   </div>
 </div>`;

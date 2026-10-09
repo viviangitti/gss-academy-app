@@ -88,7 +88,7 @@ h1{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:96px;line-height:1
     <div class="carro">${NOME}</div>
     <h1>${TITULO}</h1>
     ${FOCO ? `<p class="foco">${FOCO}</p>` : ''}
-    <div class="quiz"><i></i><span><b>3 perguntas</b> no fim · cada acerto vale ponto</span></div>
+    <div class="quiz"><i></i><span><b>3 perguntas</b> no fim · acertou as 3, +30 pontos</span></div>
   </div>
   <div class="rodape">
     <!-- O RODAPÉ ENSINA O RITMO, toda vez. Era "no ar agora / no app", que

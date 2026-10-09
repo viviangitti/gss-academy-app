@@ -8,6 +8,7 @@
 // Uso: node scripts/temporada/plano.mjs <saida.pdf>
 import fs from 'fs';
 import { abrirChrome, conectar } from '../tutorial/cdp.mjs';
+import { populacao } from '../uso-eleva.mjs';
 
 const SAIDA = process.argv[2] || `${process.env.HOME}/Downloads/ELEVA - plano de lancamento.pdf`;
 const NOITE = '#0f0f1e';
@@ -31,6 +32,15 @@ const ENCOMENDADO = [
 ];
 // AS DUAS GRAMÁTICAS. Não é o mesmo roteiro aplicado a dois assuntos: são
 // formatos diferentes, e a diferença tem razão escrita no próprio documento.
+//
+// CUIDADO COM A COLUNA DA ESQUERDA. A primeira versão desta tabela copiava os
+// nomes das batidas do roteiro 1 (Jaecoo 7) e os apresentava como "a gramática
+// do veículo". Não são: os nomes do meio mudam a cada carro — o Omoda 5 tem "A
+// resposta", o Omoda E5 tem "A virada de chave" e "As duas perguntas", o Omoda
+// 7 tem "A ordem certa" e "A objeção". O que é igual nos quatro são os TEMPOS,
+// o gancho na entrada e o CTA no fim. A Mariana tem o roteiro na mão: ela abre
+// e vê. A coluna da direita, essa sim, é um molde único — o roteiro de
+// acessórios traz as cinco batidas uma vez só, para os 27 itens.
 const BATIDAS = [
   ['0–5s', 'Gancho', '0–5s', 'Gancho'],
   ['5–15s', 'A causa', '5–13s', 'O que é'],
@@ -39,14 +49,56 @@ const BATIDAS = [
   ['40–45s', 'CTA', '37–45s', 'Quando oferecer'],
 ];
 const CANAIS = [
-  ['1', 'Vídeo da Mariana no grupo', '30 segundos, às 7h30', 'É a dona anunciando, não o fornecedor. E é o único jeito de alcançar as 8 pessoas que nunca abriram o app.'],
+  ['1', 'Vídeo da Mariana no grupo', '30 segundos, às 7h30', 'É a dona anunciando, não o fornecedor. O app alcança todo mundo; o que ele não consegue é dar um motivo para abrir — isso só a voz dela dá.'],
   ['2', 'A arte, logo em seguida', 'mesmo grupo, mesmo minuto', 'O vídeo dá a emoção; a arte dá a informação — data, prêmio, como pontua. Fica fixada e a pessoa volta nela.'],
   ['3', 'Pop-up no app', 'só no dia da estreia', 'O pop-up não anuncia: ele converte quem o WhatsApp trouxe. Sozinho falaria só com quem já abre o app.'],
-  ['4', 'Uma linha no grupo a cada episódio', 'terça e quinta', '“Episódio 4 no ar: Motorização do Jaecoo 7.” Curto, sempre igual, sempre no mesmo horário.'],
+  ['4', 'Uma linha no grupo a cada episódio', 'terça e quinta', '“Episódio 4 no ar: <i>só marca conhecida entrega?</i> — Omoda 7.” O título é a objeção, nunca o tópico de ficha.'],
   ['5', 'A foto do vencedor recebendo', 'fim do mês', 'Não é detalhe: é o que faz o segundo mês funcionar. Sem ela, o desafio vira “aquela coisa do app”.'],
 ];
-const HORAS = [['7h',63],['8h',193],['9h',168],['10h',162],['11h',99],['12h',104],['13h',49],['14h',52],['15h',54],['16h',69],['17h',65],['18h',44]];
+// OS NÚMEROS VÊM DO BANCO, NA HORA DE GERAR — não digitados aqui.
+//
+// A primeira versão tinha a tabela de horas escrita na mão. Em dois dias ela
+// mentia: dizia "21 abriram nos últimos sete dias" quando eram 19, e o gráfico
+// ia só das 7h às 18h, escondendo 77 ações — 6% do uso — que acontecem antes e
+// depois. Um documento que a Mariana pode conferir no app não pode ter número
+// congelado. Agora sai tudo de populacao(), a mesma função do relatório diário.
+const DIA = 86400000;
+const { pessoas } = await populacao();
+const AGORA = new Date();
+const TOTAL = pessoas.length;
+
+// DUAS COISAS DIFERENTES, e o documento antigo as trocava:
+//   abriu    — entrou no app (Firebase Auth)
+//   usou     — fez alguma coisa lá dentro: abriu uma ficha, um quiz, um PDF
+// As 45 pessoas já abriram o app. O que oito delas nunca fizeram foi abrir
+// conteúdo. Dizer "nunca abriram o app" derrubava justamente o argumento que
+// essa frase deveria sustentar.
+const usouEm = (d) => pessoas.filter((p) => p.eventos.some((e) => AGORA - e.at <= d * DIA)).length;
+const abriuEm = (d) => pessoas.filter((p) => p.abriu && AGORA - p.abriu <= d * DIA).length;
+const USOU7 = usouEm(7);
+const USOU30 = usouEm(30);
+const ABRIU7 = abriuEm(7);
+const SEM_CONTEUDO = pessoas.filter((p) => !p.eventos.length).length;
+const pct = (n) => Math.round((n / TOTAL) * 100);
+
+const EVENTOS = pessoas.flatMap((p) => p.eventos);
+const porHora = {};
+for (const e of EVENTOS) {
+  const h = (e.at.getUTCHours() + 21) % 24; // Brasília
+  porHora[h] = (porHora[h] || 0) + 1;
+}
+// O DIA INTEIRO, da primeira à última hora com movimento. Cortar em 7h–18h era
+// o que fazia o percentual do texto não bater com o gráfico impresso ao lado.
+const hs = Object.keys(porHora).map(Number).sort((a, b) => a - b);
+const HORAS = hs.map((h) => [`${h}h`, porHora[h]]);
 const maxH = Math.max(...HORAS.map((h) => h[1]));
+const ACOES = EVENTOS.length;
+const soma = (faixa) => faixa.reduce((t, h) => t + (porHora[h] || 0), 0);
+const MANHA = soma([7, 8, 9, 10, 11, 12]);
+const TARDE = soma([13, 14, 15, 16, 17, 18]);
+const PICO = HORAS.reduce((m, x) => (x[1] > m[1] ? x : m));
+const JANELA = soma([8, 9, 10]);
+const carimbo = `${String(AGORA.getDate()).padStart(2, '0')}/${String(AGORA.getMonth() + 1).padStart(2, '0')}`;
 
 const html = `<!doctype html><meta charset="utf-8">
 <style>
@@ -75,7 +127,7 @@ td.n{width:18mm;font-weight:800}
 td.q{width:16mm;text-align:right;color:#9aa0b0;font-weight:700}
 td.d{color:#5b6070;font-size:11px;padding-left:12px}
 
-.canal{display:flex;gap:14px;padding:12px 0;border-top:1px solid #eceff3}
+.canal{display:flex;gap:14px;padding:9px 0;border-top:1px solid #eceff3}
 .canal:first-of-type{border-top:0}
 .canal .num{flex:none;width:30px;height:30px;border-radius:50%;background:${NOITE};color:${GOLD};
   display:grid;place-items:center;font:800 14px sans-serif}
@@ -83,7 +135,7 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
 .canal i{display:block;font-style:normal;font-size:10.5px;color:${OURO};font-weight:700;margin-top:2px}
 .canal span{display:block;font-size:11.5px;color:#5b6070;line-height:1.5;margin-top:5px}
 
-.barras{display:flex;align-items:flex-end;gap:5px;height:34mm;margin-top:6px}
+.barras{display:flex;align-items:flex-end;gap:4px;height:30mm;flex:none;margin-top:6px}
 .barras div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
 .barras i{display:block;width:100%;border-radius:4px 4px 0 0;background:${AZUL}}
 .barras i.pico{background:${OURO}}
@@ -113,11 +165,11 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
   </div>
 
   <h2>A série é o que já foi encomendado</h2>
-  <p class="ld">Dois roteiros foram enviados à Ramasa em agosto e setembro. Juntos, eles são a temporada — e nada precisa ser escrito de novo.</p>
+  <p class="ld">Dois roteiros foram enviados à Ramasa em agosto e setembro. Juntos, eles são a temporada: o formato está fechado e os 4 vídeos de carro já estão escritos palavra por palavra.</p>
 
   <div class="big">
     <div><b>31</b><span>vídeos encomendados: 4 de veículo e 27 de acessório</span></div>
-    <div><b>45s</b><span>cada um, vertical, gravado no celular no showroom</span></div>
+    <div><b>45s</b><span>cada um, vertical, no showroom — o carro atrás, o acessório em uso</span></div>
     <div><b>0</b><span>já subiram no app — a temporada inteira está por vir</span></div>
   </div>
 
@@ -126,28 +178,33 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
     ${ENCOMENDADO.map(([c, n, t, d]) => `<tr><td class="n">${c}</td><td class="q">${n}</td><td class="d">${t}<br><span style="color:#9aa0b0">roteiro enviado em ${d}</span></td></tr>`).join('')}
   </table>
 
-  <div class="et">As duas gramáticas de 45 segundos, já escritas nos roteiros deles</div>
+  <div class="et">As duas gramáticas de 45 segundos, escritas nos roteiros deles</div>
   <table>
     <tr><td class="n" style="color:${AZUL};width:34mm">VEÍCULO · 4 vídeos</td><td class="n" style="color:${OURO}">ACESSÓRIO · 27 vídeos</td></tr>
     ${BATIDAS.map(([t1, n1, t2, n2]) => `<tr><td class="d" style="padding-left:0"><b style="color:${AZUL}">${t1}</b> &nbsp;${n1}</td><td class="d" style="padding-left:0"><b style="color:${OURO}">${t2}</b> &nbsp;${n2}</td></tr>`).join('')}
   </table>
+  <p style="font-size:10.5px;color:#9aa0b0;margin-top:7px;line-height:1.45">
+    Os tempos valem para os quatro carros, mas <b style="color:#6b7183">só o gancho e o CTA têm o mesmo nome nos quatro</b> —
+    acima estão os do roteiro 1 (Jaecoo 7); no meio, os outros trazem “a resposta”, “a virada de
+    chave”, “as duas perguntas”, “a ordem certa”, “a objeção”. No acessório, as cinco batidas são
+    um molde único para os 27.
+  </p>
   <div class="cx" style="margin-top:9px">
-    <b>A diferença não é cosmética.</b> No vídeo do carro, mais da metade é argumento e virada,
-    e ele fecha com CTA. No do acessório, <b>mais da metade é “pra quem é” e “a objeção”</b> — e
-    não tem CTA nenhum. A razão está escrita no documento: o vendedor já sabe o que o produto
-    faz; o que ele não sabe é a quem oferecer e o que responder quando ouve não. E quem assiste
-    já trabalha ali, não precisa ser convidado a nada. A ordem dos argumentos do carro também
-    não é opinião: saiu da pesquisa com 16 vendedores, 192 respostas.
+    <b>A diferença não é cosmética.</b> No carro, os 25 segundos do meio são o miolo de venda e os
+    quatro fecham com <b>CTA</b>. No acessório, <b>mais da metade é “pra quem é” e “a objeção”</b> e
+    <b>não tem CTA nenhum</b>: “fecha no item, quem assiste já trabalha aqui”. A razão está escrita
+    no roteiro deles — o vendedor já sabe o que o produto faz; o que ele não sabe é a quem oferecer
+    e o que responder quando ouve não. A ordem dos argumentos do carro também não é opinião: saiu
+    da pesquisa com 16 vendedores, 192 respostas.
   </div>
 
   <div class="cx">
-    <b>Duas temporadas, não uma.</b> Os 4 carros são a estreia — curta e forte, duas semanas a
-    dois por semana. Os 27 acessórios são o que sustenta os meses seguintes: mais treze semanas.
-    Juntas, quinze semanas de lançamento sem escrever um roteiro novo.
-    <br><br>
-    O padrão técnico já está fixado no roteiro deles: vertical 9:16, 45 segundos, MP4 de até
-    12 MB e <b>legenda sempre queimada</b> — metade vai assistir sem som, de pé, ao lado de um
-    cliente.
+    <b>Duas temporadas, não uma.</b> Os 4 carros são a estreia — curta e forte, duas semanas a dois
+    por semana. Os 27 acessórios sustentam os meses seguintes: mais catorze semanas. Juntas,
+    <b>dezesseis semanas</b> de lançamento. <b>Mas nem tudo está escrito:</b> os quatro roteiros de
+    carro estão prontos batida por batida, e do lado do acessório há o molde e um exemplo ponta a
+    ponta — hoje <b>8 dos 27 têm roteiro individual no app e os outros 19 precisam ser escritos</b>,
+    sobre um modelo que já existe, não do zero. A ordem de gravação também já está lá, nos quatro lotes.
   </div>
 
   <div class="rod"><span>Eleva · Grupo Ramasa</span><span>1 de 3</span></div>
@@ -155,12 +212,14 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
 
 <div class="pg">
   <h2>Por onde anunciar — e por quê nessa ordem</h2>
-  <p class="ld">O app não consegue se anunciar sozinho. Dos 45 cadastrados da Ramasa, 21 abriram nos últimos sete dias e 8 nunca abriram nada. Um pop-up é incapaz, por definição, de alcançar quem não abre.</p>
+  <p class="ld">O problema não é fazer o time abrir o app — as ${TOTAL} pessoas já abriram. É fazer abrir
+  o <b>conteúdo</b>: na última semana ${ABRIU7} entraram e só ${USOU7} fizeram alguma coisa lá dentro. O que falta
+  não é acesso, é motivo — e motivo quem dá é a dona da loja, não o aplicativo.</p>
 
   <div class="big">
-    <div><b>47%</b><span>abriram o app nos últimos 7 dias</span></div>
-    <div><b>73%</b><span>abriram nos últimos 30 dias</span></div>
-    <div><b>8</b><span>nunca abriram nada — só o WhatsApp alcança</span></div>
+    <div><b>${pct(USOU7)}%</b><span>usaram o app nos últimos 7 dias — ${USOU7} de ${TOTAL} pessoas</span></div>
+    <div><b>${pct(USOU30)}%</b><span>usaram nos últimos 30 dias</span></div>
+    <div><b>${SEM_CONTEUDO}</b><span>abrem o app e nunca abriram nenhum conteúdo</span></div>
   </div>
 
   <div class="et">A ordem</div>
@@ -170,14 +229,23 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
     <span><b>${t}</b><i>${q}</i><span>${d}</span></span>
   </div>`).join('')}
 
-  <div class="et">A que horas o time usa o app</div>
+  <div class="et">A que horas o time usa o app · ${ACOES} ações, o dia inteiro, posição de ${carimbo}</div>
   <div class="barras">
     ${HORAS.map(([h, v]) => `<div><i class="${v > 150 ? 'pico' : ''}" style="height:${Math.round(v / maxH * 100)}%"></i><span>${h}</span></div>`).join('')}
   </div>
   <div class="cx">
-    <b>45% de tudo acontece entre 8h e 11h</b>, com pico às 8h. Por isso o vídeo vai às 7h30:
-    chega antes da loja abrir, a pessoa vê no caminho, e quando liga o app às 8h o conteúdo já
-    está esperando. Mandar às 14h é o pior horário do dia.
+    <b>A manhã é ${Math.round((MANHA / ACOES) * 100)}% do uso; a tarde inteira é ${Math.round((TARDE / ACOES) * 100)}%.</b>
+    São ${MANHA} das ${ACOES} ações entre 7h e 12h, com pico às ${PICO[0]} — e só a faixa das 8h às 10h vale
+    ${Math.round((JANELA / ACOES) * 100)}% do dia. Das 13h em diante o uso cai pela metade e não volta. Por isso o vídeo
+    vai cedo: quando o time liga o app, o conteúdo já está esperando. <b>7h30 é escolha, não
+    medição</b> — o dado diz a faixa, não o minuto.
+  </div>
+
+  <div class="cx">
+    <b>O padrão técnico já está fixado</b> no roteiro de acessórios: 9:16, 1080×1920, 30 fps, MP4
+    de até 12 MB e <b>legenda sempre queimada</b> — “metade vai assistir sem som, de pé, ao lado de
+    um cliente”. Vale estender aos 4 vídeos de carro. E um detalhe que o calendário precisa
+    respeitar: <b>o vídeo ainda não sobe pelo Painel</b> — os arquivos vêm por WhatsApp ou Drive.
   </div>
 
   <div class="rod"><span>Eleva · Grupo Ramasa</span><span>2 de 3</span></div>
@@ -185,7 +253,7 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
 
 <div class="pg">
   <h2>As peças</h2>
-  <p class="ld">O formato nunca muda — selo do episódio no mesmo canto, rodapé sempre com as mesmas duas informações. E o título de cada episódio é a <b>objeção do cliente</b> que aquele vídeo resolve, tirada do próprio roteiro: é o que faz um vendedor querer abrir.</p>
+  <p class="ld">O formato dos episódios nunca muda — selo no mesmo canto, rodapé sempre com as mesmas duas informações. O anúncio é a exceção: no lugar do ritmo, traz a data de estreia. E o título de cada episódio é a <b>objeção do cliente</b> que aquele vídeo resolve, tirada do próprio roteiro: é o que faz um vendedor querer abrir.</p>
 
   <div class="artes">
     <figure style="flex:1"><img src="${img('00-anuncio-da-temporada.png')}"><figcaption>Anúncio da temporada</figcaption></figure>
@@ -205,8 +273,9 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
 
   <div class="et">Falta decidir</div>
   <div class="pend">
-    <div><b>O Jaecoo 5 não tem roteiro</b><br><span>Os quatro enviados em 03/09 são Jaecoo 7, Omoda 5, Omoda E5 e Omoda 7. O Jaecoo 5 entrou na linha depois — e é justamente o carro de lançamento, com condição própria na carta de outubro (fase de lançamento, limitada a 3.600 unidades). Sem roteiro dele, a estreia sai sem o carro do momento.</span></div>
-    <div><b>A data de estreia</b><br><span>As artes estão com “em breve”. Com a data, saem prontas em dez segundos.</span></div>
+    <div><b>O Jaecoo 5 não tem roteiro</b><br><span>Os quatro enviados em 03/09 são Jaecoo 7, Omoda 5, Omoda E5 e Omoda 7. O Jaecoo 5 entrou na linha depois — e é justamente o carro de lançamento, com condição própria na carta de outubro (fase de lançamento, limitada a 3.600 unidades). Não é detalhe: <b>é o terceiro carro mais aberto do app</b>, à frente do Omoda E5 e do Omoda 7, que têm roteiro. Sem o dele, a estreia sai sem o carro do momento.</span></div>
+    <div><b>A arte de anúncio promete o Jaecoo 5 — e o quiz dos acessórios</b><br><span>A fila de carros do anúncio tem <b>cinco</b> miniaturas, e a quinta é o Jaecoo 5, que não tem roteiro. E as artes dizem “3 perguntas por episódio · cada acerto vale ponto”: no app, o quiz existe só nos <b>carros</b> (os 27 acessórios não têm nenhum) e é tudo-ou-nada — acertou as 3, ganha 30 pontos; errou uma, ganha zero. Antes de circular: tirar o Jaecoo 5 da fila ou encomendar o roteiro, e trocar a frase por “acertou as 3, +30 pontos”.</span></div>
+    <div><b>A data de estreia</b><br><span>A arte de anúncio está com “em breve”. Com a data, ela sai pronta em dez segundos — as de episódio não mostram data.</span></div>
     <div><b>Gerente disputa o prêmio com vendedor?</b><br><span>Sugestão: não. Quem avalia não concorre — entra numa lista de uso, à parte.</span></div>
     <div><b>Critério de desempate</b><br><span>Sugestão: quem fez mais quiz; empatando, quem tem mais dias seguidos.</span></div>
   </div>

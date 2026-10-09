@@ -108,7 +108,7 @@ h1 em{display:block;font-style:normal;color:${GOLD};font-size:76px;margin-top:6p
 
   <div class="promessa">
     <div class="it"><i></i><span><b>Episódio novo toda terça e quinta</b>, no app</span></div>
-    <div class="it"><i></i><span><b>3 perguntas</b> por episódio · cada acerto vale ponto</span></div>
+    <div class="it"><i></i><span><b>3 perguntas</b> no fim de cada carro · acertou as 3, +30 pontos</span></div>
   </div>
 
   <div class="ep1">

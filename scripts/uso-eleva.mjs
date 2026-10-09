@@ -686,11 +686,22 @@ function relatorioFundo({ pessoas, cat, docs, acess, de, ate, agora, P }) {
   P('As contas de teste (Vivian e Silene) ficam fora, como no Painel.');
 }
 
-async function main() {
-  const turno = (arg('turno') || 'manha').toLowerCase();
-  const agora = new Date();
-  const { de, ate, rotulo, fixa } = janela(agora);
-
+/**
+ * A POPULAÇÃO DA RAMASA — e é daqui que QUALQUER documento tira número.
+ *
+ * Estava só dentro do main(), e por isso o plano de lançamento em PDF tinha os
+ * números digitados à mão. Eles congelaram: o PDF dizia "21 abriram nos últimos
+ * sete dias" num dia em que eram 19, e o gráfico de horas escondia tudo o que
+ * acontece antes das 7h e depois das 18h. Número copiado envelhece sem avisar.
+ *
+ * Duas definições que o documento confundia, e que aqui ficam separadas:
+ *   `abriu`   — o app foi aberto (lastRefreshAt do Firebase Auth)
+ *   `eventos` — a pessoa fez alguma coisa lá dentro (abriu uma ficha, um quiz)
+ * Dá para abrir o app todo dia e nunca abrir conteúdo nenhum. São 8 pessoas
+ * assim, e chamá-las de "nunca abriram o app" derruba o argumento que elas
+ * deveriam sustentar.
+ */
+export async function populacao() {
   const tok = await token();
   const [users, stats, perfis] = await Promise.all([
     contas(tok),
@@ -738,6 +749,15 @@ async function main() {
       };
     })
     .filter((p) => p.marcas.includes(MARCA) && !TESTE.has(p.email));
+
+  return { pessoas, cat, docs, acess };
+}
+
+async function main() {
+  const turno = (arg('turno') || 'manha').toLowerCase();
+  const agora = new Date();
+  const { de, ate, rotulo, fixa } = janela(agora);
+  const { pessoas, cat, docs, acess } = await populacao();
 
   const linhas = [];
   const P = (s = '') => linhas.push(s);
@@ -867,7 +887,11 @@ async function main() {
   }
 }
 
-main().catch((e) => {
-  console.error(`Não consegui montar o relatório: ${e.message}`);
-  process.exit(1);
-});
+// Só roda o relatório quando alguém chama o arquivo na linha de comando. Quem
+// importa (o plano de lançamento) quer os números, não o texto no terminal.
+if (process.argv[1] && process.argv[1].endsWith('uso-eleva.mjs')) {
+  main().catch((e) => {
+    console.error(`Não consegui montar o relatório: ${e.message}`);
+    process.exit(1);
+  });
+}

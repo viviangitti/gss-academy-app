@@ -29,12 +29,14 @@ const ENCOMENDADO = [
   ['Veículos', 4, 'Jaecoo 7 SHS-P · Omoda 5 SHS-H · Omoda E5 · Omoda 7 SHS-P', '03/09'],
   ['Acessórios', 27, 'De fábrica e de loja — o acessório é o ator, não o vendedor', '25/08'],
 ];
+// AS DUAS GRAMÁTICAS. Não é o mesmo roteiro aplicado a dois assuntos: são
+// formatos diferentes, e a diferença tem razão escrita no próprio documento.
 const BATIDAS = [
-  ['0–5s', 'Gancho', 'O cliente gostou do carro. Aí ele fala: “mas é chinês, né?”'],
-  ['5–15s', 'A causa', 'Marca nova assusta porque falta referência. Ele pede segurança.'],
-  ['15–30s', 'O argumento', 'Grupo Chery, no Brasil desde 2009. Rede e peça existem aqui.'],
-  ['30–40s', 'A virada', 'Até 1.200 km de autonomia. São Paulo a Salvador sem parar.'],
-  ['40–45s', 'CTA', 'Agende o test drive e mande a condição por escrito.'],
+  ['0–5s', 'Gancho', '0–5s', 'Gancho'],
+  ['5–15s', 'A causa', '5–13s', 'O que é'],
+  ['15–30s', 'O argumento', '13–25s', 'Pra quem é'],
+  ['30–40s', 'A virada', '25–37s', 'A objeção'],
+  ['40–45s', 'CTA', '37–45s', 'Quando oferecer'],
 ];
 const CANAIS = [
   ['1', 'Vídeo da Mariana no grupo', '30 segundos, às 7h30', 'É a dona anunciando, não o fornecedor. E é o único jeito de alcançar as 8 pessoas que nunca abriram o app.'],
@@ -59,15 +61,15 @@ h1{font:800 33px/1.1 Georgia,serif;margin:10px 0 8px;letter-spacing:-.6px}
 .sub{font-size:13px;line-height:1.5;color:#c6c9d6;max-width:150mm}
 h2{font:800 19px Georgia,serif;margin:0 0 4px;letter-spacing:-.3px}
 .ld{font-size:12px;line-height:1.55;color:#5b6070;margin-bottom:11px}
-.et{font:800 9.5px sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#9aa0b0;margin:16px 0 9px}
+.et{font:800 9.5px sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#9aa0b0;margin:13px 0 8px}
 
 .big{display:flex;gap:11px;margin-bottom:4px}
-.big div{flex:1;border:1.5px solid #e7eaf1;border-radius:14px;padding:14px 15px}
-.big b{display:block;font:800 34px/1 Georgia,serif;color:${NOITE};letter-spacing:-1px}
+.big div{flex:1;border:1.5px solid #e7eaf1;border-radius:14px;padding:12px 14px}
+.big b{display:block;font:800 30px/1 Georgia,serif;color:${NOITE};letter-spacing:-1px}
 .big span{display:block;font-size:11px;color:#6b7183;margin-top:7px;line-height:1.4}
 
 table{width:100%;border-collapse:collapse;font-size:11.5px}
-td{padding:9px 0;border-top:1px solid #eceff3;vertical-align:top}
+td{padding:7px 0;border-top:1px solid #eceff3;vertical-align:top}
 tr:first-child td{border-top:0}
 td.n{width:18mm;font-weight:800}
 td.q{width:16mm;text-align:right;color:#9aa0b0;font-weight:700}
@@ -91,7 +93,7 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
 .artes img{width:100%;border-radius:10px;border:1px solid #e3e7ec;display:block}
 .artes figcaption{font-size:10px;color:#8a8f9e;margin-top:6px;text-align:center}
 
-.cx{margin-top:13px;background:#f6f7fa;border-radius:13px;padding:13px 15px;font-size:12px;line-height:1.55;color:#5b6070}
+.cx{margin-top:11px;background:#f6f7fa;border-radius:13px;padding:12px 14px;font-size:11.5px;line-height:1.5;color:#5b6070}
 .cx b{color:#16181d}
 .cx.ouro{background:linear-gradient(180deg,#fdf7e8,#fbf1d9);border:1.5px solid #e4cf92;color:#4d3c0c}
 .cx.ouro b{color:#4d3c0c}
@@ -124,16 +126,28 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
     ${ENCOMENDADO.map(([c, n, t, d]) => `<tr><td class="n">${c}</td><td class="q">${n}</td><td class="d">${t}<br><span style="color:#9aa0b0">roteiro enviado em ${d}</span></td></tr>`).join('')}
   </table>
 
-  <div class="et">A batida de 45 segundos, que já está no roteiro deles</div>
+  <div class="et">As duas gramáticas de 45 segundos, já escritas nos roteiros deles</div>
   <table>
-    ${BATIDAS.map(([t, n, ex]) => `<tr><td class="n" style="width:14mm;color:${OURO}">${t}</td><td class="n" style="width:24mm">${n}</td><td class="d">${ex}</td></tr>`).join('')}
+    <tr><td class="n" style="color:${AZUL};width:34mm">VEÍCULO · 4 vídeos</td><td class="n" style="color:${OURO}">ACESSÓRIO · 27 vídeos</td></tr>
+    ${BATIDAS.map(([t1, n1, t2, n2]) => `<tr><td class="d" style="padding-left:0"><b style="color:${AZUL}">${t1}</b> &nbsp;${n1}</td><td class="d" style="padding-left:0"><b style="color:${OURO}">${t2}</b> &nbsp;${n2}</td></tr>`).join('')}
   </table>
-  <p style="font-size:10.5px;color:#9aa0b0;margin-top:7px">A ordem dos argumentos não é opinião: saiu da pesquisa com 16 vendedores, 192 respostas.</p>
+  <div class="cx" style="margin-top:9px">
+    <b>A diferença não é cosmética.</b> No vídeo do carro, mais da metade é argumento e virada,
+    e ele fecha com CTA. No do acessório, <b>mais da metade é “pra quem é” e “a objeção”</b> — e
+    não tem CTA nenhum. A razão está escrita no documento: o vendedor já sabe o que o produto
+    faz; o que ele não sabe é a quem oferecer e o que responder quando ouve não. E quem assiste
+    já trabalha ali, não precisa ser convidado a nada. A ordem dos argumentos do carro também
+    não é opinião: saiu da pesquisa com 16 vendedores, 192 respostas.
+  </div>
 
   <div class="cx">
     <b>Duas temporadas, não uma.</b> Os 4 carros são a estreia — curta e forte, duas semanas a
     dois por semana. Os 27 acessórios são o que sustenta os meses seguintes: mais treze semanas.
     Juntas, quinze semanas de lançamento sem escrever um roteiro novo.
+    <br><br>
+    O padrão técnico já está fixado no roteiro deles: vertical 9:16, 45 segundos, MP4 de até
+    12 MB e <b>legenda sempre queimada</b> — metade vai assistir sem som, de pé, ao lado de um
+    cliente.
   </div>
 
   <div class="rod"><span>Eleva · Grupo Ramasa</span><span>1 de 3</span></div>

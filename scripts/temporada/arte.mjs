@@ -113,7 +113,7 @@ h1 em{display:block;font-style:normal;color:${GOLD};font-size:76px;margin-top:6p
 
   <div class="ep1">
     <div class="ep1-k">Episódio 1</div>
-    <div class="ep1-t">O essencial do Jaecoo 7</div>
+    <div class="ep1-t">“É chinês, né?”</div>
   </div>
 
   <div class="rodape">

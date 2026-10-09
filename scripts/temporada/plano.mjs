@@ -18,12 +18,23 @@ const OURO = '#a8842f';
 const ART = `${process.env.HOME}/Downloads/eleva-temporada`;
 const img = (f) => 'data:image/png;base64,' + fs.readFileSync(`${ART}/${f}`).toString('base64');
 
-const TEMPORADAS = [
-  ['Jaecoo 7', 6, 'O essencial · Por dentro · Cabine e tecnologia · Motorização · Contra o concorrente · Negociação difícil'],
-  ['Jaecoo 5', 7, 'Os seis acima + COMFORT ou PRESTIGE'],
-  ['Omoda 5', 6, 'Os quatro primeiros + Contra o concorrente · A dúvida técnica'],
-  ['Omoda E5', 6, 'Os quatro primeiros + Contra o concorrente elétrico · A conta do custo total'],
-  ['Omoda 7', 6, 'Os quatro primeiros + Vender o topo de linha · Plug-in sem enrolação'],
+// O QUE FOI REALMENTE ENCOMENDADO A ELES — não o que eu supus.
+//
+// Eu tinha montado a série sobre os "níveis" do app, que são roteiros de texto
+// que já existem lá dentro. Mas os vídeos que a Ramasa está gravando são outra
+// coisa: dois documentos enviados em agosto e setembro pedem 4 roteiros de
+// veículo e 27 de acessório. Coincidência cruel: dá 31 nos dois casos, e foi
+// por isso que o erro passou despercebido na primeira versão.
+const ENCOMENDADO = [
+  ['Veículos', 4, 'Jaecoo 7 SHS-P · Omoda 5 SHS-H · Omoda E5 · Omoda 7 SHS-P', '03/09'],
+  ['Acessórios', 27, 'De fábrica e de loja — o acessório é o ator, não o vendedor', '25/08'],
+];
+const BATIDAS = [
+  ['0–5s', 'Gancho', 'O cliente gostou do carro. Aí ele fala: “mas é chinês, né?”'],
+  ['5–15s', 'A causa', 'Marca nova assusta porque falta referência. Ele pede segurança.'],
+  ['15–30s', 'O argumento', 'Grupo Chery, no Brasil desde 2009. Rede e peça existem aqui.'],
+  ['30–40s', 'A virada', 'Até 1.200 km de autonomia. São Paulo a Salvador sem parar.'],
+  ['40–45s', 'CTA', 'Agende o test drive e mande a condição por escrito.'],
 ];
 const CANAIS = [
   ['1', 'Vídeo da Mariana no grupo', '30 segundos, às 7h30', 'É a dona anunciando, não o fornecedor. E é o único jeito de alcançar as 8 pessoas que nunca abriram o app.'],
@@ -99,25 +110,30 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
     <p class="sub">A ideia é tratar o conteúdo do app como uma temporada — episódios com data, em vez de biblioteca parada esperando alguém procurar.</p>
   </div>
 
-  <h2>A série já existe. Ninguém sabe.</h2>
-  <p class="ld">Cada carro tem seis ou sete episódios escritos no app, com nome próprio. Hoje eles são entregues todos de uma vez, assim que a pessoa acerta um quiz — e por isso ninguém sente que recebeu alguma coisa.</p>
+  <h2>A série é o que já foi encomendado</h2>
+  <p class="ld">Dois roteiros foram enviados à Ramasa em agosto e setembro. Juntos, eles são a temporada — e nada precisa ser escrito de novo.</p>
 
   <div class="big">
-    <div><b>31</b><span>episódios já escritos nos cinco carros</span></div>
-    <div><b>15</b><span>semanas de lançamento, a dois por semana</span></div>
-    <div><b>0</b><span>precisam ser criados do zero</span></div>
+    <div><b>31</b><span>vídeos encomendados: 4 de veículo e 27 de acessório</span></div>
+    <div><b>45s</b><span>cada um, vertical, gravado no celular no showroom</span></div>
+    <div><b>0</b><span>já subiram no app — a temporada inteira está por vir</span></div>
   </div>
 
-  <div class="et">Os episódios de cada carro</div>
+  <div class="et">O que foi pedido, e quando</div>
   <table>
-    ${TEMPORADAS.map(([c, n, t]) => `<tr><td class="n">${c}</td><td class="q">${n}</td><td class="d">${t}</td></tr>`).join('')}
+    ${ENCOMENDADO.map(([c, n, t, d]) => `<tr><td class="n">${c}</td><td class="q">${n}</td><td class="d">${t}<br><span style="color:#9aa0b0">roteiro enviado em ${d}</span></td></tr>`).join('')}
   </table>
 
+  <div class="et">A batida de 45 segundos, que já está no roteiro deles</div>
+  <table>
+    ${BATIDAS.map(([t, n, ex]) => `<tr><td class="n" style="width:14mm;color:${OURO}">${t}</td><td class="n" style="width:24mm">${n}</td><td class="d">${ex}</td></tr>`).join('')}
+  </table>
+  <p style="font-size:10.5px;color:#9aa0b0;margin-top:7px">A ordem dos argumentos não é opinião: saiu da pesquisa com 16 vendedores, 192 respostas.</p>
+
   <div class="cx">
-    <b>Dois por semana, terça e quinta — e não a cada dois dias.</b> São 31 episódios: a cada
-    dois dias dá 62 dias sem poder furar, com os vídeos ainda sendo gravados. Se a gravação
-    atrasar uma semana, a série quebra e o efeito morre. Dia fixo também constrói hábito, que é
-    o que a gente quer: a pessoa abrir o app na terça sem ninguém avisar.
+    <b>Duas temporadas, não uma.</b> Os 4 carros são a estreia — curta e forte, duas semanas a
+    dois por semana. Os 27 acessórios são o que sustenta os meses seguintes: mais treze semanas.
+    Juntas, quinze semanas de lançamento sem escrever um roteiro novo.
   </div>
 
   <div class="rod"><span>Eleva · Grupo Ramasa</span><span>1 de 3</span></div>
@@ -155,12 +171,12 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
 
 <div class="pg">
   <h2>As peças</h2>
-  <p class="ld">O formato nunca muda — selo do episódio no mesmo canto, rodapé sempre com as mesmas duas informações. É a repetição que faz a série parecer série, e por isso as artes são geradas, não desenhadas.</p>
+  <p class="ld">O formato nunca muda — selo do episódio no mesmo canto, rodapé sempre com as mesmas duas informações. E o título de cada episódio é a <b>objeção do cliente</b> que aquele vídeo resolve, tirada do próprio roteiro: é o que faz um vendedor querer abrir.</p>
 
   <div class="artes">
     <figure style="flex:1"><img src="${img('00-anuncio-da-temporada.png')}"><figcaption>Anúncio da temporada</figcaption></figure>
-    <figure style="flex:1"><img src="${img('ep-01-jaecoo7-o-essencial.png')}"><figcaption>Episódio 1</figcaption></figure>
-    <figure style="flex:1"><img src="${img('ep-04-jaecoo7-motorizacao.png')}"><figcaption>Episódio 4</figcaption></figure>
+    <figure style="flex:1"><img src="${img('ep-01-jaecoo7-e-chines.png')}"><figcaption>Episódio 1 · Jaecoo 7</figcaption></figure>
+    <figure style="flex:1"><img src="${img('ep-03-omodae5-onde-eu-carrego.png')}"><figcaption>Episódio 3 · Omoda E5</figcaption></figure>
   </div>
 
   <div class="cx ouro">
@@ -175,6 +191,7 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
 
   <div class="et">Falta decidir</div>
   <div class="pend">
+    <div><b>O Jaecoo 5 não tem roteiro</b><br><span>Os quatro enviados em 03/09 são Jaecoo 7, Omoda 5, Omoda E5 e Omoda 7. O Jaecoo 5 entrou na linha depois — e é justamente o carro de lançamento, com condição própria na carta de outubro (fase de lançamento, limitada a 3.600 unidades). Sem roteiro dele, a estreia sai sem o carro do momento.</span></div>
     <div><b>A data de estreia</b><br><span>As artes estão com “em breve”. Com a data, saem prontas em dez segundos.</span></div>
     <div><b>Gerente disputa o prêmio com vendedor?</b><br><span>Sugestão: não. Quem avalia não concorre — entra numa lista de uso, à parte.</span></div>
     <div><b>Critério de desempate</b><br><span>Sugestão: quem fez mais quiz; empatando, quem tem mais dias seguidos.</span></div>

@@ -1,5 +1,5 @@
 import { useDiaAtual } from './data/diaAtual';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Tag, ArrowUpRight, FileText, Lock, Maximize2, X, Car, Wrench, Megaphone, Pencil, Trash2, CalendarClock, ChevronRight, ChevronLeft, Image as ImageIcon } from 'lucide-react';
 import { useBrand } from './BrandContext';
@@ -188,17 +188,62 @@ function Folha({ c, onAbrir }: { c: Condicao; onAbrir: (c: Condicao) => void }) 
   const [url, setUrl] = useState(c.arquivo || '');
   const [erro, setErro] = useState(false);
   const [tentativa, setTentativa] = useState(0);
+  const [perto, setPerto] = useState(false);
+  const caixa = useRef<HTMLButtonElement>(null);
   const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
 
+  // SÓ BAIXA QUANDO O CARTÃO CHEGA PERTO DA TELA.
+  //
+  // O comentário acima sempre prometeu isso e o código nunca fez: as catorze
+  // folhas começavam a baixar juntas na montagem. São 170 a 475 KB cada, uns
+  // 3,5 MB de uma vez no 4G do showroom.
   useEffect(() => {
-    if (url) return;
+    const el = caixa.current;
+    if (!el || perto) return;
+    if (typeof IntersectionObserver === 'undefined') { setPerto(true); return; }
+    const obs = new IntersectionObserver(
+      (e) => { if (e.some((x) => x.isIntersecting)) { setPerto(true); obs.disconnect(); } },
+      // 400px de antecedência: a folha chega pronta antes de a pessoa parar de rolar.
+      { rootMargin: '400px' },
+    );
+    obs.observe(el);
+    // REDE DE SEGURANÇA. Se por qualquer motivo o observador não disparar —
+    // contêiner de rolagem estranho, navegador antigo, cartão escondido numa
+    // aba —, em 2 segundos baixa assim mesmo. O pior caso aqui é voltar a
+    // baixar tudo de uma vez, como era antes; nunca é folha que não carrega.
+    const rede = setTimeout(() => setPerto(true), 2000);
+    return () => { obs.disconnect(); clearTimeout(rede); };
+  }, [perto]);
+
+  // A DEPENDÊNCIA É `c.id`, NUNCA O OBJETO `c`. Isto aqui é o bug que a Silene
+  // viu em 12/10/2026: todas as folhas presas em "carregando a folha…".
+  //
+  // O laço: abrirArquivo() chama emit() quando termina de baixar → o
+  // useCondicoes() do Ofertas re-renderiza → condicoesDaMarca() lê o cache do
+  // localStorage com JSON.parse e devolve OBJETOS NOVOS → o `c` de cada cartão
+  // muda de identidade → este efeito reinicia em TODOS os cartões → os
+  // downloads em voo são descartados (vivo = false) e recomeçam do zero. Aí o
+  // próximo que termina chama emit() de novo, e recomeça tudo outra vez.
+  //
+  // Com 14 folhas isso baixava ~105 documentos em vez de 14 — uns 26 MB. No
+  // 4G, cada rodada demora mais que o intervalo entre dois emit(), e a tela
+  // nunca sai de "carregando". `c.id` é string e não muda, então o efeito roda
+  // uma vez por folha.
+  useEffect(() => {
+    if (url || !perto) return;
     let vivo = true;
+    // TETO DE TEMPO. Sem ele, qualquer causa nova de lentidão volta a aparecer
+    // como "carregando…" para sempre — e a pessoa não tem o que fazer. Com o
+    // teto, vira o aviso de falha, que é tocável e tenta de novo.
+    const desiste = setTimeout(() => { if (vivo) { vivo = false; setErro(true); } }, 25000);
     abrirArquivo(c).then((u) => {
       if (!vivo) return;
+      clearTimeout(desiste);
       if (u) setUrl(u); else setErro(true);
     });
-    return () => { vivo = false; };
-  }, [c, url, tentativa]);
+    return () => { vivo = false; clearTimeout(desiste); };
+    // `c` entra pelo id de propósito — ver o comentário acima.
+  }, [c.id, url, tentativa, perto]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Tocar na folha que falhou tenta baixar de novo — é o que a pessoa faz por
   // instinto, e antes o toque não fazia nada porque o botão ficava desativado.
@@ -208,7 +253,7 @@ function Folha({ c, onAbrir }: { c: Condicao; onAbrir: (c: Condicao) => void }) 
   };
 
   return (
-    <button type="button" className="wp-cond-thumb" onClick={abrir} disabled={!url && !erro}>
+    <button ref={caixa} type="button" className="wp-cond-thumb" onClick={abrir} disabled={!url && !erro}>
       {c.tipo === 'imagem' && url ? (
         <img src={url} alt={c.titulo} />
       ) : (

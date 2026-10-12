@@ -78,6 +78,22 @@ export const CAMPOS = [
   { chave: 'loja', rotulo: 'Sua loja', exemplo: 'Tiger Omoda' },
 ] as const;
 
+// TEXTO SEM GÊNERO — regra dura deste arquivo.
+//
+// A Silene leu a mensagem do primeiro contato e viu "para eu ser mais
+// ASSERTIVO". Ela é vendedora. O texto mandava ela se apresentar no masculino
+// para um cliente dela.
+//
+// O conserto NÃO é descobrir o sexo de quem usa. O app não guarda isso, e nome
+// não diz: tem Ane, Claricie, Santhiago e Walther na mesma base. Chutar pelo
+// nome erra — e erra justamente com quem já é tratado errado em todo lugar.
+// Perguntar no cadastro também não resolve: só vale para quem responde, e
+// metade das contas novas nem preenche cargo.
+//
+// A regra, então: NENHUM adjetivo ou particípio que concorde com quem fala.
+// "Fico à disposição" sim; "fico disponível" não. "Agradeço" sim; "obrigado"
+// não. Quando a frase pedir um adjetivo, troque por verbo ou reescreva com o
+// objeto no lugar ("o carro sai pronto" concorda com o carro, e isso pode).
 export const ETAPAS: Etapa[] = [
   {
     id: 'pre-qualificacao',
@@ -88,7 +104,7 @@ export const ETAPAS: Etapa[] = [
     sinal: 'O cliente respondeu pelo menos duas das três perguntas.',
     script: `Oi, {cliente}! Aqui é {vendedor}, da {loja}. Acabei de receber seu contato sobre o {carro}.
 
-Estou num atendimento presencial aqui na loja agora, mas não queria te deixar esperando. Para que eu possa ser mais assertivo no meu retorno, poderia me responder três perguntas rápidas?
+Estou num atendimento presencial aqui na loja agora, mas não queria te deixar esperando. Para o meu retorno já vir certo pro seu caso, poderia me responder três perguntas rápidas?
 
 1. O carro vai ser mais utilizado na cidade, na estrada ou os dois?
 2. Será conduzido principalmente por você ou por outro membro da família?
@@ -96,7 +112,7 @@ Estou num atendimento presencial aqui na loja agora, mas não queria te deixar e
 
 Pode responder por aqui mesmo. Assim que eu terminar este atendimento, volto com tudo organizado pra você.`,
     porQue:
-      'Dizer que você está com um cliente na loja explica a demora antes que ela incomode, e mostra que você é procurado. As três perguntas cabem numa resposta só e dão uso, quem dirige e o que ele já decidiu que quer. Dinheiro fica de fora de propósito: pergunta de pagamento ou de carro na troca na PRIMEIRA mensagem assusta e derruba a conversa — isso vem depois, quando ele já está falando com você. E não prometa a melhor opção antes de ouvir: promessa antes de saber o uso é o que faz a mensagem soar a vendedor.',
+      'Dizer que você está com um cliente na loja explica a demora antes que ela incomode, e mostra que a sua agenda está cheia. As três perguntas cabem numa resposta só e dão uso, quem dirige e o que ele já decidiu que quer. Dinheiro fica de fora de propósito: pergunta de pagamento ou de carro na troca na PRIMEIRA mensagem assusta e derruba a conversa — isso vem depois, quando ele já está falando com você. E não prometa a melhor opção antes de ouvir: promessa antes de saber o uso é o que faz a mensagem soar a vendedor.',
     semResposta: `Oi, {cliente}! Terminei o atendimento aqui. Consegue me responder aquelas três perguntas rápidas? Com elas meu retorno já vem certo pro seu caso, sem você perder tempo com carro que não tem a ver com o que você procura.`,
   },
   {
@@ -106,7 +122,7 @@ Pode responder por aqui mesmo. Assim que eu terminar este atendimento, volto com
     tempo: 'Ainda no mesmo dia',
     objetivo: 'Fechar o perfil de uso para recomendar um carro só — e o certo.',
     sinal: 'Você sabe uso, tamanho de família, garagem e prazo de decisão.',
-    script: `{cliente}, obrigado! Com isso já dá pra eu preparar o que te mandar.
+    script: `{cliente}, perfeito — agradeço! Com isso já dá pra eu preparar o que te mandar.
 
 Só mais duas coisas pra eu não errar:
 

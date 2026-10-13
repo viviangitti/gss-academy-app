@@ -38,19 +38,19 @@ const VERDE = '#1f7a4d';
 const CARROS = [
   { id: 'j7', nome: 'Jaecoo 7', sub: 'SHS-P', tomada: 'Opcional', tipo: 'Plug-in',
     malas: '500 L', eixos: '2.672', comp: '4.500', cem: '8,4 s',
-    quem: 'Quer SUV médio cheio de série e aceita marca nova.' },
+    quem: ['Autonomia', 'Potência', 'Design'] },
   { id: 'j5', nome: 'Jaecoo 5', sub: 'SHS-H', tomada: 'Não precisa', tipo: 'Híbrido',
     malas: '410 L', eixos: '2.620', comp: '4.380', cem: '7,9 s',
-    quem: 'Quer economia sem mudar nada na rotina.' },
+    quem: ['Economia', 'Sem tomada', 'Lançamento'] },
   { id: 'o5', nome: 'Omoda 5', sub: 'SHS-H', tomada: 'Não precisa', tipo: 'Híbrido',
     malas: '372 L', eixos: '2.610', comp: '4.447', cem: '7,9 s',
-    quem: 'Roda muito na cidade e não quer obra em casa.' },
+    quem: ['Autonomia', 'Tecnologia', 'Sem tomada'] },
   { id: 'e5', nome: 'Omoda E5', sub: '100% elétrico', tomada: 'Obrigatório', tipo: 'Elétrico',
     malas: '360 L', eixos: '2.630', comp: '4.424', cem: '7,6 s',
-    quem: 'Tem onde carregar e valoriza silêncio e tecnologia.' },
+    quem: ['Autonomia', 'Custo-benefício', 'Design'] },
   { id: 'o7', nome: 'Omoda 7', sub: 'SHS-P', tomada: 'Opcional', tipo: 'Plug-in',
     malas: '590 L', eixos: '2.720', comp: '4.660', cem: '8,4 s',
-    quem: 'Família maior, pega estrada, quer o topo de acabamento.' },
+    quem: ['Acabamento', 'Espaço', 'Autonomia'] },
 ];
 
 const LINHAS = [
@@ -77,7 +77,7 @@ const tabela = (desloca) => `
       <div class="cc">
         <div class="ch"><b>${c.nome}</b><span>${c.sub}</span></div>
         ${LINHAS.map(([, k, dec]) => `<div class="cl${dec ? ' dec' : ''}">${c[k]}</div>`).join('')}
-        <div class="cl quem">${c.quem}</div>
+        <div class="cl quem">${c.quem.map((t) => `<i>${t}</i>`).join('')}</div>
       </div>`).join('')}
     </div></div>
   </div>`;
@@ -118,9 +118,9 @@ h2{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
 .tb{display:flex;align-items:stretch}
 .rot-col{flex:none;width:102px;padding-left:20px;background:#fff;position:relative;z-index:2;
   box-shadow:6px 0 10px -6px rgba(0,0,0,.14)}
-.pista{flex:1;overflow:hidden}
+.pista{flex:1;overflow:hidden;scroll-snap-type:x mandatory}
 .trilho{display:flex;width:max-content}
-.cc{width:104px;flex:none;padding:0 9px;border-left:1px solid ${BORDA}}
+.cc{width:96px;flex:none;padding:0 8px;border-left:1px solid ${BORDA};scroll-snap-align:start}
 .ch{height:46px;display:flex;flex-direction:column;justify-content:center}
 .ch b{font-size:12.5px;font-weight:800;line-height:1.1}
 .ch span{font-size:9.5px;color:${ROTULO};margin-top:2px}
@@ -132,7 +132,10 @@ h2{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
 .rl.dec,.cl.dec{background:#fbfaf5}
 .rl.dec{color:#8a7a3e}
 .cl.dec{font-weight:800}
-.quem-lb,.quem{align-items:flex-start;padding-top:10px;font-size:10.5px;font-weight:500;line-height:1.35;height:86px;color:#44504a}
+.quem-lb,.quem{align-items:flex-start;padding-top:10px;height:86px;color:#44504a;
+  flex-direction:column;gap:4px;font-size:10.5px;font-weight:500;line-height:1.35}
+.quem i{font-style:normal;font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:999px;
+  background:#eaf3ee;color:${VERDE};border:1px solid #cfe5d8;white-space:nowrap}
 .quem-lb{color:${VERDE};font-size:9.5px;font-weight:800}
 .nota{margin:14px 20px 0;background:#f6f8f6;border:1px solid ${BORDA};border-radius:10px;
   padding:10px 12px;font-size:11px;line-height:1.5;color:#44504a}
@@ -152,13 +155,13 @@ ${fone('1 · Escolher quantos quiser', `<div class="pad">
 ${fone('2 · O comparativo — começo', `
   <div class="pad"><h2>5 modelos lado a lado</h2></div>
   ${tabela(0)}
-  <div class="desliza"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg> deslize para ver os outros · o nome da linha fica parado</div>
+  <div class="desliza"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg> deslize: cada carro encaixa inteiro, nunca pela metade</div>
   <div class="nota"><b>A primeira linha é a que decide.</b> Plug-in, híbrido e elétrico resolvem rotinas diferentes — é nela que o cliente se reconhece.</div>
 `)}
 
 ${fone('3 · O mesmo, deslizado para o fim', `
   <div class="pad"><h2>5 modelos lado a lado</h2></div>
-  ${tabela(208)}
+  ${tabela(192)}
   <div class="nota"><b>Nenhum carro ganha.</b> Os cinco são da casa: a última linha diz para quem cada um é, em vez de apontar um melhor.</div>
 `)}
 `;

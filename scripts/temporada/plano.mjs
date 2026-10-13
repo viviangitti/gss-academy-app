@@ -27,7 +27,9 @@ const img = (f) => 'data:image/png;base64,' + fs.readFileSync(`${ART}/${f}`).toS
 // veículo e 27 de acessório. Coincidência cruel: dá 31 nos dois casos, e foi
 // por isso que o erro passou despercebido na primeira versão.
 const ENCOMENDADO = [
-  ['Veículos', 4, 'Jaecoo 7 SHS-P · Omoda 5 SHS-H · Omoda E5 · Omoda 7 SHS-P', '03/09'],
+  // O Jaecoo 5 entrou em 13/10, depois dos quatro de 03/09 — ele não existia na
+  // linha quando o primeiro documento foi escrito.
+  ['Veículos', 5, 'Jaecoo 7 SHS-P · Jaecoo 5 SHS-H · Omoda 5 SHS-H · Omoda E5 · Omoda 7 SHS-P', '03/09 e 13/10'],
   ['Acessórios', 27, 'De fábrica e de loja — o acessório é o ator, não o vendedor', '25/08'],
 ];
 // AS DUAS GRAMÁTICAS. Não é o mesmo roteiro aplicado a dois assuntos: são
@@ -165,10 +167,10 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
   </div>
 
   <h2>A série é o que já foi encomendado</h2>
-  <p class="ld">Dois roteiros foram enviados à Ramasa em agosto e setembro. Juntos, eles são a temporada: o formato está fechado e os 4 vídeos de carro já estão escritos palavra por palavra.</p>
+  <p class="ld">Os roteiros enviados à Ramasa em agosto, setembro e outubro são a temporada: o formato está fechado e os 5 vídeos de carro já estão escritos palavra por palavra.</p>
 
   <div class="big">
-    <div><b>31</b><span>vídeos encomendados: 4 de veículo e 27 de acessório</span></div>
+    <div><b>32</b><span>vídeos encomendados: 5 de veículo e 27 de acessório</span></div>
     <div><b>45s</b><span>cada um, vertical, no showroom — o carro atrás, o acessório em uso</span></div>
     <div><b>0</b><span>já subiram no app — a temporada inteira está por vir</span></div>
   </div>
@@ -180,7 +182,7 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
 
   <div class="et">As duas gramáticas de 45 segundos, escritas nos roteiros deles</div>
   <table>
-    <tr><td class="n" style="color:${AZUL};width:34mm">VEÍCULO · 4 vídeos</td><td class="n" style="color:${OURO}">ACESSÓRIO · 27 vídeos</td></tr>
+    <tr><td class="n" style="color:${AZUL};width:34mm">VEÍCULO · 5 vídeos</td><td class="n" style="color:${OURO}">ACESSÓRIO · 27 vídeos</td></tr>
     ${BATIDAS.map(([t1, n1, t2, n2]) => `<tr><td class="d" style="padding-left:0"><b style="color:${AZUL}">${t1}</b> &nbsp;${n1}</td><td class="d" style="padding-left:0"><b style="color:${OURO}">${t2}</b> &nbsp;${n2}</td></tr>`).join('')}
   </table>
   <p style="font-size:10.5px;color:#9aa0b0;margin-top:7px;line-height:1.45">
@@ -199,7 +201,7 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
   </div>
 
   <div class="cx">
-    <b>Duas temporadas, não uma.</b> Os 4 carros são a estreia — curta e forte, duas semanas a dois
+    <b>Duas temporadas, não uma.</b> Os 5 carros são a estreia — curta e forte, três semanas a dois
     por semana. Os 27 acessórios sustentam os meses seguintes: mais catorze semanas. Juntas,
     <b>dezesseis semanas</b> de lançamento. <b>Mas nem tudo está escrito:</b> os quatro roteiros de
     carro estão prontos batida por batida, e do lado do acessório há o molde e um exemplo ponta a
@@ -273,7 +275,7 @@ td.d{color:#5b6070;font-size:11px;padding-left:12px}
 
   <div class="et">Falta decidir</div>
   <div class="pend">
-    <div><b>O Jaecoo 5 não tem roteiro</b><br><span>Os quatro enviados em 03/09 são Jaecoo 7, Omoda 5, Omoda E5 e Omoda 7. O Jaecoo 5 entrou na linha depois — e é justamente o carro de lançamento, com condição própria na carta de outubro (fase de lançamento, limitada a 3.600 unidades). Não é detalhe: <b>é o terceiro carro mais aberto do app</b>, à frente do Omoda E5 e do Omoda 7, que têm roteiro. Sem o dele, a estreia sai sem o carro do momento.</span></div>
+    <div><b>O roteiro do Jaecoo 5 precisa do aval do time</b><br><span>Ele foi escrito em 13/10 e já está no documento — a dor do cliente saiu da objeção que <b>5 vendedores</b> mais consultaram nele no app (“e se a bateria acabar no meio do caminho?”). Falta uma coisa: os três pontos que fecham o carro, que nos outros quatro vieram da pesquisa com 16 vendedores, feita antes de o Jaecoo 5 existir. Os dele são proposta e estão marcados como <b>a confirmar com o time</b>.</span></div>
     <div><b>A arte de anúncio promete o Jaecoo 5 — e o quiz dos acessórios</b><br><span>A fila de carros do anúncio tem <b>cinco</b> miniaturas, e a quinta é o Jaecoo 5, que não tem roteiro. E as artes dizem “3 perguntas por episódio · cada acerto vale ponto”: no app, o quiz existe só nos <b>carros</b> (os 27 acessórios não têm nenhum) e é tudo-ou-nada — acertou as 3, ganha 30 pontos; errou uma, ganha zero. Antes de circular: tirar o Jaecoo 5 da fila ou encomendar o roteiro, e trocar a frase por “acertou as 3, +30 pontos”.</span></div>
     <div><b>A data de estreia</b><br><span>A arte de anúncio está com “em breve”. Com a data, ela sai pronta em dez segundos — as de episódio não mostram data.</span></div>
     <div><b>Gerente disputa o prêmio com vendedor?</b><br><span>Sugestão: não. Quem avalia não concorre — entra numa lista de uso, à parte.</span></div>

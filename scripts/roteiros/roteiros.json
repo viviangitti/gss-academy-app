@@ -1,0 +1,168 @@
+[
+ {
+  "nome": "JAECOO 7 SHS-P",
+  "dor": "O cliente gostou do carro, mas trava numa frase: \"é chinês, né?\"",
+  "fecha": "Autonomia · Potência · Design",
+  "batidas": [
+   [
+    "0-5s",
+    "GANCHO",
+    "O cliente gostou do carro. Aí ele fala: \"mas é chinês, né?\""
+   ],
+   [
+    "5-15s",
+    "A CAUSA",
+    "Marca nova assusta porque o cliente não tem referência. Ele não está negando o carro — está pedindo segurança."
+   ],
+   [
+    "15-30s",
+    "O ARGUMENTO",
+    "Jaecoo é do grupo Chery, no Brasil desde 2009. Rede e peça existem aqui. E o SHS entrega 135 cv de motor a combustão mais 204 cv de elétrico."
+   ],
+   [
+    "30-40s",
+    "A VIRADA",
+    "E o que mais fecha: até 1.200 km de autonomia somando tanque e bateria — São Paulo a Salvador sem parar no posto. São 79 km só no elétrico, mais que o trajeto diário da maioria. Some o teto panorâmico e o ADAS completo, que na concorrência são opcionais."
+   ],
+   [
+    "40-45s",
+    "CTA",
+    "Agende o test drive e mande a condição por escrito — ela tem validade."
+   ]
+  ],
+  "sub": "O SUV que abre a Jaecoo no Brasil: SHS-P — híbrido plug-in em TODAS as versões, com pacote de série cheio para a faixa."
+ },
+ {
+  "nome": "JAECOO 5 SHS-H",
+  "sub": "O SUV compacto da linha: híbrido pleno de 224 cv que nunca vê tomada. Duas versões — COMFORT e PRESTIGE.",
+  "dor": "O cliente quer economia, mas pergunta: \"e se a bateria acabar no meio do caminho?\"",
+  "fecha": "Economia · Sem tomada · Potência",
+  "fechaProposto": true,
+  "batidas": [
+   [
+    "0-5s",
+    "GANCHO",
+    "O cliente quer economizar. Aí ele pergunta: \"e se a bateria acabar no meio do caminho?\""
+   ],
+   [
+    "5-15s",
+    "A CAUSA",
+    "Ele está pensando em carro elétrico. Híbrido pleno é outra coisa — e ninguém explicou a diferença pra ele."
+   ],
+   [
+    "15-30s",
+    "O ARGUMENTO",
+    "A bateria é de 1,83 kWh, pequena de propósito: ela enche e esvazia o tempo todo, na condução e na frenagem. Se zerar, o 1.5 turbo assume e ela volta a carregar rodando. O carro nunca vê uma tomada — sem wallbox, sem conta de luz."
+   ],
+   [
+    "30-40s",
+    "A VIRADA",
+    "E o número que fecha: 791 km de autonomia na cidade com 51 litros de tanque. Quem roda 40 km por dia abastece uma vez por mês. São 224 cv num compacto onde o rival entrega de 150 a 190 — e suspensão traseira multibraço, que nessa faixa quase sempre é eixo de torção."
+   ],
+   [
+    "40-45s",
+    "CTA",
+    "Agende o test drive — 7,9 segundos de 0 a 100 é argumento de banco, não de ficha. E mande a condição por escrito: ela tem validade."
+   ]
+  ]
+ },
+ {
+  "nome": "OMODA 5 SHS-H",
+  "dor": "O cliente quer economizar combustível, mas acha que híbrido dá trabalho.",
+  "fecha": "Autonomia · Tecnologia · Não precisa de tomada",
+  "batidas": [
+   [
+    "0-5s",
+    "GANCHO",
+    "\"Híbrido eu preciso ligar na tomada?\" — é a primeira pergunta que você vai ouvir."
+   ],
+   [
+    "5-15s",
+    "A RESPOSTA",
+    "Não precisa. O SHS-H se recarrega sozinho enquanto roda. O cliente abastece no posto, como sempre."
+   ],
+   [
+    "15-30s",
+    "O ARGUMENTO",
+    "Resolvida a tomada, mostre o resto: painel de 24,6\", 7 airbags e câmera 540°. Som Sony e bancos ventilados são só da PRESTIGE — confira a versão antes de citar."
+   ],
+   [
+    "30-40s",
+    "A VIRADA",
+    "Aí venha com o número: 15,1 km por litro na cidade, o melhor do comparativo da própria marca contra Corolla Cross e HR-V. E o recorde da marca foi São Paulo a Vitória com um tanque só — 1.306 km. Diga que é recorde, não o número de todo dia."
+   ],
+   [
+    "40-45s",
+    "CTA",
+    "Leve pro test drive: economia de combustível se sente rodando, não na tabela."
+   ]
+  ],
+  "sub": ""
+ },
+ {
+  "nome": "OMODA E5",
+  "dor": "O cliente quer o elétrico, mas a primeira coisa que ele pergunta é: \"e onde eu carrego?\"",
+  "fecha": "Autonomia · Custo-benefício · Design",
+  "batidas": [
+   [
+    "0-5s",
+    "GANCHO",
+    "Ele quer o elétrico. E aí pergunta: \"onde eu carrego?\""
+   ],
+   [
+    "5-15s",
+    "A VIRADA DE CHAVE",
+    "Quem tem elétrico carrega em casa, de noite, e sai todo dia cheio. Eletroposto é para viagem."
+   ],
+   [
+    "15-30s",
+    "AS DUAS PERGUNTAS",
+    "Pergunte quantos km por dia e onde o carro dorme. Com isso você já sabe se serve — e ele vê que você não está empurrando."
+   ],
+   [
+    "30-40s",
+    "O ARGUMENTO",
+    "Aí vêm os dois números que fecham: 345 km de autonomia pelo Inmetro, a maior da faixa, e 6 km rodados por real gasto — o Corolla Cross híbrido faz 2,8 e o Compass 1,6. Depois mostre a tela de 24,6\" e o head-up display."
+   ],
+   [
+    "40-45s",
+    "CTA",
+    "Se o perfil não bater, ofereça o híbrido. Vender o carro errado volta como reclamação."
+   ]
+  ],
+  "sub": ""
+ },
+ {
+  "nome": "OMODA 7 SHS-P",
+  "dor": "O cliente tem o dinheiro — mas nessa faixa ele acha que só marca conhecida entrega.",
+  "fecha": "Acabamento · Espaço · Autonomia",
+  "batidas": [
+   [
+    "0-5s",
+    "GANCHO",
+    "Ele tem o dinheiro. Mas acha que nessa faixa só marca conhecida entrega."
+   ],
+   [
+    "5-15s",
+    "A ORDEM CERTA",
+    "Não comece pelo número. Sente ele dentro: tela deslizante de 15,6\", som Sony de 12, o aroma do L’Essence."
+   ],
+   [
+    "15-30s",
+    "O ARGUMENTO",
+    "Mostre o espaço: 590 litros de porta-malas, um dos maiores da categoria, e mais de 1.300 rebatendo. Depois compare equipado contra equipado — 8 airbags e ADAS com evasão inteligente. Veja onde o preço do concorrente para."
+   ],
+   [
+    "30-40s",
+    "A OBJEÇÃO",
+    "\"Preciso de tomada em casa?\" — para aproveitar o melhor dele, sim. Mas sem carregar ele roda como híbrido normal."
+   ],
+   [
+    "40-45s",
+    "CTA",
+    "Test drive em horário de trânsito: o assistente de congestionamento vende sozinho."
+   ]
+  ],
+  "sub": ""
+ }
+]

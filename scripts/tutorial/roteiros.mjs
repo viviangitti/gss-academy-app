@@ -26,6 +26,20 @@ export const VENDEDOR = [
   { id: '07-ficha', foco: `(()=>{const a=[...document.querySelectorAll('*')].filter(e=>(e.textContent||'').trim().startsWith("Ficha técnica")); const el=a[a.length-1]; return (el&&el.getBoundingClientRect().height>6)?el:null;})()`, url: '/eleva/produto/omoda-5-shs-h', espera: 1800,
     acao: `const t=[...document.querySelectorAll('summary,button,.wp-vers-tit,[class*=ficha]')].find(e=>/^\\s*Ficha técnica/.test(e.textContent||'')); t?.click(); await new Promise(r=>setTimeout(r,900)); t?.scrollIntoView({block:'start'}); window.scrollBy(0,-70)`,
     fala: 'A ficha técnica fica aqui, linha por linha, pra você achar um número em dois segundos com o cliente do lado. E o que vai pro WhatsApp dele é a folha oficial da montadora, em PDF, com o nome em caixa alta.' },
+  // NOVO EM 13/10 — o comparativo entre os carros da casa e os três pontos.
+  // Entram logo depois da tela do carro porque é ali que a dúvida nasce: o
+  // vendedor acabou de ler para quem aquele carro serve.
+  { id: '07b-trio', foco: `[...document.querySelectorAll('.wp-block')].find(e=>/Para quem é/.test(e.textContent))`, url: '/eleva/produto/omoda-5-shs-h', espera: 2400,
+    acao: `const b=[...document.querySelectorAll('.wp-block')].find(e=>/Para quem é/.test(e.textContent)); b?.scrollIntoView({block:'center'})`,
+    fala: 'No fim de cada carro tem um resumo de três palavras: é o que o time respondeu quando perguntamos o que fecha este carro. Não é opinião de quem escreveu o app — saiu de uma pesquisa com dezesseis vendedores.' },
+  { id: '07c-comparar', foco: `document.querySelector('.wp-cmp-btn')`, url: '/eleva/produto/omoda-5-shs-h', espera: 2200,
+    acao: `document.querySelector('.wp-cmp-btn')?.scrollIntoView({block:'center'})`,
+    fala: 'E quando o cliente pergunta "e o outro, então?", o botão está logo abaixo: comparar com os outros modelos da casa.' },
+  { id: '07d-escolher', foco: `document.querySelector('.wp-cmp-todos')`, url: '/eleva/comparar', espera: 2400,
+    fala: 'Marque quantos quiser. Dá para ver os cinco de uma vez.' },
+  { id: '07e-tabela', foco: `document.querySelector('.wp-cmp-tb')`, url: '/eleva/comparar', espera: 3000,
+    acao: `const b=[...document.querySelectorAll('button')].find(e=>/^Comparar os/.test(e.textContent||'')); b?.click(); await new Promise(r=>setTimeout(r,1200)); document.querySelector('.wp-cmp-tb')?.scrollIntoView({block:'center'})`,
+    fala: 'A primeira linha é a que decide: carrega na tomada ou não. Deslize para o lado que os carros passam, e o nome da linha fica parado. Nenhum carro ganha — a última linha diz para quem cada um é.' },
   { id: '08-acessorio', foco: `document.querySelector('.wp-acp-preco')?.parentElement`, url: '/eleva/acessorio/estribo-iluminado', espera: 2400,
     fala: 'Acessório tem tela própria: o que resolve pro cliente, a hora certa de oferecer, e o código pra pedir no sistema. Toque no código que ele copia.' },
   { id: '09-condicoes', foco: `document.querySelector('.wp-cond-portas')`, url: '/eleva/ofertas', espera: 2400,
@@ -55,6 +69,14 @@ export const VENDEDOR = [
   { id: '14e-jornada-acessorios', foco: `document.querySelector('.wp-jn-chips')`, url: '/eleva/jornada', espera: 2400,
     acao: `document.querySelectorAll('.wp-jn-cab')[7]?.click(); await new Promise(r=>setTimeout(r,1300)); document.querySelector('.wp-jn-chips')?.scrollIntoView({block:'center'})`,
     fala: 'Na etapa dos acessórios, cada item abre direto no app, com foto e com o jeito de oferecer. Oferecido junto da proposta, ele entra no mesmo negócio: é assim que a venda cresce sem mexer no desconto do carro.' },
+  // NOVO — o desafio da semana e a prova do mês. É a diferença entre o quiz
+  // livre do carro (treino, quantas vezes quiser) e a prova que vale ponto e
+  // tem UMA tentativa. Confundir os dois é perder a vez sem saber.
+  { id: '14f-desafio', foco: `document.querySelector('.wp-prova-card')`, url: '/eleva/desafio/semana', espera: 3000,
+    fala: 'Toda semana tem o Desafio: cinco perguntas sobre os carros da casa, iguais para o time inteiro. Acertou quatro, soma vinte e cinco pontos no ranking do mês.' },
+  { id: '14g-desafio-regra', foco: `document.querySelector('.wp-prova-regras')`, url: '/eleva/desafio/semana', espera: 2600,
+    acao: `document.querySelector('.wp-prova-regras')?.scrollIntoView({block:'center'})`,
+    fala: 'Repare na regra: uma tentativa só, até virar a semana. O quiz de cada carro continua livre para treinar — treine lá antes de vir aqui. No fim do mês tem a Prova, com dez perguntas e sessenta pontos.' },
   { id: '15-noticias', foco: `document.querySelector('.wp-news-frentes')`, url: '/eleva/noticias', espera: 3000,
     fala: 'Em Notícias, repare nas abas de cima. Além de Tudo, tem Concorrência e Mercado — e arrastando para o lado, Lançamentos, Condições, e Elétricos e híbridos. São seis frentes.' },
   { id: '15b-concorrencia', url: '/eleva/noticias', espera: 3000,
@@ -144,6 +166,12 @@ export const GERENTE = [
     usuario: { uid: 'q', name: 'Silmara', email: 'qualidade.demo@gruporamasa.com', role: 'balconista', brands: ['ramasa'], cargo: 'lider-qualidade' },
     foco: `document.querySelector('.wp-rit')`,
     fala: 'Cada cargo tem o seu. No primeiro dia útil, quem cuida da qualidade recebe a revisão do mês: carros, condições, acessórios, documentos e objeções, uma frente de cada vez. Quem mantém acessórios recebe a dele nos mesmos dias um a cinco.' },
+  // NOVO — o aviso que o app manda sozinho quando a prateleira fica vazia.
+  // É o contrário dos rituais: não é lembrete de data, é alarme de buraco.
+  { id: '14d-carta-vencida', url: '/eleva', espera: 3000, relogio: '2026-10-06T09:10:00-03:00',
+    usuario: { uid: 'cv', name: 'Raphaela', email: 'raphaela.machado@gruporamasa.com', role: 'balconista', brands: ['ramasa'], cargo: 'gerente-veiculos' },
+    foco: `document.querySelector('.wp-cv')`,
+    fala: 'E se a carta vencer e ninguém publicar a nova, o app não espera a próxima reunião: todo dia ele avisa quem pode resolver, até alguém subir. Porque o buraco é silencioso — o vendedor abre Condições e simplesmente não acha taxa de carro.' },
   { id: '15-ver-como-time', foco: `[...document.querySelectorAll('.wp-nav-item')].find(e=>/Ver como time/.test(e.textContent))`, url: '/eleva/catalogo', espera: 2400,
     fala: 'E a aba Ver como time mostra o app exatamente como o vendedor vê. Antes de cobrar, confira aqui se o que você publicou chegou.' },
   // TRANSFORMAR EM APP. Os dois primeiros passos não são tela do app — são do

@@ -160,7 +160,7 @@ põe(tabela([
   faixa('FERRAMENTAS NOVAS', LM),
   linhaMudou('Jornada do lead online', 'A aba que guia o atendimento: 9 etapas, mensagem pronta em cada uma, atalho para acessórios e lembrete da entrega. Nasceu da objeção que chega pelo funil.'),
   linhaMudou('Rituais do mês', 'Pop-up por cargo com dia marcado — a tabela entre os dias 1 e 5, a campanha nos dias 14 e 30, a revisão de qualidade no 1º dia útil, o time da semana toda segunda. O "ok" fica gravado com nome, cargo e horário.'),
-  linhaMudou('Cargos e lojas', 'Supervisor de vendas, F&I, líder e diretor de qualidade; a loja de cada pessoa; Omoda Goiânia como unidade; e o Painel separado por loja.'),
+  linhaMudou('Cargos e lojas', 'Supervisor de vendas, F&I, líder e diretor de qualidade; a loja de cada pessoa; e o Painel separado por loja.'),
   linhaMudou('O app no computador', 'Quem abre pelo desktop deixou de ver a tela de celular esticada: menu na lateral, conteúdo em duas colunas, leitura em largura de página.'),
   linhaMudou('Salvar PDF em tudo', 'Todo material que vai para o cliente agora tem botão de salvar em PDF.'),
   faixa('MANUTENÇÃO E SEGURANÇA', LM),

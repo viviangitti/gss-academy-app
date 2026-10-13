@@ -103,8 +103,8 @@ ${topo('R', 'Raphaela')}
 
 // -------------------------------------------------------------- diretora ---
 const LOJAS = [
-  ['Tiger Itumbiara', 5, 4, 369, 100], ['Tiger Goiânia', 19, 6, 331, 90],
-  ['Omoda Goiânia', 1, 1, 31, 8], ['Sem loja no cadastro', 15, 5, 267, 72],
+  ['Tiger Itumbiara', 5, 4, 369, 100], ['Tiger Goiânia', 20, 7, 362, 98],
+  ['Sem loja no cadastro', 15, 5, 267, 72],
 ];
 const diretora = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${CSS}</style>
 ${topo('M', 'Mariana')}

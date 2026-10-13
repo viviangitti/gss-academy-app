@@ -18,9 +18,16 @@ export interface Loja {
 
 export const LOJAS: Loja[] = [
   { id: 'tiger-goiania', nome: 'Tiger Goiânia', brand: 'ramasa' },
-  // Em Goiânia o grupo tem duas operações, e elas são lojas diferentes para
-  // quem trabalha nelas (24/09/2026).
-  { id: 'omoda-goiania', nome: 'Omoda Goiânia', brand: 'ramasa' },
+  // EM GOIÂNIA É UMA LOJA SÓ.
+  //
+  // Existiu aqui uma 'omoda-goiania', aberta em 24/09/2026 porque eu entendi
+  // que o grupo tinha duas operações na cidade. Não tem: a Vivian corrigiu em
+  // 13/10/2026 — é só a Tiger Goiânia. A unidade saiu da lista e a única
+  // pessoa que estava nela foi movida.
+  //
+  // Loja a mais não é opção inofensiva: ela racha o time no Painel. A Tiger
+  // Goiânia aparecia com 19 pessoas e uma linha solta de 1 do lado, e a
+  // diretora lia como se fossem duas operações com desempenhos diferentes.
   { id: 'tiger-anapolis', nome: 'Tiger Anápolis', brand: 'ramasa' },
   { id: 'tiger-itumbiara', nome: 'Tiger Itumbiara', brand: 'ramasa' },
   // QUEM NÃO É DE UMA LOJA SÓ.

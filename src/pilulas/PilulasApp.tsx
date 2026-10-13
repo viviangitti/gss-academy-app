@@ -256,7 +256,14 @@ function Shell() {
     // carrega depois deste efeito rodar. Sem a dependência, o cargo nunca era
     // gravado nos stats dessas pessoas e o Painel voltava a mostrar o papel
     // genérico — exatamente o problema que a gerência apontou.
-  }, [brand.id, user, user?.role, user?.cargo, user?.name]);
+    //
+    // `loja` PELO MESMO MOTIVO, e faltava. A Ane preencheu a loja em 07/10 e
+    // no dia seguinte o espelho ainda gravou vazio: o efeito rodou antes de a
+    // loja chegar do perfil e nunca mais rodou, porque nada na lista mudou.
+    // E o espelho só escreve campo com valor — regra certa, que evita apagar
+    // dado bom —, então o vazio de antes ficava para sempre. Ela sumia do
+    // recorte por loja no Painel: Itumbiara aparecia com 6 pessoas em vez de 7.
+  }, [brand.id, user, user?.role, user?.cargo, user?.loja, user?.name]);
   // Puxa da nuvem os vídeos que o gestor configurou por público — é o que faz o
   // link chegar no celular do time, e não só no aparelho de quem cadastrou.
   useEffect(() => {

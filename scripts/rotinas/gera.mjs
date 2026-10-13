@@ -27,6 +27,14 @@ const GOLD = '#c9a84c';
 const VERDE = '#3fb27f';
 const AMBAR = '#e0a33a';
 
+// As mesmas contas de teste que o relatório diário tira: sem isto a Vivian e
+// a Silene apareceriam no ranking que vai para o time.
+const TESTE = new Set(['viviangitti23@gmail.com', 'viviangitti@gmail.com', 'maria26@gmail.com',
+  'silene_mendes@hotmail.com', 'silene.mendesdesouza@gmail.com', 'silene.mendesangelodesouza@gmail.com']);
+const CARGO_CURTO = {
+  'vendedor-veiculos': 'veículos', 'vendedor-acessorios': 'acessórios', fi: 'F&I',
+  'executivo-leads': 'leads', 'gerente-veiculos': 'gerente', 'gerente-acessorios': 'gerente',
+};
 const AGORA = new Date();
 const MES = AGORA.toISOString().slice(0, 7);
 const NOME_MES = AGORA.toLocaleDateString('pt-BR', { month: 'long', timeZone: 'America/Sao_Paulo' });
@@ -37,6 +45,22 @@ const ramasa = cond.map(doc2obj).filter((c) => c.brand === 'ramasa');
 const doMes = (cat) => ramasa.filter(
   (c) => (c.categoria || 'veiculo') === cat && c.criadoEm && new Date(c.criadoEm).toISOString().slice(0, 7) === MES,
 ).length;
+
+// O RANKING DO MÊS entra aqui a pedido da Vivian (13/10): é o mesmo envio
+// mensal, e é o que o time procura primeiro. Sai dos eventos de elevaStats,
+// a mesma fonte do relatório diário — não é um segundo placar.
+const stats = ((await get('elevaStats?pageSize=300')).documents || []).map(doc2obj)
+  .filter((s) => s.brand === 'ramasa' && !TESTE.has(String(s.email || '').toLowerCase()));
+const RANKING = stats.map((s) => {
+  const ev = (s.events || []).filter((e) => String(e.at || '').slice(0, 7) === MES);
+  return {
+    nome: String(s.name || s.email || '').split(' ')[0],
+    cargo: CARGO_CURTO[s.cargo] || s.cargo || '',
+    pts: ev.reduce((t, e) => t + (e.points || 0), 0),
+    quiz: ev.filter((e) => e.type === 'quiz_pass').length,
+    dias: new Set(ev.map((e) => String(e.at).slice(0, 10))).size,
+  };
+}).filter((p) => p.pts > 0).sort((a, b) => b.pts - a.pts).slice(0, 5);
 
 const rit = (await get('elevaRituais?pageSize=200')).documents || [];
 const oks = rit.map(doc2obj).flatMap((d) => Object.values(d.oks || {}));
@@ -129,6 +153,15 @@ h1{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:56px;line-height:1
 .badge.no{background:rgba(224,163,58,.14);color:${AMBAR};border:1px solid rgba(224,163,58,.42)}
 .nota{display:block;font-size:16px;color:#7b84a0;margin-top:7px;line-height:1.3}
 
+.rkt{font-size:17px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#7b84a0;margin:34px 0 8px}
+.rl{display:flex;align-items:center;gap:15px;padding:13px 4px;border-bottom:1px solid #232c47}
+.rl .pos{flex:none;width:34px;height:34px;border-radius:50%;background:#151c31;border:1px solid #232c47;
+  color:${GOLD};display:grid;place-items:center;font-family:Cinzel,Georgia,serif;font-weight:900;font-size:18px}
+.rl.ouro .pos{background:rgba(201,168,76,.18);border-color:rgba(201,168,76,.5)}
+.rl .nm{flex:1;font-size:23px;font-weight:700}
+.rl .nm i{font-style:normal;font-size:17px;color:#7b84a0;font-weight:500;margin-left:9px}
+.rl .dt{flex:none;font-size:19px;color:#a8b0c6}
+.rl .dt b{color:#eef1f8;font-weight:800}
 .rod{margin-top:26px;display:flex;justify-content:space-between;font-size:18px;color:#7b84a0}
 </style>
 <div class="marca">ELEVA · GRUPO RAMASA</div>
@@ -146,6 +179,16 @@ ${ROTINAS.map((r) => `
     <span class="badge ${r.feito ? 'ok' : 'no'}">${r.feito ? check + ' Feito' : '<span class="pt"></span> Pendente'}</span>
     <span class="nota">${r.nota}</span>
   </div>
+</div>`).join('')}
+</div>
+
+<h2 class="rkt">Ranking do mês</h2>
+<div class="rk">
+${RANKING.map((p, n) => `
+<div class="rl${n === 0 ? ' ouro' : ''}">
+  <span class="pos">${n + 1}</span>
+  <span class="nm">${p.nome}<i>${p.cargo}</i></span>
+  <span class="dt"><b>${p.pts}</b> pontos · <b>${p.dias}</b> dias${p.quiz ? ` · <b>${p.quiz}</b> quiz` : ''}</span>
 </div>`).join('')}
 </div>
 

@@ -151,7 +151,18 @@ export default function Login() {
     setInfo('');
     try {
       await resetPassword(email.trim());
-      setInfo('Se existir uma conta com esse e-mail, enviamos o link. Olhe também o SPAM (o remetente pode aparecer como "eleva-gss" / Firebase). Não achou? Crie sua conta na aba "Criar conta".');
+      // A FRASE NÃO PODE DIZER SE A CONTA EXISTE — confirmar isso entrega a
+      // lista de quem trabalha na rede para quem estiver testando e-mails.
+      //
+      // Mas o aviso vago sozinho deixa quem tem conta sem saída, e isso
+      // aconteceu: em 13/10/2026 a Ane, de Itumbiara, pediu a senha de
+      // ane.cardoso@tigeromoda.com.br — e-mail que nunca existiu no app. A
+      // conta dela é outra, um gmail, e estava ativa (último acesso em 08/10).
+      // Ela leu "se existir… enviamos" e concluiu que o app estava quebrado.
+      //
+      // A linha do e-mail trocado resolve o caso real sem revelar nada: ela
+      // vale para quem tem conta e para quem não tem.
+      setInfo('Se existir uma conta com esse e-mail, enviamos o link. Olhe também o SPAM (o remetente pode aparecer como "eleva-gss" / Firebase). Não chegou em alguns minutos? Pode ser que sua conta esteja em OUTRO e-mail — o pessoal costuma cadastrar com o e-mail pessoal. Tente o outro, ou peça ao seu gerente para conferir qual está no app. Se nunca teve conta, crie na aba "Criar conta".');
     } catch (e) {
       const code = (e as { code?: string })?.code || '';
       setError(translateAuthError(code));

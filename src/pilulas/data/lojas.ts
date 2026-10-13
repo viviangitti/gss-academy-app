@@ -38,7 +38,16 @@ export const LOJAS: Loja[] = [
   // todas. Obrigar essas pessoas a escolher UMA unidade não é só incômodo — põe
   // o número delas no balde errado do Painel, que é justamente o que a loja
   // existe para evitar.
-  { id: 'grupo', nome: 'Grupo — todas as unidades', brand: 'ramasa' },
+  // O NOME NÃO PODE PARECER UM FILTRO. Isto aqui é uma UNIDADE — o lugar de
+  // quem não pertence a nenhuma loja —, mas chamava-se "Grupo — todas as
+  // unidades" e ficava do lado do botão "Todas as lojas", que é o filtro de
+  // não-filtrar. Dois rótulos quase iguais, significados opostos: a Vivian
+  // perguntou qual era a diferença em 13/10/2026, e se ela perguntou, o time
+  // inteiro já tinha lido errado antes.
+  //
+  // O `id` continua 'grupo': trocar o id apagaria a unidade de quem já está
+  // nela. Só o nome muda.
+  { id: 'grupo', nome: 'Corporativo', brand: 'ramasa' },
 ];
 
 export function lojasDaMarca(brand: BrandId): Loja[] {

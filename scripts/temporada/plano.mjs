@@ -7,6 +7,7 @@
 //
 // Uso: node scripts/temporada/plano.mjs <saida.pdf>
 import fs from 'fs';
+import { execFileSync } from 'child_process';
 import { abrirChrome, conectar } from '../tutorial/cdp.mjs';
 import { populacao } from '../uso-eleva.mjs';
 
@@ -17,7 +18,16 @@ const AZUL = '#2563eb';
 const OURO = '#a8842f';
 
 const ART = `${process.env.HOME}/Downloads/eleva-temporada`;
-const img = (f) => 'data:image/png;base64,' + fs.readFileSync(`${ART}/${f}`).toString('base64');
+// AS ARTES ENTRAM REDUZIDAS. Elas aparecem com menos de um terço da largura
+// da página, mas iam embutidas em 1080px de largura e PNG sem perda: o PDF
+// pesava 2,6 MB, quase tudo imagem que ninguém vê nesse tamanho. Em JPEG de
+// 560px o documento cabe no WhatsApp e a miniatura continua nítida no papel.
+const img = (f) => {
+  const fora = `/tmp/plano-${f.replace(/\.png$/, '')}.jpg`;
+  execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '82',
+    '-Z', '560', `${ART}/${f}`, '--out', fora], { stdio: 'ignore' });
+  return 'data:image/jpeg;base64,' + fs.readFileSync(fora).toString('base64');
+};
 
 // O QUE FOI REALMENTE ENCOMENDADO A ELES — não o que eu supus.
 //

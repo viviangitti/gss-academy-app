@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText, ArrowUpRight, Play, Pause, Plus, Minus, Camera, Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon, Volume2, BookOpen, Users, Lock, Package, Maximize2, Layers, Download, X, Sparkles, ChevronRight } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
@@ -14,6 +14,7 @@ import { getAfiliadoCode } from './data/afiliadoCode';
 import { recordView, isQuizDone, registraUso, carimbarValor, quizJaPassou, POINTS_PER_QUIZ } from './data/tracking';
 import { nomeParaCliente } from './data/nomeArquivo';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
+import { comparavel, temComparativo } from './data/comparativo';
 import { useBrand } from './BrandContext';
 import { getBrand, isAuto, isBalcao } from './data/brands';
 import { vocab } from './data/vocabulario';
@@ -769,7 +770,13 @@ export default function Product() {
     code: getAfiliadoCode(user?.email),
   };
   const { id } = useParams();
+  const navigate = useNavigate();
   const product = id ? findProduct(id) : undefined;
+  // Os três pontos do carro e se dá para comparar nesta marca. Carro sem
+  // entrada no comparativo (acessório, produto de farmácia) devolve lista
+  // vazia, e aí nada aparece — é o comportamento certo.
+  const trio = product ? (comparavel(product)?.atributos ?? []) : [];
+  const podeComparar = temComparativo(brandId, user?.role);
   const [openObj, setOpenObj] = useState<number | null>(0);
   const [openFicha, setOpenFicha] = useState(false);
   const [enviandoFicha, setEnviandoFicha] = useState(false);
@@ -1187,9 +1194,35 @@ export default function Product() {
             <div className="wp-block wp-half">
               <span className="wp-block-label"><Target size={14} className="wp-ico" /> Para quem é</span>
               <p>{product.forWho}</p>
+              {/* OS TRÊS PONTOS, logo abaixo do parágrafo.
+                  Não são adjetivo meu: é a resposta do time à pergunta "o que
+                  fecha este carro", no roteiro de 03/09 — pesquisa com 16
+                  vendedores, 192 respostas. Carro sem roteiro não mostra nada,
+                  em vez de mostrar palavra inventada. */}
+              {trio.length > 0 && (
+                <>
+                  <span className="wp-trio">{trio.map((t: string) => <i key={t}>{t}</i>)}</span>
+                  <span className="wp-trio-fonte">é o que o time diz que fecha este carro</span>
+                </>
+              )}
             </div>
           )}
         </div>
+      )}
+
+      {/* COMPARAR COM OS OUTROS DA CASA.
+          Fica aqui, logo depois de "para quem é", porque é exatamente onde a
+          dúvida nasce: o vendedor acabou de ler para quem este carro serve e a
+          pergunta seguinte é "e o outro, então?". */}
+      {auto && podeComparar && (
+        <button
+          type="button"
+          className="wp-cmp-btn"
+          onClick={() => navigate(`/eleva/comparar?de=${product.id}`)}
+        >
+          Comparar com os outros modelos da casa
+          <ChevronRight size={17} className="wp-ico" />
+        </button>
       )}
 
       {product.objections.length > 0 && (

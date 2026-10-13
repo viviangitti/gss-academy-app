@@ -35,6 +35,7 @@ import { BrandProvider, useBrand } from './BrandContext';
 import { AuthProvider, useAuth, audienceOf } from './AuthContext';
 import Perfil from './Perfil';
 import Ficha from './Ficha';
+import Comparar from './Comparar';
 import { stageSegmentFromUrl } from './data/segments';
 import { stageBrandFromUrl, invitedBrand } from './data/brandInvite';
 import { isAuto, isBalcao, ehGss, type BrandId } from './data/brands';
@@ -431,6 +432,7 @@ function Shell() {
           <Route path="/eleva/privacidade" element={<Privacidade />} />
           <Route path="/eleva/noticias" element={<Noticias />} />
           <Route path="/eleva/jornada" element={<SoAuto><Jornada /></SoAuto>} />
+          <Route path="/eleva/comparar" element={<SoAuto><Comparar /></SoAuto>} />
           <Route path="/eleva/documentos" element={<Documentos />} />
           {/* Nossa cultura: a tela existe só pra quem tem programa de cultura
               (hoje a Ramasa) — a própria tela devolve um aviso nas outras. */}

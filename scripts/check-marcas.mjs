@@ -94,8 +94,14 @@ const NEUTRAS = new Set(['/eleva', '/eleva/sobre', '/eleva/perfil', '/eleva/priv
 // Telas que se guardam SOZINHAS: a própria tela confere a marca e devolve
 // aviso para quem não é dela. Ficam fora do menu de propósito (chega-se a elas
 // por um card ou um link), e por isso não caem na regra do <BlockAuto>.
-//   /eleva/cultura — valores da Ramasa; Cultura.tsx começa com temValores().
-const GUARDADAS_NA_TELA = new Set(['/eleva/cultura']);
+//   /eleva/cultura  — valores da Ramasa; Cultura.tsx começa com temValores().
+//   /eleva/comparar — comparativo entre os carros da casa. Está em <SoAuto>, que
+//     devolve quem não é automotivo para a home, e a própria tela só monta a
+//     tabela com comparaveisDaMarca(brandId) — marca com menos de dois modelos
+//     vê um aviso, nunca o carro de outra empresa. Fica fora do menu de
+//     propósito: chega-se a ela pelo botão no fim da tela do carro, que é onde
+//     a dúvida "e o outro, então?" nasce.
+const GUARDADAS_NA_TELA = new Set(['/eleva/cultura', '/eleva/comparar']);
 
 for (const [, rota] of app.matchAll(/path="(\/eleva[^"*:]*)"/g)) {
   if (noMenuAuto.has(rota) || NEUTRAS.has(rota) || GUARDADAS_NA_TELA.has(rota)) continue;

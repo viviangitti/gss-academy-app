@@ -4961,3 +4961,116 @@ button.wp-doc { width: 100%; text-align: left; cursor: pointer; font: inherit; }
   color: #6b5312;
 }
 .wp-gz-leads-aviso b { color: #4d3c0c; }
+
+/* ---------- COMPARATIVO ENTRE OS CARROS DA CASA ---------- */
+/*
+   A medida que manda aqui é a LARGURA DA COLUNA. A pista ocupa o que sobra
+   depois do rótulo fixo, e a coluna é um terço exato disso: três carros
+   inteiros por tela. Com scroll-snap, o dedo solta e o carro encaixa — a
+   primeira versão deixava a terceira coluna entrar pela metade e o texto saía
+   cortado na borda, que foi exatamente o que a Vivian reprovou.
+*/
+.wp-cmp { padding: 4px 0 30px; }
+.wp-cmp-tit { margin: 0 0 4px; font-size: 21px; font-weight: 800; line-height: 1.2; color: var(--wp-ink); }
+.wp-cmp-sub { margin: 0 0 16px; font-size: 13px; line-height: 1.5; color: var(--wp-soft); }
+.wp-cmp-vazio { font-size: 13px; color: var(--wp-soft); }
+
+.wp-cmp-todos, .wp-cmp-op {
+  display: flex; align-items: center; gap: 11px; width: 100%; text-align: left;
+  background: none; border: 0; font-family: inherit; cursor: pointer; color: var(--wp-ink);
+}
+.wp-cmp-todos {
+  justify-content: space-between; margin-bottom: 4px; padding: 12px 13px;
+  border-radius: 11px; background: #f6f8f6; border: 1px solid #e8ebe6;
+  font-size: 13px; font-weight: 800;
+}
+.wp-cmp-op { padding: 12px 0; border-top: 1px solid #e8ebe6; }
+.wp-cmp-op:first-of-type { border-top: 0; }
+.wp-cmp-tx { flex: 1; min-width: 0; }
+.wp-cmp-tx b { display: block; font-size: 13.5px; font-weight: 800; }
+.wp-cmp-tx span { display: block; font-size: 11.5px; color: #7a857f; margin-top: 2px; }
+.wp-cmp-ck {
+  width: 21px; height: 21px; flex: none; border-radius: 6px; border: 2px solid #d6dbd7;
+  display: grid; place-items: center; color: #fff;
+}
+.wp-cmp-ck.on { border-color: #1f7a4d; background: #1f7a4d; }
+
+.wp-cmp-ir {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+  margin-top: 18px; padding: 14px; border: 0; border-radius: 12px; cursor: pointer;
+  background: #1a1a2e; color: #fff; font-family: inherit; font-size: 14px; font-weight: 800;
+}
+.wp-cmp-ir:disabled { background: #e8ebe6; color: #9aa49e; cursor: default; }
+
+/* a tabela */
+.wp-cmp-tb { display: flex; align-items: stretch; margin: 14px -16px 0; }
+.wp-cmp-rot {
+  flex: none; width: 102px; padding-left: 16px; background: var(--wp-bg, #fff);
+  position: relative; z-index: 2; box-shadow: 6px 0 10px -6px rgba(0,0,0,.14);
+}
+.wp-cmp-pista {
+  flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.wp-cmp-pista::-webkit-scrollbar { display: none; }
+/* FRAÇÃO EXATA DA PISTA, nunca pixel calculado da tela.
+   A primeira versão usava calc((100vw - 134px) / 3) e dava 2,36 colunas na
+   pista — ou seja, a terceira entrava pela metade, que é exatamente o que a
+   Vivian reprovou. Porcentagem dentro do flex resolve contra a largura VISÍVEL
+   da pista, então 50% são sempre dois carros inteiros, em qualquer celular.
+   Em tela mais larga cabem três. */
+.wp-cmp-col {
+  flex: 0 0 50%; box-sizing: border-box; padding: 0 9px;
+  border-left: 1px solid #e8ebe6; scroll-snap-align: start;
+}
+@media (min-width: 430px) { .wp-cmp-col { flex: 0 0 33.3333%; } }
+.wp-cmp-cab { height: 46px; display: flex; flex-direction: column; justify-content: center; }
+.wp-cmp-cab b { font-size: 12.5px; font-weight: 800; line-height: 1.1; }
+.wp-cmp-cab span { font-size: 9.5px; color: #7a857f; margin-top: 2px; }
+.wp-cmp-rl, .wp-cmp-cl {
+  height: 50px; display: flex; align-items: center; border-top: 1px solid #e8ebe6;
+  font-size: 11.5px; line-height: 1.3;
+}
+.wp-cmp-rl {
+  font-size: 8.5px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase;
+  color: #7a857f; padding-right: 8px; line-height: 1.25;
+}
+.wp-cmp-cl { font-weight: 600; color: var(--wp-ink); }
+.wp-cmp-rl.dec, .wp-cmp-cl.dec { background: #fbfaf5; }
+.wp-cmp-rl.dec { color: #8a7a3e; }
+.wp-cmp-cl.dec { font-weight: 800; }
+.wp-cmp-quem-lb, .wp-cmp-quem {
+  height: 86px; align-items: flex-start; padding-top: 10px;
+  flex-direction: column; gap: 4px;
+}
+.wp-cmp-quem-lb { color: #1f7a4d; }
+.wp-cmp-quem i {
+  font-style: normal; font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 999px;
+  background: #eaf3ee; color: #1f7a4d; border: 1px solid #cfe5d8; white-space: nowrap;
+}
+.wp-cmp-sem { font-size: 10px; font-weight: 500; color: #b0b8b3; }
+
+.wp-cmp-dica { margin: 11px 0 0; font-size: 10.5px; color: #9aa49e; }
+.wp-cmp-nota, .wp-cmp-falta {
+  margin-top: 14px; padding: 11px 13px; border-radius: 11px;
+  font-size: 11.5px; line-height: 1.5;
+}
+.wp-cmp-nota { background: #f6f8f6; border: 1px solid #e8ebe6; color: #44504a; }
+.wp-cmp-nota b { color: var(--wp-ink); }
+.wp-cmp-falta { background: #fdf7e8; border: 1px solid #ecd9a4; color: #6b5a2e; }
+
+/* o botão que leva pra cá, no fim da ficha e na tela do carro */
+.wp-cmp-btn {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
+  margin-top: 16px; padding: 13px 15px; border: 0; border-radius: 12px; cursor: pointer;
+  background: #1a1a2e; color: #fff; font-family: inherit; font-size: 13.5px; font-weight: 700;
+  text-align: left; text-decoration: none;
+}
+
+/* os três pontos do carro, embaixo de "para quem é" */
+.wp-trio { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+.wp-trio i {
+  font-style: normal; font-size: 10.5px; font-weight: 700; padding: 3px 8px;
+  border-radius: 999px; background: #eaf3ee; color: #1f7a4d; border: 1px solid #cfe5d8;
+}
+.wp-trio-fonte { display: block; margin-top: 6px; font-size: 10px; color: #9aa49e; line-height: 1.4; }

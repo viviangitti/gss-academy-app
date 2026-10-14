@@ -7,6 +7,21 @@
 const clic = (sel, n = 0) => `[...document.querySelectorAll(${JSON.stringify(sel)})][${n}]?.click()`;
 const clicTexto = (sel, txt) => `[...document.querySelectorAll(${JSON.stringify(sel)})].find(e=>e.textContent.includes(${JSON.stringify(txt)}))?.click()`;
 
+// ESPERA O BOTÃO FICAR PRONTO, não um tempo fixo.
+// A folha da carta é uma imagem grande em base64 (perto de 200 KB) e o botão
+// que a abre nasce `disabled` até ela decodificar. Com espera fixa de 1,6 s o
+// clique caía no botão desabilitado e não acontecia nada: as cenas 11 e 12
+// saíam na lista de condições, sem a folha e sem a arte, e sem marca nenhuma.
+const pronto = (sel, ate = 9000) => `await (async () => {
+  const t0 = Date.now();
+  while (Date.now() - t0 < ${ate}) {
+    const el = ${sel};
+    if (el && !el.disabled) return el;
+    await new Promise(r => setTimeout(r, 150));
+  }
+  return null;
+})()`;
+
 export const VENDEDOR = [
   { id: '01-abre', url: '/eleva', espera: 2600,
     fala: 'O Eleva coloca o produto na mão de quem vende: um vídeo curto, a resposta pronta para cada objeção, e a mensagem para mandar na hora. Vamos ver.' },
@@ -48,10 +63,14 @@ export const VENDEDOR = [
     acao: clicTexto('.wp-cond-porta', 'Veículos'),
     fala: 'Cada carta é uma folha. Confira a validade antes de falar número com o cliente — ela sai sozinha quando vence.' },
   { id: '11-folha', foco: `document.querySelector('.wp-cond-lb img')`, url: '/eleva/ofertas', espera: 2200,
-    acao: `${clicTexto('.wp-cond-porta', 'Veículos')}; await new Promise(r=>setTimeout(r,1600)); const card=[...document.querySelectorAll('.wp-cond-card')].find(x=>/OMODA 5/.test(x.textContent)); card?.querySelector('.wp-cond-thumb')?.click()`,
+    acao: `${clicTexto('.wp-cond-porta', 'Veículos')}; await new Promise(r=>setTimeout(r,1200));
+      const bt = ${pronto("(()=>{const c=[...document.querySelectorAll('.wp-cond-card')].find(x=>/omoda\\s*5/i.test(x.textContent)); return c&&c.querySelector('.wp-cond-thumb');})()")};
+      bt?.click(); await new Promise(r=>setTimeout(r,900));`,
     fala: 'A folha abre em tela cheia e amplia com dois dedos. Esta folha é interna: você passa o número pro cliente, nunca a folha.' },
   { id: '12-arte', foco: `document.querySelector('.wp-arte-btn-main')`, url: '/eleva/ofertas', espera: 2600,
-    acao: `${clicTexto('.wp-cond-porta', 'Veículos')}; await new Promise(r=>setTimeout(r,1400)); const card=[...document.querySelectorAll('.wp-cond-card')].find(x=>/OMODA 5/.test(x.textContent)); card?.querySelector('.wp-cond-arte')?.click(); await new Promise(r=>setTimeout(r,1800))`,
+    acao: `${clicTexto('.wp-cond-porta', 'Veículos')}; await new Promise(r=>setTimeout(r,1200));
+      const ba = ${pronto("(()=>{const c=[...document.querySelectorAll('.wp-cond-card')].find(x=>/omoda\\s*5/i.test(x.textContent)); return c&&c.querySelector('.wp-cond-arte');})()")};
+      ba?.click(); await new Promise(r=>setTimeout(r,2200));`,
     fala: 'O que vai pro cliente é isto: a arte da oferta, com o carro e a chamada aprovada. Um toque em enviar e ela vai no WhatsApp.' },
   { id: '13-ia', foco: `document.querySelector('.wp-ia-sug') || document.querySelector('.wp-ia-thread')`, url: '/eleva/assistente', espera: 2200,
     fala: 'O Tira-dúvida sabe tudo que está no app: os carros, os acessórios com preço, e as condições do mês com os números. Pergunte como você falaria com um colega.' },
@@ -63,8 +82,13 @@ export const VENDEDOR = [
   { id: '14c-jornada-script', foco: `document.querySelector('.wp-jn-copiar')`, url: '/eleva/jornada', espera: 2200,
     acao: `document.querySelector('.wp-jn-script')?.scrollIntoView({block:'center'}); window.scrollBy(0,-40)`,
     fala: 'Cada etapa traz a mensagem pronta para copiar e colar. A primeira avisa que você está num atendimento na loja e já faz três perguntas que cabem numa resposta só: onde o carro vai rodar, quem vai dirigir e o que ele procura. Nada de pagamento na primeira mensagem, que assusta.' },
+  // A ETAPA PRECISA SER UMA QUE TENHA ONE PAGE. O botão só nasce da sexta
+  // etapa em diante ("Marcar o test drive"); nas cinco primeiras o bloco nem
+  // existe. A cena abria na primeira, que vem aberta por padrão, e procurava
+  // um botão que não estava ali. Vai por texto e não por índice: etapa nova no
+  // meio da jornada não quebra a gravação.
   { id: '14d-jornada-onepage', foco: `document.querySelector('.wp-jn-mandar')`, url: '/eleva/jornada', espera: 2200,
-    acao: `document.querySelector('.wp-jn-mandar')?.scrollIntoView({block:'center'}); window.scrollBy(0,-60)`,
+    acao: `const cab=[...document.querySelectorAll('.wp-jn-cab')].find(e=>/test drive/i.test(e.textContent||'')); cab?.click(); await new Promise(r=>setTimeout(r,1300)); document.querySelector('.wp-jn-mandar')?.scrollIntoView({block:'center'}); window.scrollBy(0,-60)`,
     fala: 'Embaixo da mensagem vem o one page: a folha que você manda para o cliente, com o nome da sua loja em cima e o seu WhatsApp no rodapé. Sem preço, porque número sai da tabela oficial.' },
   { id: '14e-jornada-acessorios', foco: `document.querySelector('.wp-jn-chips')`, url: '/eleva/jornada', espera: 2400,
     acao: `document.querySelectorAll('.wp-jn-cab')[7]?.click(); await new Promise(r=>setTimeout(r,1300)); document.querySelector('.wp-jn-chips')?.scrollIntoView({block:'center'})`,
@@ -105,7 +129,7 @@ export const VENDEDOR = [
   { id: '20-instalar-3', ilustracao: 'ilustracoes/inst-3.png',
     fala: 'Pronto. O Eleva vira um ícone na tela do seu celular e abre em tela cheia, sem você procurar a aba no meio das outras.' },
 
-  { id: '16-fim', foco: `(()=>{const a=[...document.querySelectorAll('*')].filter(e=>(e.textContent||'').trim().startsWith("SEU WHATSAPP")); const el=a[a.length-1]; return (el&&el.getBoundingClientRect().height>6)?el:null;})()`, url: '/eleva/perfil', espera: 2200,
+  { id: '16-fim', foco: `(()=>{const a=[...document.querySelectorAll('*')].filter(e=>/^seu whatsapp/i.test((e.textContent||'').trim())); const el=a[a.length-1]; return (el&&el.getBoundingClientRect().height>6)?el:null;})()`, url: '/eleva/perfil', espera: 2200,
     fala: 'E no Perfil você confere a versão do app e instala ele na tela de início do celular. É isso: antes de cada atendimento, uma pílula, a condição do dia e a resposta pronta. E durante o atendimento, a Jornada. Boa venda.' },
 ];
 
@@ -154,7 +178,7 @@ export const GERENTE = [
     acao: `${clicTexto('.wp-gz-tab', 'Conteúdo')}; await new Promise(r=>setTimeout(r,800)); const b=[...document.querySelectorAll('.wp-gz-block')].find(x=>/Condições comerciais/.test(x.textContent)); b.querySelector('[title="Editar"]').click(); await new Promise(r=>setTimeout(r,700)); const d=[...document.querySelectorAll('.wp-gz-avancado')].find(x=>/IA lê/.test(x.textContent)); d.open=true; d.scrollIntoView({block:'start'}); window.scrollBy(0,-70)`,
     fala: 'Esta parte é importante. A folha é imagem, e a inteligência artificial não enxerga imagem: ela responde a partir deste texto. Se o Tira-dúvida falar um número que não bate com a folha, é aqui que se corrige.' },
   { id: '13-arte', foco: `[...document.querySelectorAll('.wp-gz-avancado')].find(e=>/Arte para o cliente/.test(e.textContent))`, url: '/eleva/gestor', espera: 2600,
-    acao: `${clicTexto('.wp-gz-tab', 'Conteúdo')}; await new Promise(r=>setTimeout(r,900)); const b=[...document.querySelectorAll('.wp-gz-block')].find(x=>/Condições comerciais/.test(x.textContent)); const alvo=[...b.querySelectorAll('.wp-gz-item')].find(x=>/OMODA 5/.test(x.textContent)); alvo.querySelector('[title="Editar"]').click(); await new Promise(r=>setTimeout(r,1000)); const d=[...document.querySelectorAll('.wp-gz-avancado')].find(x=>/Arte para o cliente/.test(x.textContent)); d.open=true; d.scrollIntoView({block:'start'}); window.scrollBy(0,-70)`,
+    acao: `${clicTexto('.wp-gz-tab', 'Conteúdo')}; await new Promise(r=>setTimeout(r,900)); const b=[...document.querySelectorAll('.wp-gz-block')].find(x=>/Condições comerciais/.test(x.textContent)); const alvo=[...b.querySelectorAll('.wp-gz-item')].find(x=>/omoda\s*5/i.test(x.textContent)); alvo.querySelector('[title="Editar"]').click(); await new Promise(r=>setTimeout(r,1000)); const d=[...document.querySelectorAll('.wp-gz-avancado')].find(x=>/Arte para o cliente/.test(x.textContent)); d.open=true; d.scrollIntoView({block:'start'}); window.scrollBy(0,-70)`,
     fala: 'E aqui você libera a arte que o vendedor manda pro cliente. Você escreve uma vez a frase que pode ser anunciada, e o time inteiro manda a mesma coisa. Entrada, bônus de troca e rebate não entram nessa peça.' },
   { id: '14-documentos', foco: `[...document.querySelectorAll('.wp-gz-add')].find(e=>/Publicar/.test(e.textContent))`, url: '/eleva/gestor', espera: 2400,
     acao: `${clicTexto('.wp-gz-tab', 'Conteúdo')}; await new Promise(r=>setTimeout(r,800)); const b=[...document.querySelectorAll('.wp-gz-block')].find(x=>/Documentos da marca/.test(x.textContent)); b.scrollIntoView({block:'start'}); window.scrollBy(0,-70)`,
@@ -168,7 +192,12 @@ export const GERENTE = [
     fala: 'Cada cargo tem o seu. No primeiro dia útil, quem cuida da qualidade recebe a revisão do mês: carros, condições, acessórios, documentos e objeções, uma frente de cada vez. Quem mantém acessórios recebe a dele nos mesmos dias um a cinco.' },
   // NOVO — o aviso que o app manda sozinho quando a prateleira fica vazia.
   // É o contrário dos rituais: não é lembrete de data, é alarme de buraco.
-  { id: '14d-carta-vencida', url: '/eleva', espera: 3000, relogio: '2026-10-06T09:10:00-03:00',
+  { id: '14d-carta-vencida', url: '/eleva', espera: 3000, relogio: '2026-11-07T09:10:00-03:00',
+    // A DATA NÃO É QUALQUER UMA. O aviso só sobe quando NENHUMA carta de
+    // veículo está no ar — basta uma válida e ele some. As publicadas vencem
+    // em 04/10 e 04/11, então 06/10 (onde isto estava) ainda tinha oito no ar
+    // e a cena saiu sem o aviso. 07/11 é depois da última, e dá "Há 3 dias" no
+    // texto, que é o tom certo: o buraco é recente, não antigo.
     usuario: { uid: 'cv', name: 'Raphaela', email: 'raphaela.machado@gruporamasa.com', role: 'balconista', brands: ['ramasa'], cargo: 'gerente-veiculos', loja: 'grupo' },
     foco: `document.querySelector('.wp-cv')`,
     fala: 'E se a carta vencer e ninguém publicar a nova, o app não espera a próxima reunião: todo dia ele avisa quem pode resolver, até alguém subir. Porque o buraco é silencioso — o vendedor abre Condições e simplesmente não acha taxa de carro.' },

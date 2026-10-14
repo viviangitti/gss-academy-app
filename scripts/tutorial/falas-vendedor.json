@@ -28,6 +28,22 @@
   "fala": "A ficha técnica fica aqui, linha por linha, pra você achar um número em dois segundos com o cliente do lado. E o que vai pro WhatsApp dele é a folha oficial da montadora, em PDF, com o nome em caixa alta."
  },
  {
+  "id": "07b-trio",
+  "fala": "No fim de cada carro tem um resumo de três palavras: é o que o time respondeu quando perguntamos o que fecha este carro. Não é opinião de quem escreveu o app — saiu de uma pesquisa com dezesseis vendedores."
+ },
+ {
+  "id": "07c-comparar",
+  "fala": "E quando o cliente pergunta \"e o outro, então?\", o botão está logo abaixo: comparar com os outros modelos da casa."
+ },
+ {
+  "id": "07d-escolher",
+  "fala": "Marque quantos quiser. Dá para ver os cinco de uma vez."
+ },
+ {
+  "id": "07e-tabela",
+  "fala": "A primeira linha é a que decide: carrega na tomada ou não. Deslize para o lado que os carros passam, e o nome da linha fica parado. Nenhum carro ganha — a última linha diz para quem cada um é."
+ },
+ {
   "id": "08-acessorio",
   "fala": "Acessório tem tela própria: o que resolve pro cliente, a hora certa de oferecer, e o código pra pedir no sistema. Toque no código que ele copia."
  },
@@ -70,6 +86,14 @@
  {
   "id": "14e-jornada-acessorios",
   "fala": "Na etapa dos acessórios, cada item abre direto no app, com foto e com o jeito de oferecer. Oferecido junto da proposta, ele entra no mesmo negócio: é assim que a venda cresce sem mexer no desconto do carro."
+ },
+ {
+  "id": "14f-desafio",
+  "fala": "Toda semana tem o Desafio: cinco perguntas sobre os carros da casa, iguais para o time inteiro. Acertou quatro, soma vinte e cinco pontos no ranking do mês."
+ },
+ {
+  "id": "14g-desafio-regra",
+  "fala": "Repare na regra: uma tentativa só, até virar a semana. O quiz de cada carro continua livre para treinar — treine lá antes de vir aqui. No fim do mês tem a Prova, com dez perguntas e sessenta pontos."
  },
  {
   "id": "15-noticias",

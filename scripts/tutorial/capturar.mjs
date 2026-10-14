@@ -37,7 +37,29 @@ const CONVERSA = QUAL === 'drogaria'
     ];
 // A folha entra só na condição que o vídeo abre — as outras ficam sem arquivo,
 // como na vida real (a folha só desce quando alguém abre).
-const comFolha = condicoes.map((c) => (c.id === 'carta-set26-omoda-5' ? { ...c, arquivo: folha } : c));
+// A FOLHA VAI NA CARTA QUE ESTÁ NO AR, não numa fixa pelo id.
+// Estava presa em 'carta-set26-omoda-5'. Essa venceu em 04/10 e condição
+// vencida é arquivada — some da lista. As cenas 11-folha e 12-arte
+// procuravam esse cartão na tela e não achavam nada, e saíram sem marca.
+// Agora é a primeira carta de veículo VÁLIDA que fale de Omoda 5, seja ela
+// a de outubro ou a que vier depois.
+const alvoFolha = condicoes.find((c) => (c.categoria || 'veiculo') === 'veiculo'
+  && /omoda\s*5/i.test(c.titulo || '')
+  && (!c.venceEm || c.venceEm >= new Date().toISOString().slice(0, 10)));
+// A CHAMADA, PELO MESMO MOTIVO — e esta merece aviso.
+// O botão da arte da oferta só nasce quando a condição tem `chamada`, que é a
+// frase aprovada que vai pro cliente. As cartas de setembro tinham ("Taxa 0%
+// em até 24x"); as de outubro subiram SEM nenhuma. Resultado: hoje, no app de
+// verdade, esse botão não aparece em carta nenhuma — não é defeito de código,
+// é campo em branco na publicação.
+// A gravação repõe a MESMA frase que já foi aprovada, para a cena 12 mostrar
+// a funcionalidade. Quando a gerência preencher a chamada nas cartas do mês,
+// isto vira redundante e pode sair daqui.
+const CHAMADA_APROVADA = 'Taxa 0% em até 24x';
+const comFolha = condicoes.map((c) => (alvoFolha && c.id === alvoFolha.id
+  ? { ...c, arquivo: folha, chamada: c.chamada?.trim() || CHAMADA_APROVADA }
+  : c));
+if (!alvoFolha) console.log('  aviso: nenhuma carta de Omoda 5 no ar — as cenas da folha vão sair sem o arquivo');
 
 // A `loja` NÃO É ENFEITE: sem ela a gravação inteira sai na mesma tela.
 // Desde que entrou a trava "Antes de continuar" (QuemVoceE), quem é de marca

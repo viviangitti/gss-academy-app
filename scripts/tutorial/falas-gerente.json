@@ -68,6 +68,10 @@
   "fala": "Cada cargo tem o seu. No primeiro dia útil, quem cuida da qualidade recebe a revisão do mês: carros, condições, acessórios, documentos e objeções, uma frente de cada vez. Quem mantém acessórios recebe a dele nos mesmos dias um a cinco."
  },
  {
+  "id": "14d-carta-vencida",
+  "fala": "E se a carta vencer e ninguém publicar a nova, o app não espera a próxima reunião: todo dia ele avisa quem pode resolver, até alguém subir. Porque o buraco é silencioso — o vendedor abre Condições e simplesmente não acha taxa de carro."
+ },
+ {
   "id": "15-ver-como-time",
   "fala": "E a aba Ver como time mostra o app exatamente como o vendedor vê. Antes de cobrar, confira aqui se o que você publicou chegou."
  },

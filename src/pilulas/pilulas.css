@@ -331,8 +331,17 @@
 }
 @keyframes wpBadge { from { opacity: 0; transform: translateX(-10px) scale(0.8); } to { opacity: 1; transform: none; } }
 .wp-reel-time { font-size: 12px; font-weight: 700; opacity: 0.85; }
+/* A FALA SE AJUSTA AO TAMANHO DELA.
+   Era 27px fixo. A cena mais longa do app — "E o que mais fecha: até 1.200 km
+   de autonomia…", 254 caracteres — ocupava 428 px de texto num card de 503 px
+   que ainda precisa de 86 px para o cabeçalho e a barra de progresso: 514 em
+   503. O texto cobria a barra e a última linha saía pela borda de baixo num
+   iPhone de 375 px.
+   Reescrever a fala resolveria, mas a fala é da Vivian e da Silene. Então quem
+   cede é a tipografia: passando de 215 caracteres a fala cai para 25 px pelo
+   `--wp-fala`, que o componente calcula pelo comprimento. */
 .wp-reel-caption {
-  font-size: 27px;
+  font-size: var(--wp-fala, 27px);
   font-weight: 800;
   line-height: 1.22;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.4);
@@ -1811,6 +1820,21 @@
   font-family: inherit; font-size: 14px; font-weight: 800; color: var(--wp-ink); text-align: left;
 }
 .wp-ficha-chev { margin-left: auto; transition: transform .18s; }
+
+/* DOBRA — mesma casca da ficha técnica, usada pelos blocos de consulta.
+   O `resumo` só aparece fechada: é o que impede a sanfona de esconder o
+   que tem dentro. "Leve com ele" fechado e mudo não é lido como conteúdo
+   guardado, é lido como bloco vazio — e ninguém toca. Com "3 acessórios"
+   do lado, o toque vira decisão. */
+.wp-dobra { margin: 12px 0; }
+.wp-dobra-resumo {
+  margin-left: auto; font-size: 12px; font-weight: 700; color: var(--wp-soft);
+  white-space: nowrap;
+}
+.wp-dobra-resumo + .wp-ficha-chev { margin-left: 8px; }
+.wp-dobra-corpo { padding: 0 16px 14px; }
+.wp-dobra-corpo > .wp-acess-intro:first-child,
+.wp-dobra-corpo > .wp-op-nota:first-child { margin-top: 0; }
 .wp-ficha-chev.open { transform: rotate(180deg); }
 .wp-ficha-list { margin: 0; padding: 0 16px 14px; }
 .wp-ficha-row { display: flex; gap: 12px; padding: 9px 0; border-top: 1px solid var(--wp-border); }

@@ -353,7 +353,18 @@ function Reel({ product, previewAudience, nivel }: { product: ProductT; previewA
           <span className="wp-reel-time">{scene.t}</span>
         </div>
 
-        <div className="wp-reel-caption" key={i}>
+        {/* UM DEGRAU SÓ, E PEQUENO. Medido no card de 503 px: a 27 px a fala
+            estoura passando de ~242 caracteres (428 px de texto para 417 de
+            espaço). A 25 px, a maior fala do app — 254 caracteres — ocupa
+            366 px e sobra folga. O corte entra em 215 para dar margem em tela
+            mais estreita que a do iPhone padrão; pega seis das 264 cenas, e
+            2 px a menos ninguém percebe. Degraus menores que isso piscavam na
+            troca de cena. */}
+        <div
+          className="wp-reel-caption"
+          key={i}
+          style={{ ['--wp-fala' as string]: scene.line.length > 215 ? '25px' : '27px' }}
+        >
           {scene.line}
         </div>
 
@@ -754,6 +765,35 @@ function GestorVideoEditor({ product }: { product: ProductT }) {
   );
 }
 
+/**
+ * DOBRA — a sanfona que a página já usava em Versões e Ficha técnica, agora
+ * reaproveitável.
+ *
+ * A tela do carro tinha 6,4 telas de rolagem no Jaecoo 7 (5.220 px num
+ * iPhone). Quem está de pé com o cliente não rola seis telas: para na
+ * primeira que não serve. O conteúdo não sobra — o que sobra é tudo aberto
+ * ao mesmo tempo.
+ *
+ * Fica ABERTO o que é a trilha: o vídeo, o que destacar e o que responder.
+ * Fecha o que é consulta — acessório, prova social, material de estudo —
+ * que continua a um toque e passa a dizer quanto tem lá dentro.
+ */
+function Dobra({ icone, titulo, resumo, children }: {
+  icone: React.ReactNode; titulo: string; resumo?: string; children: React.ReactNode;
+}) {
+  const [aberta, setAberta] = useState(false);
+  return (
+    <div className="wp-ficha wp-dobra">
+      <button type="button" className="wp-ficha-toggle" onClick={() => setAberta((a) => !a)} aria-expanded={aberta}>
+        {icone} {titulo}
+        {resumo && !aberta && <span className="wp-dobra-resumo">{resumo}</span>}
+        <ChevronDown size={16} className={`wp-ico wp-ficha-chev ${aberta ? 'open' : ''}`} />
+      </button>
+      {aberta && <div className="wp-dobra-corpo">{children}</div>}
+    </div>
+  );
+}
+
 export default function Product() {
   // Re-renderiza quando o preço corrigido chega da nuvem: sem isto a tela
   // fica com o número do catálogo até alguém trocar de aba.
@@ -777,7 +817,12 @@ export default function Product() {
   // vazia, e aí nada aparece — é o comportamento certo.
   const trio = product ? (comparavel(product)?.atributos ?? []) : [];
   const podeComparar = temComparativo(brandId, user?.role);
-  const [openObj, setOpenObj] = useState<number | null>(0);
+  // COMEÇA FECHADA. Abrir a primeira por padrão custava ~430 px de rolagem
+  // em cima de todo o resto, e a objeção aberta quase nunca era a que o
+  // cliente tinha acabado de fazer. Quatro perguntas visíveis em uma tela
+  // acham mais rápido que uma resposta aberta e três escondidas abaixo dela.
+  const [openObj, setOpenObj] = useState<number | null>(null);
+  const [verTodosFortes, setVerTodosFortes] = useState(false);
   const [openFicha, setOpenFicha] = useState(false);
   const [enviandoFicha, setEnviandoFicha] = useState(false);
   const [openVers, setOpenVers] = useState(false);
@@ -1070,11 +1115,26 @@ export default function Product() {
         {/* A lista do TIME ganha da de fábrica quando existe — era só o rótulo
             que mudava, e a lista continuava a do código: dizia "o que o time diz
             que fecha" mostrando texto que o time nunca escreveu. */}
+        {/* QUATRO, E O RESTO A UM TOQUE — igual aos acessórios logo abaixo.
+            O Jaecoo 7 tem oito pontos fortes, 906 caracteres, 790 px: quase
+            uma tela inteira de lista num bloco que é para ser conferido de
+            relance antes de falar com o cliente. Lista que não cabe na tela
+            não é lida inteira, é abandonada no meio — e os de baixo, que
+            ninguém escolheu para ficar por último, somem na prática.
+            Quatro cabem no olhar. */}
         <ul className="wp-benefits">
-          {(doTime.length ? doTime.map((d) => d.titulo) : product.benefits).map((b, idx) => (
-            <li key={idx}>{b}</li>
-          ))}
+          {(() => {
+            const todos = doTime.length ? doTime.map((d) => d.titulo) : product.benefits;
+            return (verTodosFortes ? todos : todos.slice(0, 4)).map((b, idx) => <li key={idx}>{b}</li>);
+          })()}
         </ul>
+        {(doTime.length ? doTime.length : product.benefits.length) > 4 && (
+          <button type="button" className="wp-acess-todos" onClick={() => setVerTodosFortes((v) => !v)}>
+            {verTodosFortes
+              ? 'Mostrar menos'
+              : `Ver os outros ${(doTime.length ? doTime.length : product.benefits.length) - 4}`}
+          </button>
+        )}
       </div>
 
       {/* VERSÕES — fica ANTES da ficha técnica de propósito.
@@ -1255,10 +1315,9 @@ export default function Product() {
       <Quiz product={product} />
 
       {mp4 && product.instagramUrl && (
-        <div className="wp-block">
-          <span className="wp-block-label"><Camera size={14} className="wp-ico" /> Prova social</span>
+        <Dobra icone={<Camera size={15} className="wp-ico" />} titulo="Prova social">
           <InstagramEmbed url={product.instagramUrl} />
-        </div>
+        </Dobra>
       )}
 
       {/* O que veio DA RUA e o gestor respondeu. Fica logo depois das objeções
@@ -1266,8 +1325,11 @@ export default function Product() {
           "o cliente falou isso, o que eu respondo?". A diferença é que estas
           aqui vieram do time dele, nesta loja, neste mês. */}
       {publicadas.length > 0 && (
-        <div className="wp-block">
-          <span className="wp-block-label"><Users size={14} className="wp-ico" /> Veio do time — respondido pela gestão</span>
+        <Dobra
+          icone={<Users size={15} className="wp-ico" />}
+          titulo="Veio do time — respondido pela gestão"
+          resumo={`${publicadas.length} ${publicadas.length === 1 ? 'resposta' : 'respostas'}`}
+        >
           {publicadas.map((o) => (
             <div key={o.id} className="wp-time-obj">
               <p className="wp-time-obj-q">“{o.text}”</p>
@@ -1275,7 +1337,7 @@ export default function Product() {
               {o.byName && <span className="wp-time-obj-meta">trazida por {o.byName.split(' ')[0]}</span>}
             </div>
           ))}
-        </div>
+        </Dobra>
       )}
 
       {product.compliance && (
@@ -1298,8 +1360,11 @@ export default function Product() {
           que existe estribo iluminado é o que faz o vendedor oferecer. Cada um
           entra pelo benefício, não pela descrição da peça. */}
       {auto && acessorios.length > 0 && (
-        <div className="wp-block">
-          <span className="wp-block-label"><Package size={14} className="wp-ico" /> Leve com ele</span>
+        <Dobra
+          icone={<Package size={15} className="wp-ico" />}
+          titulo="Leve com ele"
+          resumo={`${acessorios.length} ${acessorios.length === 1 ? 'acessório' : 'acessórios'}`}
+        >
           <p className="wp-acess-intro">Ofereça no fechamento, com o carro já escolhido. O código é o que você usa pra pedir.</p>
           {/* Cortado em quatro de propósito. Este bloco aparece na hora do
               fechamento, e vinte e um itens numa lista só não é oferta, é
@@ -1338,7 +1403,7 @@ export default function Product() {
                 : `Ver os outros ${acessorios.length - 4} acessórios`}
             </button>
           )}
-        </div>
+        </Dobra>
       )}
 
       {/* PRA VOCÊ ESTUDAR — e só isso.
@@ -1352,8 +1417,7 @@ export default function Product() {
           "material pronto", colada no botão do cliente. Ela não vai pro cliente,
           e agora a tela diz isso. */}
       {auto && (
-        <div className="wp-op">
-          <span className="wp-block-label"><BookOpen size={14} className="wp-ico" /> Pra você estudar</span>
+        <Dobra icone={<BookOpen size={15} className="wp-ico" />} titulo="Pra você estudar" resumo="PDF das objeções">
           <p className="wp-op-nota">
             Um PDF com as objeções e a resposta pronta deste carro, pra você ler antes de
             atender. <b>Não é o material do cliente</b> — esse sai no botão verde, no rodapé.
@@ -1363,7 +1427,7 @@ export default function Product() {
             {gerando === 'estudo' ? 'Preparando…' : 'Gerar o material de estudo'}
           </button>
           {avisoOp && <p className="wp-op-aviso">{avisoOp}</p>}
-        </div>
+        </Dobra>
       )}
 
       {/* Sobe do rodapé, onde o polegar já está. Não trava: quem está de pé com

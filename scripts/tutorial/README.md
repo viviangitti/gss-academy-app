@@ -41,6 +41,19 @@ python3 montar.py drogaria
 
 ## Armadilhas que já custaram caro
 
+**A VOZ PARA DE FUNCIONAR SOZINHA.** O `narrar.py` usa o edge-tts, que fala com
+um servidor da Microsoft, e a Microsoft muda a autenticação sem avisar. Em
+14/10/2026 ele passou a devolver `WSServerHandshakeError 403` e a narração das
+cenas novas simplesmente não saiu — as velhas continuaram no lugar porque o
+script só gera o que falta, então o vídeo ia sair mudo só nos trechos novos, que
+é o pior jeito de descobrir. Conserto: `python3 -m pip install --upgrade
+edge-tts` (de 7.2.8 para 7.3.1 resolveu). Antes de montar, confira que o número
+de MP3 bate com o de cenas:
+
+```bash
+ls audio-vendedor/*.mp3 | wc -l     # tem que bater com as cenas de falas-vendedor.json
+```
+
 **RESOLVIDO EM 14/10/2026 — mas leia assim mesmo.** O `vite.config.ts` agora
 tem `server: { host: '127.0.0.1' }`, o que faz o Vite escutar em IPv4 e tira o
 problema abaixo da mesa. Se alguém mexer nisso, ele volta: naquele dia a

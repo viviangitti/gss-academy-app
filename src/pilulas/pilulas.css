@@ -1805,6 +1805,12 @@
 /* Botão de comprar no e-commerce oficial (só afiliado) */
 .wp-buy {
   display: flex; align-items: center; justify-content: center; gap: 8px;
+  /* box-sizing: sem ele os 16px de padding de cada lado e a borda de 1,5px
+     entram POR FORA dos 100%. O botão media 378px numa tela de 375 e saía
+     cortado pela direita — visível no GLPEN Nutri Muscle, onde ele aparece.
+     O botão verde logo abaixo respeita a margem, o que deixava o
+     desalinhamento óbvio. Mesmo defeito já corrigido no .wp-cond-card. */
+  box-sizing: border-box;
   width: 100%; margin: 12px 0 4px; padding: 14px 16px;
   border-radius: 14px; border: 1.5px solid var(--wp-ink);
   background: var(--wp-surface); color: var(--wp-ink);

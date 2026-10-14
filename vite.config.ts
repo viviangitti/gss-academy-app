@@ -22,6 +22,18 @@ function versaoDoApp(): string {
 
 export default defineConfig({
   plugins: [react()],
+  // ESCUTAR EM IPv4, NÃO SÓ EM IPv6.
+  //
+  // Sem isto o Vite sobe em [::1] e mais nada. O navegador da pessoa não
+  // percebe, mas o Chrome headless que grava os vídeos do tutorial não
+  // alcança [::1] nesta máquina: ele falha em silêncio e grava a página de
+  // erro. Em 14/10/2026 a gravação do vendedor saiu com os quadros todos de
+  // 129.433 bytes — o mesmo tamanho, que é a assinatura do problema e está
+  // anotada em scripts/tutorial/README.md.
+  //
+  // 127.0.0.1 em vez de 'localhost' de propósito: 'localhost' é justamente o
+  // nome que resolve para ::1 e recria o problema.
+  server: { host: '127.0.0.1' },
   define: {
     __VERSAO_APP__: JSON.stringify(versaoDoApp()),
   },

@@ -41,6 +41,15 @@ python3 montar.py drogaria
 
 ## Armadilhas que já custaram caro
 
+**RESOLVIDO EM 14/10/2026 — mas leia assim mesmo.** O `vite.config.ts` agora
+tem `server: { host: '127.0.0.1' }`, o que faz o Vite escutar em IPv4 e tira o
+problema abaixo da mesa. Se alguém mexer nisso, ele volta: naquele dia a
+gravação do vendedor saiu com 32 quadros de **129.433 bytes cada**, o mesmo
+tamanho, porque o `localhost` desta máquina resolvia só para `[::1]` e o Chrome
+headless não alcançava. Confira com
+`curl -o /dev/null -w "%{http_code}" http://127.0.0.1:5173/` antes de gravar: se
+der `000`, é isto.
+
 **O endereço, dos dois lados.** O Vite às vezes sobe escutando só em IPv6: o
 Chrome tenta IPv4, falha em silêncio e o quadro sai **branco**. E já aconteceu o
 contrário — o Chrome desta máquina não alcançou `[::1]` e gravou 14 cenas

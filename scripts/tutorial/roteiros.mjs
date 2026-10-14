@@ -29,7 +29,7 @@ export const VENDEDOR = [
   // NOVO EM 13/10 — o comparativo entre os carros da casa e os três pontos.
   // Entram logo depois da tela do carro porque é ali que a dúvida nasce: o
   // vendedor acabou de ler para quem aquele carro serve.
-  { id: '07b-trio', foco: `[...document.querySelectorAll('.wp-block')].find(e=>/Para quem é/.test(e.textContent))`, url: '/eleva/produto/omoda-5-shs-h', espera: 2400,
+  { id: '07b-trio', foco: `document.querySelector('.wp-trio')`, url: '/eleva/produto/omoda-5-shs-h', espera: 2400,
     acao: `const b=[...document.querySelectorAll('.wp-block')].find(e=>/Para quem é/.test(e.textContent)); b?.scrollIntoView({block:'center'})`,
     fala: 'No fim de cada carro tem um resumo de três palavras: é o que o time respondeu quando perguntamos o que fecha este carro. Não é opinião de quem escreveu o app — saiu de uma pesquisa com dezesseis vendedores.' },
   { id: '07c-comparar', foco: `document.querySelector('.wp-cmp-btn')`, url: '/eleva/produto/omoda-5-shs-h', espera: 2200,

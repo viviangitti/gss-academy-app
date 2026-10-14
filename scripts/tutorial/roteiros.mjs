@@ -178,7 +178,14 @@ export const GERENTE = [
     acao: `${clicTexto('.wp-gz-tab', 'Conteúdo')}; await new Promise(r=>setTimeout(r,800)); const b=[...document.querySelectorAll('.wp-gz-block')].find(x=>/Condições comerciais/.test(x.textContent)); b.querySelector('[title="Editar"]').click(); await new Promise(r=>setTimeout(r,700)); const d=[...document.querySelectorAll('.wp-gz-avancado')].find(x=>/IA lê/.test(x.textContent)); d.open=true; d.scrollIntoView({block:'start'}); window.scrollBy(0,-70)`,
     fala: 'Esta parte é importante. A folha é imagem, e a inteligência artificial não enxerga imagem: ela responde a partir deste texto. Se o Tira-dúvida falar um número que não bate com a folha, é aqui que se corrige.' },
   { id: '13-arte', foco: `[...document.querySelectorAll('.wp-gz-avancado')].find(e=>/Arte para o cliente/.test(e.textContent))`, url: '/eleva/gestor', espera: 2600,
-    acao: `${clicTexto('.wp-gz-tab', 'Conteúdo')}; await new Promise(r=>setTimeout(r,900)); const b=[...document.querySelectorAll('.wp-gz-block')].find(x=>/Condições comerciais/.test(x.textContent)); const alvo=[...b.querySelectorAll('.wp-gz-item')].find(x=>/omoda\s*5/i.test(x.textContent)); alvo.querySelector('[title="Editar"]').click(); await new Promise(r=>setTimeout(r,1000)); const d=[...document.querySelectorAll('.wp-gz-avancado')].find(x=>/Arte para o cliente/.test(x.textContent)); d.open=true; d.scrollIntoView({block:'start'}); window.scrollBy(0,-70)`,
+    // ESPERA A LISTA RENDERIZAR. Eram 900 ms fixos depois de trocar de aba, e
+    // o bloco de condições monta depois disso: `alvo` vinha undefined e a ação
+    // estourava calada. Agora procura o lápis de Editar até ele existir.
+    acao: `${clicTexto('.wp-gz-tab', 'Conteúdo')};
+      const lapis = ${pronto(`(()=>{const b=[...document.querySelectorAll('.wp-gz-block')].find(x=>/Condições comerciais/.test(x.textContent)); if(!b) return null; const a=[...b.querySelectorAll('.wp-gz-item')].find(x=>/omoda\\s*5/i.test(x.textContent)); return a && a.querySelector('[title="Editar"]');})()`)};
+      lapis?.click();
+      const det = ${pronto(`[...document.querySelectorAll('.wp-gz-avancado')].find(x=>/Arte para o cliente/.test(x.textContent))`)};
+      if (det) { det.open = true; await new Promise(r=>setTimeout(r,400)); det.scrollIntoView({block:'start'}); window.scrollBy(0,-70); }`,
     fala: 'E aqui você libera a arte que o vendedor manda pro cliente. Você escreve uma vez a frase que pode ser anunciada, e o time inteiro manda a mesma coisa. Entrada, bônus de troca e rebate não entram nessa peça.' },
   { id: '14-documentos', foco: `[...document.querySelectorAll('.wp-gz-add')].find(e=>/Publicar/.test(e.textContent))`, url: '/eleva/gestor', espera: 2400,
     acao: `${clicTexto('.wp-gz-tab', 'Conteúdo')}; await new Promise(r=>setTimeout(r,800)); const b=[...document.querySelectorAll('.wp-gz-block')].find(x=>/Documentos da marca/.test(x.textContent)); b.scrollIntoView({block:'start'}); window.scrollBy(0,-70)`,

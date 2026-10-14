@@ -213,9 +213,16 @@ for (const cena of CENAS) {
   await c.send('Page.navigate', { url: `${ENDERECO}${cena.url}` });
   await espera(cena.espera || 2000);
   if (cena.acao) {
-    await c.send('Runtime.evaluate', {
+    // O ERRO DA PÁGINA PRECISA APARECER. O .catch() só pega falha de
+    // transporte do CDP; quando a ação lança DENTRO da página, o Runtime
+    // devolve `exceptionDetails` num retorno BEM-SUCEDIDO e o erro sumia. A
+    // cena saía sem marca e sem explicação — foi assim que 13-arte ficou
+    // quebrada sem ninguém saber por quê.
+    const r = await c.send('Runtime.evaluate', {
       expression: `(async()=>{ ${cena.acao} })()`, awaitPromise: true,
-    }).catch((e) => console.log(`  ação falhou em ${cena.id}: ${e.message}`));
+    }).catch((e) => ({ erroCdp: e.message }));
+    const falha = r?.erroCdp || r?.exceptionDetails?.exception?.description || r?.exceptionDetails?.text;
+    if (falha) console.log(`  ação falhou em ${cena.id}: ${String(falha).split('\n')[0]}`);
     await espera(1400);
   }
   // Onde está, NA TELA, o que a narração vai falar. Medido agora, não chutado:

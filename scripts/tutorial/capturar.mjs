@@ -39,11 +39,18 @@ const CONVERSA = QUAL === 'drogaria'
 // como na vida real (a folha só desce quando alguém abre).
 const comFolha = condicoes.map((c) => (c.id === 'carta-set26-omoda-5' ? { ...c, arquivo: folha } : c));
 
+// A `loja` NÃO É ENFEITE: sem ela a gravação inteira sai na mesma tela.
+// Desde que entrou a trava "Antes de continuar" (QuemVoceE), quem é de marca
+// automotiva e não tem unidade no cadastro não passa da porta. Em 14/10/2026
+// os 32 quadros do vendedor saíram todos com 129.433 bytes — o mesmo tamanho,
+// que é a assinatura de quadro repetido anotada no README — e eram 32 fotos do
+// formulário de unidade. O gerente vai como 'grupo' (Corporativo) porque as
+// cenas do Painel mostram o time inteiro.
 const USUARIO = QUAL === 'gerente'
-  ? { uid: 'c', name: 'Cristiano Maciel', email: 'cristiano.maciel@gruporamasa.com', role: 'gestor', brands: ['ramasa'], cargo: 'gerente-veiculos' }
+  ? { uid: 'c', name: 'Cristiano Maciel', email: 'cristiano.maciel@gruporamasa.com', role: 'gestor', brands: ['ramasa'], cargo: 'gerente-veiculos', loja: 'grupo' }
   : QUAL === 'drogaria'
   ? { uid: 'b', name: 'Ana', email: 'ana@drogariasaopaulo.com.br', role: 'balconista', brands: ['dsp'] }
-  : { uid: 'v', name: 'Walther', email: 'walther@gruporamasa.com', role: 'balconista', brands: ['ramasa'], cargo: 'vendedor-veiculos' };
+  : { uid: 'v', name: 'Walther', email: 'walther@gruporamasa.com', role: 'balconista', brands: ['ramasa'], cargo: 'vendedor-veiculos', loja: 'tiger-goiania' };
 
 // A MARCA DA GRAVAÇÃO. O vídeo da Drogaria São Paulo mostra as telas DELES:
 // mesmo app, catálogo deles, cor deles. Gravar farmácia com carro na tela seria
@@ -146,8 +153,39 @@ for (const cena of CENAS) {
     Object.setPrototypeOf(D, _D); window.Date = D;
   })();
   localStorage.removeItem('wp_rituais_ok'); localStorage.removeItem('wp_ritual_adiado');` : '';
+  // OS MODAIS DE DATA, FORA DAS CENAS QUE OS QUEREM.
+  //
+  // Três coisas sobem sozinhas por DATA e cobrem a tela: o lembrete de
+  // campanha (.wp-camppop, do Hoje.tsx, nos dias 14 e 30), o ritual do mês
+  // (.wp-rit) e o aviso de carta vencida (.wp-cv). Mais o selo de valor
+  // (.wp-carimbo), que sobe no rodapé quando a pessoa pratica um pilar.
+  //
+  // Gravar em 14/10/2026 punha "A campanha está fechando" por cima de TODA
+  // cena — 32 quadros do vendedor com o mesmo modal na frente do app.
+  //
+  // As cenas que QUEREM o modal são as que adiantam o relógio (14b, 14c, 14d):
+  // ali ele é o assunto. Nas outras ele é intruso, então sai do DOM assim que
+  // aparece. Um MutationObserver em vez de um clique porque o modal monta
+  // depois da navegação, e "Agora não" nem sempre existe — alguns rituais só
+  // têm o botão de ir fazer.
+  const semAvisos = cena.relogio ? '' : `
+    (() => {
+      const CSS = '.wp-camppop-fundo,.wp-camppop,.wp-rit-fundo,.wp-rit,.wp-cv-fundo,.wp-cv,.wp-carimbo{display:none !important}';
+      // CSS, e não remover o nó: o React remonta o modal e qualquer remoção
+      // vira corrida. Uma regra de folha de estilo ele não desfaz.
+      const por = () => {
+        if (!document.head) return;
+        if (document.getElementById('sem-avisos')) return;
+        const st = document.createElement('style');
+        st.id = 'sem-avisos'; st.textContent = CSS;
+        document.head.appendChild(st);
+      };
+      por();
+      document.addEventListener('DOMContentLoaded', por);
+      setInterval(por, 150);
+    })();`;
   const posto = await c.send('Page.addScriptToEvaluateOnNewDocument', {
-    source: `localStorage.setItem('wp_dev_user', ${JSON.stringify(JSON.stringify(quem))}); ${relogio}`,
+    source: `localStorage.setItem('wp_dev_user', ${JSON.stringify(JSON.stringify(quem))}); ${relogio} ${semAvisos}`,
   });
   idAcesso = posto.identifier;
   await c.send('Page.navigate', { url: `${ENDERECO}${cena.url}` });

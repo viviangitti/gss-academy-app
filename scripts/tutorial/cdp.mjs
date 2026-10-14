@@ -13,6 +13,14 @@ export async function abrirChrome() {
   fs.rmSync(PERFIL, { recursive: true, force: true });
   const p = spawn(CHROME, [
     '--headless=new', `--remote-debugging-port=${PORTA}`, `--user-data-dir=${PERFIL}`,
+    // SEM ISTO O CHROME ENGORDA UMA PASTA QUE O PERFIL NÃO COBRE.
+    // O --user-data-dir acima é temporário e some a cada execução, mas os
+    // componentes baixados e os dumps de falha vão para
+    // ~/Library/Application Support/Google/Chrome-headless, que é fixa. Com
+    // dezenas de execuções (cada PDF, cada PNG, cada vídeo) ela chegou a 4 GB
+    // e foi o que lotou o disco da máquina em 13/10/2026 — sobraram 120 MB e
+    // nem a saída dos comandos cabia mais.
+    '--disable-component-update', '--disable-crash-reporter', '--disable-breakpad',
     '--no-first-run', '--no-default-browser-check', '--hide-scrollbars',
     '--force-device-scale-factor=3', '--window-size=390,844',
     'about:blank',

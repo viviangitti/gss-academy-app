@@ -245,16 +245,29 @@ const LOJAS = {
 };
 
 const CARGOS = {
-  'vendedor-veiculos': 'vendedor de veículos',
-  'vendedor-acessorios': 'vendedor de acessórios',
-  fi: 'F&I (financiamento e seguros)',
-  'gerente-veiculos': 'gerente de vendas',
-  'gerente-acessorios': 'gerente de acessórios',
-  'lider-acessorios': 'supervisor de acessórios',
-  'lider-qualidade': 'líder de qualidade',
-  'diretor-qualidade': 'diretor de qualidade',
-  'executivo-leads': 'executivo de leads',
-  'gerente-leads': 'gerente de leads',
+  // LIDO DO APP, não copiado. Esta lista era escrita à mão e já tinha ficado
+  // para trás duas vezes: 'supervisor-vendas' e 'diretor' existem em
+  // data/cargos.ts desde setembro e nunca entraram aqui — quem tinha esses
+  // cargos aparecia no relatório só como "gestor", sem dizer o quê. O
+  // relatório semanal (relatorio-semanal/monta.mjs) já lê da fonte; este agora
+  // também, então cargo novo entra sozinho.
+  //
+  // O arquivo escreve "Diretor(a) de marketing" e aqui o texto corre no meio
+  // da frase ("Fulano (diretor de marketing) — último acesso…"), então cai
+  // para minúscula e perde o (a). F&I é exceção: é sigla, não cai.
+  ...(() => {
+    const mapa = {};
+    try {
+      const fonte = readFileSync(join(RAIZ, 'src/pilulas/data/cargos.ts'), 'utf8');
+      for (const m of fonte.matchAll(/id:\s*'([^']+)',\s*\n\s*label:\s*'([^']+)'/g)) {
+        const rotulo = m[2].replace(/\(a\)/g, '').replace(/\s{2,}/g, ' ').trim();
+        mapa[m[1]] = /^F&I/.test(rotulo)
+          ? 'F&I (financiamento e seguros)'
+          : rotulo.charAt(0).toLowerCase() + rotulo.slice(1);
+      }
+    } catch { /* sem o arquivo, cai no papel */ }
+    return mapa;
+  })(),
 };
 
 const identifica = (p) =>

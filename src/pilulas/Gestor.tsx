@@ -44,7 +44,7 @@ const ROLE_LB: Record<string, string> = {
   'gerente-acessorios': 'Gerentes de acessórios',
   'lider-acessorios': 'Supervisores de acessórios', 'lider-qualidade': 'Líderes de qualidade', 'diretor-qualidade': 'Diretoria de qualidade',
   'executivo-leads': 'Executivos de leads', 'gerente-leads': 'Gerentes de leads',
-  diretor: 'Diretoria do grupo',
+  diretor: 'Diretoria do grupo', 'diretor-mkt': 'Diretoria de marketing',
 };
 // Singular certo por papel — antes o código tirava só o último "s" do plural, o
 // que gerava "Gestore" (de Gestores) e "Promotore" (de Promotores).
@@ -157,7 +157,9 @@ function Resultados({ brandId, products, buscas }: { brandId: string; products: 
   // Quem usava e sumiu. Diferente de `semUso`, que é quem nunca começou.
   const parados = useMemo(() => quemParou(pessoasDoRecorte, 7), [pessoasDoRecorte]);
   // A diretoria vê as lojas lado a lado; o gerente de uma loja não precisa.
-  const ehDiretoria = user?.cargo === 'diretor';
+  // Marketing entra junto: campanha se decide comparando unidade com unidade,
+  // e sem esse quadro ele escolhe onde investir no escuro.
+  const ehDiretoria = user?.cargo === 'diretor' || user?.cargo === 'diretor-mkt';
   const lojas = useMemo(() => (ehDiretoria ? porLoja(pessoas || [], 7) : []), [ehDiretoria, pessoas]);
 
   // A barra de lojas só existe quando há mais de uma unidade no time — numa

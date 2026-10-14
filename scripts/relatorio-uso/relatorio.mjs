@@ -9,7 +9,11 @@ const GRUPOS = [
   ['Vendedores de acessórios', ['vendedor-acessorios']],
   ['F&I (financiamento e seguros)', ['fi']],
   ['Leads', ['executivo-leads', 'gerente-leads']],
-  ['Gestão', ['gerente-veiculos', 'gerente-acessorios', 'lider-acessorios', 'lider-qualidade', 'diretor-qualidade']],
+  // A lista de Gestão ficava para trás a cada cargo novo: 'supervisor-vendas'
+  // e 'diretor' existiam desde setembro e caíam em "Sem cargo definido", que
+  // é o balde de quem nem preencheu. 'gerente-leads' fica em Leads, onde já
+  // estava, para não ser contado duas vezes.
+  ['Gestão', ['gerente-veiculos', 'supervisor-vendas', 'gerente-acessorios', 'lider-acessorios', 'lider-qualidade', 'diretor-qualidade', 'diretor', 'diretor-mkt']],
   ['Sem cargo definido no cadastro', ['']],
 ];
 const dias = {};
@@ -113,7 +117,7 @@ ${barrasDia}
 ${secao('Vendedores de veículos', ['vendedor-veiculos'])}
 ${secao('Vendedores de acessórios', ['vendedor-acessorios'], 'Duas pessoas cadastradas nesta frente, com 1 vídeo cada. É a menor adesão do time.')}
 ${secao('Leads', ['executivo-leads', 'gerente-leads'], 'Ninguém se cadastrou como Executivo ou Gerente de leads. Os cargos existem no app desde 04/09 — falta o time da frente de leads criar conta.')}
-${secao('Gestão', ['gerente-veiculos', 'gerente-acessorios', 'lider-acessorios', 'lider-qualidade', 'diretor-qualidade'])}
+${secao('Gestão', ['gerente-veiculos', 'supervisor-vendas', 'gerente-acessorios', 'lider-acessorios', 'lider-qualidade', 'diretor-qualidade', 'diretor', 'diretor-mkt'])}
 ${secao('Sem cargo definido no cadastro', [''], 'Entraram antes de o cargo virar lista obrigatória. Vale pedir para atualizarem em Perfil — sem cargo, não aparecem separadas por frente.')}
 
 <h2>Documentos mais abertos</h2>

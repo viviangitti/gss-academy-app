@@ -30,6 +30,11 @@ export function grupoDoCargo(cargo?: CargoAuto, role?: string): GrupoCargo {
     // Por isso tem recorte próprio — dar a ela a linha da gerência de vendas
     // seria mandar o diretor fazer o trabalho do gerente.
     case 'diretor':
+    // Marketing entra na diretoria e não numa frente: as três linhas deste
+    // recorte — comparar as lojas, cobrar o dono de cada frente, e olhar o que
+    // o grupo já publicou antes de aprovar material novo — são exatamente o
+    // trabalho dele. A última é literalmente de marketing.
+    case 'diretor-mkt':
       return 'diretoria';
     case 'gerente-veiculos':
     case 'supervisor-vendas':

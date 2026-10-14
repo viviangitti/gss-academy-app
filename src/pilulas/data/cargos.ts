@@ -59,7 +59,8 @@ export type CargoAuto =
   | 'diretor-qualidade'
   | 'executivo-leads'
   | 'gerente-leads'
-  | 'diretor';
+  | 'diretor'
+  | 'diretor-mkt';
 
 export interface Cargo {
   id: CargoAuto;
@@ -146,6 +147,23 @@ export const CARGOS_AUTO: Cargo[] = [
     // decide onde colocar atenção, não para quem executa.
     id: 'diretor',
     label: 'Diretor(a) do grupo',
+    role: 'gestor',
+  },
+  {
+    // MARKETING (14/10/2026). Não vende e não responde por loja: responde pelo
+    // que o time MANDA pro cliente — a arte da oferta, a chamada aprovada, o
+    // material que sai daqui com o nome do grupo.
+    //
+    // É o cargo que faltava para um buraco concreto: a arte da oferta só
+    // aparece pro vendedor quando a condição tem `chamada` preenchida, e em
+    // 14/10 NENHUMA carta de outubro tinha — o botão não existia para ninguém,
+    // e não havia dono a quem perguntar por quê.
+    //
+    // Papel de gestor, e vê as lojas lado a lado como a diretoria: campanha se
+    // decide comparando unidade com unidade. Não mexe no catálogo de
+    // acessórios, que continua de quem responde por ele.
+    id: 'diretor-mkt',
+    label: 'Diretor(a) de marketing',
     role: 'gestor',
   },
 ];

@@ -125,6 +125,11 @@ const QUEM_LE = {
   'elevaVideos/*': 'vendedor',
   'elevaVideos/*/pedacos/*': 'vendedor',
   'elevaImagens/*': 'vendedor',
+  // O valor da semana: quem PUBLICA é a gerência, quem LÊ é o time inteiro —
+  // o card do Hoje e a tela de Cultura mostram para todo mundo. Por isso
+  // 'vendedor' e não 'gestor': se fechar aqui, o time volta a ver o valor da
+  // aritmética antiga enquanto a gerência vê o certo no Painel.
+  'elevaBrands/*/elevaConfig/*': 'vendedor',
   'elevaAcessorios/*': 'vendedor',            // o documento é a MARCA
   'elevaDocsOcultos/*': 'vendedor',           // idem
   'elevaDestaques/*': 'vendedor',

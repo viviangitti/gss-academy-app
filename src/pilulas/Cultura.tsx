@@ -6,6 +6,7 @@
 import { Link } from 'react-router-dom';
 import { ChevronLeft, Sparkles } from 'lucide-react';
 import { useAuth } from './AuthContext';
+import { useAncora } from './data/valorAncora';
 import { useBrand } from './BrandContext';
 import { getStats } from './data/tracking';
 import { PILARES, VALORES, linhaNoApp, valoresDoPilar, temValores, valorDaSemana, pilaresDe, grupoDoCargo } from './data/valores';
@@ -24,6 +25,7 @@ const COMO_ME_CHAMA: Record<string, string> = {
 
 export default function Cultura() {
   const { brandId, brand } = useBrand();
+  const ancora = useAncora(brandId);
   const { user } = useAuth();
   if (!temValores(brandId)) {
     return (
@@ -33,7 +35,7 @@ export default function Cultura() {
       </div>
     );
   }
-  const daSemana = valorDaSemana();
+  const daSemana = valorDaSemana(new Date(), ancora);
   const soma = pilaresDe(getStats().perValor);
   return (
     <div className="wp-cult">

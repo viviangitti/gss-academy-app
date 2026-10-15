@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Sparkles } from 'lucide-react';
 import { useAuth } from './AuthContext';
+import { useAncora } from './data/valorAncora';
 import { useBrand } from './BrandContext';
 import { useCarimbo, limparCarimbo } from './data/carimbo';
 import { getStats } from './data/tracking';
@@ -42,8 +43,9 @@ export function CarimboValor() {
 export function ValorDaSemana() {
   const { brandId } = useBrand();
   const { user } = useAuth();
+  const ancora = useAncora(brandId);
   if (!temValores(brandId)) return null;
-  const valor = valorDaSemana();
+  const valor = valorDaSemana(new Date(), ancora);
   const p = pilarDe(valor.pilar);
   return (
     <Link to="/eleva/cultura" className="wp-valsem">

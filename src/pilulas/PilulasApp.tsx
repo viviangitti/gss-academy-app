@@ -29,6 +29,7 @@ import AvisoCartaVencida from './AvisoCartaVencida';
 import { lojasDaMarca } from './data/lojas';
 import BottomNav from './BottomNav';
 import AvisosApp from './AvisosApp';
+import { carregarAncora } from './data/valorAncora';
 import { carregarAjustesAcessorios } from './data/ajustesAcessorios';
 import { carregarIndiceImagens } from './data/imagensNuvem';
 import { BrandProvider, useBrand } from './BrandContext';
@@ -220,6 +221,10 @@ function Shell() {
   // tela do acessório sem passar por lá ficava com o número do catálogo pra
   // sempre. Correção que não chega na ponta é correção que não aconteceu.
   useEffect(() => { carregarAjustesAcessorios(brandId); }, [brandId]);
+  // A ÂNCORA DO VALOR DA SEMANA, uma vez pro app inteiro. Carregar dentro do
+  // card do Hoje e de novo na tela de Cultura seria duas buscas pela mesma
+  // coisa, e a tela abriria no valor de ontem até a rede responder.
+  useEffect(() => { carregarAncora(brandId).catch(() => {}); }, [brandId]);
 
   // A FOTO QUE A GERÊNCIA SUBIU tem o mesmo problema que o preço tinha: o
   // índice das fotos da nuvem não era buscado por ninguém, então a foto só

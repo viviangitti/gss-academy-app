@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, ChevronUp, X, RotateCcw, Undo2, CalendarClock } from 'lucide-react';
+import { Package, Tag, Plus, UploadCloud, Check, ExternalLink, Users, Eye, Send, TrendingUp, CalendarDays, Flame, Video, Search, ChevronRight, ChevronDown, Copy, Bell, MessageCircle, Mail, FileText, Trash2, ClipboardList, GraduationCap, FolderOpen, EyeOff, Pencil, ChevronUp, X, RotateCcw, Undo2, CalendarClock, Sparkles } from 'lucide-react';
 import { useBrand } from './BrandContext';
 import { TimePelosPilares, ValorDaSemana } from './Valores';
 import { isAuto } from './data/brands';
 import { cargoLabel, podeMexerEmAcessorios, podeVerOTime } from './data/cargos';
+import { VALORES, temValores, valorDaSemana } from './data/valores';
+import { carregarAncora, publicarAncora, segundaDaSemana, type Ancora } from './data/valorAncora';
 import { lojaLabel } from './data/lojas';
 import { vocab } from './data/vocabulario';
 import { useAuth } from './AuthContext';
@@ -2623,6 +2625,8 @@ export default function Gestor() {
       )}
 
       {/* Documentos — o repositório que o gestor alimenta sozinho */}
+      <ValorDaSemanaBloco brand={brandId} nome={user?.name || ''} />
+
       <div className="wp-gz-block">
         <div className="wp-gz-block-head">
           <span className="wp-gz-block-title"><FolderOpen size={17} className="wp-ico" /> Documentos da marca ({docsDoApp.length - escondidos.length + docsNuvem.length})</span>
@@ -2755,6 +2759,86 @@ export default function Gestor() {
       </div>
       </>)}
       </>)}
+    </div>
+  );
+}
+
+
+/**
+ * O VALOR DA SEMANA — quem manda é a casa, não a aritmética.
+ *
+ * O valor sempre girou sozinho, toda segunda. O que faltava era a âncora: a
+ * ordem saía de `semanaDoAno % 9`, uma conta que não conhece o calendário de
+ * cultura da Ramasa. Em 15/10/2026 a casa estava em "Ser firme e discordar" e
+ * o app em "Altos padrões", os dois certos pela sua própria conta, e o único
+ * jeito de aproximar era mexer no código e publicar.
+ *
+ * Aqui a gerência diz uma vez qual é o valor desta semana. A rotação segue
+ * dali em diante, sozinha — isto não é um campo para preencher toda semana, é
+ * um acerto de relógio.
+ */
+function ValorDaSemanaBloco({ brand, nome }: { brand: BrandId; nome: string }) {
+  const [ancora, setAncora] = useState<Ancora | null>(null);
+  const [salvando, setSalvando] = useState(false);
+  const [aviso, setAviso] = useState('');
+  useEffect(() => { carregarAncora(brand).then(setAncora).catch(() => {}); }, [brand]);
+  if (!temValores(brand)) return null;
+
+  const atual = valorDaSemana(new Date(), ancora);
+  const proximo = valorDaSemana(new Date(Date.now() + 7 * 86400000), ancora);
+
+  const publicar = async (valorId: string) => {
+    setSalvando(true);
+    setAviso('');
+    const nova: Ancora = { valorId, desde: segundaDaSemana(), por: nome, em: new Date().toISOString() };
+    try {
+      await publicarAncora(brand, nova);
+      setAncora(nova);
+      setAviso('Pronto. O time vê este valor agora, e a fila anda sozinha toda segunda.');
+    } catch {
+      setAviso('Não consegui publicar. Tente de novo em instantes.');
+    }
+    setSalvando(false);
+  };
+
+  return (
+    <div className="wp-gz-block">
+      <div className="wp-gz-block-head">
+        <span className="wp-gz-block-title"><Sparkles size={17} className="wp-ico" /> Valor da semana</span>
+      </div>
+      <p className="wp-gz-nota">
+        Gira sozinho toda segunda. Só mexa aqui se o app estiver num valor diferente do
+        que a casa está vivendo — a fila continua a partir do que você escolher.
+      </p>
+      <div className="wp-gz-list">
+        {VALORES.map((v) => {
+          const eAtual = v.id === atual.id;
+          return (
+            // SEM wp-gz-item-off nos outros: essa classe RISCA o texto, e é o
+            // estilo de condição vencida. Valor que não é o desta semana não
+            // está cancelado — ele só ainda não chegou a vez. Riscar os oito
+            // fazia a tela dizer que a cultura inteira saiu do ar.
+            <div key={v.id} className="wp-gz-item">
+              <span className="wp-gz-item-name">
+                {v.nome}
+                {eAtual && <i className="wp-gz-fora"> esta semana</i>}
+                {v.id === proximo.id && !eAtual && <i className="wp-gz-fora"> na semana que vem</i>}
+              </span>
+              {!eAtual && (
+                <button type="button" className="wp-gz-del" disabled={salvando} onClick={() => publicar(v.id)}>
+                  é este
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {aviso && <p className="wp-gz-nota">{aviso}</p>}
+      {ancora?.por && (
+        <p className="wp-gz-nota">
+          Último acerto: {ancora.por}, em {new Date(ancora.em || ancora.desde).toLocaleDateString('pt-BR')}.
+        </p>
+      )}
     </div>
   );
 }

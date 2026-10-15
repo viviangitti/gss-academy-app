@@ -11,6 +11,7 @@
 // programa de cultura não ganha tela de cultura de outro cliente.
 import type { BrandId } from './brands';
 import type { CargoAuto } from './cargos';
+import { semanasEntre } from './valorAncora';
 import type { ElevaEventType } from './statsSync';
 
 /**
@@ -253,7 +254,21 @@ export function semanaDoAno(d: Date): number {
  * nove valores, nove semanas, e recomeça. Ninguém precisa lembrar de trocar —
  * e o time sabe que na segunda tem valor novo.
  */
-export function valorDaSemana(hoje = new Date()): Valor {
+export function valorDaSemana(hoje = new Date(), ancora?: { valorId: string; desde: string } | null): Valor {
+  // COM ÂNCORA, a fila anda a partir do que a casa disse estar valendo.
+  // Sem ela, cai na conta antiga — nenhum app no ar fica sem valor enquanto a
+  // gerência não publica a primeira.
+  if (ancora?.valorId && ancora?.desde) {
+    const base = VALORES.findIndex((v) => v.id === ancora.valorId);
+    if (base >= 0) {
+      const n = VALORES.length;
+      const andou = semanasEntre(ancora.desde, hoje);
+      // Resto SEMPRE positivo: semana anterior à âncora (relógio do aparelho
+      // atrasado, ou alguém abrindo um histórico) não pode cair em índice
+      // negativo e quebrar a tela.
+      return VALORES[(((base + andou) % n) + n) % n];
+    }
+  }
   return VALORES[semanaDoAno(hoje) % VALORES.length];
 }
 

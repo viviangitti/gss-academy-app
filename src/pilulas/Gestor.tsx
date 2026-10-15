@@ -2785,7 +2785,6 @@ function ValorDaSemanaBloco({ brand, nome }: { brand: BrandId; nome: string }) {
   if (!temValores(brand)) return null;
 
   const atual = valorDaSemana(new Date(), ancora);
-  const proximo = valorDaSemana(new Date(Date.now() + 7 * 86400000), ancora);
 
   const publicar = async (valorId: string) => {
     setSalvando(true);
@@ -2801,38 +2800,60 @@ function ValorDaSemanaBloco({ brand, nome }: { brand: BrandId; nome: string }) {
     setSalvando(false);
   };
 
+  // A FILA, COM DATA. "Como sei que os próximos estão organizados?" — vendo.
+  // Marcar só "esta semana" e "a semana que vem" obriga a pessoa a confiar na
+  // conta; com as nove semanas na tela, ela confere contra o calendário da
+  // casa em dois segundos e vê na hora se a ordem bate.
+  const fila = Array.from({ length: VALORES.length }, (_, k) => {
+    const d = new Date(Date.now() + k * 7 * 86400000);
+    const seg = new Date(`${segundaDaSemana(d)}T12:00:00`);
+    const dom = new Date(seg.getTime() + 6 * 86400000);
+    const br = (x: Date) => `${String(x.getDate()).padStart(2, '0')}/${String(x.getMonth() + 1).padStart(2, '0')}`;
+    return { k, valor: valorDaSemana(d, ancora), periodo: `${br(seg)} a ${br(dom)}` };
+  });
+
   return (
     <div className="wp-gz-block">
       <div className="wp-gz-block-head">
         <span className="wp-gz-block-title"><Sparkles size={17} className="wp-ico" /> Valor da semana</span>
       </div>
       <p className="wp-gz-nota">
-        Gira sozinho toda segunda. Só mexa aqui se o app estiver num valor diferente do
-        que a casa está vivendo — a fila continua a partir do que você escolher.
+        Gira sozinho toda segunda. A fila abaixo é o que o time vai ver nas próximas
+        semanas — confira contra o calendário da casa.
       </p>
+
       <div className="wp-gz-list">
-        {VALORES.map((v) => {
-          const eAtual = v.id === atual.id;
-          return (
-            // SEM wp-gz-item-off nos outros: essa classe RISCA o texto, e é o
-            // estilo de condição vencida. Valor que não é o desta semana não
-            // está cancelado — ele só ainda não chegou a vez. Riscar os oito
-            // fazia a tela dizer que a cultura inteira saiu do ar.
+        {fila.map(({ k, valor, periodo }) => (
+          <div key={valor.id + k} className="wp-gz-item">
+            <span className="wp-gz-item-name">
+              {valor.nome}
+              {k === 0 && <i className="wp-gz-fora"> esta semana</i>}
+            </span>
+            <span className="wp-gz-item-meta">{periodo}</span>
+          </div>
+        ))}
+      </div>
+
+      <details className="wp-gz-avancado">
+        <summary>A casa está em outro valor? Acerte aqui</summary>
+        <p className="wp-gz-nota">
+          Escolha o que está valendo ESTA semana. A fila inteira se reorganiza a partir
+          dele, e ninguém precisa voltar aqui toda segunda.
+        </p>
+        <div className="wp-gz-list">
+          {VALORES.map((v) => (
             <div key={v.id} className="wp-gz-item">
-              <span className="wp-gz-item-name">
-                {v.nome}
-                {eAtual && <i className="wp-gz-fora"> esta semana</i>}
-                {v.id === proximo.id && !eAtual && <i className="wp-gz-fora"> na semana que vem</i>}
-              </span>
-              {!eAtual && (
+              <span className="wp-gz-item-name">{v.nome}</span>
+              {v.id !== atual.id && (
                 <button type="button" className="wp-gz-del" disabled={salvando} onClick={() => publicar(v.id)}>
                   é este
                 </button>
               )}
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      </details>
+
       {aviso && <p className="wp-gz-nota">{aviso}</p>}
       {ancora?.por && (
         <p className="wp-gz-nota">
@@ -2841,4 +2862,5 @@ function ValorDaSemanaBloco({ brand, nome }: { brand: BrandId; nome: string }) {
       )}
     </div>
   );
+
 }

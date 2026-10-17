@@ -1827,6 +1827,40 @@
 }
 .wp-ficha-chev { margin-left: auto; transition: transform .18s; }
 
+/* A FOLHA DO CONCORRENTE EM TELA CHEIA.
+   Fundo preto, não o cinza do app: a peça é preta de ponta a ponta e qualquer
+   moldura clara faz a arte parecer recortada. O rolo tem o scroll próprio para
+   a folha de 2.000 px caber sem empurrar o botão de mandar para fora. */
+.wp-folha {
+  position: fixed; inset: 0; z-index: 70; background: #000;
+  display: flex; flex-direction: column;
+}
+.wp-folha-rolo { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; }
+.wp-folha-rolo img { display: block; width: 100%; height: auto; }
+.wp-folha-x {
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  width: 38px; height: 38px; border: 0; border-radius: 999px; cursor: pointer;
+  background: rgba(0,0,0,.55); color: #fff; backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+}
+.wp-folha-pe {
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: #000; border-top: 1px solid #222;
+}
+.wp-folha-mandar {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-sizing: border-box; width: 100%; padding: 15px 16px;
+  border: 0; border-radius: 14px; cursor: pointer;
+  background: var(--wp-zap, #25d366); color: #06371a;
+  font-family: inherit; font-size: 15px; font-weight: 800;
+}
+.wp-folha-mandar:disabled { opacity: .7; }
+.wp-folha-aviso { margin: 8px 0 0; font-size: 13px; color: #f3b0b0; text-align: center; }
+/* O título da seção de concorrentes respira longe dos carros da casa: são duas
+   listas com significados diferentes, e coladas viravam uma lista só. */
+.wp-cmp-conc-tit { margin-top: 22px; }
+.wp-cmp-conc-tit b { color: var(--wp-ink); font-size: 15px; }
+
 /* DOBRA — mesma casca da ficha técnica, usada pelos blocos de consulta.
    O `resumo` só aparece fechada: é o que impede a sanfona de esconder o
    que tem dentro. "Leve com ele" fechado e mudo não é lido como conteúdo

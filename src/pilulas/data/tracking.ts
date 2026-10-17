@@ -57,7 +57,7 @@ export const WORK_DAILY_CAP = 10;
 
 /** As ações que contam como trabalho (as outras só servem para medir uso). */
 const TRABALHO = new Set<ElevaEventType>([
-  'objecao', 'onepage', 'doc_open', 'acessorio', 'jornada_script', 'jornada_onepage',
+  'objecao', 'onepage', 'doc_open', 'acessorio', 'jornada_script', 'jornada_onepage', 'comparativo',
 ]);
 
 export interface Stats {

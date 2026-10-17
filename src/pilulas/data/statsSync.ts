@@ -44,6 +44,9 @@ export type ElevaEventType =
   | 'onepage'
   | 'objecao'
   | 'acessorio'
+  // Qual concorrente o vendedor abriu: diz com quem a loja está perdendo a
+  // conversa no salão. É pauta de reunião, não curiosidade.
+  | 'comparativo'
   // O desafio da semana e a prova do mês. Tipos próprios porque o relatório
   // precisa separar "estudou o carro" de "passou na prova da marca" — e porque
   // a reprovação também é informação: é ela que mostra o que o time não sabe.

@@ -18,8 +18,10 @@
 // para QUEM cada carro é, em vez de apontar um melhor.
 import { useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, Check, ArrowRight } from 'lucide-react';
+import { ChevronLeft, Check, ArrowRight, ChevronRight } from 'lucide-react';
 import { useAuth } from './AuthContext';
+import { concorrentesDaMarca, CARRO_DAS_FOLHAS, type Concorrente } from './data/concorrentes';
+import FolhaConcorrente from './FolhaConcorrente';
 import { useBrand } from './BrandContext';
 import { comparaveisDaMarca, LINHAS } from './data/comparativo';
 
@@ -40,6 +42,11 @@ export default function Comparar() {
     return inicial;
   });
   const [comparando, setComparando] = useState(false);
+  // O CONCORRENTE É OUTRO CAMINHO, não mais uma coluna. As folhas que o Gerson
+  // mandou são peça pronta da marca, Jaecoo 5 contra um de cada vez — não dá
+  // para somar na tabela da casa (ver data/concorrentes.ts). Então escolher um
+  // concorrente ABRE A FOLHA dele, e só.
+  const [folha, setFolha] = useState<Concorrente | null>(null);
 
   const alterna = (id: string) =>
     setMarcados((m) => (m.includes(id) ? m.filter((x) => x !== id) : [...m, id]));
@@ -48,6 +55,10 @@ export default function Comparar() {
   // escolhem os mesmos carros têm que ver a mesma tabela.
   const escolhidos = carros.filter((c) => marcados.includes(c.id));
   const todos = marcados.length === carros.length;
+  // As folhas só existem para o carro que a marca comparou. Numa marca sem
+  // folha nenhuma a seção não aparece — melhor que um título vazio.
+  const folhas = useMemo(() => concorrentesDaMarca(brandId), [brandId]);
+  const temFolhas = folhas.length > 0 && carros.some((c) => c.id.startsWith(CARRO_DAS_FOLHAS));
 
   if (carros.length < 2) {
     return (
@@ -59,6 +70,8 @@ export default function Comparar() {
       </div>
     );
   }
+
+  if (folha) return <FolhaConcorrente c={folha} onFechar={() => setFolha(null)} />;
 
   if (!comparando) {
     return (
@@ -90,6 +103,24 @@ export default function Comparar() {
             </button>
           );
         })}
+
+        {temFolhas && (
+          <>
+            <p className="wp-cmp-sub wp-cmp-conc-tit">
+              <b>Concorrentes do Jaecoo 5</b><br />
+              Folha pronta da marca, um a um. Toque para abrir e mandar pro cliente.
+            </p>
+            {folhas.map((c) => (
+              <button key={c.id} type="button" className="wp-cmp-op" onClick={() => setFolha(c)}>
+                <span className="wp-cmp-tx">
+                  <b>{c.nome}</b>
+                  <span>{c.versao}</span>
+                </span>
+                <ChevronRight size={16} className="wp-ico" />
+              </button>
+            ))}
+          </>
+        )}
 
         <button
           type="button"

@@ -59,6 +59,7 @@ export default function Comparar() {
   // folha nenhuma a seção não aparece — melhor que um título vazio.
   const folhas = useMemo(() => concorrentesDaMarca(brandId), [brandId]);
   const temFolhas = folhas.length > 0 && carros.some((c) => c.id.startsWith(CARRO_DAS_FOLHAS));
+  const jaecoo5Marcado = escolhidos.some((c) => c.id.startsWith(CARRO_DAS_FOLHAS));
 
   if (carros.length < 2) {
     return (
@@ -110,11 +111,24 @@ export default function Comparar() {
               <b>Concorrentes do Jaecoo 5</b><br />
               Folha pronta da marca, um a um. Toque para abrir e mandar pro cliente.
             </p>
+            {/* O AVISO SÓ APARECE QUANDO O RISCO EXISTE — com o Jaecoo 5 fora da
+                seleção, o vendedor está trabalhando OUTRO carro, e a folha que
+                ele abrir aqui fala de um carro que não é o da conversa. */}
+            {!jaecoo5Marcado && (
+              <p className="wp-cmp-aviso">
+                Você está comparando {escolhidos.length === 1 ? 'o ' : 'os '}
+                {escolhidos.map((e) => e.curto).join(', ')}. Estas folhas são do <b>Jaecoo 5</b>.
+              </p>
+            )}
             {folhas.map((c) => (
               <button key={c.id} type="button" className="wp-cmp-op" onClick={() => setFolha(c)}>
                 <span className="wp-cmp-tx">
-                  <b>{c.nome}</b>
-                  <span>{c.versao}</span>
+                  {/* O NOME É A COMPARAÇÃO INTEIRA, não só o concorrente. Antes
+                      lia "Hyundai Creta" e o vendedor com pressa entendia "a
+                      folha da Creta" — e mandava pro cliente de Jaecoo 7 uma
+                      comparação de outro carro, assinada com o nome dele. */}
+                  <b>Jaecoo 5 × {c.nome}</b>
+                  <span>contra a {c.versao}</span>
                 </span>
                 <ChevronRight size={16} className="wp-ico" />
               </button>

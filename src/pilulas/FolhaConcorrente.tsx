@@ -62,6 +62,11 @@ export default function FolhaConcorrente({ c, onFechar }: { c: Concorrente; onFe
       <button type="button" className="wp-folha-x" onClick={onFechar} aria-label="Fechar">
         <X size={20} className="wp-ico" />
       </button>
+      {/* QUAL COMPARAÇÃO É ESTA, escrito, acima da arte. A folha tem "JAECOO 5"
+          em letra grande no topo, mas o vendedor chega aqui rolando e o botão
+          de mandar pro cliente está a um polegar de distância. Uma linha de
+          texto custa nada e evita mandar a folha do carro errado. */}
+      <p className="wp-folha-qual">Jaecoo 5 Prestige × {c.nome} {c.versao}</p>
       <div className="wp-folha-rolo">
         <img src={c.arquivo} alt={`Comparativo Jaecoo 5 contra ${c.nome} ${c.versao}`} />
       </div>

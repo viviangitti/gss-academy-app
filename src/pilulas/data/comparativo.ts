@@ -72,6 +72,7 @@ export const LINHAS: LinhaComp[] = [
   { chave: 'eixos', rotulo: 'Entre-eixos' },
   { chave: 'comp', rotulo: 'Comprimento' },
   { chave: 'cem', rotulo: '0 a 100' },
+  { chave: 'autonomia', rotulo: 'Autonomia' },
 ];
 
 /** O que é prosa na ficha e precisa de versão curta para caber na coluna. */
@@ -116,6 +117,27 @@ const soSegundos = (v: string) => {
   return n ? `${n} s` : '';
 };
 
+/**
+ * A AUTONOMIA — e o recorde que NÃO pode entrar aqui.
+ *
+ * Os cinco têm linha de "Autonomia" na ficha, mas elas não falam a mesma
+ * língua. A do Omoda 5 é "RECORDE de 1.306 km com um tanque, de São Paulo a
+ * Vitória, na maratona da marca" — número de condução econômica, não de
+ * terça-feira. Puxado cru para a coluna, o Omoda 5 apareceria como o que vai
+ * mais longe dos cinco, na frente do Jaecoo 7, e o vendedor repetiria isso
+ * para o cliente. O próprio roteiro da marca avisa: "diga que é recorde, não
+ * o número de todo dia".
+ *
+ * Então recorde não entra. Fica vazio, e quem quiser o número abre a ficha,
+ * onde ele está inteiro e com o contexto que o explica.
+ */
+const soAutonomia = (v: string) => {
+  if (/recorde|maratona/i.test(v)) return '';
+  const m = v.match(/(até\s*)?([\d.]+)\s*km/i);
+  if (!m) return '';
+  return `${m[1] ? 'até ' : ''}${m[2]} km`;
+};
+
 /** A versão curta do carro, pronta para a tabela. Null = não dá para comparar. */
 export function comparavel(p: Product): Comparavel | null {
   const fixo = CURTO[p.id];
@@ -127,6 +149,14 @@ export function comparavel(p: Product): Comparavel | null {
     eixos: soMm(linhaFicha(p, 'Entre-eixos')),
     comp: soMm(linhaFicha(p, 'Dimensões')),
     cem: soSegundos(linhaFicha(p, '0 a 100')),
+    // "AUTONOMIA TOTAL" PRIMEIRO, e isso não é detalhe de busca.
+    //
+    // Os plug-in têm DUAS linhas de autonomia: "só no elétrico" (79 km no
+    // Jaecoo 7, 60 no Omoda 7) e "total" (até 1.200 km nos dois). Pegando a
+    // primeira que começa com "Autonomia" vinha a do elétrico — e aí o Jaecoo
+    // 7 aparecia com 79 km ao lado dos 791 km do Jaecoo 5, como se fosse dez
+    // vezes pior. É o número certo lido na coluna errada.
+    autonomia: soAutonomia(linhaFicha(p, 'Autonomia total') || linhaFicha(p, 'Autonomia')),
   };
   return {
     id: p.id,

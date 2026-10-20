@@ -42,20 +42,37 @@ export interface Concorrente {
   arquivo: string;
 }
 
+/**
+ * OS NOMES SAEM DA FOLHA, LIDOS UM A UM — não da minha memória.
+ *
+ * Na primeira versão eu escrevi as versões de cabeça e errei quatro: o Corolla
+ * Cross virou XRE em vez de XRX, o Renegade virou Willys em vez de Sahara
+ * MHEV, o CS55 virou Plus em vez de PHEV, e o B10 saiu como "Omoda B10" —
+ * trocando a MARCA de um concorrente pela marca da casa. Tudo isso foi ao ar
+ * em 18/10 e ficou dois dias na mão do vendedor.
+ *
+ * Foi exatamente o risco que eu mesma tinha descrito ao recusar transcrever as
+ * fichas dos concorrentes: digitar de cabeça a especificação do carro dos
+ * outros. Caí nele no único campo que achei "simples demais para errar".
+ *
+ * Qualquer concorrente novo entra COPIANDO o cabeçalho da folha, com a folha
+ * aberta do lado.
+ */
+
 /** Contra qual carro da casa estas folhas falam. */
 export const CARRO_DAS_FOLHAS = 'jaecoo-5';
 
 export const CONCORRENTES: Concorrente[] = [
   { id: 'creta', brand: 'ramasa', nome: 'Hyundai Creta', versao: 'Platinum', arquivo: '/comparativos/jaecoo-5-x-creta.jpg' },
-  { id: 'compass', brand: 'ramasa', nome: 'Jeep Compass', versao: 'Longitude', arquivo: '/comparativos/jaecoo-5-x-compass.jpg' },
-  { id: 'corolla-cross', brand: 'ramasa', nome: 'Toyota Corolla Cross', versao: 'XRE', arquivo: '/comparativos/jaecoo-5-x-corolla-cross.jpg' },
+  { id: 'compass', brand: 'ramasa', nome: 'Jeep Compass', versao: 'Longitude MHEV', arquivo: '/comparativos/jaecoo-5-x-compass.jpg' },
+  { id: 'corolla-cross', brand: 'ramasa', nome: 'Toyota Corolla Cross', versao: 'XRX', arquivo: '/comparativos/jaecoo-5-x-corolla-cross.jpg' },
   { id: 'hr-v', brand: 'ramasa', nome: 'Honda HR-V', versao: 'EXL', arquivo: '/comparativos/jaecoo-5-x-hr-v.jpg' },
   { id: 't-cross', brand: 'ramasa', nome: 'VW T-Cross', versao: 'Highline', arquivo: '/comparativos/jaecoo-5-x-t-cross.jpg' },
-  { id: 'renegade', brand: 'ramasa', nome: 'Jeep Renegade', versao: 'Willys', arquivo: '/comparativos/jaecoo-5-x-renegade.jpg' },
+  { id: 'renegade', brand: 'ramasa', nome: 'Jeep Renegade', versao: 'Sahara MHEV', arquivo: '/comparativos/jaecoo-5-x-renegade.jpg' },
   { id: 'atto-2', brand: 'ramasa', nome: 'BYD Atto 2', versao: 'GS', arquivo: '/comparativos/jaecoo-5-x-atto-2.jpg' },
-  { id: 'yaris-cross', brand: 'ramasa', nome: 'Toyota Yaris Cross', versao: 'XRX', arquivo: '/comparativos/jaecoo-5-x-yaris-cross.jpg' },
-  { id: 'cs55', brand: 'ramasa', nome: 'Changan CS55', versao: 'Plus', arquivo: '/comparativos/jaecoo-5-x-cs55.jpg' },
-  { id: 'b10', brand: 'ramasa', nome: 'Omoda B10', versao: 'Pro', arquivo: '/comparativos/jaecoo-5-x-b10.jpg' },
+  { id: 'yaris-cross', brand: 'ramasa', nome: 'Toyota Yaris Cross', versao: 'XRX HEV', arquivo: '/comparativos/jaecoo-5-x-yaris-cross.jpg' },
+  { id: 'cs55', brand: 'ramasa', nome: 'Changan CS55', versao: 'PHEV', arquivo: '/comparativos/jaecoo-5-x-cs55.jpg' },
+  { id: 'b10', brand: 'ramasa', nome: 'Leapmotor B10', versao: 'REEV', arquivo: '/comparativos/jaecoo-5-x-b10.jpg' },
 ];
 
 export function concorrentePorId(id?: string | null): Concorrente | null {

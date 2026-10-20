@@ -71,7 +71,7 @@ export default function FolhaConcorrente({ c, onFechar }: { c: Concorrente; onFe
   // carimbo) são IRMÃOS do .wp-main, não filhos; esta nascia dentro dele.
   // O portal põe a folha no body e o fixed volta a valer contra a janela.
   return createPortal(
-    <div className="wp-folha" role="dialog" aria-modal="true" aria-label={`Jaecoo 5 contra ${c.nome}`}>
+    <div className="wp-folha" role="dialog" aria-modal="true" aria-label={`Jaecoo 5 versus ${c.nome}`}>
       <button type="button" className="wp-folha-x" onClick={onFechar} aria-label="Fechar">
         <X size={20} className="wp-ico" />
       </button>
@@ -81,7 +81,7 @@ export default function FolhaConcorrente({ c, onFechar }: { c: Concorrente; onFe
           texto custa nada e evita mandar a folha do carro errado. */}
       <p className="wp-folha-qual">Jaecoo 5 Prestige × {c.nome} {c.versao}</p>
       <div className="wp-folha-rolo">
-        <img src={c.arquivo} alt={`Comparativo Jaecoo 5 contra ${c.nome} ${c.versao}`} />
+        <img src={c.arquivo} alt={`Comparativo Jaecoo 5 versus ${c.nome} ${c.versao}`} />
       </div>
       <div className="wp-folha-pe">
         <button type="button" className="wp-folha-mandar" onClick={mandar} disabled={enviando}>

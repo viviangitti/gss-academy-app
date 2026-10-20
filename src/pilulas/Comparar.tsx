@@ -140,7 +140,7 @@ export default function Comparar() {
                       folha da Creta" — e mandava pro cliente de Jaecoo 7 uma
                       comparação de outro carro, assinada com o nome dele. */}
                   <b>{soUm?.curto} × {c.nome}</b>
-                  <span>contra a {c.versao}</span>
+                  <span>versus {c.versao}</span>
                 </span>
                 <ChevronRight size={16} className="wp-ico" />
               </button>

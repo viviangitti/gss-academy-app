@@ -75,7 +75,7 @@ export default function FolhaGerada({ p, c, onFechar }: { p: Product; c: Concorr
     x.font = '700 72px "Barlow Condensed", Helvetica, sans-serif';
     x.fillText(curto.toUpperCase(), L / 2, 96);
     x.font = '600 24px Helvetica, sans-serif'; x.fillStyle = '#8c8c8c';
-    x.fillText(`CONTRA ${c.nome.toUpperCase()} ${c.versao.toUpperCase()}`, L / 2, 140);
+    x.fillText(`VERSUS ${c.nome.toUpperCase()} ${c.versao.toUpperCase()}`, L / 2, 140);
 
     let y = 215;
     x.font = '600 26px Helvetica, sans-serif'; x.fillStyle = '#fff';
@@ -147,13 +147,13 @@ export default function FolhaGerada({ p, c, onFechar }: { p: Product; c: Concorr
   };
 
   return createPortal(
-    <div className="wp-folha" role="dialog" aria-modal="true" aria-label={`${curto} contra ${c.nome}`}>
+    <div className="wp-folha" role="dialog" aria-modal="true" aria-label={`${curto} versus ${c.nome}`}>
       <p className="wp-folha-qual">{curto} × {c.nome} {c.versao}</p>
       <button type="button" className="wp-folha-x" onClick={onFechar} aria-label="Fechar"><X size={20} className="wp-ico" /></button>
       <div className="wp-folha-rolo">
         <div className="wp-fg" ref={peca}>
           <p className="wp-fg-modelo">{curto}</p>
-          <p className="wp-fg-contra">contra {c.nome} {c.versao}</p>
+          <p className="wp-fg-versus">versus {c.nome} {c.versao}</p>
           {linhas.length === 0 ? (
             <p className="wp-fg-vazio">
               Este não se ganha na ficha. Leve a garantia de 7 anos, as revisões com preço

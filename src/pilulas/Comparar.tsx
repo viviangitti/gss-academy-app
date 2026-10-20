@@ -58,8 +58,18 @@ export default function Comparar() {
   // As folhas só existem para o carro que a marca comparou. Numa marca sem
   // folha nenhuma a seção não aparece — melhor que um título vazio.
   const folhas = useMemo(() => concorrentesDaMarca(brandId), [brandId]);
-  const temFolhas = folhas.length > 0 && carros.some((c) => c.id.startsWith(CARRO_DAS_FOLHAS));
-  const jaecoo5Marcado = escolhidos.some((c) => c.id.startsWith(CARRO_DAS_FOLHAS));
+  // AS FOLHAS SÓ APARECEM COM O CARRO DELAS SELECIONADO.
+  //
+  // Elas comparam o Jaecoo 5 e mais nada. Mostrar a lista para quem está
+  // olhando o Jaecoo 7 é oferecer material do carro errado no momento exato
+  // em que a pessoa está decidindo o que mandar pro cliente — e o botão de
+  // enviar fica a um polegar da folha aberta.
+  //
+  // A primeira versão disto mostrava a seção sempre, com um aviso âmbar
+  // explicando que as folhas eram de outro carro. A Vivian cortou (20/10), e
+  // está certa: aviso é remendo em cima de uma oferta que não devia existir.
+  // Quem quiser a folha marca o Jaecoo 5, que é onde ela faz sentido.
+  const temFolhas = folhas.length > 0 && escolhidos.some((c) => c.id.startsWith(CARRO_DAS_FOLHAS));
 
   if (carros.length < 2) {
     return (
@@ -111,15 +121,6 @@ export default function Comparar() {
               <b>Concorrentes do Jaecoo 5</b><br />
               Folha pronta da marca, um a um. Toque para abrir e mandar pro cliente.
             </p>
-            {/* O AVISO SÓ APARECE QUANDO O RISCO EXISTE — com o Jaecoo 5 fora da
-                seleção, o vendedor está trabalhando OUTRO carro, e a folha que
-                ele abrir aqui fala de um carro que não é o da conversa. */}
-            {!jaecoo5Marcado && (
-              <p className="wp-cmp-aviso">
-                Você está comparando {escolhidos.length === 1 ? 'o ' : 'os '}
-                {escolhidos.map((e) => e.curto).join(', ')}. Estas folhas são do <b>Jaecoo 5</b>.
-              </p>
-            )}
             {folhas.map((c) => (
               <button key={c.id} type="button" className="wp-cmp-op" onClick={() => setFolha(c)}>
                 <span className="wp-cmp-tx">

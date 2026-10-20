@@ -1865,13 +1865,6 @@
    listas com significados diferentes, e coladas viravam uma lista só. */
 .wp-cmp-conc-tit { margin-top: 22px; }
 .wp-cmp-conc-tit b { color: var(--wp-ink); font-size: 15px; }
-/* O aviso de carro trocado: âmbar, não vermelho. Não é erro do vendedor —
-   é um descompasso entre o que ele selecionou e o que a marca mandou. */
-.wp-cmp-aviso {
-  margin: 0 0 10px; padding: 10px 12px; border-radius: 10px;
-  background: var(--wp-amber-bg, #fff7e6); border: 1px solid var(--wp-amber-bd, #f0d9a8);
-  color: var(--wp-amber-ink, #7a5a12); font-size: 13px; line-height: 1.45;
-}
 
 /* DOBRA — mesma casca da ficha técnica, usada pelos blocos de consulta.
    O `resumo` só aparece fechada: é o que impede a sanfona de esconder o

@@ -60,16 +60,20 @@ export default function Comparar() {
   // As folhas só existem para o carro que a marca comparou. Numa marca sem
   // folha nenhuma a seção não aparece — melhor que um título vazio.
   const folhas = useMemo(() => concorrentesDaMarca(brandId), [brandId]);
-  // A COMPARAÇÃO COM CONCORRENTE É DE UM CARRO SÓ POR VEZ.
+  // DE QUAL CARRO É A FOLHA — e por que isto não pode depender da seleção.
   //
-  // Antes a seção só existia com o Jaecoo 5 marcado, porque as folhas da marca
-  // só falavam dele. Agora o app gera a folha de QUALQUER carro da casa contra
-  // qualquer rival (ver data/folhaGerada.ts), então a trava mudou de carro
-  // para QUANTIDADE: com dois ou mais marcados o app não sabe de quem é a
-  // folha, e perguntar no meio da conversa com o cliente é pior do que pedir
-  // que ele marque um.
-  const soUm = escolhidos.length === 1 ? escolhidos[0] : null;
-  const produtoDoFoco = soUm ? allProducts().find((x) => x.id === soUm.id) : null;
+  // A folha do concorrente é sempre de UM carro da casa. A primeira versão
+  // resolveu isso exigindo um só marcado — e quebrou no caminho principal: pelo
+  // Catálogo os cinco vêm marcados, então a seção inteira sumia e o vendedor
+  // via só os carros da casa. Foi o que a Vivian encontrou em 20/10, com a
+  // versão já no ar.
+  //
+  // Agora a seção tem o próprio seletor: mostra os carros marcados em fileira e
+  // o vendedor toca em qual quer comparar. Nada some, e a pergunta "de quem é
+  // esta folha" fica respondida na tela, não na cabeça dele.
+  const [focoId, setFocoId] = useState('');
+  const foco = escolhidos.find((c) => c.id === focoId) || escolhidos[0] || null;
+  const produtoDoFoco = foco ? allProducts().find((x) => x.id === foco.id) : null;
   const temFolhas = folhas.length > 0 && !!produtoDoFoco;
 
   if (carros.length < 2) {
@@ -129,9 +133,23 @@ export default function Comparar() {
         {temFolhas && (
           <>
             <p className="wp-cmp-sub wp-cmp-conc-tit">
-              <b>Concorrentes do {soUm?.curto}</b><br />
+              <b>Concorrentes</b><br />
               Toque para abrir a folha e mandar pro cliente.
             </p>
+            {escolhidos.length > 1 && (
+              <div className="wp-cmp-foco">
+                {escolhidos.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    className={`wp-cmp-foco-bt${c.id === foco?.id ? ' on' : ''}`}
+                    onClick={() => setFocoId(c.id)}
+                  >
+                    {c.curto}
+                  </button>
+                ))}
+              </div>
+            )}
             {folhas.map((c) => (
               <button key={c.id} type="button" className="wp-cmp-op" onClick={() => setFolha(c)}>
                 <span className="wp-cmp-tx">
@@ -139,7 +157,7 @@ export default function Comparar() {
                       lia "Hyundai Creta" e o vendedor com pressa entendia "a
                       folha da Creta" — e mandava pro cliente de Jaecoo 7 uma
                       comparação de outro carro, assinada com o nome dele. */}
-                  <b>{soUm?.curto} × {c.nome}</b>
+                  <b>{foco?.curto} × {c.nome}</b>
                   <span>versus {c.versao}</span>
                 </span>
                 <ChevronRight size={16} className="wp-ico" />

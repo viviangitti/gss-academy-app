@@ -1945,6 +1945,22 @@
    listas com significados diferentes, e coladas viravam uma lista só. */
 .wp-cmp-conc-tit { margin-top: 22px; }
 .wp-cmp-conc-tit b { color: var(--wp-ink); font-size: 15px; }
+/* O SELETOR DE QUAL CARRO. Fileira que rola de lado: com cinco carros e nome
+   de três palavras, empilhar comeria meia tela antes da lista começar. */
+.wp-cmp-foco {
+  display: flex; gap: 7px; overflow-x: auto; margin: 0 0 12px;
+  padding-bottom: 3px; -webkit-overflow-scrolling: touch;
+}
+.wp-cmp-foco::-webkit-scrollbar { display: none; }
+.wp-cmp-foco-bt {
+  flex: none; padding: 8px 13px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--wp-border); background: var(--wp-surface);
+  color: var(--wp-soft); font-family: inherit; font-size: 13px; font-weight: 700;
+  white-space: nowrap;
+}
+.wp-cmp-foco-bt.on {
+  background: var(--wp-ink); border-color: var(--wp-ink); color: var(--wp-surface);
+}
 
 /* DOBRA — mesma casca da ficha técnica, usada pelos blocos de consulta.
    O `resumo` só aparece fechada: é o que impede a sanfona de esconder o

@@ -1880,8 +1880,8 @@
 .wp-fg-tb tbody tr:last-child td { border-bottom: 0; }
 .wp-fg-vazio { margin: 0 16px; font-size: 14px; line-height: 1.55; color: #c9c9c9; }
 /* A foto tem fundo de cidade; o degradê costura ela no preto da peça. */
-.wp-fg-foto { position: relative; height: 128px; overflow: hidden; margin-top: 16px; }
-.wp-fg-foto img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 64%; filter: brightness(.5) contrast(1.08) saturate(.75); }
+.wp-fg-foto { position: relative; height: 150px; overflow: hidden; margin-top: 16px; }
+.wp-fg-foto img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 72%; filter: brightness(.5) contrast(1.08) saturate(.75); }
 .wp-fg-foto::after {
   content: ''; position: absolute; inset: 0;
   /* Mais preto no topo: a foto do catálogo tem céu e prédios claros, e sem

@@ -64,7 +64,7 @@ export default function FolhaGerada({ p, c, onFechar }: { p: Product; c: Concorr
   const desenhar = async (): Promise<Blob | null> => {
     const L = 1080, pad = 64;
     const alturaLinha = 92;
-    const alt = 300 + linhas.length * alturaLinha + 300;
+    const alt = 300 + linhas.length * alturaLinha + 450;
     const cv = document.createElement('canvas');
     cv.width = L; cv.height = alt;
     const x = cv.getContext('2d');
@@ -112,9 +112,27 @@ export default function FolhaGerada({ p, c, onFechar }: { p: Product; c: Concorr
         i.onload = () => ok(i); i.onerror = () => ok(null); i.src = foto;
       });
       if (img) {
-        const h = 230;
+        // ALTURA DA FAIXA: 230 px deixava o recorte tão apertado que sobrava
+        // uma tira do meio do carro. Em 380 a foto mostra o carro inteiro com
+        // o chão, que é o enquadramento das peças da marca.
+        const h = 380;
+        // RECORTA, NÃO ESTICA. O drawImage de 5 argumentos deforma: ele espreme
+        // a foto (1400×787) dentro de 1080×230 e o carro sai achatado e largo.
+        // A Vivian viu isso na peça que chegou no WhatsApp — e NÃO aparecia na
+        // tela, porque lá o object-fit:cover do CSS recorta certo. O arquivo é
+        // outro desenho, e tinha que repetir a conta na mão.
+        const alvo = L / h;
+        const prop = img.naturalWidth / img.naturalHeight;
+        let sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
+        if (prop > alvo) {           // foto mais larga: corta dos lados
+          sw = sh * alvo;
+          sx = (img.naturalWidth - sw) / 2;
+        } else {                     // foto mais alta: corta em cima e embaixo
+          sh = sw / alvo;
+          sy = (img.naturalHeight - sh) * 0.72;  // puxa para baixo: carro e chão, não céu
+        }
         x.save(); x.globalAlpha = .82;
-        x.drawImage(img, 0, y + 10, L, h);
+        x.drawImage(img, sx, sy, sw, sh, 0, y + 10, L, h);
         x.restore();
         const g = x.createLinearGradient(0, y + 10, 0, y + 10 + h);
         g.addColorStop(0, '#000'); g.addColorStop(.3, 'rgba(0,0,0,.5)');

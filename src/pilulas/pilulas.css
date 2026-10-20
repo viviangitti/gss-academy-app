@@ -1836,14 +1836,23 @@
   display: flex; flex-direction: column;
 }
 .wp-folha-qual {
-  margin: 0; padding: 14px 52px 12px 16px; background: #000; color: #fff;
+  /* A FAIXA DE CIMA DO IPHONE, de novo — e aqui custou caro.
+     O app roda com viewport-fit=cover, então esta tela cheia ocupa ATÉ
+     embaixo do notch. Eu tinha tratado só a margem de baixo: o cabeçalho e o
+     X de fechar nasciam debaixo da hora e da bateria do iOS. A Silene relatou
+     em 20/10 que não achava o X e precisava FECHAR O APP para sair da ficha —
+     ela ficava presa aqui dentro. O cabeçalho da arte ("JAECOO 5") também
+     entrava cortado. */
+  margin: 0;
+  padding: calc(14px + env(safe-area-inset-top, 0px)) 52px 12px 16px;
+  background: #000; color: #fff;
   font-size: 13px; font-weight: 800; letter-spacing: .02em; line-height: 1.35;
   border-bottom: 1px solid #222;
 }
 .wp-folha-rolo { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; }
 .wp-folha-rolo img { display: block; width: 100%; height: auto; }
 .wp-folha-x {
-  position: absolute; top: 10px; right: 10px; z-index: 2;
+  position: absolute; top: calc(10px + env(safe-area-inset-top, 0px)); right: 10px; z-index: 2;
   width: 38px; height: 38px; border: 0; border-radius: 999px; cursor: pointer;
   background: rgba(0,0,0,.55); color: #fff; backdrop-filter: blur(6px);
   display: flex; align-items: center; justify-content: center;

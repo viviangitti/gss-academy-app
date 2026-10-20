@@ -4,6 +4,7 @@
 // para o cliente, ou manda. Tela cheia tira a navegação da frente e deixa a
 // arte da marca ocupar o que ela foi desenhada para ocupar.
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Send, Loader2 } from 'lucide-react';
 import type { Concorrente } from './data/concorrentes';
 import { montarFolha, nomeDoArquivo } from './data/folhaConcorrente';
@@ -57,7 +58,19 @@ export default function FolhaConcorrente({ c, onFechar }: { c: Concorrente; onFe
     setEnviando(false);
   };
 
-  return (
+  // MONTADA FORA DO .wp-main, E ISSO NÃO É DETALHE.
+  //
+  // O .wp-main tem `animation: wpFade` com translateY(8px) — e ancestral com
+  // transform vira bloco de contenção: o `position: fixed` desta tela deixa de
+  // valer contra a janela e passa a valer contra o .wp-main. Medi: a folha
+  // virava uma caixa de 126 px a 62 px do topo, em vez de ocupar os 812 px da
+  // tela. A arte saía cortada e o X ia parar num canto qualquer.
+  //
+  // É o que a Silene relatou em 20/10 — cabeçalho cortado, sem X para sair,
+  // tendo que fechar o app. Os modais que funcionam (ritual, carta vencida,
+  // carimbo) são IRMÃOS do .wp-main, não filhos; esta nascia dentro dele.
+  // O portal põe a folha no body e o fixed volta a valer contra a janela.
+  return createPortal(
     <div className="wp-folha" role="dialog" aria-modal="true" aria-label={`Jaecoo 5 contra ${c.nome}`}>
       <button type="button" className="wp-folha-x" onClick={onFechar} aria-label="Fechar">
         <X size={20} className="wp-ico" />
@@ -77,6 +90,7 @@ export default function FolhaConcorrente({ c, onFechar }: { c: Concorrente; onFe
         </button>
         {aviso && <p className="wp-folha-aviso">{aviso}</p>}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

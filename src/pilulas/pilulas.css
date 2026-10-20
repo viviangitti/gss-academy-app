@@ -1827,6 +1827,25 @@
 }
 .wp-ficha-chev { margin-left: auto; transition: transform .18s; }
 
+/* A ENTRADA DO COMPARATIVO NO CATÁLOGO.
+   Fica entre a última seção de carros e a de acessórios. Cartão e não botão
+   cheio: ali em volta tudo é cartão com foto, e um botão de bloco brigaria
+   com a grade. A seta diz que leva para outra tela. */
+.wp-cat-comparar {
+  display: flex; align-items: center; gap: 12px;
+  margin: 4px 0 26px; padding: 15px 16px;
+  background: var(--wp-surface); border: 1px solid var(--wp-border);
+  border-radius: 14px; text-decoration: none; color: var(--wp-ink);
+  box-shadow: 0 2px 8px rgba(16, 24, 40, .04);
+}
+.wp-cat-comparar:active { transform: scale(.995); }
+.wp-cat-comparar-tx { flex: 1; min-width: 0; }
+.wp-cat-comparar-tx b { display: block; font-size: 15px; font-weight: 800; }
+.wp-cat-comparar-tx span {
+  display: block; margin-top: 3px; font-size: 13px; line-height: 1.4;
+  color: var(--wp-soft);
+}
+
 /* A FOLHA DO CONCORRENTE EM TELA CHEIA.
    Fundo preto, não o cinza do app: a peça é preta de ponta a ponta e qualquer
    moldura clara faz a arte parecer recortada. O rolo tem o scroll próprio para

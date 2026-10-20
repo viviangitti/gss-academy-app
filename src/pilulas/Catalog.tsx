@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Maximize2, X, Wrench } from 'lucide-react';
+import { Play, Maximize2, X, Wrench, ChevronRight } from 'lucide-react';
 import { CATEGORIES, visibleProducts, duracaoLabel, type Category } from './data/products';
 import { allProducts, hasImage, getProductImageUrl, ensureImageLoaded, useStore } from './data/store';
 import { useBrand } from './BrandContext';
@@ -10,6 +10,7 @@ import { isAuto } from './data/brands';
 import { useAuth } from './AuthContext';
 import { vocab } from './data/vocabulario';
 import { useAjustesAcessorios } from './data/ajustesAcessorios';
+import { temComparativo } from './data/comparativo';
 
 // Ordem em que as categorias aparecem. Categoria fora desta lista NÃO é
 // renderizada — foi o que sumiu com o catálogo da Ramasa quando 'suv' entrou.
@@ -25,6 +26,9 @@ export default function Catalog() {
   // Afiliado só vê a linha GLPEN.
   const catalog = visibleProducts(allProducts().filter((p) => p.brand === brandId), user?.role);
   const acessorios = acessoriosDaMarca(brandId);
+  // Marca sem comparativo (farmácia) não mostra a entrada — a função devolve
+  // falso e a seção some, como já acontece na ficha do produto.
+  const podeComparar = temComparativo(brandId, user?.role);
   const [ampliada, setAmpliada] = useState<Acessorio | null>(null);
   // carrega as fotos de capa (IndexedDB) pra usar no card
   useEffect(() => {
@@ -57,13 +61,30 @@ export default function Catalog() {
 
       {ORDER.map((cat) => {
         const items = catalog.filter((p) => p.category === cat);
+        // A ENTRADA DO COMPARATIVO, ENTRE OS CARROS E OS ACESSÓRIOS.
+        //
+        // Saiu da ficha do carro em 20/10 (pedido da Vivian). Mora aqui porque
+        // comparar é escolher ENTRE modelos, e isso acontece olhando a lista —
+        // não de dentro de um carro só. Entra antes da seção de acessórios,
+        // que é o fim da linha de veículos.
+        const antesDeAcessorios = cat === 'acessorio' && podeComparar;
         // Acessório é a segunda venda da concessionária (engate, película, som,
         // proteção) e some fácil da conversa. A seção aparece mesmo vazia, com o
         // recado de onde cadastrar — senão ninguém descobre que ela existe.
         if (!items.length && !(cat === 'acessorio' && isAuto(brandId) && acessorios.length > 0)) return null;
         const CatIcon = CATEGORIES[cat].Icon;
         return (
-          <section key={cat} className="wp-section">
+          <Fragment key={cat}>
+          {antesDeAcessorios && (
+            <Link to="/eleva/comparar" className="wp-cat-comparar">
+              <span className="wp-cat-comparar-tx">
+                <b>Comparar modelos</b>
+                <span>Lado a lado: tomada, porta-malas, 0 a 100 — e para quem cada um é.</span>
+              </span>
+              <ChevronRight size={18} className="wp-ico" />
+            </Link>
+          )}
+          <section className="wp-section">
             <h2 className="wp-section-title">
               <CatIcon size={18} className="wp-section-emoji" />
               {CATEGORIES[cat].label}
@@ -154,6 +175,7 @@ export default function Catalog() {
               })}
             </div>
           </section>
+          </Fragment>
         );
       })}
     </div>

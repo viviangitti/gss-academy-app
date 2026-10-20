@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import {useParams, Link} from 'react-router-dom';
 import {
   MessageCircle, BadgeCheck, Clock, Target, ShieldCheck, ShoppingBag, ClipboardList, Send, FileText, ArrowUpRight, Play, Pause, Plus, Minus, Camera, Pencil, ChevronDown, UploadCloud, Check, Image as ImageIcon, Volume2, BookOpen, Users, Lock, Package, Maximize2, Layers, Download, X, Sparkles, ChevronRight } from 'lucide-react';
 import { speak, stopSpeaking } from './data/speech';
@@ -14,7 +14,7 @@ import { getAfiliadoCode } from './data/afiliadoCode';
 import { recordView, isQuizDone, registraUso, carimbarValor, quizJaPassou, POINTS_PER_QUIZ } from './data/tracking';
 import { nomeParaCliente } from './data/nomeArquivo';
 import { useAuth, audienceOf, type Audience } from './AuthContext';
-import { comparavel, temComparativo } from './data/comparativo';
+import {comparavel} from './data/comparativo';
 import { useBrand } from './BrandContext';
 import { getBrand, isAuto, isBalcao } from './data/brands';
 import { vocab } from './data/vocabulario';
@@ -810,13 +810,11 @@ export default function Product() {
     code: getAfiliadoCode(user?.email),
   };
   const { id } = useParams();
-  const navigate = useNavigate();
   const product = id ? findProduct(id) : undefined;
   // Os três pontos do carro e se dá para comparar nesta marca. Carro sem
   // entrada no comparativo (acessório, produto de farmácia) devolve lista
   // vazia, e aí nada aparece — é o comportamento certo.
   const trio = product ? (comparavel(product)?.atributos ?? []) : [];
-  const podeComparar = temComparativo(brandId, user?.role);
   // COMEÇA FECHADA. Abrir a primeira por padrão custava ~430 px de rolagem
   // em cima de todo o resto, e a objeção aberta quase nunca era a que o
   // cliente tinha acabado de fazer. Quatro perguntas visíveis em uma tela
@@ -1270,20 +1268,11 @@ export default function Product() {
         </div>
       )}
 
-      {/* COMPARAR COM OS OUTROS DA CASA.
-          Fica aqui, logo depois de "para quem é", porque é exatamente onde a
-          dúvida nasce: o vendedor acabou de ler para quem este carro serve e a
-          pergunta seguinte é "e o outro, então?". */}
-      {auto && podeComparar && (
-        <button
-          type="button"
-          className="wp-cmp-btn"
-          onClick={() => navigate(`/eleva/comparar?de=${product.id}`)}
-        >
-          Comparar com os outros modelos da casa
-          <ChevronRight size={17} className="wp-ico" />
-        </button>
-      )}
+      {/* O COMPARATIVO SAIU DAQUI (20/10/2026, pedido da Vivian).
+          Ficava logo depois de "para quem é" — onde a dúvida nasce — e agora
+          mora no Catálogo, entre os carros e os acessórios. A ficha do carro
+          já tinha 4,5 telas de rolagem; o comparativo é escolha entre modelos,
+          e escolher entre modelos acontece na lista, não dentro de um deles. */}
 
       {product.objections.length > 0 && (
       <div className="wp-block">

@@ -20,8 +20,10 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, Check, ArrowRight, ChevronRight } from 'lucide-react';
 import { useAuth } from './AuthContext';
-import { concorrentesDaMarca, CARRO_DAS_FOLHAS, type Concorrente } from './data/concorrentes';
+import { concorrentesDaMarca, type Concorrente } from './data/concorrentes';
+import { allProducts } from './data/store';
 import FolhaConcorrente from './FolhaConcorrente';
+import FolhaGerada from './FolhaGerada';
 import { useBrand } from './BrandContext';
 import { comparaveisDaMarca, LINHAS } from './data/comparativo';
 
@@ -58,18 +60,17 @@ export default function Comparar() {
   // As folhas só existem para o carro que a marca comparou. Numa marca sem
   // folha nenhuma a seção não aparece — melhor que um título vazio.
   const folhas = useMemo(() => concorrentesDaMarca(brandId), [brandId]);
-  // AS FOLHAS SÓ APARECEM COM O CARRO DELAS SELECIONADO.
+  // A COMPARAÇÃO COM CONCORRENTE É DE UM CARRO SÓ POR VEZ.
   //
-  // Elas comparam o Jaecoo 5 e mais nada. Mostrar a lista para quem está
-  // olhando o Jaecoo 7 é oferecer material do carro errado no momento exato
-  // em que a pessoa está decidindo o que mandar pro cliente — e o botão de
-  // enviar fica a um polegar da folha aberta.
-  //
-  // A primeira versão disto mostrava a seção sempre, com um aviso âmbar
-  // explicando que as folhas eram de outro carro. A Vivian cortou (20/10), e
-  // está certa: aviso é remendo em cima de uma oferta que não devia existir.
-  // Quem quiser a folha marca o Jaecoo 5, que é onde ela faz sentido.
-  const temFolhas = folhas.length > 0 && escolhidos.some((c) => c.id.startsWith(CARRO_DAS_FOLHAS));
+  // Antes a seção só existia com o Jaecoo 5 marcado, porque as folhas da marca
+  // só falavam dele. Agora o app gera a folha de QUALQUER carro da casa contra
+  // qualquer rival (ver data/folhaGerada.ts), então a trava mudou de carro
+  // para QUANTIDADE: com dois ou mais marcados o app não sabe de quem é a
+  // folha, e perguntar no meio da conversa com o cliente é pior do que pedir
+  // que ele marque um.
+  const soUm = escolhidos.length === 1 ? escolhidos[0] : null;
+  const produtoDoFoco = soUm ? allProducts().find((x) => x.id === soUm.id) : null;
+  const temFolhas = folhas.length > 0 && !!produtoDoFoco;
 
   if (carros.length < 2) {
     return (
@@ -82,7 +83,17 @@ export default function Comparar() {
     );
   }
 
-  if (folha) return <FolhaConcorrente c={folha} onFechar={() => setFolha(null)} />;
+  // A FOLHA DA MARCA GANHA DA GERADA quando existe.
+  //
+  // O Jaecoo 5 tem dez peças assinadas pelo Gerson, com a arte e a foto certas.
+  // Gerar por cima delas seria trocar material aprovado por material meu. Os
+  // outros quatro carros não têm, e aí a gerada entra.
+  if (folha && produtoDoFoco) {
+    const daMarca = produtoDoFoco.id.startsWith('jaecoo-5');
+    return daMarca
+      ? <FolhaConcorrente c={folha} onFechar={() => setFolha(null)} />
+      : <FolhaGerada p={produtoDoFoco} c={folha} onFechar={() => setFolha(null)} />;
+  }
 
   if (!comparando) {
     return (
@@ -118,8 +129,8 @@ export default function Comparar() {
         {temFolhas && (
           <>
             <p className="wp-cmp-sub wp-cmp-conc-tit">
-              <b>Concorrentes do Jaecoo 5</b><br />
-              Folha pronta da marca, um a um. Toque para abrir e mandar pro cliente.
+              <b>Concorrentes do {soUm?.curto}</b><br />
+              Toque para abrir a folha e mandar pro cliente.
             </p>
             {folhas.map((c) => (
               <button key={c.id} type="button" className="wp-cmp-op" onClick={() => setFolha(c)}>
@@ -128,7 +139,7 @@ export default function Comparar() {
                       lia "Hyundai Creta" e o vendedor com pressa entendia "a
                       folha da Creta" — e mandava pro cliente de Jaecoo 7 uma
                       comparação de outro carro, assinada com o nome dele. */}
-                  <b>Jaecoo 5 × {c.nome}</b>
+                  <b>{soUm?.curto} × {c.nome}</b>
                   <span>contra a {c.versao}</span>
                 </span>
                 <ChevronRight size={16} className="wp-ico" />
